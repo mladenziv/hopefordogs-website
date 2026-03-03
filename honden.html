@@ -1,0 +1,2159 @@
+<!doctype html>
+<html lang="nl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Adoptiehonden — Beschikbare Honden | Hope for Dogs</title>
+        <meta name="description" content="Bekijk alle beschikbare adoptiehonden van Hope for Dogs. Straathonden uit Bosnie en Servie, medisch behandeld en klaar voor een nieuw thuis.">
+        <link rel="canonical" href="https://www.hopefordogseurope.com/honden.html">
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="Hope for Dogs">
+        <meta property="og:title" content="Adoptiehonden — Beschikbare Honden | Hope for Dogs">
+        <meta property="og:description" content="Bekijk alle beschikbare adoptiehonden van Hope for Dogs. Straathonden uit Bosnie en Servie, medisch behandeld en klaar voor een nieuw thuis.">
+        <meta property="og:url" content="https://www.hopefordogseurope.com/honden.html">
+        <meta property="og:image" content="https://www.hopefordogseurope.com/images/hero-1.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="shared.css?v=20" />
+        <style>
+            /* Loading skeleton */
+            .skeleton-card {
+                background: var(--white);
+                border-radius: 20px;
+                overflow: hidden;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+            }
+            .skeleton-img {
+                width: 100%;
+                aspect-ratio: 4/3;
+                background: linear-gradient(
+                    90deg,
+                    #f0f0f0 25%,
+                    #e0e0e0 50%,
+                    #f0f0f0 75%
+                );
+                background-size: 200% 100%;
+                animation: shimmer 1.5s infinite;
+            }
+            .skeleton-body {
+                padding: 24px;
+            }
+            .skeleton-line {
+                height: 16px;
+                border-radius: 8px;
+                background: linear-gradient(
+                    90deg,
+                    #f0f0f0 25%,
+                    #e0e0e0 50%,
+                    #f0f0f0 75%
+                );
+                background-size: 200% 100%;
+                animation: shimmer 1.5s infinite;
+                margin-bottom: 8px;
+            }
+            .skeleton-line:last-child {
+                width: 60%;
+                margin-bottom: 0;
+            }
+            .skeleton-line-sm {
+                height: 12px;
+                width: 40%;
+            }
+            @keyframes shimmer {
+                0% {
+                    background-position: 200% 0;
+                }
+                100% {
+                    background-position: -200% 0;
+                }
+            }
+
+            .skeleton-adopted {
+                background: var(--white);
+                border-radius: 16px;
+                overflow: hidden;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+            }
+            .skeleton-adopted .skeleton-img {
+                aspect-ratio: 1/1;
+            }
+            .skeleton-adopted .skeleton-body {
+                padding: 16px 20px;
+            }
+
+            body {
+                font-family: "Manrope", sans-serif;
+                color: var(--dark-1);
+                background: var(--white);
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            ul {
+                list-style: none;
+            }
+
+            img {
+                max-width: 100%;
+                display: block;
+            }
+
+            /* ============ FILTER TABS ============ */
+            .filter-section {
+                padding: 48px 0 0;
+            }
+
+            .filter-inner {
+                max-width: 1560px;
+                margin: 0 auto;
+                padding: 0 40px;
+                display: flex;
+                justify-content: center;
+            }
+
+            .filter-tabs {
+                display: flex;
+                gap: 8px;
+                background: var(--beige);
+                padding: 6px;
+                border-radius: 100px;
+            }
+
+            .filter-tab {
+                padding: 12px 28px;
+                border-radius: 100px;
+                border: none;
+                background: transparent;
+                font-family: "Manrope", sans-serif;
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--dark-2);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                white-space: nowrap;
+            }
+
+            .filter-tab:hover {
+                color: var(--dark-1);
+                background: rgba(0, 0, 0, 0.04);
+            }
+
+            .filter-tab.active {
+                background: var(--brand);
+                color: var(--white);
+                box-shadow: 0 2px 8px rgba(255, 83, 20, 0.25);
+            }
+
+            .filter-tab.active:hover {
+                background: rgb(230, 70, 15);
+                color: var(--white);
+            }
+
+            /* ============ FILTER BLURB ============ */
+            .filter-blurb {
+                max-width: 640px;
+                margin: 0 auto 40px;
+                text-align: center;
+            }
+
+            .filter-blurb p {
+                font-size: 18px;
+                font-weight: 500;
+                line-height: 1.7;
+                color: var(--dark-2);
+            }
+
+            /* ============ DOG CARDS GRID ============ */
+            .dogs-section {
+                padding: 40px 0 80px;
+                background: #ffffff;
+            }
+
+            .dogs-inner {
+                max-width: 1560px;
+                margin: 0 auto;
+                padding: 0 40px;
+            }
+
+            .dogs-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 32px;
+            }
+
+            .dog-card {
+                position: relative;
+                transition: transform 0.3s ease;
+                cursor: pointer;
+            }
+
+            .dog-card:hover {
+                transform: translateY(-4px);
+            }
+
+            .dog-card-inner {
+                background: var(--white);
+                border-radius: 20px;
+                overflow: hidden;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+                transition: box-shadow 0.3s ease;
+            }
+
+            .dog-card:hover .dog-card-inner {
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+            }
+
+            .dog-card-img {
+                width: 100%;
+                aspect-ratio: 4 / 2.4;
+                object-fit: cover;
+            }
+
+            .dog-card-body {
+                padding: 24px;
+            }
+
+            .dog-card-name {
+                font-family: "Nunito", sans-serif;
+                font-size: 22px;
+                font-weight: 800;
+                line-height: 1.3;
+                color: var(--dark-1);
+                margin-bottom: 4px;
+            }
+
+            .dog-card-desc {
+                font-family: "Manrope", sans-serif;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 20px;
+                color: #424242;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+
+            .dog-card-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 15px;
+                font-weight: 700;
+                color: var(--brand);
+                margin-top: auto;
+                padding-top: 12px;
+            }
+
+            .dog-card-link svg {
+                width: 16px;
+                height: 16px;
+                fill: var(--brand);
+            }
+
+            /* Tag badge — ribbon style */
+            .dog-card-badge {
+                position: absolute;
+                top: 12px;
+                left: -4px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                z-index: 2;
+            }
+
+            .dog-card-badge-label {
+                font-family: "Nunito", sans-serif;
+                font-size: 14px;
+                font-weight: 800;
+                line-height: 20px;
+                padding: 4px 12px;
+                color: #fefefd;
+                border-radius: 8px 8px 8px 0;
+            }
+
+            .dog-card-badge-tail {
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 0 4px 4px 0;
+            }
+
+            .dog-card-badge.puppy .dog-card-badge-label {
+                background: #7c3aed;
+            }
+            .dog-card-badge.puppy .dog-card-badge-tail {
+                border-color: transparent #5b21b6 transparent transparent;
+            }
+
+            .dog-card-badge.senior .dog-card-badge-label {
+                background: #dc2626;
+            }
+            .dog-card-badge.senior .dog-card-badge-tail {
+                border-color: transparent #991b1b transparent transparent;
+            }
+
+            .dog-card-badge.langzitter .dog-card-badge-label {
+                background: #ea580c;
+            }
+            .dog-card-badge.langzitter .dog-card-badge-tail {
+                border-color: transparent #c2410c transparent transparent;
+            }
+
+            /* ============ ADOPTED SECTION ============ */
+            .adopted-section {
+                background: var(--beige);
+                padding: 80px 0;
+            }
+
+            .adopted-inner {
+                max-width: 1560px;
+                margin: 0 auto;
+                padding: 0 40px;
+            }
+
+            .adopted-header {
+                text-align: center;
+                margin-bottom: 48px;
+            }
+
+            .adopted-header h2 {
+                margin-bottom: 16px;
+                color: var(--dark-1);
+            }
+
+            .adopted-header p {
+                font-size: 17px;
+                color: var(--dark-2);
+                max-width: 560px;
+                margin: 0 auto;
+            }
+
+            .adopted-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 24px;
+            }
+
+            .adopted-card {
+                background: var(--white);
+                border-radius: 16px;
+                overflow: hidden;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+                transition:
+                    transform 0.3s ease,
+                    box-shadow 0.3s ease;
+                position: relative;
+            }
+
+            .adopted-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            }
+
+            .adopted-badge {
+                position: absolute;
+                top: 12px;
+                left: 12px;
+                background: #2e7d32;
+                color: var(--white);
+                font-size: 12px;
+                font-weight: 700;
+                padding: 6px 14px;
+                border-radius: 100px;
+                z-index: 2;
+                letter-spacing: 0.3px;
+            }
+
+            .adopted-card-img {
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                object-fit: cover;
+            }
+
+            .adopted-card-body {
+                padding: 16px 20px;
+            }
+
+            .adopted-card-name {
+                font-family: "Nunito", sans-serif;
+                font-size: 20px;
+                font-weight: 700;
+                line-height: 1.3;
+                color: var(--dark-1);
+            }
+
+            /* ============ CTA SECTION ============ */
+            .cta-section {
+                padding: 100px 0;
+            }
+
+            .cta-inner {
+                max-width: 1560px;
+                margin: 0 auto;
+                padding: 0 40px;
+            }
+
+            .cta-box {
+                background: var(--dark-1);
+                border-radius: 28px;
+                padding: 80px 60px;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .cta-box::before {
+                content: "";
+                position: absolute;
+                top: -80px;
+                right: -80px;
+                width: 300px;
+                height: 300px;
+                background: var(--brand);
+                border-radius: 50%;
+                opacity: 0.08;
+                pointer-events: none;
+            }
+
+            .cta-box::after {
+                content: "";
+                position: absolute;
+                bottom: -60px;
+                left: -60px;
+                width: 200px;
+                height: 200px;
+                background: var(--brand);
+                border-radius: 50%;
+                opacity: 0.06;
+                pointer-events: none;
+            }
+
+            .cta-box h2 {
+                color: var(--white);
+                font-family: "Nunito", sans-serif;
+                font-size: 36px;
+                font-weight: 800;
+                line-height: 1.2;
+                letter-spacing: -0.02em /* -0.72px */;
+                margin-bottom: 16px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .cta-box p {
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 18px;
+                max-width: 560px;
+                margin: 0 auto 40px;
+                line-height: 1.7;
+                position: relative;
+                z-index: 1;
+            }
+
+            .cta-buttons {
+                display: flex;
+                gap: 16px;
+                justify-content: center;
+                position: relative;
+                z-index: 1;
+            }
+
+            .cta-buttons .btn-secondary {
+                color: var(--white);
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+
+            .cta-buttons .btn-secondary:hover {
+                border-color: var(--white);
+            }
+
+            /* ============ RESPONSIVE ============ */
+            /* --- MD: 1024–1247px --- */
+            @media (max-width: 1247px) {
+                .dogs-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .adopted-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+
+            /* --- SM: 768–1023px --- */
+            @media (max-width: 1023px) {
+                /* Responsive type */
+                .dog-card-name {
+                    font-size: 20px;
+                }
+                .adopted-card-name {
+                    font-size: 18px;
+                }
+                .cta-box h2 {
+                    font-size: 32px;
+                }
+                .cta-box p {
+                    font-size: 16px;
+                }
+                .dog-modal-name {
+                    font-size: 24px;
+                }
+                .contact-modal h2 {
+                    font-size: 24px;
+                }
+
+                .filter-tabs {
+                    width: 100%;
+                }
+                .filter-tab {
+                    flex: 1;
+                    text-align: center;
+                }
+
+                .cta-box {
+                    padding: 60px 32px;
+                }
+            }
+
+            /* --- XS: 0–767px --- */
+            @media (max-width: 767px) {
+                /* Responsive type — XS */
+                .dog-card-name {
+                    font-size: 18px;
+                }
+                .adopted-card-name {
+                    font-size: 16px;
+                }
+                .cta-box h2 {
+                    font-size: 28px;
+                }
+                .dog-modal-name {
+                    font-size: 22px;
+                }
+                .contact-modal h2 {
+                    font-size: 22px;
+                }
+
+                .page-hero-inner {
+                    padding: 0 40px;
+                }
+                .filter-inner {
+                    padding: 0;
+                }
+                .dogs-inner,
+                .adopted-inner,
+                .cta-inner {
+                    padding: 0 20px;
+                }
+
+                .page-hero {
+                    padding-bottom: 0;
+                }
+
+                .filter-section {
+                    background: #fcf9f5;
+                    padding: 28px 20px 32px;
+                }
+
+                .dogs-section {
+                    padding-top: 24px;
+                }
+
+                .dogs-grid {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+
+                .adopted-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 16px;
+                }
+
+                .filter-tabs {
+                    background: rgba(223, 184, 126, 0.12);
+                    height: 50px;
+                    gap: 0;
+                    justify-content: space-between;
+                }
+
+                .filter-tab {
+                    padding: 0 16px;
+                    font-size: 15px;
+                    font-weight: 500;
+                    letter-spacing: 0.2px;
+                    line-height: 24px;
+                    height: 38px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .cta-buttons {
+                    flex-direction: column;
+                    align-items: center;
+                }
+            }
+
+            /* ============ ANIMATIONS ============ */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .dog-card,
+            .adopted-card {
+                animation: fadeInUp 0.5s ease forwards;
+                opacity: 0;
+            }
+
+            .dog-card:nth-child(1),
+            .adopted-card:nth-child(1) {
+                animation-delay: 0.05s;
+            }
+            .dog-card:nth-child(2),
+            .adopted-card:nth-child(2) {
+                animation-delay: 0.1s;
+            }
+            .dog-card:nth-child(3),
+            .adopted-card:nth-child(3) {
+                animation-delay: 0.15s;
+            }
+            .dog-card:nth-child(4),
+            .adopted-card:nth-child(4) {
+                animation-delay: 0.2s;
+            }
+            .dog-card:nth-child(5),
+            .adopted-card:nth-child(5) {
+                animation-delay: 0.25s;
+            }
+            .dog-card:nth-child(6),
+            .adopted-card:nth-child(6) {
+                animation-delay: 0.3s;
+            }
+            .dog-card:nth-child(7),
+            .adopted-card:nth-child(7) {
+                animation-delay: 0.35s;
+            }
+            .dog-card:nth-child(8),
+            .adopted-card:nth-child(8) {
+                animation-delay: 0.4s;
+            }
+            .dog-card:nth-child(9) {
+                animation-delay: 0.45s;
+            }
+            .dog-card:nth-child(10) {
+                animation-delay: 0.5s;
+            }
+            .dog-card:nth-child(11) {
+                animation-delay: 0.55s;
+            }
+            .dog-card:nth-child(12) {
+                animation-delay: 0.6s;
+            }
+
+            /* ============ EQUAL HEIGHT CARDS ============ */
+            .dog-card {
+                display: flex;
+                min-width: 0;
+            }
+            .dog-card-inner {
+                height: 100%;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            .dog-card-body {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* ============ DOG MODAL OVERLAY ============ */
+            .dog-modal-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 200;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+            .dog-modal-overlay.open {
+                display: flex;
+            }
+
+            .dog-modal {
+                background: white;
+                border-radius: 24px;
+                width: 100%;
+                max-width: 760px;
+                max-height: 90vh;
+                overflow-y: auto;
+                position: relative;
+                animation: dogModalIn 0.25s ease;
+            }
+
+            @keyframes dogModalIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(16px) scale(0.97);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            .dog-modal-close {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(255, 255, 255, 0.9);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                transition: background 0.2s;
+            }
+            .dog-modal-close:hover {
+                background: white;
+            }
+            .dog-modal-close svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            /* Modal carousel */
+            .dog-modal-carousel {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 38/27;
+                overflow: hidden;
+                border-radius: 24px 24px 0 0;
+                background: var(--beige);
+                user-select: none;
+            }
+            .dog-modal-carousel-track {
+                display: flex;
+                width: 100%;
+                height: 100%;
+                transition: transform 0.3s ease;
+            }
+            .dog-modal-carousel-slide {
+                min-width: 100%;
+                height: 100%;
+            }
+            .dog-modal-carousel-slide img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .dog-modal-carousel-btn {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.9);
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+                transition:
+                    background 0.2s,
+                    transform 0.2s;
+                z-index: 2;
+            }
+            .dog-modal-carousel-btn:hover {
+                background: white;
+                transform: translateY(-50%) scale(1.05);
+            }
+            .dog-modal-carousel-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+            .dog-modal-carousel-prev {
+                left: 16px;
+            }
+            .dog-modal-carousel-next {
+                right: 16px;
+            }
+
+            .dog-modal-carousel-dots {
+                position: absolute;
+                bottom: 16px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 8px;
+                z-index: 2;
+            }
+            .dog-modal-carousel-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.5);
+                border: none;
+                cursor: pointer;
+                transition:
+                    background 0.2s,
+                    transform 0.2s;
+            }
+            .dog-modal-carousel-dot.active {
+                background: white;
+                transform: scale(1.3);
+            }
+
+            /* Modal body */
+            .dog-modal-body {
+                padding: 32px;
+            }
+            .dog-modal-name {
+                font-family: "Nunito", sans-serif;
+                font-size: 28px;
+                font-weight: 800;
+                line-height: 1.2;
+                color: var(--dark-1);
+                margin-bottom: 20px;
+            }
+            .dog-modal-status {
+                display: inline-block;
+                font-size: 13px;
+                font-weight: 700;
+                padding: 6px 16px;
+                border-radius: 100px;
+                margin-bottom: 16px;
+            }
+            .modal-status-opzoek {
+                background: #fff3cd;
+                color: #856404;
+            }
+            .modal-status-in_gesprek {
+                background: #e8daef;
+                color: #6c3483;
+            }
+            .modal-status-geadopteerd {
+                background: #d4edda;
+                color: #155724;
+            }
+
+            .dog-modal-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 24px;
+                margin-bottom: 20px;
+            }
+            .dog-modal-meta-item {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+            .dog-modal-meta-label {
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--dark-2);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            .dog-modal-meta-value {
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--dark-1);
+            }
+            .dog-modal-desc {
+                font-size: 15px;
+                font-weight: 500;
+                line-height: 1.7;
+                color: var(--dark-2);
+                margin-bottom: 24px;
+            }
+            .dog-modal-cta {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+            .dog-modal-cta .btn-facebook {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: #1877f2;
+                color: white;
+                border: none;
+                padding: 16px 28px;
+                border-radius: 100px;
+                font-family: inherit;
+                font-size: 15px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: background 0.2s;
+                text-decoration: none;
+            }
+            .dog-modal-cta .btn-facebook:hover {
+                background: #1565c0;
+            }
+            .dog-modal-cta .btn-facebook svg {
+                width: 20px;
+                height: 20px;
+                fill: white;
+            }
+            .dog-modal-cta .btn-primary {
+                padding: 16px 28px;
+                font-size: 15px;
+            }
+
+            .dog-modal-loading {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 60px 0;
+                color: var(--dark-2);
+                font-size: 15px;
+                gap: 12px;
+            }
+            .dog-modal-loading .mini-spinner {
+                width: 20px;
+                height: 20px;
+                border: 2px solid rgba(0, 0, 0, 0.1);
+                border-top-color: var(--brand);
+                border-radius: 50%;
+                animation: spin 0.6s linear infinite;
+            }
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            @media (max-width: 767px) {
+                .dog-modal-carousel {
+                    aspect-ratio: 4/3;
+                    border-radius: 20px 20px 0 0;
+                }
+                .dog-modal-body {
+                    padding: 24px;
+                }
+                .dog-modal-carousel-btn {
+                    display: none;
+                }
+                .dog-modal-cta {
+                    flex-direction: column;
+                }
+            }
+
+            /* ============ CONTACT MODAL ============ */
+            .contact-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 300;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+            .contact-overlay.open {
+                display: flex;
+            }
+            .contact-modal {
+                background: white;
+                border-radius: 24px;
+                width: 100%;
+                max-width: 560px;
+                max-height: 90vh;
+                overflow-y: auto;
+                padding: 40px;
+                position: relative;
+                animation: dogModalIn 0.25s ease;
+            }
+            .contact-modal-close {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(0, 0, 0, 0.06);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.2s;
+            }
+            .contact-modal-close:hover {
+                background: rgba(0, 0, 0, 0.1);
+            }
+            .contact-modal-close svg {
+                width: 18px;
+                height: 18px;
+            }
+            .contact-modal h2 {
+                font-size: 28px;
+                margin-bottom: 8px;
+            }
+            .contact-modal > p {
+                color: var(--dark-2);
+                font-size: 15px;
+                margin-bottom: 24px;
+            }
+            .contact-form {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+            .form-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+            .form-group label {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--dark-1);
+            }
+            .form-group input,
+            .form-group textarea {
+                padding: 14px 16px;
+                border: 2px solid rgba(0, 0, 0, 0.1);
+                border-radius: 12px;
+                font-family: inherit;
+                font-size: 15px;
+                transition: border-color 0.2s;
+                outline: none;
+            }
+            .form-group input:focus,
+            .form-group textarea:focus {
+                border-color: var(--brand);
+            }
+            .form-group textarea {
+                min-height: 120px;
+                resize: vertical;
+            }
+            .form-success {
+                display: none;
+                text-align: center;
+                padding: 32px;
+                background: #d4edda;
+                border-radius: 16px;
+                color: #155724;
+            }
+            .form-success h3 {
+                font-size: 20px;
+                margin-bottom: 8px;
+            }
+
+            .dog-modal-cta .btn-facebook-outline {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: transparent;
+                color: var(--dark-1);
+                border: 1.5px solid rgba(0, 0, 0, 0.12);
+                padding: 16px 28px;
+                border-radius: 100px;
+                font-family: inherit;
+                font-size: 15px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: border-color 0.2s;
+                text-decoration: none;
+            }
+            .dog-modal-cta .btn-facebook-outline:hover {
+                border-color: rgba(0, 0, 0, 0.3);
+            }
+            .dog-modal-cta .btn-facebook-outline svg {
+                width: 20px;
+                height: 20px;
+                fill: #1877f2;
+            }
+
+            @media (max-width: 767px) {
+                .form-row {
+                    grid-template-columns: 1fr;
+                }
+                .contact-modal {
+                    padding: 28px 20px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="vaul-wrapper">
+            <div id="nav-placeholder"></div>
+
+            <main>
+            <!-- ============ PAGE HERO ============ -->
+            <section class="page-hero">
+                <div class="page-hero-inner">
+                    <h1 data-i18n="honden.hero">Opzoek naar een huisje</h1>
+                    <p data-i18n="honden.hero.sub">
+                        Hier zie je alle honden die momenteel bij ons in of
+                        rondom het asiel verblijven.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ============ FILTER TABS ============ -->
+            <section class="filter-section">
+                <div class="filter-inner">
+                    <div class="filter-tabs">
+                        <button
+                            class="filter-tab active"
+                            data-filter="alle"
+                            data-i18n="honden.filter.alle"
+                            data-i18n-short="honden.filter.alle.short"
+                        >
+                            Alle honden
+                        </button>
+                        <button
+                            class="filter-tab"
+                            data-filter="in_aziel"
+                            data-i18n="honden.filter.onsasiel"
+                        >
+                            Ons asiel
+                        </button>
+                        <button
+                            class="filter-tab"
+                            data-filter="gemeente_aziel"
+                            data-i18n="honden.filter.gemeente"
+                            data-i18n-short="honden.filter.gemeente.short"
+                        >
+                            Gemeente asiel
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ DOG CARDS GRID ============ -->
+            <section class="dogs-section">
+                <div class="dogs-inner">
+                    <div
+                        class="filter-blurb"
+                        id="filterBlurb"
+                        style="display: none"
+                    >
+                        <p data-i18n="honden.gemeente.desc">
+                            Naast ons eigen asiel helpen wij ook de honden in
+                            het gemeente asiel. De omstandigheden daar zijn
+                            helaas erg slecht en de honden hebben dringend hulp
+                            nodig. Wij zetten ons in om ook deze honden een
+                            betere toekomst te geven.
+                        </p>
+                    </div>
+                    <div class="dogs-grid" id="dogsGrid">
+                        <!-- Loading skeletons -->
+                        <div class="skeleton-card">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-body">
+                                <div class="skeleton-line"></div>
+                                <div
+                                    class="skeleton-line skeleton-line-sm"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-card">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-body">
+                                <div class="skeleton-line"></div>
+                                <div
+                                    class="skeleton-line skeleton-line-sm"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-card">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-body">
+                                <div class="skeleton-line"></div>
+                                <div
+                                    class="skeleton-line skeleton-line-sm"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-card">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-body">
+                                <div class="skeleton-line"></div>
+                                <div
+                                    class="skeleton-line skeleton-line-sm"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-card">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-body">
+                                <div class="skeleton-line"></div>
+                                <div
+                                    class="skeleton-line skeleton-line-sm"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-card">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-body">
+                                <div class="skeleton-line"></div>
+                                <div
+                                    class="skeleton-line skeleton-line-sm"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ ADOPTED SECTION ============ -->
+            <section class="adopted-section">
+                <div class="adopted-inner">
+                    <div class="adopted-header">
+                        <h2 data-i18n="honden.adopted">
+                            Whoohoo, wij zijn geadopteerd!
+                        </h2>
+                        <p data-i18n="honden.adopted.sub">
+                            Deze honden hebben hun forever home gevonden. Wij
+                            zijn zo blij voor ze!
+                        </p>
+                    </div>
+                    <div class="adopted-grid" id="adoptedGrid">
+                        <!-- Loading skeletons -->
+                        <div class="skeleton-adopted">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-body">
+                                <div class="skeleton-line"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-adopted">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-body">
+                                <div class="skeleton-line"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-adopted">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-body">
+                                <div class="skeleton-line"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-adopted">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-body">
+                                <div class="skeleton-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ CTA SECTION ============ -->
+            <section class="cta-section">
+                <div class="cta-inner">
+                    <div class="cta-box">
+                        <h2 data-i18n="honden.cta.title">
+                            Wil jij ook helpen?
+                        </h2>
+                        <p data-i18n="honden.cta.sub">
+                            Elke donatie, hoe klein ook, maakt een groot
+                            verschil voor deze honden. Je kunt ook helpen door
+                            een hond te adopteren en hem of haar een liefdevolle
+                            thuis te geven.
+                        </p>
+                        <div class="cta-buttons">
+                            <a
+                                href="doneer.html"
+                                class="btn-primary"
+                                data-i18n="honden.cta.doneer"
+                                >Doneer nu</a
+                            >
+                            <a
+                                href="#"
+                                class="btn-secondary"
+                                data-i18n="honden.cta.contact"
+                                >Neem contact op</a
+                            >
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            </main>
+            <div id="footer-placeholder"></div>
+        </div>
+        <!-- /.vaul-wrapper -->
+
+        <!-- ============ DOG MODAL ============ -->
+        <div class="dog-modal-overlay" id="dogModalOverlay">
+            <div class="dog-modal" id="dogModal">
+                <button class="dog-modal-close" id="dogModalClose">
+                    <svg
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    >
+                        <line x1="4" y1="4" x2="12" y2="12" />
+                        <line x1="12" y1="4" x2="4" y2="12" />
+                    </svg>
+                </button>
+                <div class="dog-modal-carousel" id="dogModalCarousel">
+                    <div
+                        class="dog-modal-carousel-track"
+                        id="dogModalTrack"
+                    ></div>
+                    <button
+                        class="dog-modal-carousel-btn dog-modal-carousel-prev"
+                        id="dogModalPrev"
+                    >
+                        <svg viewBox="0 0 16 16">
+                            <path
+                                d="M10 3l-5 5 5 5"
+                                stroke="#1a1a1a"
+                                stroke-width="2"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </button>
+                    <button
+                        class="dog-modal-carousel-btn dog-modal-carousel-next"
+                        id="dogModalNext"
+                    >
+                        <svg viewBox="0 0 16 16">
+                            <path
+                                d="M6 3l5 5-5 5"
+                                stroke="#1a1a1a"
+                                stroke-width="2"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </button>
+                    <div
+                        class="dog-modal-carousel-dots"
+                        id="dogModalDots"
+                    ></div>
+                </div>
+                <div class="dog-modal-body" id="dogModalBody">
+                    <div class="dog-modal-loading">
+                        <div class="mini-spinner"></div>
+                        Laden...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ CONTACT MODAL ============ -->
+        <div class="contact-overlay" id="contactOverlay">
+            <div class="contact-modal">
+                <button class="contact-modal-close" id="contactModalClose">
+                    <svg
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    >
+                        <line x1="4" y1="4" x2="12" y2="12" />
+                        <line x1="12" y1="4" x2="4" y2="12" />
+                    </svg>
+                </button>
+                <h2>Interesse in <span id="contactDogName"></span>?</h2>
+                <p>
+                    Vul het formulier in en wij nemen zo snel mogelijk contact
+                    met je op.
+                </p>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contactNaam">Naam *</label>
+                            <input
+                                type="text"
+                                id="contactNaam"
+                                required
+                                placeholder="Je volledige naam"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">E-mail *</label>
+                            <input
+                                type="email"
+                                id="contactEmail"
+                                required
+                                placeholder="je@email.nl"
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactTelefoon">Telefoonnummer</label>
+                        <input
+                            type="tel"
+                            id="contactTelefoon"
+                            placeholder="06-12345678"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="contactBericht">Bericht *</label>
+                        <textarea
+                            id="contactBericht"
+                            required
+                            placeholder="Vertel ons waarom je ge&iuml;nteresseerd bent in deze hond..."
+                        ></textarea>
+                    </div>
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                        id="contactSubmitBtn"
+                    >
+                        Verstuur bericht
+                    </button>
+                </form>
+                <div class="form-success" id="contactSuccess">
+                    <h3>Bericht verstuurd!</h3>
+                    <p>
+                        Bedankt voor je interesse. We nemen zo snel mogelijk
+                        contact met je op.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <script src="components.js?v=20"></script>
+        <!-- ============ SUPABASE ============ -->
+        <script src="supabase-config.js"></script>
+        <script src="dog-card.js"></script>
+
+        <!-- ============ JAVASCRIPT ============ -->
+        <script>
+            let allDogs = [];
+            let adoptedDogs = [];
+            let activeFilter = "alle";
+
+            async function loadDogs() {
+                try {
+                    // Load dogs and photos from Supabase
+                    const [dogs, primaryPhotos] = await Promise.all([
+                        supabaseGet("dogs", "select=*&order=created_at.desc"),
+                        supabaseGet(
+                            "dog_photos",
+                            "select=dog_id,photo_url&is_primary=eq.true",
+                        ),
+                    ]);
+
+                    // Build a map of dog_id -> primary photo URL
+                    const primaryPhotoMap = {};
+                    primaryPhotos.forEach((p) => {
+                        primaryPhotoMap[p.dog_id] = p.photo_url;
+                    });
+
+                    // If some dogs don't have a primary photo, fetch one fallback per dog
+                    const dogsWithoutPrimary = dogs
+                        .filter((d) => !primaryPhotoMap[d.id])
+                        .map((d) => d.id);
+                    if (dogsWithoutPrimary.length > 0) {
+                        // Fetch first photo for dogs missing a primary (in batches)
+                        for (
+                            let i = 0;
+                            i < dogsWithoutPrimary.length;
+                            i += 50
+                        ) {
+                            const batch = dogsWithoutPrimary.slice(i, i + 50);
+                            const fallbacks = await supabaseGet(
+                                "dog_photos",
+                                "select=dog_id,photo_url&dog_id=in.(" +
+                                    batch.join(",") +
+                                    ")&limit=50",
+                            );
+                            fallbacks.forEach((p) => {
+                                if (!primaryPhotoMap[p.dog_id])
+                                    primaryPhotoMap[p.dog_id] = p.photo_url;
+                            });
+                        }
+                    }
+
+                    // Attach photo to dogs
+                    const allDocsRaw = dogs.map((d) => {
+                        const photoUrl = primaryPhotoMap[d.id] || null;
+                        return {
+                            ...d,
+                            photos: photoUrl ? [{ photo_url: photoUrl }] : [],
+                        };
+                    });
+
+                    allDogs = allDocsRaw.filter(
+                        (d) => d.status !== "geadopteerd",
+                    );
+                    adoptedDogs = allDocsRaw.filter(
+                        (d) => d.status === "geadopteerd",
+                    );
+
+                    renderDogs();
+                    renderAdopted();
+                } catch (err) {
+                    console.error("Error loading dogs:", err);
+                    document.getElementById("dogsGrid").innerHTML =
+                        '<p style="grid-column:1/-1;text-align:center;color:var(--dark-2);padding:40px;">Er is een fout opgetreden bij het laden van de honden.</p>';
+                }
+            }
+
+            function getPhoto(dog) {
+                return dog.photos && dog.photos.length > 0
+                    ? dog.photos[0].photo_url
+                    : "images/placeholder-dog.png";
+            }
+
+            function getGender(dog) {
+                if (dog.geslacht === "reu") return "Reu";
+                if (dog.geslacht === "teefje") return "Teef";
+                return "";
+            }
+
+            function t(key) {
+                var lang = h4dGetLanguage();
+                return (
+                    (H4D_I18N[key] && H4D_I18N[key][lang]) ||
+                    (H4D_I18N[key] && H4D_I18N[key].nl) ||
+                    key
+                );
+            }
+
+            function renderDogs() {
+                const grid = document.getElementById("dogsGrid");
+                const blurb = document.getElementById("filterBlurb");
+                blurb.style.display =
+                    activeFilter === "gemeente_aziel" ? "block" : "none";
+                const filtered =
+                    activeFilter === "alle"
+                        ? allDogs
+                        : allDogs.filter((d) => d.locatie === activeFilter);
+
+                if (filtered.length === 0) {
+                    grid.innerHTML =
+                        '<p style="grid-column:1/-1;text-align:center;color:var(--dark-2);padding:40px;">Geen honden gevonden in deze categorie.</p>';
+                    return;
+                }
+
+                grid.innerHTML = filtered
+                    .map(function (dog, index) {
+                        return dogCardHTML(dog, { modal: true, index: index });
+                    })
+                    .join("");
+            }
+
+            function renderAdopted() {
+                const grid = document.getElementById("adoptedGrid");
+
+                if (adoptedDogs.length === 0) {
+                    grid.innerHTML = "";
+                    return;
+                }
+
+                const adoptedLabel = t("honden.geadopteerd");
+                grid.innerHTML = adoptedDogs
+                    .map((dog, index) => {
+                        const img = getPhoto(dog);
+                        return `
+          <a href="hond.html?id=${dog.id}" class="adopted-card" style="animation-delay: ${index * 0.05}s; text-decoration: none; color: inherit;">
+            <span class="adopted-badge">${adoptedLabel}</span>
+            <img src="${img}" alt="${dog.naam}" class="adopted-card-img">
+            <div class="adopted-card-body">
+              <div class="adopted-card-name">${dog.naam}</div>
+            </div>
+          </a>
+        `;
+                    })
+                    .join("");
+            }
+
+            // Filter tabs interaction
+            const filterTabs = document.querySelectorAll(".filter-tab");
+            filterTabs.forEach((tab) => {
+                tab.addEventListener("click", () => {
+                    filterTabs.forEach((t) => t.classList.remove("active"));
+                    tab.classList.add("active");
+                    activeFilter = tab.getAttribute("data-filter");
+                    renderDogs();
+                });
+            });
+
+            // Responsive short labels for filter tabs at XS
+            (function () {
+                var mq = window.matchMedia("(max-width: 767px)");
+                function updateTabLabels(isXS) {
+                    filterTabs.forEach(function (tab) {
+                        var shortKey = tab.getAttribute("data-i18n-short");
+                        var fullKey = tab.getAttribute("data-i18n");
+                        if (!shortKey) return;
+                        var key = isXS ? shortKey : fullKey;
+                        var t = H4D_I18N[key];
+                        if (!t) return;
+                        var lang = localStorage.getItem("h4d-lang") || "nl";
+                        tab.textContent = t[lang] || t.nl;
+                    });
+                }
+                updateTabLabels(mq.matches);
+                mq.addEventListener("change", function (e) {
+                    updateTabLabels(e.matches);
+                });
+            })();
+
+            // Init
+            loadDogs();
+
+            // ============ DOG MODAL ============
+            const statusLabels = {
+                opzoek: "Op zoek naar een baasje",
+                in_gesprek: "In gesprek",
+                geadopteerd: "Geadopteerd",
+                in_aziel: "In asiel",
+                gemeente_aziel: "Gemeente asiel",
+                in_opvang: "In opvang",
+            };
+
+            let modalSlide = 0;
+            let modalImages = [];
+            let modalTouchStartX = 0;
+
+            function buildDogModalBody(dog) {
+                var gender =
+                    dog.geslacht === "reu"
+                        ? "Reu"
+                        : dog.geslacht === "teefje"
+                          ? "Teef"
+                          : null;
+                var metaHtml = "";
+                if (gender)
+                    metaHtml +=
+                        '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Geslacht</span><span class="dog-modal-meta-value">' +
+                        gender +
+                        "</span></div>";
+                if (dog.leeftijd)
+                    metaHtml +=
+                        '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Leeftijd</span><span class="dog-modal-meta-value">' +
+                        dog.leeftijd +
+                        "</span></div>";
+                if (dog.ras)
+                    metaHtml +=
+                        '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Ras</span><span class="dog-modal-meta-value">' +
+                        dog.ras +
+                        "</span></div>";
+                if (
+                    dog.gesteriliseerd !== null &&
+                    dog.gesteriliseerd !== undefined
+                ) {
+                    metaHtml +=
+                        '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Gesteriliseerd</span><span class="dog-modal-meta-value">' +
+                        (dog.gesteriliseerd ? "Ja" : "Nee") +
+                        "</span></div>";
+                }
+
+                var statusLabel = statusLabels[dog.status] || dog.status;
+
+                var ctaHtml = "";
+                if (dog.status !== "geadopteerd") {
+                    ctaHtml =
+                        '<div class="dog-modal-cta">' +
+                        '<button class="btn-primary" onclick="openContactModal(\'' +
+                        dog.id +
+                        "', '" +
+                        (dog.naam || "").replace(/'/g, "\\'") +
+                        "')\">Stuur een bericht</button>" +
+                        '<a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener" class="btn-facebook-outline">' +
+                        '<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' +
+                        "Facebook" +
+                        "</a>" +
+                        "</div>";
+                }
+
+                return (
+                    '<div class="dog-modal-name">' +
+                    dog.naam +
+                    "</div>" +
+                    (metaHtml
+                        ? '<div class="dog-modal-meta">' + metaHtml + "</div>"
+                        : "") +
+                    (dog.beschrijving
+                        ? '<div class="dog-modal-desc">' +
+                          dog.beschrijving +
+                          "</div>"
+                        : "") +
+                    ctaHtml
+                );
+            }
+
+            function setModalCarousel(images) {
+                var track = document.getElementById("dogModalTrack");
+                var dots = document.getElementById("dogModalDots");
+                modalImages = images;
+                modalSlide = 0;
+
+                track.style.transition = "none";
+                track.innerHTML = modalImages
+                    .map(function (url) {
+                        return (
+                            '<div class="dog-modal-carousel-slide"><img src="' +
+                            url +
+                            '" alt="Foto van hond"></div>'
+                        );
+                    })
+                    .join("");
+                track.style.transform = "translateX(0)";
+
+                dots.innerHTML = modalImages
+                    .map(function (_, i) {
+                        return (
+                            '<button class="dog-modal-carousel-dot ' +
+                            (i === 0 ? "active" : "") +
+                            '" data-index="' +
+                            i +
+                            '"></button>'
+                        );
+                    })
+                    .join("");
+
+                document.getElementById("dogModalPrev").style.display =
+                    modalImages.length <= 1 ? "none" : "";
+                document.getElementById("dogModalNext").style.display =
+                    modalImages.length <= 1 ? "none" : "";
+                dots.style.display = modalImages.length <= 1 ? "none" : "";
+
+                requestAnimationFrame(function () {
+                    track.style.transition = "";
+                });
+            }
+
+            function openDogModal(dogId) {
+                var overlay = document.getElementById("dogModalOverlay");
+                var body = document.getElementById("dogModalBody");
+
+                // Find dog from already loaded data
+                var dog =
+                    allDogs.find(function (d) {
+                        return d.id === dogId;
+                    }) ||
+                    adoptedDogs.find(function (d) {
+                        return d.id === dogId;
+                    });
+
+                // Render body content immediately from cached data
+                if (dog) {
+                    body.innerHTML = buildDogModalBody(dog);
+                    // Show cached primary photo immediately (from listing data)
+                    var cachedPhoto = getPhoto(dog);
+                    setModalCarousel(cachedPhoto ? [cachedPhoto] : []);
+                } else {
+                    body.innerHTML =
+                        '<div class="dog-modal-loading"><div class="mini-spinner"></div> Laden...</div>';
+                    setModalCarousel([]);
+                }
+
+                // Open overlay
+                overlay.classList.add("open");
+                document.body.style.overflow = "hidden";
+
+                // Update URL for sharing
+                history.replaceState(null, "", "?hond=" + dogId);
+
+                // Fetch full photos in background (upgrade carousel)
+                loadDogModalPhotos(dogId, dog);
+            }
+
+            async function loadDogModalPhotos(dogId, cachedDog) {
+                var body = document.getElementById("dogModalBody");
+
+                try {
+                    // If no cached dog, fetch it too
+                    var dog = cachedDog;
+                    if (!dog) {
+                        var dogArr = await supabaseGet(
+                            "dogs",
+                            "select=*&id=eq." + dogId,
+                        );
+                        dog = dogArr && dogArr[0];
+                        if (!dog) {
+                            body.innerHTML =
+                                '<p style="padding:40px;text-align:center;color:var(--dark-2);">Hond niet gevonden.</p>';
+                            return;
+                        }
+                        // Render body now that we have data
+                        body.innerHTML = buildDogModalBody(dog);
+                    }
+
+                    // Fetch all photos
+                    var photos = await supabaseGet(
+                        "dog_photos",
+                        "select=*&dog_id=eq." +
+                            dogId +
+                            "&order=is_primary.desc",
+                    );
+                    var photoUrls = photos.map(function (p) {
+                        return p.photo_url;
+                    });
+                    if (photoUrls.length === 0) {
+                        var fallback = getPhoto(dog);
+                        if (fallback) photoUrls = [fallback];
+                    }
+
+                    // Only update carousel if we got more photos than the initial cached one
+                    if (photoUrls.length > 0) {
+                        setModalCarousel(photoUrls);
+                    }
+                } catch (err) {
+                    console.error("Error loading dog photos:", err);
+                }
+            }
+
+            function closeDogModal() {
+                var modal = document.getElementById("dogModal");
+                var overlay = document.getElementById("dogModalOverlay");
+                var mq = window.matchMedia("(max-width: 767px)");
+                if (mq.matches && overlay.classList.contains("open")) {
+                    var spring = VAUL.spring();
+                    var dur = VAUL.dur();
+                    modal.style.transition = "transform " + dur + " " + spring;
+                    modal.style.transform = "translate3d(0,100%,0)";
+                    overlay.style.transition =
+                        "background-color " + dur + " " + spring;
+                    overlay.style.backgroundColor = "transparent";
+                    var wrapper = document.querySelector(".vaul-wrapper");
+                    if (wrapper) {
+                        wrapper.style.transitionDuration = dur;
+                        wrapper.style.transform =
+                            "scale(1) translate3d(0, 0, 0)";
+                        wrapper.style.borderRadius = "0px";
+                    }
+                    setTimeout(
+                        function () {
+                            modal.style.transition = "";
+                            modal.style.transform = "";
+                            modal.style.height = "";
+                            modal.style.maxHeight = "";
+                            overlay.style.transition = "";
+                            overlay.style.backgroundColor = "";
+                            overlay.classList.remove("open");
+                            history.replaceState(null, "", location.pathname);
+                        },
+                        VAUL.DURATION * 1000 + 50,
+                    );
+                } else {
+                    overlay.classList.remove("open");
+                    document.body.style.overflow = "";
+                    history.replaceState(null, "", location.pathname);
+                }
+            }
+
+            function modalGoToSlide(index) {
+                modalSlide = index;
+                document.getElementById("dogModalTrack").style.transform =
+                    "translateX(-" + index * 100 + "%)";
+                document
+                    .querySelectorAll(".dog-modal-carousel-dot")
+                    .forEach(function (d, i) {
+                        d.classList.toggle("active", i === index);
+                    });
+            }
+
+            // Modal event listeners
+            document
+                .getElementById("dogModalOverlay")
+                .addEventListener("click", function (e) {
+                    if (e.target === this) closeDogModal();
+                });
+            document
+                .getElementById("dogModalClose")
+                .addEventListener("click", closeDogModal);
+            document
+                .getElementById("dogModalPrev")
+                .addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    modalGoToSlide(
+                        modalSlide > 0
+                            ? modalSlide - 1
+                            : modalImages.length - 1,
+                    );
+                });
+            document
+                .getElementById("dogModalNext")
+                .addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    modalGoToSlide(
+                        modalSlide < modalImages.length - 1
+                            ? modalSlide + 1
+                            : 0,
+                    );
+                });
+            document
+                .getElementById("dogModalDots")
+                .addEventListener("click", function (e) {
+                    var dot = e.target.closest(".dog-modal-carousel-dot");
+                    if (dot) modalGoToSlide(parseInt(dot.dataset.index));
+                });
+
+            // Touch swipe on modal carousel
+            var modalCarousel = document.getElementById("dogModalCarousel");
+            modalCarousel.addEventListener(
+                "touchstart",
+                function (e) {
+                    modalTouchStartX = e.changedTouches[0].screenX;
+                },
+                { passive: true },
+            );
+            modalCarousel.addEventListener(
+                "touchend",
+                function (e) {
+                    var diff = modalTouchStartX - e.changedTouches[0].screenX;
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0)
+                            modalGoToSlide(
+                                modalSlide < modalImages.length - 1
+                                    ? modalSlide + 1
+                                    : 0,
+                            );
+                        else
+                            modalGoToSlide(
+                                modalSlide > 0
+                                    ? modalSlide - 1
+                                    : modalImages.length - 1,
+                            );
+                    }
+                },
+                { passive: true },
+            );
+
+            // Escape key to close
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape") {
+                    if (
+                        document
+                            .getElementById("contactOverlay")
+                            .classList.contains("open")
+                    ) {
+                        closeContactModal();
+                    } else if (
+                        document
+                            .getElementById("dogModalOverlay")
+                            .classList.contains("open")
+                    ) {
+                        closeDogModal();
+                    }
+                }
+            });
+
+            // ============ CONTACT MODAL ============
+            var contactDogId = null;
+            var contactOpenedFromDog = false;
+
+            function openContactModal(dogId, dogName) {
+                contactDogId = dogId;
+                document.getElementById("contactDogName").textContent = dogName;
+                document.getElementById("contactForm").reset();
+                document.getElementById("contactForm").style.display = "";
+                document.getElementById("contactSuccess").style.display =
+                    "none";
+                document.getElementById("contactSubmitBtn").disabled = false;
+                document.getElementById("contactSubmitBtn").textContent =
+                    "Verstuur bericht";
+
+                // At XS, stack the contact sheet on top of the dog sheet (don't dismiss it)
+                var dogOverlay = document.getElementById("dogModalOverlay");
+                if (
+                    window.matchMedia("(max-width: 767px)").matches &&
+                    dogOverlay.classList.contains("open")
+                ) {
+                    contactOpenedFromDog = true;
+                }
+
+                document.getElementById("contactOverlay").classList.add("open");
+                document.body.style.overflow = "hidden";
+            }
+
+            function closeContactModal() {
+                var contactEl = document.querySelector(".contact-modal");
+                var contactOverlay = document.getElementById("contactOverlay");
+                var mq = window.matchMedia("(max-width: 767px)");
+
+                if (contactOpenedFromDog && mq.matches) {
+                    contactOpenedFromDog = false;
+                    var spring = VAUL.spring();
+                    var dur = VAUL.dur();
+                    // Slide contact sheet down — dog sheet is still open underneath
+                    contactEl.style.transition =
+                        "transform " + dur + " " + spring;
+                    contactEl.style.transform = "translate3d(0,100%,0)";
+                    contactOverlay.style.transition =
+                        "background-color " + dur + " " + spring;
+                    contactOverlay.style.backgroundColor = "transparent";
+                    setTimeout(
+                        function () {
+                            contactOverlay.classList.remove("open");
+                            contactEl.style.transition = "";
+                            contactEl.style.transform = "";
+                            contactEl.style.height = "";
+                            contactEl.style.maxHeight = "";
+                            contactOverlay.style.transition = "";
+                            contactOverlay.style.backgroundColor = "";
+                        },
+                        VAUL.DURATION * 1000 + 50,
+                    );
+                } else if (
+                    mq.matches &&
+                    contactOverlay.classList.contains("open")
+                ) {
+                    var spring = VAUL.spring();
+                    var dur = VAUL.dur();
+                    contactEl.style.transition =
+                        "transform " + dur + " " + spring;
+                    contactEl.style.transform = "translate3d(0,100%,0)";
+                    contactOverlay.style.transition =
+                        "background-color " + dur + " " + spring;
+                    contactOverlay.style.backgroundColor = "transparent";
+                    var wrapper = document.querySelector(".vaul-wrapper");
+                    if (wrapper) {
+                        wrapper.style.transitionDuration = dur;
+                        wrapper.style.transform =
+                            "scale(1) translate3d(0, 0, 0)";
+                        wrapper.style.borderRadius = "0px";
+                    }
+                    setTimeout(
+                        function () {
+                            contactEl.style.transition = "";
+                            contactEl.style.transform = "";
+                            contactEl.style.height = "";
+                            contactEl.style.maxHeight = "";
+                            contactOverlay.style.transition = "";
+                            contactOverlay.style.backgroundColor = "";
+                            contactOverlay.classList.remove("open");
+                        },
+                        VAUL.DURATION * 1000 + 50,
+                    );
+                } else {
+                    contactOverlay.classList.remove("open");
+                    document.body.style.overflow = "";
+                }
+            }
+
+            document
+                .getElementById("contactOverlay")
+                .addEventListener("click", function (e) {
+                    if (e.target === this) closeContactModal();
+                });
+            document
+                .getElementById("contactModalClose")
+                .addEventListener("click", closeContactModal);
+
+            // Bottom-sheet drag to dismiss
+            h4dSheetDrag(
+                document.getElementById("dogModal"),
+                document.getElementById("dogModalOverlay"),
+                closeDogModal,
+            );
+            h4dSheetDrag(
+                document.querySelector(".contact-modal"),
+                document.getElementById("contactOverlay"),
+                closeContactModal,
+            );
+
+            document
+                .getElementById("contactForm")
+                .addEventListener("submit", async function (e) {
+                    e.preventDefault();
+                    var btn = document.getElementById("contactSubmitBtn");
+                    btn.disabled = true;
+                    btn.textContent = "Verzenden...";
+
+                    try {
+                        var body = {
+                            dog_id: contactDogId,
+                            naam: document
+                                .getElementById("contactNaam")
+                                .value.trim(),
+                            email: document
+                                .getElementById("contactEmail")
+                                .value.trim(),
+                            telefoon:
+                                document
+                                    .getElementById("contactTelefoon")
+                                    .value.trim() || null,
+                            bericht: document
+                                .getElementById("contactBericht")
+                                .value.trim(),
+                        };
+
+                        var res = await fetch(
+                            SUPABASE_URL + "/rest/v1/contact_messages",
+                            {
+                                method: "POST",
+                                headers: {
+                                    apikey: SUPABASE_ANON_KEY,
+                                    Authorization:
+                                        "Bearer " + SUPABASE_ANON_KEY,
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(body),
+                            },
+                        );
+
+                        if (!res.ok) {
+                            var errBody = await res.text();
+                            throw new Error(
+                                "HTTP " + res.status + ": " + errBody,
+                            );
+                        }
+
+                        document.getElementById("contactForm").style.display =
+                            "none";
+                        document.getElementById(
+                            "contactSuccess",
+                        ).style.display = "block";
+                    } catch (err) {
+                        console.error("Contact form error:", err);
+                        alert("Er is iets misgegaan. Probeer het opnieuw.");
+                        btn.disabled = false;
+                        btn.textContent = "Verstuur bericht";
+                    }
+                });
+
+            // Deep link: open dog modal from ?hond=<id>
+            var hondParam = new URLSearchParams(location.search).get("hond");
+            if (hondParam) openDogModal(hondParam);
+        </script>
+    </body>
+</html>

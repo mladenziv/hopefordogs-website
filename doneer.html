@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doneer — Help Straathonden in Nood | Hope for Dogs</title>
+  <meta name="description" content="Steun Hope for Dogs met een donatie. Elke bijdrage helpt bij voeding, medische zorg en opvang van straathonden in Bosnie en Servie.">
+  <link rel="canonical" href="https://www.hopefordogseurope.com/doneer.html">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Hope for Dogs">
+  <meta property="og:title" content="Doneer — Help Straathonden in Nood | Hope for Dogs">
+  <meta property="og:description" content="Steun Hope for Dogs met een donatie. Elke bijdrage helpt bij voeding, medische zorg en opvang van straathonden in Bosnie en Servie.">
+  <meta property="og:url" content="https://www.hopefordogseurope.com/doneer.html">
+  <meta property="og:image" content="https://www.hopefordogseurope.com/images/hero-1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=20">
+  <style>
+    /* ===== DONATION FORM SECTION ===== */
+    .donate-form-section {
+      width: 100%;
+      background: var(--white);
+      display: flex;
+      justify-content: center;
+      padding: 80px 0;
+    }
+
+    .donate-form-inner {
+      width: 100%;
+      max-width: 740px;
+      padding: 0 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group-label {
+      font-family: 'Nunito', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--dark-1);
+    }
+
+    .form-group-sublabel {
+      font-size: 14px;
+      color: var(--dark-2);
+      margin-top: -8px;
+    }
+
+    /* Amount selection */
+    .amount-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .amount-btn {
+      padding: 14px 24px;
+      border-radius: 100px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      background: var(--white);
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark-1);
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 72px;
+      text-align: center;
+    }
+
+    .amount-btn:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .amount-btn.selected {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: white;
+    }
+
+    .custom-amount-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .custom-amount-wrapper .euro-sign {
+      position: absolute;
+      left: 20px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark-2);
+      pointer-events: none;
+    }
+
+    .custom-amount-input {
+      width: 160px;
+      padding: 14px 20px 14px 34px;
+      border-radius: 100px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      background: var(--white);
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark-1);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .custom-amount-input::placeholder {
+      color: var(--dark-2);
+      font-weight: 500;
+    }
+
+    .custom-amount-input:focus {
+      border-color: var(--brand);
+    }
+
+    /* Frequency toggle */
+    .frequency-toggle {
+      display: flex;
+      gap: 0;
+      background: var(--beige);
+      border-radius: 100px;
+      padding: 4px;
+      width: fit-content;
+    }
+
+    .frequency-btn {
+      padding: 12px 28px;
+      border-radius: 100px;
+      border: none;
+      background: transparent;
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark-2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .frequency-btn.selected {
+      background: var(--brand);
+      color: white;
+      box-shadow: 0 2px 8px rgba(255, 83, 20, 0.25);
+    }
+
+    .frequency-btn:hover:not(.selected) {
+      color: var(--dark-1);
+    }
+
+    /* Form inputs */
+    .form-row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .form-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-field label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark-2);
+    }
+
+    .form-field input {
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: 2px solid rgba(0, 0, 0, 0.08);
+      background: var(--white);
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      color: var(--dark-1);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-field input::placeholder {
+      color: rgba(0, 0, 0, 0.3);
+    }
+
+    .form-field input:focus {
+      border-color: var(--brand);
+    }
+
+    /* Submit button */
+    .donate-submit-btn {
+      width: 100%;
+      padding: 20px 32px;
+      border-radius: 100px;
+      border: none;
+      background: var(--brand) !important;
+      color: white !important;
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .donate-submit-btn:hover {
+      opacity: 0.95;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 83, 20, 0.3);
+    }
+
+    .form-divider {
+      width: 100%;
+      border: none;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    /* Payment trust badges */
+    .payment-trust {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .payment-trust-logos {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .payment-trust-logos img {
+      flex-shrink: 0;
+    }
+
+    .payment-trust-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dark-2);
+      display: flex;
+      align-items: center;
+    }
+
+    /* ===== IMPACT SECTION ===== */
+    .impact-section {
+      width: 100%;
+      background: var(--beige);
+      display: flex;
+      justify-content: center;
+      padding: 96px 0;
+    }
+
+    .impact-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 0 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .impact-heading {
+      font-family: 'Nunito', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--dark-1);
+      letter-spacing: -0.02em /* -0.72px */;
+      text-align: center;
+    }
+
+    .impact-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      width: 100%;
+    }
+
+    .impact-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .impact-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .impact-card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .impact-card-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .impact-card-amount {
+      font-family: 'Nunito', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--brand);
+    }
+
+    .impact-card-desc {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.7;
+      color: var(--dark-2);
+    }
+
+    /* ===== TRUST SECTION ===== */
+    .trust-section {
+      width: 100%;
+      background: var(--white);
+      display: flex;
+      justify-content: center;
+      padding: 96px 0;
+    }
+
+    .trust-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 0 40px;
+      display: flex;
+      gap: 72px;
+      align-items: center;
+    }
+
+    .trust-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .trust-content h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--dark-1);
+      letter-spacing: -0.02em /* -0.72px */;
+    }
+
+    .trust-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .trust-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.7;
+      color: var(--dark-2);
+    }
+
+    .trust-list li .check-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .trust-image {
+      flex: 1;
+      border-radius: 24px;
+      overflow: hidden;
+      min-height: 420px;
+    }
+
+    .trust-image img {
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      object-fit: cover;
+      display: block;
+      border-radius: 24px;
+    }
+
+    /* ===== BANK TRANSFER SECTION ===== */
+    .bank-section {
+      width: 100%;
+      background: var(--beige);
+      display: flex;
+      justify-content: center;
+      padding: 80px 0;
+    }
+
+    .bank-inner {
+      width: 100%;
+      max-width: 700px;
+      padding: 0 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 28px;
+    }
+
+    .bank-inner h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--dark-1);
+    }
+
+    .bank-inner p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--dark-2);
+    }
+
+    .bank-details {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 32px 40px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .bank-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .bank-row-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--dark-2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em /* 0.7px */;
+    }
+
+    .bank-row-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark-1);
+      font-family: 'Inter', monospace;
+      letter-spacing: 0.02em /* 0.32px */;
+    }
+
+    .bank-note {
+      font-size: 14px;
+      color: var(--dark-2);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    /* --- SM: 768–1023px --- */
+    @media (max-width: 1023px) {
+      /* Responsive type */
+      .form-group-label { font-size: 18px; }
+      .impact-heading { font-size: 32px; }
+      .impact-card-amount { font-size: 20px; }
+      .impact-card-desc { font-size: 15px; }
+      .trust-content h2 { font-size: 32px; }
+      .bank-inner h2 { font-size: 24px; }
+      .bank-inner p { font-size: 15px; }
+
+      .impact-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .trust-inner {
+        flex-direction: column;
+        gap: 40px;
+      }
+
+      .trust-image {
+        min-height: 320px;
+        width: 100%;
+      }
+
+      .trust-image img {
+        min-height: 320px;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+    }
+
+    /* --- XS: 0–767px --- */
+    @media (max-width: 767px) {
+      /* Responsive type — XS */
+      .impact-heading { font-size: 28px; }
+      .impact-card-amount { font-size: 18px; }
+      .trust-content h2 { font-size: 28px; }
+      .bank-inner h2 { font-size: 22px; }
+      .form-group-label { font-size: 16px; }
+
+      .impact-cards {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+        margin: 0 auto;
+      }
+
+      .donate-form-inner {
+        padding: 0 20px;
+      }
+
+      .amount-buttons {
+        gap: 8px;
+      }
+
+      .amount-btn {
+        padding: 12px 18px;
+        min-width: 60px;
+      }
+
+      .custom-amount-input {
+        width: 130px;
+      }
+
+      .bank-details {
+        padding: 24px 20px;
+      }
+
+      .bank-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .impact-card {
+      animation: fadeInUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .impact-card:nth-child(1) { animation-delay: 0.1s; }
+    .impact-card:nth-child(2) { animation-delay: 0.2s; }
+    .impact-card:nth-child(3) { animation-delay: 0.3s; }
+  </style>
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <main>
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <h1 data-i18n="doneer.hero">Help onze honden</h1>
+      <p data-i18n="doneer.hero.sub">Uw donatie maakt het verschil. Elke euro helpt ons om zwerfhonden te redden, te verzorgen en een nieuw thuis te geven.</p>
+    </div>
+  </section>
+
+  <!-- DONATION FORM -->
+  <section class="donate-form-section">
+    <div class="donate-form-inner">
+
+      <!-- Amount selection -->
+      <div class="form-group">
+        <span class="form-group-label" data-i18n="doneer.kies">Kies een bedrag</span>
+        <div class="amount-buttons">
+          <button class="amount-btn" data-amount="10">&euro;10</button>
+          <button class="amount-btn selected" data-amount="25">&euro;25</button>
+          <button class="amount-btn" data-amount="50">&euro;50</button>
+          <button class="amount-btn" data-amount="100">&euro;100</button>
+          <button class="amount-btn" data-amount="200">&euro;200</button>
+          <div class="custom-amount-wrapper">
+            <span class="euro-sign">&euro;</span>
+            <input type="number" class="custom-amount-input" id="customAmount" placeholder="Anders" min="1" step="1">
+          </div>
+        </div>
+      </div>
+
+      <!-- Frequency toggle -->
+      <div class="form-group">
+        <span class="form-group-label" data-i18n="doneer.frequentie">Frequentie</span>
+        <div class="frequency-toggle">
+          <button class="frequency-btn selected" data-frequency="maandelijks" data-i18n="doneer.maandelijks">Maandelijks</button>
+          <button class="frequency-btn" data-frequency="eenmalig" data-i18n="doneer.eenmalig">Eenmalig</button>
+        </div>
+      </div>
+
+      <hr class="form-divider">
+
+      <!-- Donor info -->
+      <div class="form-group">
+        <span class="form-group-label" data-i18n="doneer.gegevens">Uw gegevens</span>
+        <span class="form-group-sublabel" data-i18n="doneer.optioneel">Optioneel - vul in als u een bevestiging wilt ontvangen</span>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="donorName" data-i18n="doneer.naam">Naam</label>
+            <input type="text" id="donorName" placeholder="Uw naam">
+          </div>
+          <div class="form-field">
+            <label for="donorEmail" data-i18n="doneer.email">E-mailadres</label>
+            <input type="email" id="donorEmail" placeholder="uw@email.nl">
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button class="donate-submit-btn" id="donateBtn" data-i18n="doneer.btn">Doneer nu</button>
+
+      <!-- Payment trust badges -->
+      <div class="payment-trust">
+        <div class="payment-trust-logos">
+          <img src="images/payment/Ideal.svg" alt="iDEAL" width="47" height="32">
+          <img src="images/payment/Visa.svg" alt="Visa" width="47" height="32">
+          <img src="images/payment/Mastercard.svg" alt="Mastercard" width="47" height="32">
+          <img src="images/payment/Paypal.svg" alt="PayPal" width="47" height="32">
+          <img src="images/payment/Gpay.svg" alt="Google Pay" width="47" height="32">
+          <img src="images/payment/Apple pay.svg" alt="Apple Pay" width="47" height="32">
+          <img src="images/payment/Sepa.svg" alt="SEPA" width="47" height="32">
+        </div>
+        <p class="payment-trust-text">
+          <svg viewBox="0 0 16 16" fill="none" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px;flex-shrink:0;">
+            <path d="M11 6H10V5a2 2 0 10-4 0v1H5a1 1 0 00-1 1v5a1 1 0 001 1h6a1 1 0 001-1V7a1 1 0 00-1-1zM7 5a1 1 0 112 0v1H7V5z" fill="#22c55e"/>
+          </svg>
+          Veilig betalen via Mollie
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- IMPACT SECTION -->
+  <section class="impact-section">
+    <div class="impact-inner">
+      <h2 class="impact-heading" data-i18n="doneer.impact">Uw donatie maakt impact</h2>
+      <div class="impact-cards">
+
+        <div class="impact-card">
+          <div class="impact-card-icon">
+            <!-- Bowl/food icon -->
+            <svg viewBox="0 0 28 28" fill="none">
+              <path d="M3 17c0 4.418 4.925 8 11 8s11-3.582 11-8H3z" fill="#AF8720"/>
+              <path d="M14 3c-.552 0-1 .448-1 1v5h-2V5a1 1 0 10-2 0v4H7V5a1 1 0 10-2 0v5.5c0 2.071 1.534 3.785 3.5 3.969V16h11v-1.531C21.466 14.285 23 12.571 23 10.5V5a1 1 0 10-2 0v4h-2V5a1 1 0 10-2 0v4h-2V4c0-.552-.448-1-1-1z" fill="#AF8720"/>
+            </svg>
+          </div>
+          <div class="impact-card-amount" data-i18n="doneer.met10">Met &euro;10</div>
+          <div class="impact-card-desc" data-i18n="doneer.met10.d">Voorziet u een hond een week lang van voer. Zo hoeft geen enkel hondje met een lege maag te slapen.</div>
+        </div>
+
+        <div class="impact-card">
+          <div class="impact-card-icon">
+            <!-- Syringe/vaccine icon -->
+            <svg viewBox="0 0 28 28" fill="none">
+              <path d="M20.5 2.5l-3 3M17.5 5.5l5 5M22.5 10.5l-3 3M9.5 8.5l10 10M7.5 18.5l2 2M4 25l3.5-3.5M16.5 6.5l-10 10 4 4 10-10-4-4z" stroke="#AF8720" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M11.5 11.5l5 5M9.5 13.5l5 5" stroke="#AF8720" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="impact-card-amount" data-i18n="doneer.met25">Met &euro;25</div>
+          <div class="impact-card-desc" data-i18n="doneer.met25.d">Betaalt u de vaccinaties voor een puppy. Een gezonde start is essentieel voor hun toekomst.</div>
+        </div>
+
+        <div class="impact-card">
+          <div class="impact-card-icon">
+            <!-- Heart/medical icon -->
+            <svg viewBox="0 0 28 28" fill="none">
+              <path d="M14 24.5S3 17.5 3 10.5C3 6.91 5.91 4 9.5 4c2.04 0 3.86.98 5 2.5A6.47 6.47 0 0118.5 4C22.09 4 25 6.91 25 10.5c0 7-11 14-11 14z" fill="#AF8720"/>
+              <path d="M11 13h6M14 10v6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="impact-card-amount" data-i18n="doneer.met50">Met &euro;50</div>
+          <div class="impact-card-desc" data-i18n="doneer.met50.d">Financiert u de sterilisatie van een zwerfhond. Dit helpt de eindeloze cyclus te doorbreken.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST SECTION -->
+  <section class="trust-section">
+    <div class="trust-inner">
+      <div class="trust-content">
+        <h2 data-i18n="doneer.waargaat">Waar gaat uw geld naartoe?</h2>
+        <ul class="trust-list">
+          <li>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="12" fill="rgb(255, 83, 20)" opacity="0.1"/>
+              <path d="M7 12.5l3 3 7-7" stroke="rgb(255, 83, 20)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span><strong>Dagelijks voer</strong> - Elke hond in ons asiel krijgt dagelijks kwalitatief voer om gezond en sterk te blijven.</span>
+          </li>
+          <li>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="12" fill="rgb(255, 83, 20)" opacity="0.1"/>
+              <path d="M7 12.5l3 3 7-7" stroke="rgb(255, 83, 20)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span><strong>Medische zorg en vaccinaties</strong> - Alle honden die we opnemen krijgen direct diergeneeskundige zorg en hun benodigde vaccinaties.</span>
+          </li>
+          <li>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="12" fill="rgb(255, 83, 20)" opacity="0.1"/>
+              <path d="M7 12.5l3 3 7-7" stroke="rgb(255, 83, 20)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span><strong>Sterilisatie en castratie</strong> - We proberen zoveel mogelijk zwerfhonden te steriliseren om de eindeloze cyclus te doorbreken.</span>
+          </li>
+          <li>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="12" fill="rgb(255, 83, 20)" opacity="0.1"/>
+              <path d="M7 12.5l3 3 7-7" stroke="rgb(255, 83, 20)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span><strong>Transport naar hun nieuwe thuis</strong> - Het veilig vervoeren van honden naar hun adoptiegezinnen in Nederland en Belgi&euml;.</span>
+          </li>
+        </ul>
+      </div>
+      <div class="trust-image">
+        <img src="images/shelter-dogs.jpg" alt="Onze honden in het asiel" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- BANK TRANSFER SECTION -->
+  <section class="bank-section">
+    <div class="bank-inner">
+      <h2 data-i18n="doneer.bank">Liever via bankoverschrijving?</h2>
+      <p data-i18n="doneer.bank.sub">U kunt ook direct een donatie overmaken naar onze bankrekening. Elke bijdrage, groot of klein, wordt enorm gewaardeerd.</p>
+      <div class="bank-details">
+        <div class="bank-row">
+          <span class="bank-row-label">IBAN</span>
+          <span class="bank-row-value">NL00 BANK 0000 0000 00</span>
+        </div>
+        <div class="bank-row">
+          <span class="bank-row-label">T.n.v.</span>
+          <span class="bank-row-value">Hopefor Dogs</span>
+        </div>
+        <div class="bank-row">
+          <span class="bank-row-label" data-i18n="doneer.omschrijving">Omschrijving</span>
+          <span class="bank-row-value" data-i18n="doneer.donatie">Donatie</span>
+        </div>
+      </div>
+      <p class="bank-note" data-i18n="doneer.vermeld">Vermeld 'Donatie' bij de omschrijving zodat wij uw bijdrage correct kunnen verwerken.</p>
+    </div>
+  </section>
+
+  <section style="width:100%;background:#faf8f4;display:flex;justify-content:center;padding:64px 0;">
+    <div style="max-width:740px;padding:0 40px;text-align:center;">
+      <p style="font-size:17px;font-weight:600;color:var(--dark-1);margin-bottom:8px;">Liever direct een hond een thuis geven?</p>
+      <p style="font-size:15px;font-weight:500;color:var(--dark-2);margin-bottom:20px;">Bekijk onze beschikbare honden en ontdek wie bij jou past.</p>
+      <a href="honden.html" class="btn-primary">Bekijk onze honden</a>
+    </div>
+  </section>
+
+  </main>
+  <div id="footer-placeholder"></div>
+
+  <script src="components.js?v=20"></script>
+
+  <!-- JAVASCRIPT: Donation form logic & Mollie integration -->
+  <script>
+    // ========================================
+    // MOLLIE PAYMENT INTEGRATION
+    // ========================================
+    // TODO: Replace with your Mollie payment link or API endpoint
+    // To set up Mollie:
+    // 1. Create account at https://www.mollie.com
+    // 2. Get your API key from the Mollie dashboard
+    // 3. Create a payment link at https://www.mollie.com/dashboard/payment-links
+    // Or set up a simple backend (Node.js/PHP) that creates payments via Mollie API
+    //
+    // Example Mollie payment link format:
+    // https://www.mollie.com/paymentlinks/pl_XXXXXXXXXX
+    //
+    // Example backend endpoint:
+    // https://your-api.com/create-payment?amount=25&frequency=eenmalig
+    // ========================================
+
+    const MOLLIE_PAYMENT_URL = null; // Set your Mollie payment link or API endpoint here
+
+    // State
+    let selectedAmount = 25;
+    let selectedFrequency = 'maandelijks';
+
+    // Check URL for preselected amount
+    const urlParams = new URLSearchParams(window.location.search);
+    const presetAmount = urlParams.get('bedrag');
+
+    // Amount buttons
+    const amountBtns = document.querySelectorAll('.amount-btn');
+    const customAmountInput = document.getElementById('customAmount');
+
+    if (presetAmount) {
+      const amt = parseInt(presetAmount);
+      if (amt > 0) {
+        selectedAmount = amt;
+        amountBtns.forEach(b => b.classList.remove('selected'));
+        const matchBtn = document.querySelector('.amount-btn[data-amount="' + amt + '"]');
+        if (matchBtn) {
+          matchBtn.classList.add('selected');
+        } else {
+          customAmountInput.value = amt;
+        }
+      }
+    }
+
+    amountBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        amountBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedAmount = parseInt(btn.dataset.amount);
+        customAmountInput.value = '';
+      });
+    });
+
+    customAmountInput.addEventListener('input', () => {
+      if (customAmountInput.value) {
+        amountBtns.forEach(b => b.classList.remove('selected'));
+        selectedAmount = parseFloat(customAmountInput.value);
+      }
+    });
+
+    customAmountInput.addEventListener('focus', () => {
+      amountBtns.forEach(b => b.classList.remove('selected'));
+    });
+
+    // Frequency buttons
+    const frequencyBtns = document.querySelectorAll('.frequency-btn');
+
+    frequencyBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        frequencyBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedFrequency = btn.dataset.frequency;
+      });
+    });
+
+    // Donate button
+    const donateBtn = document.getElementById('donateBtn');
+
+    donateBtn.addEventListener('click', () => {
+      // Get custom amount if entered
+      if (customAmountInput.value) {
+        selectedAmount = parseFloat(customAmountInput.value);
+      }
+
+      // Validate amount
+      if (!selectedAmount || selectedAmount < 1) {
+        alert('Selecteer of vul een bedrag in van minimaal \u20AC1.');
+        return;
+      }
+
+      const donorName = document.getElementById('donorName').value.trim();
+      const donorEmail = document.getElementById('donorEmail').value.trim();
+
+      // If Mollie is configured, redirect
+      if (MOLLIE_PAYMENT_URL) {
+        const params = new URLSearchParams({
+          amount: selectedAmount.toFixed(2),
+          frequency: selectedFrequency
+        });
+
+        if (donorName) params.append('name', donorName);
+        if (donorEmail) params.append('email', donorEmail);
+
+        const separator = MOLLIE_PAYMENT_URL.includes('?') ? '&' : '?';
+        window.location.href = MOLLIE_PAYMENT_URL + separator + params.toString();
+        return;
+      }
+
+      // If Mollie is not configured, show setup message
+      const frequencyText = selectedFrequency === 'maandelijks' ? 'maandelijkse' : 'eenmalige';
+      alert(
+        'Mollie betaallink moet nog worden ingesteld.\n\n' +
+        'Uw selectie:\n' +
+        '- Bedrag: \u20AC' + selectedAmount.toFixed(2) + '\n' +
+        '- Frequentie: ' + frequencyText + ' donatie\n' +
+        (donorName ? '- Naam: ' + donorName + '\n' : '') +
+        (donorEmail ? '- E-mail: ' + donorEmail + '\n' : '') +
+        '\nOm Mollie in te stellen:\n' +
+        '1. Maak een account aan op mollie.com\n' +
+        '2. Maak een betaallink aan in het Mollie dashboard\n' +
+        '3. Vul de MOLLIE_PAYMENT_URL variabele in dit script in\n\n' +
+        'U kunt ook doneren via bankoverschrijving (zie onderaan de pagina).'
+      );
+    });
+  </script>
+
+</body>
+</html>

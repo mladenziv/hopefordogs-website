@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hond | Hope for Dogs</title>
+  <meta name="description" content="Leer meer over deze adoptiehond van Hope for Dogs. Gered van de straat in Bosnie of Servie, medisch behandeld en klaar voor een thuis.">
+  <link rel="canonical" href="https://www.hopefordogseurope.com/hond.html">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Hope for Dogs">
+  <meta property="og:title" content="Adoptiehond | Hope for Dogs">
+  <meta property="og:description" content="Leer meer over deze adoptiehond van Hope for Dogs. Gered van de straat, medisch behandeld en klaar voor een thuis.">
+  <meta property="og:url" content="https://www.hopefordogseurope.com/hond.html">
+  <meta property="og:image" content="https://www.hopefordogseurope.com/images/hero-1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=20">
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      color: var(--dark-1);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ============ DETAIL LAYOUT ============ */
+    .detail-section {
+      max-width: 1560px; margin: 0 auto;
+      padding: 112px 40px 80px;
+    }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 600; color: var(--dark-2);
+      margin-bottom: 32px; transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--brand); }
+    .back-link svg { width: 16px; height: 16px; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    /* ============ IMAGE CAROUSEL ============ */
+    .carousel {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      background: var(--beige);
+      aspect-ratio: 4/3;
+      user-select: none;
+    }
+
+    .carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.3s ease;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      height: 100%;
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      transition: background 0.2s, transform 0.2s;
+      z-index: 2;
+    }
+
+    .carousel-btn:hover {
+      background: var(--white);
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .carousel-btn svg { width: 20px; height: 20px; }
+    .carousel-prev { left: 16px; }
+    .carousel-next { right: 16px; }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .carousel-dot.active {
+      background: var(--white);
+      transform: scale(1.3);
+    }
+
+    .carousel-thumbs {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .carousel-thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .carousel-thumb.active { border-color: var(--brand); }
+    .carousel-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ============ DOG INFO ============ */
+    .dog-info {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .dog-name {
+      font-family: 'Nunito', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em /* -0.72px */;
+    }
+
+    .dog-status-badge {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 20px;
+      border-radius: 100px;
+      width: fit-content;
+    }
+
+    .status-opzoek { background: #fff3cd; color: #856404; }
+    .status-in_gesprek { background: #e8daef; color: #6c3483; }
+    .status-geadopteerd { background: #d4edda; color: #155724; }
+
+    .dog-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .dog-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dog-meta-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--dark-2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em /* 0.7px */;
+    }
+
+    .dog-meta-value {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .dog-tests {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .dog-test-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 100px;
+    }
+
+    .test-pass { background: #d4edda; color: #155724; }
+    .test-fail { background: #f8d7da; color: #721c24; }
+    .test-unknown { background: #e2e3e5; color: #383d41; }
+
+    /* ============ CTA BUTTONS ============ */
+    .dog-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: 8px;
+    }
+
+    .btn-facebook {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #1877F2;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 100px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-facebook:hover {
+      background: #1565C0;
+      transform: translateY(-1px);
+    }
+
+    .btn-facebook svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    /* ============ CONTACT MODAL ============ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 40px;
+      position: relative;
+      animation: modalIn 0.25s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0,0,0,0.06);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(0,0,0,0.1);
+    }
+
+    .modal-close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .modal h2 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .modal > p {
+      color: var(--dark-2);
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark-1);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      padding: 14px 16px;
+      border: 2px solid rgba(0,0,0,0.1);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--brand);
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 32px;
+      background: #d4edda;
+      border-radius: 16px;
+      color: #155724;
+    }
+
+    .form-success h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .dog-description {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.7;
+      color: var(--dark-2);
+    }
+
+    /* ============ LOADING / ERROR ============ */
+    .loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 20px;
+      gap: 16px;
+    }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(0,0,0,0.1);
+      border-top-color: var(--brand);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-screen {
+      display: none;
+      text-align: center;
+      padding: 120px 20px;
+    }
+
+    .error-screen h2 {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .error-screen p {
+      color: var(--dark-2);
+      margin-bottom: 24px;
+    }
+
+    /* ============ RESPONSIVE ============ */
+    /* --- SM: 768–1023px --- */
+    @media (max-width: 1023px) {
+      /* Responsive type */
+      .dog-name { font-size: 32px; }
+      .dog-meta-value { font-size: 15px; }
+      .dog-description { font-size: 15px; }
+      .modal h2 { font-size: 24px; }
+      .error-screen h2 { font-size: 24px; }
+
+      .detail-section { padding: 144px 40px 80px; }
+      .detail-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    /* --- XS: 0–767px --- */
+    @media (max-width: 767px) {
+      /* Responsive type — XS */
+      .dog-name { font-size: 28px; }
+      .modal h2 { font-size: 22px; }
+      .error-screen h2 { font-size: 22px; }
+
+      .detail-section { padding: 144px 20px 60px; }
+      .carousel-btn { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .modal { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="vaul-wrapper">
+  <div id="nav-placeholder"></div>
+
+  <main>
+  <!-- ============ LOADING ============ -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <span style="color:var(--dark-2);font-size:15px;">Laden...</span>
+  </div>
+
+  <!-- ============ ERROR ============ -->
+  <div class="error-screen" id="errorScreen">
+    <h2>Hond niet gevonden</h2>
+    <p>Deze hond bestaat niet of is verwijderd.</p>
+    <a href="honden.html" class="btn-primary">Bekijk alle honden</a>
+  </div>
+
+  <!-- ============ DOG DETAIL ============ -->
+  <section class="detail-section" id="detailSection" style="display:none;">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="honden.html">Honden</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current" id="breadcrumbName"></span>
+    </nav>
+
+    <div class="detail-grid">
+      <div>
+        <div class="carousel" id="carousel">
+          <div class="carousel-track" id="carouselTrack"></div>
+          <button class="carousel-btn carousel-prev" id="carouselPrev">
+            <svg viewBox="0 0 16 16"><path d="M10 3l-5 5 5 5" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="carousel-btn carousel-next" id="carouselNext">
+            <svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="carousel-dots" id="carouselDots"></div>
+        </div>
+        <div class="carousel-thumbs" id="carouselThumbs"></div>
+      </div>
+
+      <div class="dog-info">
+        <h1 class="dog-name" id="dogName"></h1>
+        <span class="dog-status-badge" id="dogStatusBadge"></span>
+        <div class="dog-meta" id="dogMeta"></div>
+        <p class="dog-description" id="dogDescription"></p>
+        <div class="dog-cta" id="dogCta">
+          <button class="btn-primary" id="contactBtn">Stuur een bericht</button>
+          <a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener" class="btn-facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Chat op Facebook
+          </a>
+        </div>
+        <p style="font-size:15px;font-weight:500;color:var(--dark-2);margin-top:8px;">Benieuwd hoe het adoptieproces werkt? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">Bekijk de stappen en kosten</a></p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+  <div id="footer-placeholder"></div>
+  </div><!-- /.vaul-wrapper -->
+
+  <!-- ============ CONTACT MODAL ============ -->
+  <div class="modal-overlay" id="contactModal">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
+      </button>
+      <h2>Interesse in <span id="contactDogName"></span>?</h2>
+      <p>Vul het formulier in en wij nemen zo snel mogelijk contact met je op.</p>
+
+      <form class="contact-form" id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="contactNaam">Naam *</label>
+            <input type="text" id="contactNaam" required placeholder="Je volledige naam">
+          </div>
+          <div class="form-group">
+            <label for="contactEmail">E-mail *</label>
+            <input type="email" id="contactEmail" required placeholder="je@email.nl">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="contactTelefoon">Telefoonnummer</label>
+          <input type="tel" id="contactTelefoon" placeholder="06-12345678">
+        </div>
+        <div class="form-group">
+          <label for="contactBericht">Bericht *</label>
+          <textarea id="contactBericht" required placeholder="Vertel ons waarom je ge&#239;nteresseerd bent in deze hond..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary" id="contactSubmitBtn">Verstuur bericht</button>
+      </form>
+
+      <div class="form-success" id="contactSuccess">
+        <h3>Bericht verstuurd!</h3>
+        <p>Bedankt voor je interesse. We nemen zo snel mogelijk contact met je op.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="components.js?v=20"></script>
+
+  <!-- ============ SUPABASE ============ -->
+  <script src="supabase-config.js"></script>
+
+  <script>
+    const statusLabels = {
+      opzoek: 'Opzoek',
+      in_gesprek: 'In gesprek',
+      geadopteerd: 'Geadopteerd'
+    };
+
+    const locationLabels = {
+      in_aziel: 'In het asiel',
+      gemeente_aziel: 'Gemeente asiel',
+      in_opvang: 'In opvang'
+    };
+
+    let currentSlide = 0;
+    let images = [];
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    async function loadDog() {
+      const params = new URLSearchParams(window.location.search);
+      const dogId = params.get('id');
+
+      if (!dogId) {
+        showError();
+        return;
+      }
+
+      try {
+        const dogs = await supabaseGet('dogs', `select=*&id=eq.${dogId}`);
+
+        if (!dogs || dogs.length === 0) {
+          showError();
+          return;
+        }
+
+        const dog = dogs[0];
+        document.title = `${dog.naam} — Adoptiehond | Hope for Dogs`;
+        document.querySelector('meta[name="description"]').setAttribute('content', `Maak kennis met ${dog.naam}. ${dog.beschrijving ? dog.beschrijving.substring(0, 120) : 'Gered van de straat en klaar voor een nieuw thuis.'}`);
+        document.querySelector('meta[property="og:title"]').setAttribute('content', `${dog.naam} — Adoptiehond | Hope for Dogs`);
+        document.querySelector('meta[property="og:description"]').setAttribute('content', `Maak kennis met ${dog.naam}. ${dog.beschrijving ? dog.beschrijving.substring(0, 120) : 'Gered van de straat en klaar voor een nieuw thuis.'}`);
+        if (dog.photos && dog.photos.length > 0) {
+          document.querySelector('meta[property="og:image"]').setAttribute('content', dog.photos[0].photo_url);
+        }
+
+        // Fill info
+        document.getElementById('dogName').textContent = dog.naam;
+        document.getElementById('breadcrumbName').textContent = dog.naam;
+
+        // JSON-LD: BreadcrumbList schema
+        var bcSchema = document.createElement('script');
+        bcSchema.type = 'application/ld+json';
+        bcSchema.textContent = JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.hopefordogseurope.com/"},
+            {"@type": "ListItem", "position": 2, "name": "Honden", "item": "https://www.hopefordogseurope.com/honden.html"},
+            {"@type": "ListItem", "position": 3, "name": dog.naam}
+          ]
+        });
+        document.head.appendChild(bcSchema);
+
+        const badge = document.getElementById('dogStatusBadge');
+        badge.textContent = statusLabels[dog.status] || dog.status;
+        badge.className = 'dog-status-badge status-' + dog.status;
+
+        // Build meta items
+        var metaHtml = '';
+        var gender = dog.geslacht === 'reu' ? 'Reu' : dog.geslacht === 'teefje' ? 'Teef' : null;
+        if (gender) {
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Geslacht</span><span class="dog-meta-value">' + gender + '</span></div>';
+        }
+        if (dog.leeftijd) {
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Leeftijd</span><span class="dog-meta-value">' + dog.leeftijd + '</span></div>';
+        }
+        if (dog.ras) {
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Ras</span><span class="dog-meta-value">' + dog.ras + '</span></div>';
+        }
+        if (dog.gesteriliseerd !== null && dog.gesteriliseerd !== undefined) {
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Gesteriliseerd</span><span class="dog-meta-value">' + (dog.gesteriliseerd ? 'Ja' : 'Nee') + '</span></div>';
+        }
+        document.getElementById('dogMeta').innerHTML = metaHtml;
+
+        // Extra attributes (size, compatibility) — renders when fields exist in DB
+        var attrsHtml = '';
+        if (dog.grootte) {
+          var sizeLabel = dog.grootte === 'klein' ? 'Klein' : dog.grootte === 'middel' ? 'Middel' : dog.grootte === 'groot' ? 'Groot' : dog.grootte;
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Grootte</span><span class="dog-meta-value">' + sizeLabel + '</span></div>';
+        }
+        if (dog.gewicht) {
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Gewicht</span><span class="dog-meta-value">' + dog.gewicht + '</span></div>';
+        }
+
+        // Compatibility badges
+        var compatHtml = '';
+        if (dog.kindvriendelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; Kindvriendelijk</span>';
+        if (dog.kindvriendelijk === false) compatHtml += '<span class="dog-test-badge test-fail">&#10007; Niet kindvriendelijk</span>';
+        if (dog.katvriendelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; Katvriendelijk</span>';
+        if (dog.katvriendelijk === false) compatHtml += '<span class="dog-test-badge test-fail">&#10007; Niet katvriendelijk</span>';
+        if (dog.hondvriendelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; Hondvriendelijk</span>';
+        if (dog.hondvriendelijk === false) compatHtml += '<span class="dog-test-badge test-fail">&#10007; Niet hondvriendelijk</span>';
+        if (dog.zindelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; Zindelijk</span>';
+        if (dog.tuin_nodig === true) compatHtml += '<span class="dog-test-badge test-unknown">Tuin nodig</span>';
+
+        // Tests (only show if positive)
+        var testsHtml = '';
+        if (dog.test_4d === true) {
+          testsHtml += '<span class="dog-test-badge test-pass">&#10003; 4D Test</span>';
+        }
+        if (dog.test_giardia === true) {
+          testsHtml += '<span class="dog-test-badge test-pass">&#10003; Giardia Test</span>';
+        }
+        var allBadges = compatHtml + testsHtml;
+        if (allBadges) {
+          document.getElementById('dogMeta').insertAdjacentHTML('afterend', '<div class="dog-tests" style="margin-top: -8px;">' + allBadges + '</div>');
+        }
+
+        // Description
+        document.getElementById('dogDescription').textContent = dog.beschrijving || '';
+
+        // Contact section
+        if (dog.status === 'geadopteerd') {
+          document.getElementById('dogCta').style.display = 'none';
+        } else {
+          document.getElementById('contactDogName').textContent = dog.naam;
+          var modal = document.getElementById('contactModal');
+          function closeModal() {
+            var mq = window.matchMedia('(max-width: 767px)');
+            var modalContent = modal.querySelector('.modal');
+            if (mq.matches && modal.classList.contains('open')) {
+              var spring = VAUL.spring();
+              var dur = VAUL.dur();
+              modalContent.style.transition = 'transform ' + dur + ' ' + spring;
+              modalContent.style.transform = 'translate3d(0,100%,0)';
+              modal.style.transition = 'background-color ' + dur + ' ' + spring;
+              modal.style.backgroundColor = 'transparent';
+              var wrapper = document.querySelector('.vaul-wrapper');
+              if (wrapper) {
+                wrapper.style.transitionDuration = dur;
+                wrapper.style.transform = 'scale(1) translate3d(0, 0, 0)';
+                wrapper.style.borderRadius = '0px';
+              }
+              setTimeout(function() {
+                modalContent.style.transition = '';
+                modalContent.style.transform = '';
+                modalContent.style.height = '';
+                modalContent.style.maxHeight = '';
+                modal.style.transition = '';
+                modal.style.backgroundColor = '';
+                modal.classList.remove('open');
+              }, VAUL.DURATION * 1000 + 50);
+            } else {
+              modal.classList.remove('open');
+              document.body.style.overflow = '';
+            }
+          }
+          document.getElementById('contactBtn').addEventListener('click', function() {
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+          });
+          document.getElementById('modalClose').addEventListener('click', closeModal);
+          modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+          });
+          h4dSheetDrag(modal.querySelector('.modal'), modal, closeModal);
+          initContactForm(dog.id);
+        }
+
+        // Load photos from dog_photos table
+        const photos = await supabaseGet('dog_photos', `select=*&dog_id=eq.${dogId}&order=is_primary.desc`);
+        images = photos.map(p => p.photo_url);
+        if (images.length > 0) {
+          initCarousel();
+        }
+
+        // Show detail
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('detailSection').style.display = 'block';
+
+      } catch (err) {
+        console.error('Error loading dog:', err);
+        showError();
+      }
+    }
+
+    function showError() {
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('errorScreen').style.display = 'block';
+    }
+
+    // ============ CAROUSEL ============
+    function initCarousel() {
+      const track = document.getElementById('carouselTrack');
+      const dots = document.getElementById('carouselDots');
+      const thumbs = document.getElementById('carouselThumbs');
+
+      // Build slides
+      track.innerHTML = images.map(url =>
+        `<div class="carousel-slide"><img src="${url}" alt="Foto van ${dog.naam}"></div>`
+      ).join('');
+
+      // Build dots
+      dots.innerHTML = images.map((_, i) =>
+        `<button class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></button>`
+      ).join('');
+
+      // Build thumbs
+      thumbs.innerHTML = images.map((url, i) =>
+        `<div class="carousel-thumb ${i === 0 ? 'active' : ''}" data-index="${i}"><img src="${url}" alt="Foto ${i + 1} van ${dog.naam}"></div>`
+      ).join('');
+
+      // Hide nav if only 1 image
+      if (images.length <= 1) {
+        document.getElementById('carouselPrev').style.display = 'none';
+        document.getElementById('carouselNext').style.display = 'none';
+        dots.style.display = 'none';
+        thumbs.style.display = 'none';
+      }
+
+      // Dot clicks
+      dots.addEventListener('click', (e) => {
+        const dot = e.target.closest('.carousel-dot');
+        if (dot) goToSlide(parseInt(dot.dataset.index));
+      });
+
+      // Thumb clicks
+      thumbs.addEventListener('click', (e) => {
+        const thumb = e.target.closest('.carousel-thumb');
+        if (thumb) goToSlide(parseInt(thumb.dataset.index));
+      });
+
+      // Arrow clicks
+      document.getElementById('carouselPrev').addEventListener('click', () => {
+        goToSlide(currentSlide > 0 ? currentSlide - 1 : images.length - 1);
+      });
+
+      document.getElementById('carouselNext').addEventListener('click', () => {
+        goToSlide(currentSlide < images.length - 1 ? currentSlide + 1 : 0);
+      });
+
+      // Touch swipe
+      const carousel = document.getElementById('carousel');
+      carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      carousel.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            // Swipe left -> next
+            goToSlide(currentSlide < images.length - 1 ? currentSlide + 1 : 0);
+          } else {
+            // Swipe right -> prev
+            goToSlide(currentSlide > 0 ? currentSlide - 1 : images.length - 1);
+          }
+        }
+      }, { passive: true });
+
+      // Keyboard
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') goToSlide(currentSlide > 0 ? currentSlide - 1 : images.length - 1);
+        if (e.key === 'ArrowRight') goToSlide(currentSlide < images.length - 1 ? currentSlide + 1 : 0);
+      });
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      const track = document.getElementById('carouselTrack');
+      track.style.transform = `translateX(-${index * 100}%)`;
+
+      // Update dots
+      document.querySelectorAll('.carousel-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === index);
+      });
+
+      // Update thumbs
+      document.querySelectorAll('.carousel-thumb').forEach((t, i) => {
+        t.classList.toggle('active', i === index);
+      });
+    }
+
+    function initContactForm(dogId) {
+      var form = document.getElementById('contactForm');
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        var btn = document.getElementById('contactSubmitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Verzenden...';
+
+        try {
+          var body = {
+            dog_id: dogId,
+            naam: document.getElementById('contactNaam').value.trim(),
+            email: document.getElementById('contactEmail').value.trim(),
+            telefoon: document.getElementById('contactTelefoon').value.trim() || null,
+            bericht: document.getElementById('contactBericht').value.trim()
+          };
+
+          var res = await fetch(SUPABASE_URL + '/rest/v1/contact_messages', {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+          });
+
+          if (!res.ok) {
+            var errBody = await res.text();
+            throw new Error('HTTP ' + res.status + ': ' + errBody);
+          }
+
+          form.style.display = 'none';
+          document.getElementById('contactSuccess').style.display = 'block';
+        } catch (err) {
+          console.error('Contact form error:', err);
+          alert('Er is iets misgegaan. Probeer het opnieuw.');
+          btn.disabled = false;
+          btn.textContent = 'Verstuur bericht';
+        }
+      });
+    }
+
+    // Init
+    loadDog();
+  </script>
+</body>
+</html>

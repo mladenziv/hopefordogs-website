@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hond Adopteren — Procedure, Kosten & Stappen | Hope for Dogs</title>
+  <meta name="description" content="Ontdek hoe je een hond adopteert via Hope for Dogs. Adoptievergoeding €230 + transport €200. Stap voor stap begeleiden we je door het hele proces.">
+  <link rel="canonical" href="https://www.hopefordogseurope.com/adoptie.html">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Hope for Dogs">
+  <meta property="og:title" content="Hond Adopteren — Procedure, Kosten & Stappen | Hope for Dogs">
+  <meta property="og:description" content="Ontdek hoe je een hond adopteert via Hope for Dogs. Adoptievergoeding €230 + transport €200. Stap voor stap begeleiden we je.">
+  <meta property="og:url" content="https://www.hopefordogseurope.com/adoptie.html">
+  <meta property="og:image" content="https://www.hopefordogseurope.com/images/hero-1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=20">
+  <style>
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ===== HERO ===== */
+    .adopt-hero {
+      width: 100%;
+      background: radial-gradient(100% 100% at 50% 100%, #FAF8F4 0%, #FFF 100%);
+      display: flex;
+      justify-content: center;
+    }
+
+    .adopt-hero-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 160px 40px 80px;
+      display: flex;
+      align-items: center;
+      gap: 64px;
+    }
+
+    .adopt-hero-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .adopt-hero-text h1 {
+      font-weight: 900;
+    }
+
+    .adopt-hero-text p {
+      max-width: 560px;
+    }
+
+    .adopt-hero-image {
+      flex: 1;
+      max-width: 520px;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.1);
+    }
+
+    .adopt-hero-image img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+    }
+
+    .adopt-hero-images-xs {
+      display: none;
+    }
+
+    /* ===== STEPS ===== */
+    .adopt-steps {
+      width: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 72px 0;
+    }
+
+    .adopt-steps-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 0 40px;
+    }
+
+    .adopt-steps-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 56px;
+      width: 620px;
+      max-width: 100%;
+    }
+
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .step-card {
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 33px 1px 33px 29px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .step-card .step-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .step-card .step-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 18px;
+      background: #ff5314;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: normal;
+    }
+
+    .step-card .step-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: normal;
+      color: var(--dark-1);
+    }
+
+    .step-card .step-desc {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 24px;
+      color: #424242;
+      max-width: 386px;
+    }
+
+    /* ===== TIMELINE ===== */
+    .adopt-timeline {
+      width: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 72px 0;
+    }
+
+    .adopt-timeline-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 0 40px;
+      display: flex;
+      align-items: flex-start;
+      gap: 72px;
+    }
+
+    .adopt-timeline-header {
+      flex: 1;
+      min-width: 0;
+      position: sticky;
+      top: 120px;
+    }
+
+    .timeline-wrap {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .adopt-timeline-header h2 {
+      margin-bottom: 16px;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 40px;
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -33px;
+      top: 4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--brand);
+      border: 3px solid #fff;
+    }
+
+    .timeline-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: normal;
+      color: var(--dark-1);
+      margin-bottom: 6px;
+    }
+
+    .timeline-desc {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 24px;
+      color: #424242;
+    }
+
+
+    /* ===== REQUIREMENTS ===== */
+    .adopt-requirements {
+      width: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 72px 0;
+    }
+
+    .adopt-requirements-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 0 40px;
+      display: flex;
+      gap: 72px;
+      align-items: flex-start;
+    }
+
+    .adopt-requirements-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .adopt-requirements-text h2 {
+      margin-bottom: 16px;
+    }
+
+    .requirements-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .requirement-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 24px;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+    }
+
+    .requirement-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .requirement-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--gold);
+    }
+
+    .requirement-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .requirement-text strong {
+      font-family: 'Nunito', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: normal;
+      color: var(--dark-1);
+    }
+
+    .requirement-text span {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 24px;
+      color: #424242;
+    }
+
+    /* ===== COSTS ===== */
+    .adopt-costs {
+      width: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 72px 0;
+    }
+
+    .section-divider {
+      width: 1560px;
+      max-width: calc(100% - 80px);
+      height: 0.5px;
+      background: rgba(0, 0, 0, 0.16);
+      margin: 0 auto;
+    }
+
+    .adopt-costs-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 0 40px;
+      display: flex;
+      align-items: flex-start;
+      gap: 64px;
+    }
+
+    .adopt-costs-text {
+      flex: 0 0 520px;
+      position: sticky;
+      top: 120px;
+    }
+
+    .adopt-costs-text h2 {
+      margin-bottom: 16px;
+    }
+
+    .costs-grid {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      gap: 20px;
+      text-align: left;
+    }
+
+    .costs-plus {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .costs-plus-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .costs-plus-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--gold);
+    }
+
+    .cost-item {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .cost-item-label {
+      margin-bottom: 4px;
+    }
+
+    .cost-item-amount {
+      color: var(--brand);
+    }
+
+    .cost-item-note {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--dark-2);
+    }
+
+    .cost-checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 24px;
+    }
+
+    .cost-checklist li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark-1);
+    }
+
+    .cost-checklist li svg { flex-shrink: 0; }
+
+    /* FAQ styles now in shared.css via component */
+
+    /* ===== CTA ===== */
+    .adopt-cta {
+      width: 100%;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      padding: 80px 0;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .adopt-cta-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .adopt-cta-text {
+      flex: 1;
+    }
+
+    .adopt-cta-text h2 {
+      margin-bottom: 12px;
+    }
+
+    .adopt-cta-text p {
+      max-width: 520px;
+    }
+
+    .adopt-cta-buttons {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    /* --- MD: 1024–1247px --- */
+    @media (max-width: 1247px) {
+      .adopt-costs-text { flex: 0 0 400px; }
+      .adopt-costs-inner { gap: 40px; }
+      .adopt-timeline-inner { gap: 48px; }
+      .adopt-requirements-inner { gap: 48px; }
+    }
+
+    /* --- SM: 768–1023px --- */
+    @media (max-width: 1023px) {
+      /* Responsive type */
+      .timeline-title { font-size: 18px; }
+
+      .adopt-hero-inner { flex-direction: column; gap: 32px; padding-top: 192px; }
+      .adopt-hero-image { max-width: 100%; }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .adopt-timeline-inner { flex-direction: column; gap: 40px; }
+      .adopt-timeline-header { position: static; }
+      .adopt-requirements-inner { flex-direction: column; gap: 40px; }
+      .adopt-costs-inner { flex-direction: column; gap: 32px; }
+      .adopt-costs-text { flex: auto; position: static; }
+      .costs-grid { flex-direction: column; }
+      .costs-plus { padding: 4px 0; }
+      .adopt-cta-inner { flex-direction: column; text-align: center; }
+      .adopt-cta-text p { max-width: 100%; }
+      .adopt-cta-buttons { flex-direction: column; align-items: center; }
+    }
+
+    /* --- XS: 0–767px --- */
+    @media (max-width: 767px) {
+      .adopt-hero-inner { padding: 152px 20px 32px; gap: 32px; flex-direction: column; text-align: center; align-items: center; }
+      .adopt-hero-text { align-items: center; padding: 0 20px; gap: 8px; }
+      .adopt-hero-text h1 { font-size: 26px; line-height: 30px; font-weight: 900; }
+      .adopt-hero-text p { font-size: 17px; line-height: 28px; letter-spacing: 0.1px; }
+      .adopt-hero-image { display: none; }
+      .adopt-hero-images-xs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        width: 100%;
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+      }
+      .adopt-hero-images-xs img {
+        width: 100%;
+        height: 240px;
+        object-fit: cover;
+        display: block;
+      }
+      .adopt-hero-arrow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 48px;
+        height: 48px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .adopt-hero-arrow::before {
+        content: '';
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: #dfb87e;
+        border-radius: 50%;
+      }
+      .adopt-hero-arrow svg {
+        width: 24px;
+        height: 24px;
+        position: relative;
+        z-index: 1;
+      }
+      .adopt-hero-arrow svg path {
+        stroke: #fff;
+      }
+      .adopt-costs-inner,
+      .adopt-steps-inner,
+      .adopt-timeline-inner,
+      .adopt-requirements-inner,
+      .adopt-cta-inner { padding: 0 20px; }
+      .adopt-costs { padding: 64px 0; }
+      .adopt-steps { padding: 72px 0; }
+      .adopt-timeline { padding: 72px 0; }
+      .adopt-requirements { padding: 72px 0; }
+      .adopt-cta { padding: 56px 0; }
+    }
+  </style>
+
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <main>
+  <!-- HERO -->
+  <section class="adopt-hero">
+    <div class="adopt-hero-inner">
+      <div class="adopt-hero-text">
+        <h1 class="t-heading-lg" data-i18n="adoptie.hero">Waar hoop een thuis vindt</h1>
+        <p class="t-body-lg" data-i18n="adoptie.hero.sub">Hun start was niet eerlijk, maar hun toekomst kan dat w&#233;l zijn.</p>
+      </div>
+      <div class="adopt-hero-image">
+        <img src="images/adopted-dog.png" alt="Hond klaar voor adoptie">
+      </div>
+      <div class="adopt-hero-images-xs">
+        <img src="images/adoption/Adoption-1.png" alt="Hond klaar voor adoptie">
+        <img src="images/adoption/Adoption-2.png" alt="Hond klaar voor adoptie">
+        <div class="adopt-hero-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12h14M13 6l6 6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COSTS -->
+  <section class="adopt-costs">
+    <div class="adopt-costs-inner">
+      <div class="adopt-costs-text">
+        <h2 class="t-heading-md" data-i18n="adoptie.kosten">Wat kost een adoptie?</h2>
+        <p class="t-body" data-i18n="adoptie.kosten.sub">De adoptievergoeding dekt een deel van de medische kosten en het transport. Dit is wat inbegrepen is:</p>
+      </div>
+      <div class="costs-grid">
+        <div class="cost-item" style="flex:1;">
+          <div class="cost-item-label t-body" data-i18n="adoptie.kosten.vergoeding">Adoptievergoeding</div>
+          <div class="cost-item-amount t-heading-sm">&#8364;230</div>
+          <div class="cost-item-note" data-i18n="adoptie.kosten.vergoeding.note">Eenmalige bijdrage voor de medische verzorging van jouw hond in het asiel.</div>
+          <ul class="cost-checklist" style="margin-top:12px;">
+            <li><svg viewBox="0 0 20 20" width="18" height="18"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="#16a34a"/></svg> <span data-i18n="adoptie.kosten.vac">Vaccinatie</span></li>
+            <li><svg viewBox="0 0 20 20" width="18" height="18"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="#16a34a"/></svg> <span data-i18n="adoptie.kosten.ont">Ontworming</span></li>
+            <li><svg viewBox="0 0 20 20" width="18" height="18"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="#16a34a"/></svg> <span data-i18n="adoptie.kosten.vlooien">Ontvlooiing</span></li>
+            <li><svg viewBox="0 0 20 20" width="18" height="18"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="#16a34a"/></svg> <span data-i18n="adoptie.kosten.chip">Chip &amp; Paspoort</span></li>
+          </ul>
+        </div>
+        <div class="costs-plus">
+          <div class="costs-plus-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          </div>
+        </div>
+        <div class="cost-item" style="flex:1;">
+          <div class="cost-item-label t-body" data-i18n="adoptie.kosten.transport">Transport</div>
+          <div class="cost-item-amount t-heading-sm">&#8364;200</div>
+          <div class="cost-item-note" data-i18n="adoptie.kosten.transport.note">Deze betaling is voor een gecertificeerde dierentransporteur, een derde partij die het veilige vervoer van jouw hond verzorgt.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="section-divider"></div>
+
+  <!-- STEPS -->
+  <section class="adopt-steps">
+    <div class="adopt-steps-inner">
+      <div class="adopt-steps-header">
+        <h2 class="t-heading-md" data-i18n="adoptie.proces">Hoe werkt het adoptieproces?</h2>
+        <p class="t-body" data-i18n="adoptie.proces.sub">Van kennismaking tot thuis — stap voor stap begeleiden we je door het hele proces.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <div class="step-title" data-i18n="adoptie.stap1">Kies een hond</div>
+            <div class="step-desc" data-i18n="adoptie.stap1.d">Bekijk de beschikbare honden op onze website. Lees hun verhaal en kijk wie bij jouw situatie past. Twijfel je? Wij helpen je graag.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <div class="step-title" data-i18n="adoptie.stap2">Kennismakingsgesprek</div>
+            <div class="step-desc" data-i18n="adoptie.stap2.d">We plannen een gesprek (telefonisch of video) om jouw woon- en leefsituatie te bespreken. We kijken samen of de hond bij jou past.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <div class="step-title" data-i18n="adoptie.stap3">Adoptieformulier</div>
+            <div class="step-desc" data-i18n="adoptie.stap3.d">Je vult een adoptieformulier in met je gegevens en leefsituatie. Dit helpt ons om de juiste match te maken en de hond goed voor te bereiden.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <div class="step-title" data-i18n="adoptie.stap4">Voorbereiden &amp; transport</div>
+            <div class="step-desc" data-i18n="adoptie.stap4.d">De hond wordt medisch gecontroleerd, gevaccineerd, gechipt en gesteriliseerd. We regelen het transport van het asiel naar Nederland.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <div class="step-title" data-i18n="adoptie.stap5">Ophalen &amp; wenperiode</div>
+            <div class="step-desc" data-i18n="adoptie.stap5.d">Je haalt je hond op bij het afleverpunt. De eerste weken zijn spannend — wij blijven beschikbaar voor advies en begeleiding.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">6</div>
+          <div class="step-content">
+            <div class="step-title" data-i18n="adoptie.stap6">Thuiscontrole</div>
+            <div class="step-desc" data-i18n="adoptie.stap6.d">Na enkele weken doen we een check-up om te zien hoe het gaat. We willen zeker weten dat zowel jij als de hond gelukkig zijn.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="section-divider"></div>
+
+  <!-- TIMELINE -->
+  <section class="adopt-timeline">
+    <div class="adopt-timeline-inner">
+      <div class="adopt-timeline-header">
+        <h2 class="t-heading-md" data-i18n="adoptie.aankomst">Wat gebeurt er voor aankomst?</h2>
+        <p class="t-body" data-i18n="adoptie.aankomst.sub">Voordat een hond bij jou thuis komt, doorloopt elk dier een zorgvuldig traject in ons asiel.</p>
+      </div>
+      <div class="timeline-wrap">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">Redding van straat of gemeente-asiel</div>
+            <div class="timeline-desc t-body-sm">De hond wordt opgehaald uit een onveilige situatie en naar ons asiel gebracht.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">Vaccinatie &amp; sterilisatie</div>
+            <div class="timeline-desc t-body-sm">Alle benodigde vaccinaties worden gegeven en de hond wordt gesteriliseerd of gecastreerd.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">Socialisatie &amp; herstel</div>
+            <div class="timeline-desc t-body-sm">De hond krijgt de tijd om te herstellen, te wennen aan mensen en andere honden.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">EU-paspoort &amp; chip</div>
+            <div class="timeline-desc t-body-sm">De hond krijgt een Europees dierenpaspoort, microchip en alle benodigde documenten voor transport.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">Transport naar Nederland</div>
+            <div class="timeline-desc t-body-sm">Veilig transport via gecertificeerde dierentransporteur, rechtstreeks naar het afleverpunt.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="section-divider"></div>
+
+  <!-- REQUIREMENTS -->
+  <section class="adopt-requirements">
+    <div class="adopt-requirements-inner">
+      <div class="adopt-requirements-text">
+        <h2 class="t-heading-md" data-i18n="adoptie.eisen">Waar letten we op?</h2>
+        <p class="t-body" data-i18n="adoptie.eisen.sub">We willen dat elke adoptie slaagt. Daarom kijken we naar een aantal belangrijke punten voordat we een hond plaatsen.</p>
+      </div>
+      <ul class="requirements-list">
+        <li class="requirement-item">
+          <div class="requirement-icon">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          </div>
+          <div class="requirement-text">
+            <strong>Geschikte woning</strong>
+            <span>Voldoende ruimte en een veilige omgeving. Een tuin is een pre, maar geen vereiste.</span>
+          </div>
+        </li>
+        <li class="requirement-item">
+          <div class="requirement-icon">
+            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          </div>
+          <div class="requirement-text">
+            <strong>Tijd en aandacht</strong>
+            <span>Een hond heeft dagelijkse zorg nodig: uitlaten, spelen, socialiseren. Reken op minstens 2-3 uur per dag.</span>
+          </div>
+        </li>
+        <li class="requirement-item">
+          <div class="requirement-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </div>
+          <div class="requirement-text">
+            <strong>Geduld &amp; begrip</strong>
+            <span>Onze honden komen van de straat. Ze hebben soms tijd nodig om te wennen aan een huiselijke omgeving.</span>
+          </div>
+        </li>
+        <li class="requirement-item">
+          <div class="requirement-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+          </div>
+          <div class="requirement-text">
+            <strong>Financi&#235;le draagkracht</strong>
+            <span>Voer, dierenarts, verzekering — een hond brengt maandelijse kosten met zich mee. Wees hier realistisch over.</span>
+          </div>
+        </li>
+        <li class="requirement-item">
+          <div class="requirement-icon">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </div>
+          <div class="requirement-text">
+            <strong>Akkoord huisgenoten</strong>
+            <span>Alle gezinsleden moeten achter de adoptie staan. We bespreken dit tijdens het kennismakingsgesprek.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+  <div class="section-divider"></div>
+
+  <!-- FAQ -->
+  <div id="faq-placeholder"></div>
+
+  <!-- CTA -->
+  <section class="adopt-cta">
+    <div class="adopt-cta-inner">
+      <div class="adopt-cta-text">
+        <h2 class="t-heading-md" data-i18n="adoptie.cta">Klaar om een leven te veranderen?</h2>
+        <p class="t-body" data-i18n="adoptie.cta.sub">Bekijk onze beschikbare honden en vind jouw nieuwe gezinslid. Of neem contact met ons op — we helpen je graag.</p>
+        <p class="t-body" style="margin-top:12px;"><a href="ervaringen.html" style="color:var(--brand);font-weight:700;">Lees de ervaringen van onze adoptanten &rarr;</a></p>
+      </div>
+      <div class="adopt-cta-buttons">
+        <a href="honden.html" class="btn-primary" data-i18n="adoptie.bekijk">Bekijk beschikbare honden</a>
+        <a href="mailto:info@hopefordogs.nl" class="btn-secondary" data-i18n="adoptie.contact">Neem contact op</a>
+      </div>
+    </div>
+  </section>
+
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="components.js?v=20"></script>
+  <script src="supabase-config.js"></script>
+</body>
+</html>

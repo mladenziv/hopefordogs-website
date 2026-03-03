@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nieuws | Hope for Dogs</title>
+  <meta name="description" content="Lees dit nieuwsbericht van Hope for Dogs over onze reddingsacties en het leven in het asiel.">
+  <link rel="canonical" href="https://www.hopefordogseurope.com/post.html">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Hope for Dogs">
+  <meta property="og:title" content="Nieuws | Hope for Dogs">
+  <meta property="og:description" content="Lees dit nieuwsbericht van Hope for Dogs over onze reddingsacties en het leven in het asiel.">
+  <meta property="og:url" content="https://www.hopefordogseurope.com/post.html">
+  <meta property="og:image" content="https://www.hopefordogseurope.com/images/hero-1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=20">
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      color: var(--dark-1);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ========== LAYOUT ========== */
+    .post-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 112px 40px 80px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark-2);
+      margin-bottom: 40px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--brand); }
+    .back-link svg { width: 16px; height: 16px; }
+
+    .post-date {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark-2);
+      margin-bottom: 12px;
+    }
+
+    .post-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+
+    .post-hero-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 40px;
+      background: var(--beige);
+    }
+
+    .post-content {
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.9;
+      color: var(--dark-2);
+    }
+
+    /* Plain text posts (no HTML) */
+    .post-content.plain-text {
+      white-space: pre-line;
+    }
+
+    /* Rich HTML content styling */
+    .post-content h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--dark-1);
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .post-content h3 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--dark-1);
+      margin: 32px 0 12px;
+      line-height: 1.4;
+    }
+    .post-content p {
+      margin: 0 0 20px;
+    }
+    .post-content ul, .post-content ol {
+      margin: 0 0 20px;
+      padding-left: 24px;
+    }
+    .post-content li {
+      margin-bottom: 8px;
+    }
+    .post-content strong {
+      font-weight: 700;
+      color: var(--dark-1);
+    }
+    .post-content a {
+      color: var(--brand);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .post-content a:hover {
+      opacity: 0.8;
+    }
+    .post-content blockquote {
+      border-left: 3px solid var(--brand);
+      padding-left: 20px;
+      margin: 24px 0;
+      font-style: italic;
+      color: var(--dark-2);
+    }
+
+    /* ========== LOADING / ERROR ========== */
+    .loading-screen, .error-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      gap: 16px;
+      text-align: center;
+      padding: 40px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(0,0,0,0.1);
+      border-top-color: var(--brand);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* --- SM: 768–1023px --- */
+    @media (max-width: 1023px) {
+      /* Responsive type */
+      .post-title { font-size: 36px; }
+      .post-content { font-size: 15px; }
+
+      .post-section { padding: 144px 40px 80px; }
+    }
+
+    /* --- XS: 0–767px --- */
+    @media (max-width: 767px) {
+      /* Responsive type — XS */
+      .post-title { font-size: 32px; }
+
+      .post-section { padding: 144px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <main>
+  <!-- Loading -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <span style="color:var(--dark-2);font-size:15px;">Laden...</span>
+  </div>
+
+  <!-- Error -->
+  <div class="error-screen" id="errorScreen" style="display:none;">
+    <h2>Bericht niet gevonden</h2>
+    <p>Dit nieuwsbericht bestaat niet of is verwijderd.</p>
+    <a href="nieuws.html" class="btn-primary">Terug naar nieuws</a>
+  </div>
+
+  <!-- Post Detail -->
+  <section class="post-section" id="postSection" style="display:none;">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="nieuws.html">Nieuws</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current" id="breadcrumbName"></span>
+    </nav>
+
+    <div class="post-date" id="postDate"></div>
+    <h1 class="post-title" id="postTitle"></h1>
+    <img class="post-hero-img" id="postImg" src="" alt="" style="display:none;">
+    <div class="post-content" id="postContent"></div>
+
+    <div style="margin-top:48px;padding:32px;background:#faf8f4;border-radius:16px;text-align:center;">
+      <p style="font-size:17px;font-weight:600;color:var(--dark-1);margin-bottom:16px;">Wil jij ook helpen?</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="honden.html" class="btn-primary">Bekijk onze honden</a>
+        <a href="doneer.html" class="btn-secondary">Steun met een donatie</a>
+      </div>
+    </div>
+
+  </section>
+
+  </main>
+  <div id="footer-placeholder"></div>
+
+  <script src="components.js?v=20"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      var d = new Date(dateStr);
+      var months = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+      return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    async function loadPost() {
+      var params = new URLSearchParams(window.location.search);
+      var postId = params.get('id');
+
+      if (!postId) {
+        showError();
+        return;
+      }
+
+      try {
+        var posts = await supabaseGet('posts', 'select=*&id=eq.' + postId);
+
+        if (!posts || posts.length === 0) {
+          showError();
+          return;
+        }
+
+        var post = posts[0];
+        document.title = post.title + ' — Nieuws | Hope for Dogs';
+        var postDesc = post.excerpt ? post.excerpt.substring(0, 140) : post.content ? post.content.substring(0, 140) : 'Lees het laatste nieuws van Hope for Dogs.';
+        document.querySelector('meta[name="description"]').setAttribute('content', postDesc);
+        document.querySelector('meta[property="og:title"]').setAttribute('content', post.title + ' — Nieuws | Hope for Dogs');
+        document.querySelector('meta[property="og:description"]').setAttribute('content', postDesc);
+        if (post.photo_url) {
+          document.querySelector('meta[property="og:image"]').setAttribute('content', post.photo_url);
+        }
+
+        document.getElementById('postDate').textContent = formatDate(post.published_at || post.created_at);
+        document.getElementById('postTitle').textContent = post.title;
+        document.getElementById('breadcrumbName').textContent = post.title;
+
+        // JSON-LD: BreadcrumbList schema
+        var bcSchema = document.createElement('script');
+        bcSchema.type = 'application/ld+json';
+        bcSchema.textContent = JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.hopefordogseurope.com/"},
+            {"@type": "ListItem", "position": 2, "name": "Nieuws", "item": "https://www.hopefordogseurope.com/nieuws.html"},
+            {"@type": "ListItem", "position": 3, "name": post.title}
+          ]
+        });
+        document.head.appendChild(bcSchema);
+        var contentEl = document.getElementById('postContent');
+        var rawContent = post.content || post.excerpt || '';
+        var isHTML = /<[a-z][\s\S]*>/i.test(rawContent);
+        if (isHTML) {
+          contentEl.innerHTML = rawContent;
+        } else {
+          contentEl.classList.add('plain-text');
+          contentEl.textContent = rawContent;
+        }
+
+        if (post.photo_url) {
+          var img = document.getElementById('postImg');
+          img.src = post.photo_url;
+          img.alt = post.title;
+          img.style.display = 'block';
+        }
+
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('postSection').style.display = 'block';
+
+        // JSON-LD: Article schema
+        var articleSchema = document.createElement('script');
+        articleSchema.type = 'application/ld+json';
+        articleSchema.textContent = JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": post.title,
+          "datePublished": post.published_at || post.created_at,
+          "image": post.photo_url || '',
+          "author": {"@type": "Organization", "name": "Hope for Dogs"},
+          "publisher": {"@type": "Organization", "name": "Hope for Dogs", "logo": {"@type": "ImageObject", "url": "https://www.hopefordogseurope.com/logo.png"}},
+          "description": post.excerpt || (post.content ? post.content.substring(0, 160) : '')
+        });
+        document.head.appendChild(articleSchema);
+
+      } catch (err) {
+        console.error('Error loading post:', err);
+        showError();
+      }
+    }
+
+    function showError() {
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('errorScreen').style.display = 'flex';
+    }
+
+    loadPost();
+  </script>
+</body>
+</html>

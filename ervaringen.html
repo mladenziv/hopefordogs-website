@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adoptieverhalen — Ervaringen van Adoptanten | Hope for Dogs</title>
+  <meta name="description" content="Lees de mooiste adoptieverhalen van Hope for Dogs. Van straathond tot huisdier — ontdek hoe onze honden hun thuis hebben gevonden in Nederland en Belgie.">
+  <link rel="canonical" href="https://www.hopefordogseurope.com/ervaringen.html">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Hope for Dogs">
+  <meta property="og:title" content="Adoptieverhalen — Ervaringen van Adoptanten | Hope for Dogs">
+  <meta property="og:description" content="Lees de mooiste adoptieverhalen van Hope for Dogs. Van straathond tot huisdier — ontdek hoe onze honden hun thuis vonden.">
+  <meta property="og:url" content="https://www.hopefordogseurope.com/ervaringen.html">
+  <meta property="og:image" content="https://www.hopefordogseurope.com/images/hero-1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=20">
+  <style>
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* ========== TESTIMONIAL GRID ========== */
+    .testimonials-section {
+      padding: 48px 0 100px;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .testimonial-card {
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1);
+    }
+
+    .testimonial-card-img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+
+    .testimonial-card-body {
+      padding: 24px 28px 28px;
+    }
+
+    .testimonial-card-name {
+      margin-bottom: 4px;
+    }
+
+    .testimonial-card-desc {
+      margin-top: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .testimonial-card-adopter {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--dark-2);
+    }
+
+    .testimonial-card-adopter span {
+      color: var(--dark-2);
+      font-weight: 500;
+    }
+
+    .testimonial-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--brand);
+      transition: gap 0.2s ease;
+    }
+
+    .testimonial-card:hover .testimonial-card-link {
+      gap: 10px;
+    }
+
+    .testimonial-card-link svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--brand);
+    }
+
+    /* Loading skeleton */
+    .skeleton-card {
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .skeleton-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    .skeleton-body { padding: 24px 28px; }
+    .skeleton-line {
+      height: 16px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      margin-bottom: 8px;
+    }
+    .skeleton-line:last-child { width: 60%; margin-bottom: 0; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 80px 40px;
+      color: var(--dark-2);
+    }
+    .empty-state p {
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    /* ========== CTA SECTION ========== */
+    .cta-section {
+      padding: 100px 0;
+    }
+
+    .cta-box {
+      background: rgb(250, 248, 244);
+      border-radius: 28px;
+      padding: 80px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-box h2 {
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-box p {
+      max-width: 560px;
+      margin: 0 auto 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-buttons .btn-secondary {
+      color: var(--dark-1);
+      border-color: rgba(0, 0, 0, 0.15);
+    }
+
+    .cta-buttons .btn-secondary:hover {
+      border-color: rgba(0, 0, 0, 0.3);
+    }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .testimonial-card {
+      animation: fadeInUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .testimonial-card:nth-child(1) { animation-delay: 0.05s; }
+    .testimonial-card:nth-child(2) { animation-delay: 0.1s; }
+    .testimonial-card:nth-child(3) { animation-delay: 0.15s; }
+    .testimonial-card:nth-child(4) { animation-delay: 0.2s; }
+    .testimonial-card:nth-child(5) { animation-delay: 0.25s; }
+    .testimonial-card:nth-child(6) { animation-delay: 0.3s; }
+    .testimonial-card:nth-child(7) { animation-delay: 0.35s; }
+    .testimonial-card:nth-child(8) { animation-delay: 0.4s; }
+    .testimonial-card:nth-child(9) { animation-delay: 0.45s; }
+    .testimonial-card:nth-child(10) { animation-delay: 0.5s; }
+    .testimonial-card:nth-child(11) { animation-delay: 0.55s; }
+    .testimonial-card:nth-child(12) { animation-delay: 0.6s; }
+
+    /* ========== RESPONSIVE ========== */
+    /* --- SM: 768–1023px --- */
+    @media (max-width: 1023px) {
+      .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+      .cta-section { padding: 80px 0; }
+    }
+
+    /* --- XS: 0–767px --- */
+    @media (max-width: 767px) {
+      .container { padding: 0 20px; }
+      .testimonials-section { padding: 40px 0 80px; }
+      .testimonials-grid { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
+      .cta-box { padding: 60px 24px; }
+      .cta-buttons { flex-direction: column; align-items: center; }
+      .cta-section { padding: 60px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <main>
+  <!-- ========== PAGE HERO ========== -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <h1 data-i18n="ervaringen.hero">Van straat naar warm nestje</h1>
+      <p data-i18n="ervaringen.hero.sub">Lees de ervaringen van onze adoptanten en ontdek waarom zoveel mensen blij zijn met hun viervoeter van Hope for Dogs.</p>
+    </div>
+  </section>
+
+  <!-- ========== TESTIMONIAL GRID ========== -->
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="testimonials-grid" id="storiesGrid">
+        <!-- Loading skeletons -->
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA SECTION ========== -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box">
+        <h2 class="t-heading-lg" data-i18n="ervaringen.cta">Wil jij ook een verschil maken?</h2>
+        <p class="t-body-lg" data-i18n="ervaringen.cta.sub">Geef een zwerfhond een tweede kans en ervaar de onvoorwaardelijke liefde van een rescuehond. Adopteer of steun ons met een donatie.</p>
+        <div class="cta-buttons">
+          <a href="honden.html" class="btn-primary" data-i18n="ervaringen.cta.btn1">Bekijk onze honden</a>
+          <a href="doneer.html" class="btn-secondary" data-i18n="nav.doneer">Doneer nu</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+  <div id="footer-placeholder"></div>
+
+  <script src="components.js?v=20"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    async function loadStories() {
+      var grid = document.getElementById('storiesGrid');
+      try {
+        var stories = await supabaseGet('stories', 'select=*&order=created_at.desc');
+
+        if (!stories || stories.length === 0) {
+          grid.innerHTML = '<div class="empty-state"><p>Er zijn nog geen ervaringen gedeeld.</p></div>';
+          return;
+        }
+
+        grid.innerHTML = stories.map(function(story, i) {
+          var img = story.photo_url || 'images/placeholder-dog.png';
+          var desc = story.description || '';
+          var adopter = story.adopter_name || '';
+          return '<a href="ervaring.html?id=' + story.id + '" class="testimonial-card" style="animation-delay:' + (i * 0.05) + 's">' +
+            '<img src="' + img + '" alt="' + escapeAttr(story.dog_name) + '" class="testimonial-card-img" loading="lazy">' +
+            '<div class="testimonial-card-body">' +
+              '<div class="testimonial-card-name t-heading-sm">' + escapeHtml(story.dog_name) + '</div>' +
+              (adopter ? '<div class="testimonial-card-adopter">' + escapeHtml(adopter) + '</div>' : '') +
+              '<div class="testimonial-card-desc t-body-sm">' + escapeHtml(desc) + '</div>' +
+            '</div>' +
+          '</a>';
+        }).join('');
+      } catch (err) {
+        console.error('Error loading stories:', err);
+        grid.innerHTML = '<div class="empty-state"><p>Er is een fout opgetreden bij het laden.</p></div>';
+      }
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    }
+
+    function escapeAttr(str) {
+      return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+
+    loadStories();
+  </script>
+</body>
+</html>

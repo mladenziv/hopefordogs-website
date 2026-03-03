@@ -1,0 +1,3093 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hope for Dogs — Adopteer een Straathond uit Bosnie en Servie</title>
+  <meta name="description" content="Hope for Dogs redt straathonden in Bosnie en Servie en vindt hen een liefdevol thuis in Nederland en Belgie. Bekijk beschikbare honden of steun ons werk.">
+  <link rel="canonical" href="https://www.hopefordogseurope.com/">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Hope for Dogs">
+  <meta property="og:title" content="Hope for Dogs — Adopteer een Straathond uit Bosnie en Servie">
+  <meta property="og:description" content="Hope for Dogs redt straathonden in Bosnie en Servie en vindt hen een liefdevol thuis in Nederland en Belgie. Bekijk beschikbare honden of steun ons werk.">
+  <meta property="og:url" content="https://www.hopefordogseurope.com/">
+  <meta property="og:image" content="https://www.hopefordogseurope.com/images/hero-1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=20">
+  <style>
+    /* ===== HERO ===== */
+    .hero {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(to bottom, #fff, #fcf9f5);
+    }
+
+    .hero-content {
+      width: 100%;
+      max-width: 1560px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 136px 40px 48px;
+    }
+
+    .hero-left {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .hero-text {
+      width: 462px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hero-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 44px;
+      color: #362709;
+      letter-spacing: 0px;
+    }
+
+    .hero-description {
+      font-family: 'Manrope', sans-serif;
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 32px;
+      color: #424242;
+    }
+
+    .hero-buttons {
+      display: none;
+      gap: 20px;
+      align-items: center;
+    }
+
+    /* Badge */
+    .hero-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(253, 240, 197, 0.58);
+      border-radius: 48px;
+      padding: 2px 8px;
+      width: fit-content;
+    }
+
+    .hero-badge svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .hero-badge span {
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 24px;
+      letter-spacing: 0.2px;
+      color: #786526;
+    }
+
+    /* Divider */
+    .hero-divider {
+      height: 0.5px;
+      background: rgba(0, 0, 0, 0.08);
+      width: 100%;
+    }
+
+    /* Stats */
+    .hero-stats {
+      display: flex;
+      flex-direction: row;
+      gap: 72px;
+    }
+
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-stat-number {
+      font-family: 'Nunito', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 36px;
+      color: #6e5400;
+    }
+
+    .hero-stat-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 28px;
+      letter-spacing: 0.1px;
+      color: rgba(24, 24, 24, 0.6);
+    }
+
+    .hero-stat-secondary {
+      display: none;
+    }
+
+    /* Image Grid */
+    .hero-grid {
+      width: 688px;
+      height: 440px;
+      border-radius: 31.381px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+      gap: 6.276px;
+      flex-shrink: 0;
+    }
+
+    .hero-grid-large {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .hero-grid-stack {
+      width: 229px;
+      display: flex;
+      flex-direction: column;
+      gap: 6.276px;
+    }
+
+    .hero-grid-small {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .hero-grid img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ===== DOGS SECTION ===== */
+    .dogs-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #ffffff;
+    }
+
+    .dogs-header-wrap {
+      width: 100%;
+      max-width: 1560px;
+      padding: 72px 40px 40px;
+    }
+
+    .dogs-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 600px;
+    }
+
+    .dogs-header h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 48px;
+      letter-spacing: -0.72px;
+      color: #1a1a1a;
+    }
+
+    .dogs-header p {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 28px;
+      color: #545454;
+    }
+
+    .dogs-carousel {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      cursor: grab;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .dogs-carousel.dragging { cursor: grabbing; }
+    .dogs-carousel.dragging .dogs-track { pointer-events: none; }
+
+    .dogs-carousel img { -webkit-user-drag: none; user-drag: none; }
+    .dogs-carousel a { -webkit-user-drag: none; user-drag: none; }
+
+    .dogs-track {
+      display: flex;
+      gap: 32px;
+      animation: scrollDogs 30s linear infinite;
+      width: max-content;
+    }
+
+    .dogs-carousel:hover .dogs-track { animation-play-state: paused !important; }
+
+    .dogs-gradient-left {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 96px;
+      background: linear-gradient(to right, #ffffff, rgba(255,255,255,0));
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .dogs-gradient-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 96px;
+      background: linear-gradient(to left, #ffffff, rgba(255,255,255,0));
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    @keyframes scrollDogs {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .dog-card {
+      width: 328px;
+      flex-shrink: 0;
+      position: relative;
+      transition: transform 0.3s;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .dog-card:hover { transform: translateY(-4px); }
+
+    .dog-card-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dog-card-img {
+      width: 100%;
+      height: 288px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .dog-card-body {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .dog-card-name {
+      font-family: 'Nunito', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #1a1a1a;
+    }
+
+    .dog-card-desc {
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      color: #424242;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .dog-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--brand);
+      margin-top: auto;
+      padding-top: 12px;
+    }
+
+    .dog-card-link svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--brand);
+    }
+
+    /* Tag badge — ribbon style overlaid on card image */
+    .dog-card-badge {
+      position: absolute;
+      top: 12px;
+      left: -4px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      z-index: 2;
+    }
+
+    .dog-card-badge-label {
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 20px;
+      padding: 4px 12px;
+      color: #fefefd;
+      border-radius: 8px 8px 8px 0;
+    }
+
+    .dog-card-badge-tail {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 4px 4px 0;
+    }
+
+    /* Puppy — purple */
+    .dog-card-badge.puppy .dog-card-badge-label { background: #7c3aed; }
+    .dog-card-badge.puppy .dog-card-badge-tail { border-color: transparent #5b21b6 transparent transparent; }
+
+    /* Senior — red */
+    .dog-card-badge.senior .dog-card-badge-label { background: #dc2626; }
+    .dog-card-badge.senior .dog-card-badge-tail { border-color: transparent #991b1b transparent transparent; }
+
+    /* Langzitter — orange */
+    .dog-card-badge.langzitter .dog-card-badge-label { background: #ea580c; }
+    .dog-card-badge.langzitter .dog-card-badge-tail { border-color: transparent #c2410c transparent transparent; }
+
+    .dogs-buttons-wrap {
+      width: 100%;
+      max-width: 1560px;
+      padding: 40px 40px 72px;
+    }
+
+    .dogs-divider {
+      width: calc(100% - 80px);
+      max-width: calc(1560px - 80px);
+      height: 0.5px;
+      background: rgba(0,0,0,0.16);
+    }
+
+    /* ===== PROBLEM ===== */
+    .problem {
+      width: 100%;
+      background: var(--dark-1);
+      position: relative;
+      overflow: hidden;
+      padding-bottom: 72px;
+    }
+
+    .problem-bg {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 1076px;
+      height: 520px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .problem-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .problem-inner {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 168px 40px 0;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 72px;
+    }
+
+    .problem-text {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 766px;
+    }
+
+    .problem-text h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 48px;
+      letter-spacing: -0.72px;
+      color: #fff;
+    }
+
+    .problem-text p {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 28px;
+      color: rgba(255, 255, 255, 0.56);
+    }
+
+    .problem-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .problem-stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .problem-stat-divider {
+      width: 1px;
+      height: 64px;
+      background: rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .problem-stat-number {
+      font-family: 'Nunito', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 48px;
+      letter-spacing: -0.72px;
+      color: #fdf0c5;
+    }
+
+    .problem-stat-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 24px;
+      color: rgba(255, 255, 255, 0.56);
+    }
+
+    /* Photo reveal */
+    .problem-photos-wrap {
+      position: relative;
+      z-index: 1;
+      margin-top: 72px;
+    }
+
+    .problem-photos {
+      display: flex;
+      width: 100%;
+      gap: 3px;
+    }
+
+    .problem-photo {
+      flex: 1;
+      min-width: 0;
+      height: 280px;
+      background: rgba(255, 255, 255, 0.04);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .problem-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    .problem-photos.visible .problem-photo img {
+      opacity: 1;
+    }
+
+    .problem-reveal-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      background: #cd1d1d;
+      border: none;
+      border-radius: 100px;
+      padding: 12px 24px;
+      color: rgba(255, 255, 255, 0.9);
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .problem-reveal-btn:hover {
+      opacity: 0.85;
+    }
+
+    .problem-reveal-btn.hide-mode {
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .problem-reveal-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ===== SOLUTION PILLARS ===== */
+    .pillars {
+      width: 100%;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      padding: 96px 0;
+    }
+
+    .pillars-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 0 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .pillars-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 680px;
+    }
+
+    .pillars-header h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em /* -0.72px */;
+      color: var(--dark-1);
+    }
+
+    .pillars-header p {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.7;
+      color: var(--dark-2);
+    }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .pillar-card {
+      background: var(--beige);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pillar-image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      background: #fff;
+    }
+
+    .pillar-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .pillar-icon {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pillar-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--gold);
+    }
+
+    .pillar-body {
+      padding: 24px 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pillar-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--dark-1);
+    }
+
+    .pillar-desc {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--dark-2);
+    }
+
+    /* ===== SOCIAL ===== */
+    .social {
+      width: 100%;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .social-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 0 40px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .social-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding-top: 72px;
+      padding-bottom: 40px;
+    }
+
+    .social-header-text {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .social-header p {
+      max-width: 600px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 28px;
+      color: #545454;
+    }
+
+    .social-follow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .social-follow-icon {
+      height: 36px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 12px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .social-follow-icon:hover {
+      opacity: 0.9;
+    }
+
+    .social-follow-icon.tiktok {
+      background: #000;
+    }
+
+    .social-follow-icon.facebook {
+      background: #1877F2;
+    }
+
+    .social-follow-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #fff;
+      flex-shrink: 0;
+    }
+
+    .social-header h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 48px;
+      letter-spacing: -0.72px;
+      color: #1a1a1a;
+    }
+
+
+    .social-carousel-wrap {
+      position: relative;
+    }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s, box-shadow 0.2s;
+    }
+
+    .carousel-arrow:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    }
+
+    .carousel-arrow.hidden { opacity: 0; pointer-events: none; }
+
+    .carousel-arrow svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--dark-1);
+    }
+
+    .carousel-arrow.prev { left: -22px; }
+    .carousel-arrow.next { right: -22px; }
+
+    .social-carousel {
+      display: flex;
+      align-items: stretch;
+      gap: 32px;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      scroll-padding-left: 0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 4px 0 12px 0;
+    }
+
+    .social-carousel::-webkit-scrollbar { display: none; }
+
+    .social-card {
+      flex: 0 0 calc(20% - 25.6px);
+      min-width: 200px;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid rgba(0,0,0,0.12);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .social-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .social-card-media {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      cursor: pointer;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .social-card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .social-card-media video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .social-card-play {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 56px;
+      height: 56px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      transition: background 0.2s;
+    }
+
+    .social-card-media:hover .social-card-play {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .social-card-play svg {
+      width: 24px;
+      height: 24px;
+      fill: #fff;
+      margin-left: 3px;
+    }
+
+    .social-card-media.playing .social-card-play {
+      display: none;
+    }
+
+    .social-card-media.playing img {
+      display: none;
+    }
+
+    .social-card-body {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .social-card-caption {
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 24px;
+      color: #424242;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: 48px;
+      max-height: 48px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .social-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 24px;
+      color: #ff5314;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .social-card-link:hover { opacity: 0.8; }
+
+    .social-card-link svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* Gallery card (2x width) */
+    .social-card.gallery {
+      flex: 0 0 calc(40% - 19.2px);
+      min-width: 400px;
+    }
+
+    .social-card-gallery {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      background: var(--dark-1);
+      overflow: hidden;
+    }
+
+    .social-card-gallery img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .social-card-gallery img.active {
+      opacity: 1;
+    }
+
+    .gallery-nav {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .gallery-nav.prev { left: 0; }
+    .gallery-nav.next { right: 0; }
+
+
+    .gallery-dots {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 2;
+    }
+
+    .gallery-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      transition: background 0.2s;
+    }
+
+    .gallery-dot.active {
+      background: #fff;
+    }
+
+    /* ===== BEFORE & AFTER ===== */
+    .before-after {
+      width: 100%;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .before-after-inner {
+      width: 100%;
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 72px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 40px;
+    }
+
+    .ba-left {
+      width: 600px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-self: stretch;
+      justify-content: space-between;
+    }
+
+    .ba-text-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-top: 32px;
+    }
+
+    .ba-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 24px;
+      color: #ff5314;
+    }
+
+    .ba-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 43px;
+      letter-spacing: -0.72px;
+      color: #1a1a1a;
+    }
+
+    .ba-description {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 30px;
+      color: #545454;
+    }
+
+    .ba-nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      padding: 1px 0;
+    }
+
+    .ba-nav-prev {
+      width: 54px;
+      height: 54px;
+      border-radius: 100px;
+      border: 1.5px solid rgba(0, 0, 0, 0.12);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .ba-nav-prev:hover {
+      border-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .ba-nav-prev svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .ba-nav-next {
+      height: 54px;
+      border-radius: 100px;
+      border: 1.5px solid rgba(0, 0, 0, 0.12);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 33.5px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 22px;
+      color: #181818;
+      transition: border-color 0.2s;
+    }
+
+    .ba-nav-next:hover {
+      border-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .ba-nav-next svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .ba-right {
+      width: 708px;
+      height: 446px;
+      flex-shrink: 0;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      gap: 8px;
+    }
+
+    .ba-image-half {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ba-image-half img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ba-photo-label {
+      position: absolute;
+      bottom: 37.5px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.46);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 24px;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .before-after-divider {
+      width: calc(100% - 80px);
+      max-width: calc(1560px - 80px);
+      height: 0.5px;
+      background: rgba(0, 0, 0, 0.16);
+    }
+
+    /* Before & After Modal */
+    .ba-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      padding: 24px;
+    }
+
+    .ba-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .ba-modal {
+      background: var(--dark-1);
+      border-radius: 20px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .ba-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: background 0.2s;
+    }
+
+    .ba-modal-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .ba-modal-close svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    .ba-modal-images {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 300px;
+      position: relative;
+      border-radius: 20px 20px 0 0;
+      overflow: hidden;
+    }
+
+    .ba-modal-images img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ba-modal-images .ba-divider {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--yellow);
+      transform: translateX(-50%);
+    }
+
+    .ba-modal-label {
+      position: absolute;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 6px;
+      top: 16px;
+      z-index: 2;
+      color: #fff;
+    }
+
+    .ba-modal-label.before { left: 16px; background: rgba(239, 68, 68, 0.85); }
+    .ba-modal-label.after { right: 16px; background: rgba(34, 197, 94, 0.85); }
+
+    .ba-modal-body {
+      padding: 32px;
+    }
+
+    .ba-modal-name {
+      font-family: 'Nunito', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .ba-modal-subtitle {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--yellow);
+      margin-bottom: 20px;
+    }
+
+    .ba-modal-text {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .ba-modal-text p {
+      margin-bottom: 12px;
+    }
+
+    .ba-modal-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ===== SECTION DIVIDER ===== */
+    .section-divider {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .section-divider hr {
+      border: none;
+      border-top: 0.5px solid rgba(0, 0, 0, 0.16);
+    }
+
+    /* ===== TEAM ===== */
+    /* ===== CTA FINAL ===== */
+    .cta-final {
+      width: 100%;
+      background: #ffffff;
+    }
+
+    .cta-final-inner {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 0 40px 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .cta-final-header {
+      padding: 88px 0 40px;
+      width: 100%;
+    }
+
+    .cta-final-header-text {
+      width: 600px;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cta-final-header-text h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 48px;
+      letter-spacing: -0.72px;
+      color: #1a1a1a;
+    }
+
+    .cta-final-header-text p {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 28px;
+      color: #545454;
+    }
+
+    .cta-costs {
+      display: flex;
+      gap: 32px;
+      width: 100%;
+    }
+
+    .cta-cost-item {
+      border: 0.5px solid rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 16px;
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .cta-cost-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.24);
+    }
+
+    .cta-cost-text {
+      padding: 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .cta-cost-amount {
+      font-family: 'Nunito', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 48px;
+      letter-spacing: -0.72px;
+      color: #1a1a1a;
+    }
+
+    .cta-cost-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 24px;
+      color: #424242;
+    }
+
+    .cta-cost-btn {
+      width: 100%;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 12px;
+      padding: 9px 33px;
+      background: transparent;
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 24px;
+      color: #181818;
+      opacity: 0.6;
+      text-align: center;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cta-cost-item:hover .cta-cost-btn {
+      opacity: 1;
+    }
+
+    .cta-payment-area {
+      padding-top: 56px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .cta-payment-logos {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      padding: 8px;
+    }
+
+    .cta-payment-logos img {
+      flex-shrink: 0;
+    }
+
+    .cta-payment-trust-text {
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 24px;
+      color: #424242;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .cta-payment-trust-text svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .cta-final-divider {
+      width: calc(100% - 80px);
+      max-width: calc(1560px - 80px);
+      height: 0.5px;
+      background: rgba(0, 0, 0, 0.16);
+      margin: 0 auto;
+    }
+
+    /* ===== DOG MODAL ===== */
+    .dog-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .dog-modal-overlay.open { display: flex; }
+    .dog-modal {
+      background: white;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 760px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      animation: dogModalIn 0.25s ease;
+    }
+    @keyframes dogModalIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .dog-modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 40px; height: 40px; border-radius: 50%;
+      border: none; background: rgba(255,255,255,0.9);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: background 0.2s;
+    }
+    .dog-modal-close:hover { background: white; }
+    .dog-modal-close svg { width: 18px; height: 18px; }
+    .dog-modal-carousel {
+      position: relative; width: 100%; aspect-ratio: 38/27;
+      overflow: hidden; border-radius: 24px 24px 0 0; background: var(--beige); user-select: none;
+    }
+    .dog-modal-carousel-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease; }
+    .dog-modal-carousel-slide { min-width: 100%; height: 100%; }
+    .dog-modal-carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
+    .dog-modal-carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.9); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12); z-index: 2;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .dog-modal-carousel-btn:hover { background: white; transform: translateY(-50%) scale(1.05); }
+    .dog-modal-carousel-btn svg { width: 20px; height: 20px; }
+    .dog-modal-carousel-prev { left: 16px; }
+    .dog-modal-carousel-next { right: 16px; }
+    .dog-modal-carousel-dots {
+      position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 2;
+    }
+    .dog-modal-carousel-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.5); border: none; cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .dog-modal-carousel-dot.active { background: white; transform: scale(1.3); }
+    .dog-modal-body { padding: 32px; }
+    .dog-modal-name {
+      font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 800;
+      line-height: 1.2; color: var(--dark-1); margin-bottom: 20px;
+    }
+    .dog-modal-status {
+      display: inline-block; font-size: 13px; font-weight: 700;
+      padding: 6px 16px; border-radius: 100px; margin-bottom: 16px;
+    }
+    .modal-status-opzoek { background: #fff3cd; color: #856404; }
+    .modal-status-in_gesprek { background: #e8daef; color: #6c3483; }
+    .modal-status-geadopteerd { background: #d4edda; color: #155724; }
+    .dog-modal-meta { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 20px; }
+    .dog-modal-meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .dog-modal-meta-label { font-size: 12px; font-weight: 700; color: var(--dark-2); text-transform: uppercase; letter-spacing: 0.05em; }
+    .dog-modal-meta-value { font-size: 16px; font-weight: 700; color: var(--dark-1); }
+    .dog-modal-desc { font-size: 15px; font-weight: 500; line-height: 1.7; color: var(--dark-2); margin-bottom: 24px; }
+    .dog-modal-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+    .dog-modal-cta .btn-facebook-outline {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      background: transparent; color: var(--dark-1); border: 1.5px solid rgba(0,0,0,0.12);
+      padding: 16px 28px; border-radius: 100px; font-family: inherit; font-size: 15px;
+      font-weight: 700; cursor: pointer; transition: border-color 0.2s; text-decoration: none;
+    }
+    .dog-modal-cta .btn-facebook-outline:hover { border-color: rgba(0,0,0,0.3); }
+    .dog-modal-cta .btn-facebook-outline svg { width: 20px; height: 20px; fill: #1877F2; }
+    .dog-modal-cta .btn-primary { padding: 16px 28px; font-size: 15px; }
+    .dog-modal-loading {
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px 0; color: var(--dark-2); font-size: 15px; gap: 12px;
+    }
+    .dog-modal-loading .mini-spinner {
+      width: 20px; height: 20px; border: 2px solid rgba(0,0,0,0.1);
+      border-top-color: var(--brand); border-radius: 50%; animation: modalSpin 0.6s linear infinite;
+    }
+    @keyframes modalSpin { to { transform: rotate(360deg); } }
+
+    /* ===== RESPONSIVE ===== */
+    /* --- MD: 1024–1247px --- */
+    @media (max-width: 1247px) {
+      .hero-content { padding: 168px 40px 48px; }
+      .hero-grid { width: auto; flex: 1; min-width: 0; max-width: 560px; height: auto; aspect-ratio: 688/440; }
+      .hero-grid-stack { width: auto; flex: 1; }
+      .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* --- SM: 768–1023px --- */
+    @media (max-width: 1023px) {
+      /* Responsive type */
+      .dogs-header h2 { font-size: 30px; }
+      .dogs-header p { font-size: 16px; }
+      .dog-card-name { font-size: 16px; }
+      .problem-text h2 { font-size: 30px; }
+      .problem-text p { font-size: 16px; }
+      .problem-stat-number { font-size: 30px; }
+      .pillars-header h2 { font-size: 32px; }
+      .pillars-header p { font-size: 15px; }
+      .pillar-title { font-size: 18px; }
+      .social-header h2 { font-size: 30px; }
+      .social-header p { font-size: 16px; }
+      .ba-title { font-size: 30px; }
+      .ba-label { font-size: 16px; }
+      .ba-description { font-size: 16px; }
+      .ba-modal-title { font-size: 24px; }
+      .cta-final-header-text h2 { font-size: 30px; }
+      .cta-final-header-text p { font-size: 16px; }
+      .cta-cost-amount { font-size: 30px; }
+      .dog-modal-name { font-size: 24px; }
+      .contact-modal h2 { font-size: 24px; }
+
+      /* Hero: flatten .hero-left so children participate in parent flex ordering */
+      .hero-content { flex-direction: column; gap: 32px; padding: 200px 40px 48px; align-items: center; }
+      .hero-left { display: contents; }
+      .hero-badge { order: 1; margin: 0 auto; }
+      .hero-text { order: 2; width: 100%; text-align: center; }
+      .hero-buttons { order: 3; display: flex; }
+      .hero-divider { display: none; }
+      .hero-grid { order: 4; width: 100%; height: auto; aspect-ratio: 688/440; border-radius: 24px; gap: 4px; max-width: none; }
+      .hero-grid-stack { width: auto; flex: 1 0 0; gap: 4px; }
+      .hero-grid-large { flex: 1 0 0; }
+      .hero-stats { order: 5; width: 100%; flex-wrap: wrap; gap: 40px; padding: 24px 0 0; border-top: 0.5px solid rgba(0,0,0,0.08); }
+      .hero-stat-secondary { display: flex; }
+      .hero-stat-secondary .hero-stat-number { color: #7f7354; }
+      .hero-stat-secondary .hero-stat-label { color: #545454; }
+
+      .problem-bg { display: block; width: 100%; height: 375px; left: 0; right: 0; top: 0; }
+      .problem-bg img { object-position: center top; }
+      .problem-inner { padding-top: 200px; gap: 48px; }
+      .problem-stats { flex-wrap: wrap; gap: 40px; }
+      .problem-stat-divider { display: none; }
+
+      .problem-photo { height: 200px; }
+
+      .social-carousel-wrap { margin-left: -40px; margin-right: -40px; }
+      .social-carousel { padding: 4px 40px 12px; scroll-padding-left: 40px; }
+      .social-card { flex: 0 0 calc(25% - 15px); }
+      .social-card.gallery { flex: 0 0 calc(50% - 10px); min-width: 320px; }
+      .carousel-arrow { display: none; }
+
+      .before-after-inner { flex-direction: column; }
+      .ba-left { width: 100%; }
+      .ba-right { width: 100%; height: auto; aspect-ratio: 708/446; }
+      .ba-nav { margin-top: 32px; }
+
+      .cta-costs { flex-wrap: wrap; gap: 16px; }
+      .cta-cost-item { flex: 1 1 calc(33.333% - 12px); min-width: 200px; }
+
+      .cta-payment-area { align-items: flex-start; }
+      .cta-payment-logos { justify-content: flex-start; gap: 14px; }
+      .cta-payment-logos img { height: 20px; width: auto; }
+      .cta-payment-trust-text { text-align: left; }
+    }
+
+    /* --- XS: 0–767px --- */
+    @media (max-width: 767px) {
+      /* Responsive type — XS (Figma-matched values) */
+      .pillars-header h2 { font-size: 22px; line-height: 28px; }
+      .pillar-title { font-size: 16px; }
+      .ba-modal-title { font-size: 22px; }
+      .dog-modal-name { font-size: 22px; }
+      .contact-modal h2 { font-size: 22px; }
+
+      /* ===== HERO — XS (Figma node 2720:9403) ===== */
+      .hero-content { padding: 160px 20px 0; gap: 32px; }
+      .hero-text { gap: 8px; margin-top: -12px; }
+      .hero-title { font-size: 26px; line-height: 30px; letter-spacing: 0px; }
+      .hero-description { font-size: 17px; line-height: 28px; opacity: 0.72; color: #181818; letter-spacing: 0.1px; }
+      .hero-buttons { display: none; }
+      .hero-grid { border-radius: 20px; gap: 4px; aspect-ratio: 353/272; height: auto; max-height: none; overflow: hidden; }
+      .hero-grid-large { flex: 1 0 0; height: auto; min-height: 0; align-self: stretch; }
+      .hero-grid-stack { flex: 1 0 0; gap: 4px; height: auto; width: auto; align-self: stretch; }
+      .hero-grid-small { flex: 1; min-height: 0; height: auto; overflow: hidden; }
+      .hero-stats {
+        gap: 40px;
+        padding: 24px 0;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        border-top: 0.5px solid rgba(0,0,0,0.08);
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .hero-stats::-webkit-scrollbar { display: none; }
+      .hero-stat { white-space: nowrap; flex-shrink: 0; }
+      .hero-stat-number { font-size: 20px; line-height: 24px; color: #6e5400; }
+      .hero-stat-label { font-size: 15px; line-height: 24px; letter-spacing: 0.2px; white-space: nowrap; color: rgba(24,24,24,0.6); }
+      .hero-stat-secondary .hero-stat-number { font-size: 20px; line-height: 24px; color: #6e5400; }
+      .hero-stat-secondary .hero-stat-label { font-size: 15px; line-height: 24px; letter-spacing: 0.2px; color: rgba(24,24,24,0.6); }
+
+      /* ===== DOGS — XS (Figma node 2720:9458): carousel → 2-col grid ===== */
+      .dogs-section { padding: 0; }
+      .dogs-header-wrap { padding: 40px 20px 0; }
+      .dogs-header { gap: 8px; }
+      .dogs-header h2 { font-size: 22px; line-height: 28px; }
+      .dogs-header p { font-size: 16px; line-height: 26px; letter-spacing: 0.15px; opacity: 0.72; }
+      .dogs-carousel { overflow: visible; cursor: auto; padding: 0 20px; margin-top: 24px; }
+      .dogs-track {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        animation: none !important;
+        width: 100% !important;
+        transform: none !important;
+      }
+      .dogs-gradient-left, .dogs-gradient-right { display: none; }
+      /* Hide duplicated cards (carousel clones them) — show max 4 */
+      .dogs-track .dog-card:nth-child(n+5) { display: none; }
+      .dog-card { width: 100% !important; height: 225px; transform: none !important; overflow: visible; }
+      .dog-card:hover { transform: none !important; }
+      .dog-card-inner { height: 100%; }
+      .dog-card-img { height: 175px; }
+      .dog-card-body { padding: 12px; gap: 0; }
+      .dog-card-name { font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 500; line-height: 26px; }
+      .dog-card-desc { display: none; }
+      .dog-card-link { display: none; }
+      .dog-card-badge { top: 15px; left: -3px; }
+      .dogs-buttons-wrap { padding: 0 20px 40px; margin-top: 24px; }
+      .dogs-buttons-wrap .btn-primary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 54px;
+        border: 1.5px solid rgba(0,0,0,0.12);
+        border-radius: 100px;
+        background: transparent;
+        color: #181818;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 0;
+      }
+      .dogs-divider { display: none; }
+      .pillars-grid { grid-template-columns: 1fr; }
+
+      /* ===== CRISIS — XS (Figma node 2720:9477): table-like stat rows ===== */
+      .problem { padding-bottom: 40px; background: linear-gradient(to bottom, #1a1a1a, #090909); overflow: visible; }
+      .problem-bg { display: block !important; width: 100%; height: 375px; left: 0; right: 0; top: 0; }
+      .problem-bg img { object-position: right center; }
+      .problem-inner { padding: 200px 20px 0; gap: 24px; }
+      .problem-text { gap: 8px; padding-bottom: 0; max-width: none; width: 100%; }
+      .problem-text h2 { font-size: 22px; line-height: 28px; }
+      .problem-text p { font-size: 16px; line-height: 26px; letter-spacing: 0.15px; }
+      /* Divider between text and stats */
+      .problem-stats {
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+        text-align: left;
+        align-items: stretch;
+        border-top: 0.5px solid rgba(255,255,255,0.08);
+        padding-top: 24px;
+      }
+      .problem-stats::before {
+        content: 'Wat zegt de data?';
+        display: block;
+        font-family: 'Manrope', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 26px;
+        color: white;
+        opacity: 0.88;
+        padding: 0 0 8px;
+        order: -1;
+      }
+      .problem-stat {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 24px;
+        padding: 8px 0;
+        border-bottom: 0.5px solid rgba(255,255,255,0.08);
+        width: 100%;
+      }
+      .problem-stat:last-child { border-bottom: none; }
+      .problem-stat-label {
+        order: -1;
+        font-size: 15px;
+        line-height: 24px;
+        letter-spacing: 0.2px;
+        opacity: 0.56;
+        flex: 1;
+        color: white;
+      }
+      .problem-stat-number {
+        font-family: 'Manrope', sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 24px;
+        letter-spacing: 0.2px;
+        color: #fdf0c5;
+        text-align: right;
+        flex-shrink: 0;
+      }
+      .problem-stat-divider { display: none; }
+
+      /* Photo reveal — compact (Figma node 2720:9505) */
+      .problem-photos-wrap {
+        margin-top: 24px;
+        padding: 24px 20px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        border-top: 0.5px solid rgba(255,255,255,0.08);
+      }
+      .problem-photos-wrap::before {
+        content: 'Waar we dagelijks mee te maken hebben';
+        display: block;
+        font-family: 'Manrope', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 26px;
+        color: white;
+        opacity: 0.88;
+      }
+      .problem-photos { width: auto; flex-wrap: nowrap; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; scroll-snap-type: x proximity; scroll-padding-left: 20px; }
+      .problem-photos::-webkit-scrollbar { display: none; }
+      .problem-photo { flex: none; width: 200px; height: 160px; scroll-snap-align: start; }
+      .problem-photo::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 24px;
+        height: 24px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 01-4.24-4.24'/%3E%3Cline x1='1' y1='1' x2='23' y2='23'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        z-index: 1;
+      }
+      .problem-photos.visible .problem-photo::before { display: none; }
+      .problem-reveal-btn {
+        position: static;
+        transform: none;
+        width: fit-content;
+        height: 43px;
+        padding: 0 24px;
+        white-space: nowrap;
+        font-size: 14px;
+        align-self: flex-start;
+      }
+
+      /* ===== BEFORE & AFTER — XS (Figma node 2720:9524) ===== */
+      /* Reorder: label → title → IMAGE → description → nav */
+      .before-after-inner { padding: 32px 20px; gap: 24px; justify-content: flex-start; }
+      .ba-left { display: contents; }
+      .ba-text-container { display: contents; }
+      .ba-label {
+        font-family: 'Nunito', sans-serif;
+        font-weight: 800;
+        font-size: 20px;
+        line-height: 24px;
+        order: 1;
+        margin-bottom: -16px; /* reduce parent 24px gap to 8px before title */
+      }
+      .ba-title {
+        font-size: 22px;
+        line-height: 28px;
+        order: 2;
+        width: 100%;
+        max-width: none;
+        letter-spacing: 0px;
+      }
+      .ba-right {
+        order: 3;
+        border-radius: 20px;
+        gap: 4px;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 708 / 446;
+        position: relative;
+      }
+      .ba-right::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: white;
+        z-index: 2;
+        box-shadow: 0 0 0 4px white;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48' fill='none'%3E%3Ccircle cx='24' cy='24' r='24' fill='white'/%3E%3Ccircle cx='24' cy='24' r='20' fill='%23dfb87e'/%3E%3Cpath d='M20 16l8 8-8 8' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        box-shadow: none;
+      }
+      .ba-photo-label { display: none; }
+      .ba-description {
+        font-size: 16px;
+        line-height: 26px;
+        letter-spacing: 0.15px;
+        color: #181818;
+        order: 4;
+        width: 100%;
+      }
+      .ba-nav { margin-top: 0; order: 5; width: 100%; }
+      .ba-nav-next { flex: 1; }
+      .before-after-divider { display: none; }
+
+      /* ===== SOCIAL — XS (Figma node 2720:9553) ===== */
+      .social { background: #fcf9f5; }
+      .social-inner { padding: 32px 20px; gap: 24px; }
+      .social-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0;
+        gap: 24px;
+      }
+      .social-header-text { gap: 8px; }
+      .social-header h2 { font-size: 22px; line-height: 28px; }
+      .social-header p { font-size: 16px; line-height: 26px; letter-spacing: 0.15px; opacity: 0.72; }
+      .social-follow { margin-top: 0; }
+      /* Carousel: break out of padding to go edge-to-edge */
+      .social-carousel-wrap { margin-left: -20px; margin-right: -20px; }
+      .social-carousel { gap: 12px; padding: 4px 20px 12px; scroll-padding-left: 20px; }
+      .social-card { flex: 0 0 270px; min-width: 270px; }
+      .social-card.gallery { flex: 0 0 270px; min-width: 270px; }
+
+      .section-divider { padding: 0 20px; }
+
+      /* ===== DONATION — XS (Figma node 2720:9569): 2x2 grid ===== */
+      .cta-final-inner { padding: 32px 20px; gap: 24px; }
+      .cta-final-header { padding: 0; }
+      .cta-final-header-text { width: 100%; gap: 8px; }
+      .cta-final-header-text h2 { font-size: 22px; line-height: 28px; color: #181818; }
+      .cta-final-header-text p { font-size: 16px; line-height: 26px; letter-spacing: 0.15px; opacity: 0.72; color: #181818; }
+      .cta-costs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .cta-cost-item { flex: unset; min-width: 0; padding: 8px; border-width: 0.5px; gap: 0; }
+      .cta-cost-item:nth-child(n+5) { display: none; }
+      .cta-cost-text { padding: 16px 24px; flex: 1; }
+      .cta-cost-amount { font-size: 34px; line-height: 48px; letter-spacing: -0.72px; }
+      .cta-cost-label { font-size: 15px; line-height: 24px; }
+      .cta-cost-btn { display: none; }
+      .cta-payment-area { padding-top: 12px; gap: 12px; }
+      .cta-payment-logos { flex-wrap: nowrap; justify-content: flex-start; gap: 14px; }
+      .cta-payment-logos img { height: 20px; width: auto; }
+
+      /* ===== MODALS — XS ===== */
+      .ba-modal-images { height: 200px; }
+      .ba-modal-body { padding: 24px; }
+      .dog-modal-carousel { aspect-ratio: 4/3; border-radius: 20px 20px 0 0; }
+      .dog-modal-body { padding: 24px; }
+      .dog-modal-cta { flex-direction: column; }
+    }
+
+    /* ============ CONTACT MODAL ============ */
+    .contact-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      justify-content: center; align-items: center; padding: 20px;
+    }
+    .contact-overlay.open { display: flex; }
+    .contact-modal {
+      background: white; border-radius: 24px; width: 100%; max-width: 560px;
+      max-height: 90vh; overflow-y: auto; padding: 40px; position: relative;
+      animation: dogModalIn 0.25s ease;
+    }
+    .contact-modal-close {
+      position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
+      border-radius: 50%; border: none; background: rgba(0,0,0,0.06); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+    }
+    .contact-modal-close:hover { background: rgba(0,0,0,0.1); }
+    .contact-modal-close svg { width: 18px; height: 18px; }
+    .contact-modal h2 { font-size: 28px; margin-bottom: 8px; }
+    .contact-modal > p { color: var(--dark-2); font-size: 15px; margin-bottom: 24px; }
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 14px; font-weight: 600; color: var(--dark-1); }
+    .form-group input, .form-group textarea {
+      padding: 14px 16px; border: 2px solid rgba(0,0,0,0.1); border-radius: 12px;
+      font-family: inherit; font-size: 15px; transition: border-color 0.2s; outline: none;
+    }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--brand); }
+    .form-group textarea { min-height: 120px; resize: vertical; }
+    .form-success {
+      display: none; text-align: center; padding: 32px;
+      background: #d4edda; border-radius: 16px; color: #155724;
+    }
+    .form-success h3 { font-size: 20px; margin-bottom: 8px; }
+    @media (max-width: 767px) {
+      .form-row { grid-template-columns: 1fr; }
+      .contact-modal { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="vaul-wrapper">
+  <div id="nav-placeholder"></div>
+
+  <main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <!-- Text -->
+      <div class="hero-left">
+        <div class="hero-badge">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 14s-5.5-3.5-5.5-7A3.5 3.5 0 0 1 8 4.5 3.5 3.5 0 0 1 13.5 7C13.5 10.5 8 14 8 14z" fill="#ff5314"/></svg>
+          <span data-i18n="index.hero.badge">non-profitorganisatie</span>
+        </div>
+        <div class="hero-text">
+          <h1 class="hero-title" data-i18n-html="index.hero.title">Waar hoop niet opgeeft</h1>
+          <p class="hero-description" data-i18n="index.hero.subtitle">Wat begint met opvang, eindigt met vertrouwen, stabiliteit en een liefdevol thuis.</p>
+        </div>
+        <div class="hero-buttons">
+          <a href="over-ons.html" class="btn-primary" data-i18n="index.hero.btn1">Ontdek onze missie</a>
+          <a href="honden.html" class="btn-secondary" data-i18n="index.hero.btn2">Onze honden</a>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-number">800+</div>
+            <div class="hero-stat-label" data-i18n="index.stat.rescued">Honden gered</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-number">60+</div>
+            <div class="hero-stat-label" data-i18n="index.stat.incare">Honden in onze zorg</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-number">1200+</div>
+            <div class="hero-stat-label" data-i18n="index.stat.sterilized">Sterilisaties uitgevoerd</div>
+          </div>
+          <div class="hero-stat hero-stat-secondary">
+            <div class="hero-stat-number">100-200k</div>
+            <div class="hero-stat-label" data-i18n="index.stat.stray">Zwerfhonden in de regio</div>
+          </div>
+          <div class="hero-stat hero-stat-secondary">
+            <div class="hero-stat-number">&#8364;0</div>
+            <div class="hero-stat-label" data-i18n="index.stat.subsidy">Overheidssubsidie</div>
+          </div>
+        </div>
+      </div>
+      <!-- Image Grid -->
+      <div class="hero-grid">
+        <div class="hero-grid-large">
+          <picture><source srcset="images/hero-1.webp" type="image/webp"><img src="images/hero-1.png" alt="Honden in het asiel" loading="eager"></picture>
+        </div>
+        <div class="hero-grid-stack">
+          <div class="hero-grid-small"><picture><source srcset="images/hero-2.webp" type="image/webp"><img src="images/hero-2.png" alt="Hond wordt verzorgd" loading="eager"></picture></div>
+          <div class="hero-grid-small"><picture><source srcset="images/hero-3.webp" type="image/webp"><img src="images/hero-3.png" alt="Hond vindt een thuis" loading="eager"></picture></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AVAILABLE DOGS -->
+  <section class="dogs-section">
+    <div class="dogs-header-wrap">
+      <div class="dogs-header">
+        <h2 data-i18n="index.dogs.title">Opzoek naar een warm huis</h2>
+        <p data-i18n="index.dogs.subtitle">Gered van de straat, medisch behandeld en klaar voor een nieuw begin.</p>
+      </div>
+    </div>
+    <div class="dogs-carousel" id="dogsCarousel">
+      <div class="dogs-track" id="dogsTrack"></div>
+      <div class="dogs-gradient-left"></div>
+      <div class="dogs-gradient-right"></div>
+    </div>
+    <div class="dogs-buttons-wrap">
+      <a href="honden.html" class="btn-primary" data-i18n="index.dogs.btn">Bekijk alle honden</a>
+    </div>
+    <div class="dogs-divider"></div>
+  </section>
+
+  <!-- THE PROBLEM -->
+  <section class="problem">
+    <div class="problem-bg">
+      <picture>
+        <source media="(max-width: 1023px)" srcset="images/crisis-bg-mobile.webp" type="image/webp">
+        <source media="(max-width: 1023px)" srcset="images/crisis-bg-mobile.png">
+        <img src="images/crisis-bg.webp" alt="Zwerfhonden op straat in Bosnie en Servie" loading="lazy">
+      </picture>
+    </div>
+
+    <div class="problem-inner">
+      <div class="problem-text">
+        <h2 data-i18n="index.crisis.title">Een crisis die niemand ziet</h2>
+        <p data-i18n="index.crisis.subtitle">Wat voor velen onzichtbaar is, is voor hen dagelijkse overleving. Honger, verwondingen en eindeloze voortplanting houden de cyclus van lijden in stand.</p>
+      </div>
+
+      <div class="problem-stats">
+        <div class="problem-stat">
+          <div class="problem-stat-number">200.000+</div>
+          <div class="problem-stat-label" data-i18n="index.crisis.stat1">Zwerfhonden in de regio</div>
+        </div>
+        <div class="problem-stat-divider"></div>
+        <div class="problem-stat">
+          <div class="problem-stat-number">20%</div>
+          <div class="problem-stat-label" data-i18n="index.crisis.stat2">Overlevingskans van pups</div>
+        </div>
+        <div class="problem-stat-divider"></div>
+        <div class="problem-stat">
+          <div class="problem-stat-number">3-4 jaar</div>
+          <div class="problem-stat-label" data-i18n="index.crisis.stat3">Gemiddelde levensverwachting</div>
+        </div>
+        <div class="problem-stat-divider"></div>
+        <div class="problem-stat">
+          <div class="problem-stat-number">1/10</div>
+          <div class="problem-stat-label" data-i18n="index.crisis.stat4">Sterft in het verkeer</div>
+        </div>
+        <div class="problem-stat-divider"></div>
+        <div class="problem-stat">
+          <div class="problem-stat-number">&#8364;0</div>
+          <div class="problem-stat-label" data-i18n="index.crisis.stat5">Overheidssubsidie</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="problem-photos-wrap">
+      <div class="problem-photos" id="problemPhotos"></div>
+      <button class="problem-reveal-btn" id="revealBtn">
+        <svg class="icon-hide" style="display:none" viewBox="0 0 24 24"><path d="M11.83 9L15 12.16V12a3 3 0 00-3-3h-.17m-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 003 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 01-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28.46.46A11.8 11.8 0 001 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3M12 7a5 5 0 015 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7z"/></svg>
+        <svg class="icon-show" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        <span data-i18n="index.crisis.reveal">Onthul gevoelige beelden</span>
+      </button>
+    </div>
+
+  </section>
+
+  <!-- BEFORE & AFTER -->
+  <section class="before-after">
+    <div class="before-after-inner">
+      <div class="ba-left">
+        <div class="ba-text-container">
+          <div class="ba-label" data-i18n="ba.label">The before &amp; after</div>
+          <h2 class="ba-title" id="baTitle">Rex werd uitgehongerd gevonden op straat. Nu geniet hij van een warm thuis.</h2>
+          <p class="ba-description" id="baDescription">Rex werd gevonden op straat in de buitenwijken van Bijeljina &#8212; uitgehongerd, bang en vol schurft. Na weken van intensieve medische zorg, goede voeding en veel liefde begon Rex langzaam te herstellen. Zijn vacht groeide terug, hij kwam aan in gewicht en zijn vertrouwen in mensen keerde terug.</p>
+        </div>
+        <div class="ba-nav">
+          <button class="ba-nav-prev" onclick="cycleBA(-1)" aria-label="Vorig verhaal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#181818" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l6-6M5 12l6 6"/></svg>
+          </button>
+          <button class="ba-nav-next" onclick="cycleBA(1)">
+            <span data-i18n="ba.next">Volgend verhaal</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#181818" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M19 12l-6-6M19 12l-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="ba-right">
+        <div class="ba-image-half">
+          <img id="baBeforeImg" src="images/before-rescue.jpg" alt="Hond voor de redding" loading="lazy">
+          <span class="ba-photo-label" data-i18n="ba.before">Before</span>
+        </div>
+        <div class="ba-image-half">
+          <img id="baAfterImg" src="images/adopted-dog.png" alt="Hond na de redding en herstel" loading="lazy">
+          <span class="ba-photo-label" data-i18n="ba.after">After</span>
+        </div>
+      </div>
+    </div>
+    <div class="before-after-divider"></div>
+  </section>
+
+  <!-- SOCIAL MEDIA -->
+  <section class="social">
+    <div class="social-inner">
+      <div class="social-header">
+        <div class="social-header-text">
+          <h2 data-i18n="index.social.title">Een kijkje in ons leven</h2>
+          <p data-i18n="index.social.subtitle">Blijf op de hoogte van onze reddingen en updates uit het asiel.</p>
+        </div>
+        <div class="social-follow">
+          <a href="https://www.tiktok.com/@hope_for_dogs_europe" target="_blank" rel="noopener" class="social-follow-icon tiktok" title="TikTok">
+            <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.73a8.19 8.19 0 004.76 1.52V6.8a4.84 4.84 0 01-1-.11z"/></svg>
+            <span>Tiktok</span>
+          </a>
+          <a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener" class="social-follow-icon facebook" title="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            <span>Facebook</span>
+          </a>
+        </div>
+      </div>
+      <div class="social-carousel-wrap">
+        <button class="carousel-arrow prev hidden" id="carouselPrev" onclick="scrollCarousel(-1)">
+          <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <div class="social-carousel" id="socialFeed"></div>
+        <button class="carousel-arrow next hidden" id="carouselNext" onclick="scrollCarousel(1)">
+          <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"><hr></div>
+
+  <!-- CTA FINAL (combined donate + close) -->
+  <section class="cta-final">
+    <div class="cta-final-inner">
+      <div class="cta-final-header">
+        <div class="cta-final-header-text">
+          <h2 data-i18n="index.cta.title">Jouw bijdrage maakt het verschil</h2>
+          <p data-i18n="index.cta.subtitle">Wij ontvangen geen overheidssteun. Elke euro die we besteden komt van donateurs en uit eigen zak.</p>
+        </div>
+      </div>
+      <div class="cta-costs">
+        <a href="doneer.html?bedrag=10" class="cta-cost-item">
+          <div class="cta-cost-text">
+            <div class="cta-cost-amount">&#8364;10</div>
+            <div class="cta-cost-label" data-i18n="index.cta.d10">Voer voor een hond voor een week</div>
+          </div>
+          <span class="cta-cost-btn" data-i18n="cta.select">Selecteer</span>
+        </a>
+        <a href="doneer.html?bedrag=25" class="cta-cost-item">
+          <div class="cta-cost-text">
+            <div class="cta-cost-amount">&#8364;25</div>
+            <div class="cta-cost-label" data-i18n="index.cta.d25">Volledige vaccinaties voor een puppy</div>
+          </div>
+          <span class="cta-cost-btn" data-i18n="cta.select">Selecteer</span>
+        </a>
+        <a href="doneer.html?bedrag=50" class="cta-cost-item">
+          <div class="cta-cost-text">
+            <div class="cta-cost-amount">&#8364;50</div>
+            <div class="cta-cost-label" data-i18n="index.cta.d50">Sterilisatie van een zwerfhond</div>
+          </div>
+          <span class="cta-cost-btn" data-i18n="cta.select">Selecteer</span>
+        </a>
+        <a href="doneer.html?bedrag=100" class="cta-cost-item">
+          <div class="cta-cost-text">
+            <div class="cta-cost-amount">&#8364;100</div>
+            <div class="cta-cost-label" data-i18n="index.cta.d100">Noodoperatie voor een gewonde hond</div>
+          </div>
+          <span class="cta-cost-btn" data-i18n="cta.select">Selecteer</span>
+        </a>
+        <a href="doneer.html?bedrag=200" class="cta-cost-item">
+          <div class="cta-cost-text">
+            <div class="cta-cost-amount">&#8364;200</div>
+            <div class="cta-cost-label" data-i18n="index.cta.d200">Volledige behandeling en opvang</div>
+          </div>
+          <span class="cta-cost-btn" data-i18n="cta.select">Selecteer</span>
+        </a>
+      </div>
+      <div class="cta-payment-area">
+        <div class="cta-payment-logos">
+          <img src="images/payment/Visa.svg" alt="Visa" width="47" height="32">
+          <img src="images/payment/Mastercard.svg" alt="Mastercard" width="47" height="32">
+          <img src="images/payment/Paypal.svg" alt="PayPal" width="47" height="32">
+          <img src="images/payment/Gpay.svg" alt="Google Pay" width="47" height="32">
+          <img src="images/payment/Apple pay.svg" alt="Apple Pay" width="47" height="32">
+          <img src="images/payment/Ideal.svg" alt="iDEAL" width="47" height="32">
+          <img src="images/payment/Sepa.svg" alt="SEPA" width="47" height="32">
+        </div>
+        <p class="cta-payment-trust-text">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.125 9.625h-.688V8.25a3.438 3.438 0 00-6.875 0v1.375h-.687A1.375 1.375 0 005.5 11v5.5a1.375 1.375 0 001.375 1.375h8.25A1.375 1.375 0 0016.5 16.5V11a1.375 1.375 0 00-1.375-1.375zM9.625 8.25a1.375 1.375 0 012.75 0v1.375h-2.75V8.25z" fill="#424242"/>
+          </svg>
+          <span data-i18n="cta.mollie">Veilig betalen via Mollie</span>
+        </p>
+      </div>
+    </div>
+    <div class="cta-final-divider"></div>
+  </section>
+
+  <!-- TEAM (shared component) -->
+  <div id="team-placeholder"></div>
+
+  </main>
+  <div id="footer-placeholder"></div>
+  </div><!-- /.vaul-wrapper -->
+
+  <!-- Before & After Modal -->
+  <div class="ba-modal-overlay" id="baModalOverlay" onclick="closeBAModal(event)">
+    <div class="ba-modal" id="baModal">
+      <button class="ba-modal-close" onclick="closeBAModal(event, true)">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+      <div class="ba-modal-images" id="baModalImages"></div>
+      <div class="ba-modal-body">
+        <div class="ba-modal-name" id="baModalName"></div>
+        <div class="ba-modal-subtitle" id="baModalSubtitle"></div>
+        <div class="ba-modal-text" id="baModalText"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOG MODAL (shared with honden.html) -->
+  <div class="dog-modal-overlay" id="dogModalOverlay">
+    <div class="dog-modal" id="dogModal">
+      <button class="dog-modal-close" id="dogModalClose">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
+      </button>
+      <div class="dog-modal-carousel" id="dogModalCarousel">
+        <div class="dog-modal-carousel-track" id="dogModalTrack"></div>
+        <button class="dog-modal-carousel-btn dog-modal-carousel-prev" id="dogModalPrev">
+          <svg viewBox="0 0 16 16"><path d="M10 3l-5 5 5 5" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="dog-modal-carousel-btn dog-modal-carousel-next" id="dogModalNext">
+          <svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="dog-modal-carousel-dots" id="dogModalDots"></div>
+      </div>
+      <div class="dog-modal-body" id="dogModalBody">
+        <div class="dog-modal-loading"><div class="mini-spinner"></div> Laden...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT MODAL -->
+  <div class="contact-overlay" id="contactOverlay">
+    <div class="contact-modal">
+      <button class="contact-modal-close" id="contactModalClose">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
+      </button>
+      <h2>Interesse in <span id="contactDogName"></span>?</h2>
+      <p>Vul het formulier in en wij nemen zo snel mogelijk contact met je op.</p>
+      <form class="contact-form" id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="contactNaam">Naam *</label>
+            <input type="text" id="contactNaam" required placeholder="Je volledige naam">
+          </div>
+          <div class="form-group">
+            <label for="contactEmail">E-mail *</label>
+            <input type="email" id="contactEmail" required placeholder="je@email.nl">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="contactTelefoon">Telefoonnummer</label>
+          <input type="tel" id="contactTelefoon" placeholder="06-12345678">
+        </div>
+        <div class="form-group">
+          <label for="contactBericht">Bericht *</label>
+          <textarea id="contactBericht" required placeholder="Vertel ons waarom je ge&iuml;nteresseerd bent in deze hond..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary" id="contactSubmitBtn">Verstuur bericht</button>
+      </form>
+      <div class="form-success" id="contactSuccess">
+        <h3>Bericht verstuurd!</h3>
+        <p>Bedankt voor je interesse. We nemen zo snel mogelijk contact met je op.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="components.js?v=20"></script>
+  <script src="supabase-config.js"></script>
+  <script src="dog-card.js"></script>
+
+  <script>
+    // Photo hide/show toggle
+    document.getElementById('revealBtn').addEventListener('click', function() {
+      var photos = document.getElementById('problemPhotos');
+      var label = this.querySelector('span');
+      var iconHide = this.querySelector('.icon-hide');
+      var iconShow = this.querySelector('.icon-show');
+      var lang = h4dGetLanguage();
+      if (photos.classList.contains('visible')) {
+        photos.classList.remove('visible');
+        this.classList.remove('hide-mode');
+        iconHide.style.display = 'none';
+        iconShow.style.display = '';
+        label.textContent = (H4D_I18N['index.crisis.reveal'] && H4D_I18N['index.crisis.reveal'][lang]) || 'Onthul gevoelige beelden';
+        label.setAttribute('data-i18n', 'index.crisis.reveal');
+      } else {
+        photos.classList.add('visible');
+        this.classList.add('hide-mode');
+        iconHide.style.display = '';
+        iconShow.style.display = 'none';
+        label.textContent = (H4D_I18N['index.crisis.hide'] && H4D_I18N['index.crisis.hide'][lang]) || 'Verberg gevoelige beelden';
+        label.setAttribute('data-i18n', 'index.crisis.hide');
+      }
+    });
+
+    // Load crisis photos from Supabase
+    async function loadCrisisPhotos() {
+      try {
+        var photos = await supabaseGet('crisis_photos', 'select=*&order=sort_order.asc,created_at.asc');
+        var container = document.getElementById('problemPhotos');
+        if (photos.length === 0) {
+          document.querySelector('.problem-photos-wrap').style.display = 'none';
+          return;
+        }
+        container.innerHTML = photos.map(function(p) {
+          return '<div class="problem-photo"><img src="' + p.photo_url + '" alt="' + (p.alt_text || '') + '" loading="lazy"></div>';
+        }).join('');
+      } catch (err) {
+        console.error('Error loading crisis photos:', err);
+      }
+    }
+    loadCrisisPhotos();
+
+    // Dog carousel
+    const carousel = document.getElementById('dogsCarousel');
+    const track = document.getElementById('dogsTrack');
+
+    async function loadCarouselDogs() {
+      try {
+        const [allDocs, primaryPhotos] = await Promise.all([
+          supabaseGet('dogs', 'select=*&status=neq.geadopteerd&order=created_at.desc&limit=20'),
+          supabaseGet('dog_photos', 'select=dog_id,photo_url&is_primary=eq.true')
+        ]);
+
+        // Build primary photo map
+        const primaryPhotoMap = {};
+        primaryPhotos.forEach(p => { primaryPhotoMap[p.dog_id] = p.photo_url; });
+
+        // Fetch fallback photos for dogs without a primary
+        const dogsWithoutPrimary = allDocs.filter(d => !primaryPhotoMap[d.id]).map(d => d.id);
+        if (dogsWithoutPrimary.length > 0) {
+          const fallbacks = await supabaseGet('dog_photos', 'select=dog_id,photo_url&dog_id=in.(' + dogsWithoutPrimary.join(',') + ')&limit=50');
+          fallbacks.forEach(p => {
+            if (!primaryPhotoMap[p.dog_id]) primaryPhotoMap[p.dog_id] = p.photo_url;
+          });
+        }
+
+        const dogs = allDocs.map(d => ({
+          ...d,
+          photo: primaryPhotoMap[d.id] || null
+        }));
+
+        if (dogs.length === 0) {
+          track.innerHTML = '<div style="padding:40px;color:#545454;">Nog geen honden beschikbaar.</div>';
+          return;
+        }
+
+        // Store dogs for modal use
+        window._carouselDogs = dogs;
+        const cardsHTML = dogs.map(function(d) { return dogCardHTML(d, { modal: true }); }).join('');
+        track.innerHTML = cardsHTML + cardsHTML;
+        track.style.animation = 'scrollDogs ' + Math.max(30, dogs.length * 3) + 's linear infinite';
+        initDragToScroll();
+      } catch (err) {
+        console.error('Error loading carousel dogs:', err);
+      }
+    }
+
+    function initDragToScroll() {
+      let isDown = false, startX = 0, scrollStart = 0, manualMode = false, didDrag = false;
+      const totalCards = track.children.length / 2;
+      const duration = Math.max(30, totalCards * 3);
+
+      function resumeAnimation() {
+        if (!manualMode) return;
+        if (window._carouselPaused) return;
+        // Read current manual position
+        const currentX = parseFloat(track.style.transform.replace('translateX(', '').replace('px)', '')) || 0;
+        // Total scrollable width is half the track (the duplicated set)
+        const halfWidth = track.scrollWidth / 2;
+        // Normalize position to be within 0 to -halfWidth
+        let normalizedX = currentX % halfWidth;
+        if (normalizedX > 0) normalizedX -= halfWidth;
+        // Calculate what percentage of the animation this corresponds to
+        const progress = Math.abs(normalizedX) / halfWidth;
+        const remainingDuration = duration * (1 - progress);
+
+        track.style.transform = `translateX(${normalizedX}px)`;
+        track.style.animation = 'none';
+        // Force reflow
+        void track.offsetWidth;
+        track.style.animation = `scrollDogs ${duration}s linear infinite`;
+        track.style.animationDelay = `-${progress * duration}s`;
+        manualMode = false;
+      }
+
+      carousel.addEventListener('mouseleave', () => {
+        if (isDown) { isDown = false; carousel.classList.remove('dragging'); }
+        resumeAnimation();
+      });
+
+      carousel.addEventListener('mousedown', (e) => {
+        isDown = true;
+        didDrag = false;
+        startX = e.pageX;
+        if (!manualMode) {
+          const matrix = new DOMMatrix(window.getComputedStyle(track).transform);
+          scrollStart = matrix.m41;
+        } else {
+          scrollStart = parseFloat(track.style.transform.replace('translateX(', '').replace('px)', '')) || 0;
+        }
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        var moved = Math.abs(e.pageX - startX);
+        if (moved > 5 && !didDrag) {
+          didDrag = true;
+          track.style.animation = 'none';
+          track.style.animationDelay = '';
+          track.style.transform = `translateX(${scrollStart}px)`;
+          manualMode = true;
+          carousel.classList.add('dragging');
+        }
+        if (didDrag) {
+          var newX = scrollStart + e.pageX - startX;
+          // Clamp: don't scroll past first card (0) or past last card
+          var halfWidth = track.scrollWidth / 2;
+          var maxX = 0;
+          var minX = -(halfWidth - carousel.offsetWidth + 40);
+          if (newX > maxX) newX = maxX;
+          if (newX < minX) newX = minX;
+          track.style.transform = `translateX(${newX}px)`;
+        }
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (!isDown) return;
+        isDown = false;
+        carousel.classList.remove('dragging');
+      });
+
+      // Block link clicks only if the user actually dragged
+      carousel.addEventListener('click', (e) => {
+        if (didDrag) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }, true);
+    }
+
+    loadCarouselDogs();
+
+    // Social feed
+    var fbIcon = '<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>';
+    var ttIcon = '<svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.78a8.21 8.21 0 004.77 1.52V6.84a4.86 4.86 0 01-1-.15z"/></svg>';
+    var playIcon = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+    var arrowIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9.2-9.2M7 7h9.2v9.2"/></svg>';
+
+    var chevronLeft = '<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>';
+    var chevronRight = '<svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
+
+    function socialCardHTML(post, idx) {
+      var platformName = post.platform === 'facebook' ? 'Facebook' : 'TikTok';
+      var hasVideo = post.video_url && post.video_url.length > 0;
+      var hasGallery = post.gallery_images && post.gallery_images.length > 1;
+      var isGallery = hasGallery && !hasVideo;
+
+      var media;
+      if (isGallery) {
+        var images = post.gallery_images;
+        var imgs = '';
+        var dots = '';
+        for (var i = 0; i < images.length; i++) {
+          imgs += '<img src="' + images[i] + '" alt="Hope for Dogs social media post" loading="lazy"' + (i === 0 ? ' class="active"' : '') + '>';
+          dots += '<div class="gallery-dot' + (i === 0 ? ' active' : '') + '"></div>';
+        }
+        media = '<div class="social-card-gallery" data-gallery="' + idx + '">' +
+          imgs +
+          '<div class="gallery-nav prev" onclick="galleryNav(' + idx + ',-1)"></div>' +
+          '<div class="gallery-nav next" onclick="galleryNav(' + idx + ',1)"></div>' +
+          '<div class="gallery-dots">' + dots + '</div>' +
+        '</div>';
+      } else if (hasVideo) {
+        media = '<div class="social-card-media" onclick="playVideo(this)" data-video="' + post.video_url + '">' +
+          '<img src="' + post.image_url + '" alt="' + (post.caption ? post.caption.replace(/"/g, '&quot;').substring(0, 80) : 'Hope for Dogs update') + '" loading="lazy">' +
+          '<div class="social-card-play">' + playIcon + '</div>' +
+        '</div>';
+      } else {
+        media = '<div class="social-card-media">' +
+          '<img src="' + post.image_url + '" alt="' + (post.caption ? post.caption.replace(/"/g, '&quot;').substring(0, 80) : 'Hope for Dogs update') + '" loading="lazy">' +
+        '</div>';
+      }
+
+      return '<div class="social-card' + (isGallery ? ' gallery' : '') + '">' +
+        media +
+        '<div class="social-card-body">' +
+          (post.caption ? '<div class="social-card-caption">' + post.caption.replace(/\n/g, ' ') + '</div>' : '') +
+          '<a href="' + post.post_url + '" target="_blank" rel="noopener" class="social-card-link">Bekijk op ' + platformName + ' ' + arrowIcon + '</a>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function galleryNav(idx, dir) {
+      var el = document.querySelector('[data-gallery="' + idx + '"]');
+      if (!el) return;
+      var imgs = el.querySelectorAll('img');
+      var dots = el.querySelectorAll('.gallery-dot');
+      var current = 0;
+      for (var i = 0; i < imgs.length; i++) {
+        if (imgs[i].classList.contains('active')) { current = i; break; }
+      }
+      imgs[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      var next = (current + dir + imgs.length) % imgs.length;
+      imgs[next].classList.add('active');
+      dots[next].classList.add('active');
+    }
+
+    function playVideo(el) {
+      document.querySelectorAll('.social-card-media.playing video').forEach(function(v) {
+        v.pause();
+      });
+
+      if (el.classList.contains('playing')) {
+        el.querySelector('video').play();
+        return;
+      }
+      var src = el.getAttribute('data-video');
+      var video = document.createElement('video');
+      video.src = src;
+      video.controls = true;
+      video.autoplay = true;
+      video.playsInline = true;
+      el.appendChild(video);
+      el.classList.add('playing');
+    }
+
+    async function loadSocialFeed() {
+      try {
+        var posts = await supabaseGet('social_posts', 'select=*&order=sort_order.asc');
+        var feed = document.getElementById('socialFeed');
+        posts.forEach(function(post, idx) {
+          feed.innerHTML += socialCardHTML(post, idx);
+        });
+      } catch (err) {
+        console.error('Error loading social feed:', err);
+      }
+    }
+
+    loadSocialFeed();
+
+    // Before & After — loaded from Supabase
+    var baStories = [];
+    var currentBA = 0;
+
+    function mapBARow(row) {
+      return {
+        name: row.name,
+        subtitle: { nl: row.subtitle_nl || '', de: row.subtitle_de || '', en: row.subtitle_en || '' },
+        title: { nl: row.title_nl || '', de: row.title_de || '', en: row.title_en || '' },
+        description: { nl: row.description_nl || '', de: row.description_de || '', en: row.description_en || '' },
+        text: { nl: row.text_nl || '', de: row.text_de || '', en: row.text_en || '' },
+        beforeImg: row.before_img,
+        afterImg: row.after_img
+      };
+    }
+
+    function showBAStory(index) {
+      if (baStories.length === 0) return;
+      var story = baStories[index];
+      var lang = h4dGetLanguage();
+      document.getElementById('baTitle').textContent = story.title[lang] || story.title.nl;
+      document.getElementById('baDescription').textContent = story.description[lang] || story.description.nl;
+      document.getElementById('baBeforeImg').src = story.beforeImg;
+      document.getElementById('baAfterImg').src = story.afterImg;
+    }
+
+    async function loadBAStories() {
+      try {
+        var rows = await supabaseGet('ba_stories', 'select=*&order=sort_order.asc,created_at.asc');
+        if (rows.length === 0) {
+          document.querySelector('.before-after').style.display = 'none';
+          return;
+        }
+        baStories = rows.map(mapBARow);
+        currentBA = 0;
+        showBAStory(0);
+        document.querySelector('.before-after').style.display = '';
+      } catch (err) {
+        console.error('Error loading BA stories:', err);
+        document.querySelector('.before-after').style.display = 'none';
+      }
+    }
+
+    loadBAStories();
+
+    function cycleBA(dir) {
+      if (baStories.length === 0) return;
+      currentBA = (currentBA + dir + baStories.length) % baStories.length;
+      showBAStory(currentBA);
+    }
+
+    function openBAModal(idx) {
+      if (!baStories[idx]) return;
+      var story = baStories[idx];
+      var lang = h4dGetLanguage();
+      var beforeLabel = (H4D_I18N['ba.before'] && H4D_I18N['ba.before'][lang]) || 'Before';
+      var afterLabel = (H4D_I18N['ba.after'] && H4D_I18N['ba.after'][lang]) || 'After';
+      document.getElementById('baModalImages').innerHTML =
+        '<img src="' + story.beforeImg + '" alt="' + beforeLabel + '" loading="lazy">' +
+        '<img src="' + story.afterImg + '" alt="' + afterLabel + '" loading="lazy">' +
+        '<div class="ba-divider"></div>' +
+        '<span class="ba-modal-label before">' + beforeLabel + '</span>' +
+        '<span class="ba-modal-label after">' + afterLabel + '</span>';
+      document.getElementById('baModalName').textContent = story.name;
+      document.getElementById('baModalSubtitle').textContent = story.subtitle[lang] || story.subtitle.nl;
+      document.getElementById('baModalText').innerHTML = story.text[lang] || story.text.nl;
+      document.getElementById('baModalOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeBAModal(e, force) {
+      if (force || e.target === document.getElementById('baModalOverlay')) {
+        vaulCloseSheet(
+          document.getElementById('baModal'),
+          document.getElementById('baModalOverlay'),
+          'active'
+        );
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeBAModal(null, true);
+        if (document.getElementById('dogModalOverlay').classList.contains('open')) closeDogModal();
+      }
+    });
+
+    function scrollCarousel(dir) {
+      var c = document.getElementById('socialFeed');
+      var card = c.querySelector('.social-card');
+      if (!card) return;
+      var scrollAmount = (card.offsetWidth + 20) * 2;
+      c.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
+    }
+
+    function updateArrows() {
+      var c = document.getElementById('socialFeed');
+      var prev = document.getElementById('carouselPrev');
+      var next = document.getElementById('carouselNext');
+      if (!c || !prev || !next) return;
+      prev.classList.toggle('hidden', c.scrollLeft <= 10);
+      next.classList.toggle('hidden', c.scrollLeft + c.clientWidth >= c.scrollWidth - 10);
+    }
+
+    var feed = document.getElementById('socialFeed');
+    feed.addEventListener('scroll', updateArrows);
+    new MutationObserver(function() {
+      setTimeout(updateArrows, 100);
+      setTimeout(positionSocialArrows, 200);
+    }).observe(feed, { childList: true });
+
+    function positionSocialArrows() {
+      var media = document.querySelector('.social-card-media');
+      if (!media) return;
+      var mediaH = media.offsetHeight;
+      var arrows = document.querySelectorAll('.carousel-arrow');
+      arrows.forEach(function(a) { a.style.top = (mediaH / 2) + 'px'; });
+    }
+    window.addEventListener('resize', positionSocialArrows);
+
+    // ===== DOG MODAL =====
+    var modalSlide = 0;
+    var modalImages = [];
+    var modalTouchStartX = 0;
+
+    var statusLabels = {
+      opzoek: 'Op zoek naar een baasje',
+      in_gesprek: 'In gesprek',
+      geadopteerd: 'Geadopteerd',
+      in_aziel: 'In asiel',
+      gemeente_aziel: 'Gemeente asiel',
+      in_opvang: 'In opvang'
+    };
+
+    window._carouselPaused = false;
+    function pauseCarousel() {
+      window._carouselPaused = true;
+      var t = document.getElementById('dogsTrack');
+      if (!t) return;
+      // Capture current visual position before stopping
+      var matrix = new DOMMatrix(window.getComputedStyle(t).transform);
+      t.style.animation = 'none';
+      t.style.animationDelay = '';
+      t.style.transform = 'translateX(' + matrix.m41 + 'px)';
+    }
+    function resumeCarousel() {
+      window._carouselPaused = false;
+      var t = document.getElementById('dogsTrack');
+      if (!t) return;
+      // Restart animation from current position
+      var totalCards = t.children.length / 2;
+      var duration = Math.max(30, totalCards * 3);
+      var currentX = parseFloat(t.style.transform.replace('translateX(', '').replace('px)', '')) || 0;
+      var halfWidth = t.scrollWidth / 2;
+      var normalizedX = currentX % halfWidth;
+      if (normalizedX > 0) normalizedX -= halfWidth;
+      var progress = Math.abs(normalizedX) / halfWidth;
+      t.style.transform = 'translateX(' + normalizedX + 'px)';
+      void t.offsetWidth;
+      t.style.animation = 'scrollDogs ' + duration + 's linear infinite';
+      t.style.animationDelay = '-' + (progress * duration) + 's';
+    }
+
+    function buildDogModalBody(dog) {
+      var gender = dog.geslacht === 'reu' ? 'Reu' : dog.geslacht === 'teefje' ? 'Teef' : null;
+      var metaHtml = '';
+      if (gender) metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Geslacht</span><span class="dog-modal-meta-value">' + gender + '</span></div>';
+      if (dog.leeftijd) metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Leeftijd</span><span class="dog-modal-meta-value">' + dog.leeftijd + '</span></div>';
+      if (dog.ras) metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Ras</span><span class="dog-modal-meta-value">' + dog.ras + '</span></div>';
+      if (dog.gesteriliseerd !== null && dog.gesteriliseerd !== undefined) {
+        metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Gesteriliseerd</span><span class="dog-modal-meta-value">' + (dog.gesteriliseerd ? 'Ja' : 'Nee') + '</span></div>';
+      }
+      var statusLabel = statusLabels[dog.status] || dog.status;
+      var ctaHtml = '';
+      if (dog.status !== 'geadopteerd') {
+        ctaHtml = '<div class="dog-modal-cta">' +
+          '<button class="btn-primary" onclick="openContactModal(\'' + dog.id + '\', \'' + (dog.naam || '').replace(/\'/g, "\\'") + '\')">Stuur een bericht</button>' +
+          '<a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener" class="btn-facebook-outline">' +
+            '<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' +
+            'Facebook</a></div>';
+      }
+      return '<div class="dog-modal-name">' + dog.naam + '</div>' +
+        (metaHtml ? '<div class="dog-modal-meta">' + metaHtml + '</div>' : '') +
+        (dog.beschrijving ? '<div class="dog-modal-desc">' + dog.beschrijving + '</div>' : '') +
+        ctaHtml;
+    }
+
+    function setModalCarousel(images) {
+      var mTrack = document.getElementById('dogModalTrack');
+      var dots = document.getElementById('dogModalDots');
+      modalImages = images;
+      modalSlide = 0;
+
+      mTrack.style.transition = 'none';
+      mTrack.innerHTML = modalImages.map(function(url) {
+        return '<div class="dog-modal-carousel-slide"><img src="' + url + '" alt="Foto van hond"></div>';
+      }).join('');
+      mTrack.style.transform = 'translateX(0)';
+
+      dots.innerHTML = modalImages.map(function(_, i) {
+        return '<button class="dog-modal-carousel-dot ' + (i === 0 ? 'active' : '') + '" data-index="' + i + '"></button>';
+      }).join('');
+
+      document.getElementById('dogModalPrev').style.display = modalImages.length <= 1 ? 'none' : '';
+      document.getElementById('dogModalNext').style.display = modalImages.length <= 1 ? 'none' : '';
+      dots.style.display = modalImages.length <= 1 ? 'none' : '';
+
+      requestAnimationFrame(function() { mTrack.style.transition = ''; });
+    }
+
+    function openDogModal(dogId) {
+      var overlay = document.getElementById('dogModalOverlay');
+      var body = document.getElementById('dogModalBody');
+
+      // Find dog from carousel data
+      var dog = (window._carouselDogs || []).find(function(d) { return d.id === dogId; });
+
+      // Render body content immediately from cached data
+      if (dog) {
+        body.innerHTML = buildDogModalBody(dog);
+        var cachedPhoto = dog.photo || (dog.photos && dog.photos.length > 0 ? dog.photos[0].photo_url : null);
+        setModalCarousel(cachedPhoto ? [cachedPhoto] : []);
+      } else {
+        body.innerHTML = '<div class="dog-modal-loading"><div class="mini-spinner"></div> Laden...</div>';
+        setModalCarousel([]);
+      }
+
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      pauseCarousel();
+      history.replaceState(null, '', '?hond=' + dogId);
+
+      // Fetch full photos in background
+      loadDogModalPhotos(dogId, dog);
+    }
+
+    async function loadDogModalPhotos(dogId, cachedDog) {
+      var body = document.getElementById('dogModalBody');
+      try {
+        var dog = cachedDog;
+        if (!dog) {
+          var dogArr = await supabaseGet('dogs', 'select=*&id=eq.' + dogId);
+          dog = dogArr && dogArr[0];
+          if (!dog) { body.innerHTML = '<p style="padding:40px;text-align:center;color:var(--dark-2);">Hond niet gevonden.</p>'; return; }
+          body.innerHTML = buildDogModalBody(dog);
+        }
+
+        var photos = await supabaseGet('dog_photos', 'select=*&dog_id=eq.' + dogId + '&order=is_primary.desc');
+        var photoUrls = photos.map(function(p) { return p.photo_url; });
+        if (photoUrls.length === 0) {
+          var fb = dog.photo || (dog.photos && dog.photos.length > 0 ? dog.photos[0].photo_url : null);
+          if (fb) photoUrls = [fb];
+        }
+
+        if (photoUrls.length > 0) {
+          setModalCarousel(photoUrls);
+        }
+      } catch (err) {
+        console.error('Error loading dog photos:', err);
+      }
+    }
+
+    // Vaul-style animated sheet close
+    function vaulCloseSheet(modal, overlay, removeCls, afterFn) {
+      var mq = window.matchMedia('(max-width: 767px)');
+      var isOpen = overlay.classList.contains(removeCls);
+      if (!mq.matches || !modal || !isOpen) {
+        overlay.classList.remove(removeCls);
+        document.body.style.overflow = '';
+        if (afterFn) afterFn();
+        return;
+      }
+      var spring = VAUL.spring();
+      var dur = VAUL.dur();
+      var wrapper = document.querySelector('.vaul-wrapper');
+      // Slide drawer out
+      modal.style.transition = 'transform ' + dur + ' ' + spring;
+      modal.style.transform = 'translate3d(0,100%,0)';
+      // Fade overlay scrim
+      overlay.style.transition = 'background-color ' + dur + ' ' + spring;
+      overlay.style.backgroundColor = 'transparent';
+      // Un-scale wrapper
+      if (wrapper) {
+        wrapper.style.transitionDuration = dur;
+        wrapper.style.transform = 'scale(1) translate3d(0, 0, 0)';
+        wrapper.style.borderRadius = '0px';
+      }
+      setTimeout(function() {
+        // Clean up modal/overlay inline styles
+        modal.style.transition = '';
+        modal.style.transform = '';
+        modal.style.height = '';
+        modal.style.maxHeight = '';
+        overlay.style.transition = '';
+        overlay.style.backgroundColor = '';
+        // Remove class — this triggers cleanupWrapper via MutationObserver,
+        // which handles wrapper cleanup + scroll restoration
+        overlay.classList.remove(removeCls);
+        if (afterFn) afterFn();
+      }, VAUL.DURATION * 1000 + 50);
+    }
+
+    function closeDogModal() {
+      vaulCloseSheet(
+        document.getElementById('dogModal'),
+        document.getElementById('dogModalOverlay'),
+        'open',
+        function() { resumeCarousel(); history.replaceState(null, '', location.pathname); }
+      );
+    }
+
+    function modalGoToSlide(index) {
+      modalSlide = index;
+      document.getElementById('dogModalTrack').style.transform = 'translateX(-' + (index * 100) + '%)';
+      document.querySelectorAll('.dog-modal-carousel-dot').forEach(function(d, i) {
+        d.classList.toggle('active', i === index);
+      });
+    }
+
+    document.getElementById('dogModalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeDogModal();
+    });
+    document.getElementById('dogModalClose').addEventListener('click', closeDogModal);
+    document.getElementById('dogModalPrev').addEventListener('click', function(e) {
+      e.stopPropagation();
+      modalGoToSlide(modalSlide > 0 ? modalSlide - 1 : modalImages.length - 1);
+    });
+    document.getElementById('dogModalNext').addEventListener('click', function(e) {
+      e.stopPropagation();
+      modalGoToSlide(modalSlide < modalImages.length - 1 ? modalSlide + 1 : 0);
+    });
+    document.getElementById('dogModalDots').addEventListener('click', function(e) {
+      var dot = e.target.closest('.dog-modal-carousel-dot');
+      if (dot) modalGoToSlide(parseInt(dot.dataset.index));
+    });
+    var modalCarousel = document.getElementById('dogModalCarousel');
+    modalCarousel.addEventListener('touchstart', function(e) {
+      modalTouchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    modalCarousel.addEventListener('touchend', function(e) {
+      var diff = modalTouchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) modalGoToSlide(modalSlide < modalImages.length - 1 ? modalSlide + 1 : 0);
+        else modalGoToSlide(modalSlide > 0 ? modalSlide - 1 : modalImages.length - 1);
+      }
+    }, { passive: true });
+
+    // Escape key to close modals
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        if (document.getElementById('contactOverlay').classList.contains('open')) {
+          closeContactModal();
+        } else if (document.getElementById('dogModalOverlay').classList.contains('open')) {
+          closeDogModal();
+        }
+      }
+    });
+
+    // ============ CONTACT MODAL ============
+    var contactDogId = null;
+    var contactOpenedFromDog = false;
+
+    function openContactModal(dogId, dogName) {
+      contactDogId = dogId;
+      document.getElementById('contactDogName').textContent = dogName;
+      document.getElementById('contactForm').reset();
+      document.getElementById('contactForm').style.display = '';
+      document.getElementById('contactSuccess').style.display = 'none';
+      document.getElementById('contactSubmitBtn').disabled = false;
+      document.getElementById('contactSubmitBtn').textContent = 'Verstuur bericht';
+
+      // At XS, stack the contact sheet on top of the dog sheet (don't dismiss it)
+      var dogOverlay = document.getElementById('dogModalOverlay');
+      if (window.matchMedia('(max-width: 767px)').matches && dogOverlay.classList.contains('open')) {
+        contactOpenedFromDog = true;
+      }
+
+      document.getElementById('contactOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeContactModal() {
+      var contactEl = document.querySelector('.contact-modal');
+      var overlay = document.getElementById('contactOverlay');
+      var mq = window.matchMedia('(max-width: 767px)');
+
+      if (contactOpenedFromDog && mq.matches) {
+        contactOpenedFromDog = false;
+        var spring = VAUL.spring();
+        var dur = VAUL.dur();
+        // Slide contact sheet down — dog sheet is still open underneath
+        contactEl.style.transition = 'transform ' + dur + ' ' + spring;
+        contactEl.style.transform = 'translate3d(0,100%,0)';
+        overlay.style.transition = 'background-color ' + dur + ' ' + spring;
+        overlay.style.backgroundColor = 'transparent';
+        setTimeout(function() {
+          overlay.classList.remove('open');
+          contactEl.style.transition = '';
+          contactEl.style.transform = '';
+          contactEl.style.height = '';
+          contactEl.style.maxHeight = '';
+          overlay.style.transition = '';
+          overlay.style.backgroundColor = '';
+        }, VAUL.DURATION * 1000 + 50);
+      } else {
+        vaulCloseSheet(contactEl, overlay, 'open');
+      }
+    }
+
+    document.getElementById('contactOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeContactModal();
+    });
+    document.getElementById('contactModalClose').addEventListener('click', closeContactModal);
+
+    // Bottom-sheet drag to dismiss
+    h4dSheetDrag(document.getElementById('dogModal'), document.getElementById('dogModalOverlay'), closeDogModal);
+    h4dSheetDrag(document.querySelector('.contact-modal'), document.getElementById('contactOverlay'), closeContactModal);
+    h4dSheetDrag(document.getElementById('baModal'), document.getElementById('baModalOverlay'), function() { closeBAModal(null, true); });
+
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var btn = document.getElementById('contactSubmitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Verzenden...';
+
+      try {
+        var body = {
+          dog_id: contactDogId,
+          naam: document.getElementById('contactNaam').value.trim(),
+          email: document.getElementById('contactEmail').value.trim(),
+          telefoon: document.getElementById('contactTelefoon').value.trim() || null,
+          bericht: document.getElementById('contactBericht').value.trim()
+        };
+
+        var res = await fetch(SUPABASE_URL + '/rest/v1/contact_messages', {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+          var errBody = await res.text();
+          throw new Error('HTTP ' + res.status + ': ' + errBody);
+        }
+
+        document.getElementById('contactForm').style.display = 'none';
+        document.getElementById('contactSuccess').style.display = 'block';
+      } catch (err) {
+        console.error('Contact form error:', err);
+        alert('Er is iets misgegaan. Probeer het opnieuw.');
+        btn.disabled = false;
+        btn.textContent = 'Verstuur bericht';
+      }
+    });
+
+    // Deep link: open dog modal from ?hond=<id>
+    var hondParam = new URLSearchParams(location.search).get('hond');
+    if (hondParam) openDogModal(hondParam);
+  </script>
+</body>
+</html>

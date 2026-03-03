@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adoptieverhaal | Hope for Dogs</title>
+  <meta name="description" content="Lees dit adoptieverhaal van Hope for Dogs. Ontdek hoe een straathond uit Bosnie of Servie een liefdevol thuis vond.">
+  <link rel="canonical" href="https://www.hopefordogseurope.com/ervaring.html">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Hope for Dogs">
+  <meta property="og:title" content="Adoptieverhaal | Hope for Dogs">
+  <meta property="og:description" content="Lees dit adoptieverhaal van Hope for Dogs. Ontdek hoe een straathond een liefdevol thuis vond.">
+  <meta property="og:url" content="https://www.hopefordogseurope.com/ervaring.html">
+  <meta property="og:image" content="https://www.hopefordogseurope.com/images/hero-1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=20">
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      color: var(--dark-1);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ========== LAYOUT ========== */
+    .story-section {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 128px 40px 80px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark-2);
+      margin-bottom: 32px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--brand); }
+    .back-link svg { width: 16px; height: 16px; }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    /* ========== PHOTO GALLERY ========== */
+    .story-gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .story-main-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border-radius: 24px;
+      background: var(--beige);
+    }
+
+
+    /* ========== STORY INFO ========== */
+    .story-info {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .story-name {
+      margin-bottom: -8px;
+    }
+
+    .story-adopter {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark-2);
+    }
+
+    .story-text {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.8;
+      color: var(--dark-2);
+      white-space: pre-line;
+    }
+
+    .story-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: 8px;
+    }
+
+    /* ========== LOADING / ERROR ========== */
+    .loading-screen, .error-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      gap: 16px;
+      text-align: center;
+      padding: 40px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(0,0,0,0.1);
+      border-top-color: var(--brand);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ========== RESPONSIVE ========== */
+    /* --- SM: 768–1023px --- */
+    @media (max-width: 1023px) {
+      /* Responsive type */
+      .story-text { font-size: 15px; }
+
+      .story-section { padding: 160px 40px 80px; }
+      .story-grid { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    /* --- XS: 0–767px --- */
+    @media (max-width: 767px) {
+      .story-section { padding: 160px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <main>
+  <!-- Loading -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <span style="color:var(--dark-2);font-size:15px;">Laden...</span>
+  </div>
+
+  <!-- Error -->
+  <div class="error-screen" id="errorScreen" style="display:none;">
+    <h2>Verhaal niet gevonden</h2>
+    <p>Dit verhaal bestaat niet of is verwijderd.</p>
+    <a href="ervaringen.html" class="btn-primary">Bekijk alle ervaringen</a>
+  </div>
+
+  <!-- Story Detail -->
+  <section class="story-section" id="storySection" style="display:none;">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="ervaringen.html">Ervaringen</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current" id="breadcrumbName"></span>
+    </nav>
+
+    <div class="story-grid">
+      <div class="story-gallery">
+        <img class="story-main-img" id="storyMainImg" src="" alt="">
+      </div>
+
+      <div class="story-info">
+        <h1 class="story-name t-heading-md" id="storyName"></h1>
+        <div class="story-adopter" id="storyAdopter"></div>
+        <div class="story-text" id="storyText"></div>
+        <div class="story-cta">
+          <a href="#" class="btn-secondary" id="nextStoryBtn">Volgend verhaal <svg viewBox="0 0 16 16" width="16" height="16" style="fill:none;"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+  <div id="footer-placeholder"></div>
+
+  <script src="components.js?v=20"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    var allStoryIds = [];
+    var currentStoryId = null;
+
+    async function loadStory(storyId, isTransition) {
+      if (!storyId) {
+        var params = new URLSearchParams(window.location.search);
+        storyId = params.get('id');
+      }
+
+      if (!storyId) {
+        showError();
+        return;
+      }
+
+      currentStoryId = storyId;
+
+      // On initial load, show loading screen; on transition, just fade content
+      if (!isTransition) {
+        document.getElementById('loadingScreen').style.display = '';
+        document.getElementById('storySection').style.display = 'none';
+      }
+
+      try {
+        var stories = await supabaseGet('stories', 'select=*&id=eq.' + storyId);
+
+        if (!stories || stories.length === 0) {
+          showError();
+          return;
+        }
+
+        var story = stories[0];
+        document.title = story.dog_name + ' — Adoptieverhaal | Hope for Dogs';
+        var storyDesc = story.description ? story.description.substring(0, 140) : 'Lees het adoptieverhaal van ' + story.dog_name;
+        document.querySelector('meta[name="description"]').setAttribute('content', storyDesc);
+        document.querySelector('meta[property="og:title"]').setAttribute('content', story.dog_name + ' — Adoptieverhaal | Hope for Dogs');
+        document.querySelector('meta[property="og:description"]').setAttribute('content', storyDesc);
+
+        document.getElementById('storyName').textContent = story.dog_name;
+        document.getElementById('breadcrumbName').textContent = story.dog_name;
+
+        // JSON-LD: BreadcrumbList schema
+        var existingBcSchema = document.querySelector('script[data-schema="breadcrumb"]');
+        if (existingBcSchema) existingBcSchema.remove();
+        var bcSchema = document.createElement('script');
+        bcSchema.type = 'application/ld+json';
+        bcSchema.setAttribute('data-schema', 'breadcrumb');
+        bcSchema.textContent = JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.hopefordogseurope.com/"},
+            {"@type": "ListItem", "position": 2, "name": "Ervaringen", "item": "https://www.hopefordogseurope.com/ervaringen.html"},
+            {"@type": "ListItem", "position": 3, "name": story.dog_name}
+          ]
+        });
+        document.head.appendChild(bcSchema);
+        document.getElementById('storyAdopter').textContent = story.adopter_name ? 'Geadopteerd door ' + story.adopter_name : '';
+        document.getElementById('storyText').textContent = story.full_story || story.description || '';
+
+        // Load photos
+        var photos = [];
+        try {
+          photos = await supabaseGet('story_photos', 'select=*&story_id=eq.' + storyId + '&order=is_primary.desc');
+        } catch (e) {}
+
+        var images = photos.map(function(p) { return p.photo_url; });
+        if (images.length === 0 && story.photo_url) {
+          images = [story.photo_url];
+        }
+
+        var mainImg = document.getElementById('storyMainImg');
+
+        if (images.length > 0) {
+          mainImg.src = images[0];
+          mainImg.alt = story.dog_name;
+          document.querySelector('meta[property="og:image"]').setAttribute('content', images[0]);
+        } else {
+          mainImg.src = 'images/placeholder-dog.png';
+          mainImg.alt = '';
+        }
+
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('storySection').style.display = 'block';
+
+        // JSON-LD: Article schema for adoption story
+        var existingStorySchema = document.querySelector('script[data-schema="story"]');
+        if (existingStorySchema) existingStorySchema.remove();
+        var storySchema = document.createElement('script');
+        storySchema.type = 'application/ld+json';
+        storySchema.setAttribute('data-schema', 'story');
+        storySchema.textContent = JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": story.dog_name + ' — Adoptieverhaal',
+          "datePublished": story.created_at,
+          "image": images.length > 0 ? images[0] : '',
+          "author": {"@type": "Organization", "name": "Hope for Dogs"},
+          "publisher": {"@type": "Organization", "name": "Hope for Dogs", "logo": {"@type": "ImageObject", "url": "https://www.hopefordogseurope.com/logo.png"}},
+          "description": story.description || ''
+        });
+        document.head.appendChild(storySchema);
+
+        // Scroll to top on transition
+        if (isTransition) {
+          window.scrollTo({ top: 0 });
+        }
+
+        // Update URL without reload
+        history.replaceState(null, '', 'ervaring.html?id=' + storyId);
+
+        // Set up "next story" button
+        if (allStoryIds.length === 0) {
+          try {
+            var all = await supabaseGet('stories', 'select=id&order=created_at.desc');
+            allStoryIds = all.map(function(s) { return s.id; });
+          } catch(e) {}
+        }
+
+        var nextBtn = document.getElementById('nextStoryBtn');
+        if (allStoryIds.length > 1) {
+          var idx = allStoryIds.indexOf(storyId);
+          var nextIdx = (idx + 1) % allStoryIds.length;
+          nextBtn.dataset.nextId = allStoryIds[nextIdx];
+          nextBtn.style.display = '';
+        } else {
+          nextBtn.style.display = 'none';
+        }
+
+      } catch (err) {
+        console.error('Error loading story:', err);
+        showError();
+      }
+    }
+
+    // Next story: swap content in-place, lock height to prevent layout shift
+    document.getElementById('nextStoryBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      var nextId = this.dataset.nextId;
+      if (!nextId) return;
+      var section = document.getElementById('storySection');
+      // Lock current height so footer doesn't jump
+      section.style.minHeight = section.offsetHeight + 'px';
+      loadStory(nextId, true).then(function() {
+        // Release after a frame so layout settles
+        requestAnimationFrame(function() {
+          section.style.minHeight = '';
+        });
+      });
+    });
+
+    function showError() {
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('errorScreen').style.display = 'flex';
+    }
+
+    loadStory();
+  </script>
+</body>
+</html>

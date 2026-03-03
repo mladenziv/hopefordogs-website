@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+Disallow: /beheer/
+Disallow: /hopefordogs-main/
+Disallow: /node_modules/
+Disallow: /migration/
+Disallow: /translate.html
+Disallow: /typography.html
+
+Sitemap: https://www.hopefordogseurope.com/sitemap.xml

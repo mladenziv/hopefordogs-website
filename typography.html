@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Typography — Hope for Dogs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=6">
+  <style>
+    body {
+      background: #fff;
+      padding: 64px 40px 120px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--brand);
+      margin-bottom: 8px;
+    }
+
+    .page-heading {
+      font-family: 'Nunito', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--dark-1);
+      margin-bottom: 48px;
+    }
+
+    /* Table header */
+    .type-table-header {
+      display: grid;
+      grid-template-columns: 160px 1fr 120px 120px 120px;
+      gap: 24px;
+      padding: 12px 0;
+      border-bottom: 2px solid var(--dark-1);
+      margin-bottom: 0;
+    }
+
+    .type-table-header span {
+      font-family: 'Manrope', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--dark-2);
+    }
+
+    /* Each type row */
+    .type-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 120px 120px 120px;
+      gap: 24px;
+      align-items: baseline;
+      padding: 24px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .type-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--brand);
+      letter-spacing: 0.01em;
+    }
+
+    .type-name small {
+      display: block;
+      font-weight: 500;
+      color: var(--dark-2);
+      margin-top: 4px;
+      font-size: 12px;
+      letter-spacing: 0;
+    }
+
+    .type-preview {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .type-bp {
+      font-family: 'Manrope', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--dark-2);
+    }
+
+    .type-bp span {
+      display: block;
+    }
+
+    .type-bp .bp-size {
+      font-weight: 700;
+      color: var(--dark-1);
+    }
+
+    .type-bp .bp-dim {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.4);
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 40px 20px 80px;
+      }
+
+      .type-table-header {
+        grid-template-columns: 140px 1fr 100px 100px 100px;
+        gap: 16px;
+      }
+
+      .type-row {
+        grid-template-columns: 140px 1fr 100px 100px 100px;
+        gap: 16px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .type-table-header {
+        display: none;
+      }
+
+      .type-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .type-bp-group {
+        display: flex;
+        gap: 16px;
+      }
+
+      .type-bp {
+        flex: 1;
+        padding: 8px 12px;
+        background: #faf8f4;
+        border-radius: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-title">Design System</div>
+  <h1 class="page-heading">Typography</h1>
+
+  <div class="type-table-header">
+    <span>Style</span>
+    <span>Preview</span>
+    <span>LG &ge;1024</span>
+    <span>SM 768–1023</span>
+    <span>XS &lt;768</span>
+  </div>
+
+  <!-- t-heading-lg -->
+  <div class="type-row">
+    <div class="type-name">
+      .t-heading-lg
+      <small>Nunito 800</small>
+    </div>
+    <div class="type-preview t-heading-lg" style="font-size:32px;">Onze vrijwilligers</div>
+    <div class="type-bp">
+      <span class="bp-size">40px</span>
+      <span class="bp-dim">/ 44px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">32px</span>
+      <span class="bp-dim">/ 36px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">24px</span>
+      <span class="bp-dim">/ 30px</span>
+    </div>
+  </div>
+
+  <!-- t-heading-md -->
+  <div class="type-row">
+    <div class="type-name">
+      .t-heading-md
+      <small>Nunito 800</small>
+    </div>
+    <div class="type-preview t-heading-md" style="font-size:28px;">Jouw bijdrage maakt het verschil</div>
+    <div class="type-bp">
+      <span class="bp-size">36px</span>
+      <span class="bp-dim">/ 40px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">28px</span>
+      <span class="bp-dim">/ 32px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">22px</span>
+      <span class="bp-dim">/ 28px</span>
+    </div>
+  </div>
+
+  <!-- t-heading-sm -->
+  <div class="type-row">
+    <div class="type-name">
+      .t-heading-sm
+      <small>Nunito 800</small>
+    </div>
+    <div class="type-preview t-heading-sm">Van toen tot nu</div>
+    <div class="type-bp">
+      <span class="bp-size">32px</span>
+      <span class="bp-dim">/ 36px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">24px</span>
+      <span class="bp-dim">/ 28px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">20px</span>
+      <span class="bp-dim">/ 24px</span>
+    </div>
+  </div>
+
+  <!-- t-body-lg -->
+  <div class="type-row">
+    <div class="type-name">
+      .t-body-lg
+      <small>Manrope 500</small>
+    </div>
+    <div class="type-preview t-body-lg">Hope for Dogs draait volledig op vrijwilligers. We hebben geen grote organisatie achter ons.</div>
+    <div class="type-bp">
+      <span class="bp-size">19px</span>
+      <span class="bp-dim">/ 32px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">18px</span>
+      <span class="bp-dim">/ 30px · 0.05px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">17px</span>
+      <span class="bp-dim">/ 28px · 0.1px</span>
+    </div>
+  </div>
+
+  <!-- t-body -->
+  <div class="type-row">
+    <div class="type-name">
+      .t-body
+      <small>Manrope 500 · 0.05px</small>
+    </div>
+    <div class="type-preview t-body">Wij ontvangen geen overheidssteun. Elke euro die we besteden aan voer, vaccins en operaties komt van donateurs.</div>
+    <div class="type-bp">
+      <span class="bp-size">18px</span>
+      <span class="bp-dim">/ 30px · 0.05px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">17px</span>
+      <span class="bp-dim">/ 28px · 0.1px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">16px</span>
+      <span class="bp-dim">/ 26px · 0.15px</span>
+    </div>
+  </div>
+
+  <!-- t-body-sm -->
+  <div class="type-row">
+    <div class="type-name">
+      .t-body-sm
+      <small>Manrope 500 · 0.1px</small>
+    </div>
+    <div class="type-preview t-body-sm">We steriliseren en castreren elke hond. Dit is cruciaal om de cyclus van overbevolking te doorbreken.</div>
+    <div class="type-bp">
+      <span class="bp-size">17px</span>
+      <span class="bp-dim">/ 28px · 0.1px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">16px</span>
+      <span class="bp-dim">/ 26px · 0.15px</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">15px</span>
+      <span class="bp-dim">/ 24px · 0.2px</span>
+    </div>
+  </div>
+
+  <!-- t-label -->
+  <div class="type-row">
+    <div class="type-name">
+      .t-label
+      <small>Manrope 700 · 0.05em · uppercase</small>
+    </div>
+    <div class="type-preview t-label">Over ons</div>
+    <div class="type-bp">
+      <span class="bp-size">14px</span>
+      <span class="bp-dim">/ 1.4</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">14px</span>
+      <span class="bp-dim">/ 1.4</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">14px</span>
+      <span class="bp-dim">/ 1.4</span>
+    </div>
+  </div>
+
+  <!-- t-caption -->
+  <div class="type-row">
+    <div class="type-name">
+      .t-caption
+      <small>Manrope 600</small>
+    </div>
+    <div class="type-preview t-caption">Veilig betalen via Mollie</div>
+    <div class="type-bp">
+      <span class="bp-size">13px</span>
+      <span class="bp-dim">/ 1.4</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">13px</span>
+      <span class="bp-dim">/ 1.4</span>
+    </div>
+    <div class="type-bp">
+      <span class="bp-size">13px</span>
+      <span class="bp-dim">/ 1.4</span>
+    </div>
+  </div>
+
+</body>
+</html>
