@@ -112,7 +112,8 @@ function parseFields($text) {
     }
     // Pattern: ALL-CAPS name surrounded by emoji or on its own line (very common in shelter posts)
     // e.g. "🩷 AIRA 🩷" or "❤️ BELLA ❤️" or just "AIRA\n"
-    if (!$result['naam'] && preg_match('/(?:^|[\n\r])[\s\p{So}\p{Cs}\x{FE0F}\x{200D}\p{Sk}\p{Mn}]*([A-Z\x{0100}-\x{024F}]{2,15})[\s\p{So}\p{Cs}\x{FE0F}\x{200D}\p{Sk}\p{Mn}]*(?:[\n\r]|$)/u', $t, $m)) {
+    // Use [^\n\r\p{L}\p{N}] instead of specific Unicode categories for server compatibility
+    if (!$result['naam'] && preg_match('/(?:^|[\n\r])[^\n\r\p{L}\p{N}]*([A-Z\x{0100}-\x{024F}]{2,15})[^\n\r\p{L}\p{N}]*(?:[\n\r]|$)/u', $t, $m)) {
         $candidate = trim($m[1]);
         $skipUpper = ['UPDATE', 'INFO', 'HELP', 'URGENT', 'DRINGEND', 'ADOPTED', 'GEADOPTEERD',
                        'LOOKING', 'ZOEKEN', 'FOSTER', 'RESCUE', 'SHELTER', 'NEW', 'STICHTING',
@@ -122,7 +123,7 @@ function parseFields($text) {
         }
     }
     // Fallback: first capitalized word at start of text (common in shelter posts)
-    if (!$result['naam'] && preg_match('/^[\s\p{So}\p{Cs}]*([A-Z\x{0100}-\x{024F}][a-z\x{0100}-\x{024F}]{2,15})[\s,!\.\-]/u', $t, $m)) {
+    if (!$result['naam'] && preg_match('/^[^\p{L}\p{N}]*([A-Z\x{0100}-\x{024F}][a-z\x{0100}-\x{024F}]{2,15})[\s,!\.\-]/u', $t, $m)) {
         // Skip common non-name words
         $skipWords = ['the', 'this', 'deze', 'een', 'het', 'hij', 'zij', 'wij', 'new', 'our', 'ons', 'onze',
                       'update', 'info', 'help', 'please', 'dringend', 'urgent', 'adopted', 'geadopteerd',
