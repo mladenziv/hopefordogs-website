@@ -258,17 +258,9 @@ if (empty($html)) {
 
 $text = null;
 
-// Strategy 1: og:description meta tag (most reliable for public posts)
+// Strategy 1: Facebook inline JSON message text (full untruncated text)
 if (!$text) {
-    // property before content
-    if (preg_match('/<meta\s+(?:property|name)=["\']og:description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-    // content before property
-    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:description["\']/i', $html, $m)) {
+    if (preg_match('/"message"\s*:\s*\{\s*"text"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
         $candidate = cleanText($m[1]);
         if (!isBoilerplate($candidate)) {
             $text = $candidate;
@@ -276,23 +268,7 @@ if (!$text) {
     }
 }
 
-// Strategy 2: Standard description meta tag
-if (!$text) {
-    if (preg_match('/<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+name=["\']description["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-}
-
-// Strategy 3: JSON-LD articleBody
+// Strategy 2: JSON-LD articleBody
 if (!$text) {
     if (preg_match('/"articleBody"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
         $candidate = cleanText($m[1]);
@@ -302,9 +278,31 @@ if (!$text) {
     }
 }
 
-// Strategy 4: Facebook inline JSON message text
+// Strategy 3: og:description meta tag (fallback, often truncated)
 if (!$text) {
-    if (preg_match('/"message"\s*:\s*\{\s*"text"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
+    if (preg_match('/<meta\s+(?:property|name)=["\']og:description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:description["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+}
+
+// Strategy 4: Standard description meta tag
+if (!$text) {
+    if (preg_match('/<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+name=["\']description["\']/i', $html, $m)) {
         $candidate = cleanText($m[1]);
         if (!isBoilerplate($candidate)) {
             $text = $candidate;
