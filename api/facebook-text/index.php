@@ -258,41 +258,22 @@ if (empty($html)) {
 
 $text = null;
 
-// Strategy 1: og:description meta tag (most reliable for public posts)
-if (!$text) {
-    // property before content
-    if (preg_match('/<meta\s+(?:property|name)=["\']og:description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
+// Strategy 1: Facebook inline JSON message text (full text, not truncated)
+if (preg_match_all('/"message"\s*:\s*\{\s*"text"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $allMsgMatches)) {
+    // Pick the longest match — Facebook embeds multiple JSON blobs, the longest is the actual post
+    $best = '';
+    foreach ($allMsgMatches[1] as $match) {
+        $candidate = cleanText($match);
+        if (!isBoilerplate($candidate) && mb_strlen($candidate, 'UTF-8') > mb_strlen($best, 'UTF-8')) {
+            $best = $candidate;
         }
     }
-    // content before property
-    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:description["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
+    if (!empty($best)) {
+        $text = $best;
     }
 }
 
-// Strategy 2: Standard description meta tag
-if (!$text) {
-    if (preg_match('/<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+name=["\']description["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-}
-
-// Strategy 3: JSON-LD articleBody
+// Strategy 2: JSON-LD articleBody (full text)
 if (!$text) {
     if (preg_match('/"articleBody"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
         $candidate = cleanText($m[1]);
@@ -302,9 +283,31 @@ if (!$text) {
     }
 }
 
-// Strategy 4: Facebook inline JSON message text
+// Strategy 3: og:description meta tag (often truncated, used as fallback)
 if (!$text) {
-    if (preg_match('/"message"\s*:\s*\{\s*"text"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
+    if (preg_match('/<meta\s+(?:property|name)=["\']og:description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:description["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+}
+
+// Strategy 4: Standard description meta tag
+if (!$text) {
+    if (preg_match('/<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+name=["\']description["\']/i', $html, $m)) {
         $candidate = cleanText($m[1]);
         if (!isBoilerplate($candidate)) {
             $text = $candidate;
@@ -328,52 +331,87 @@ if (!$text) {
     }
 }
 
-// Extract images from og:image meta tags
+// Extract images — collect from multiple sources, deduplicate by base URL
 $images = [];
 $seen = [];
-if (preg_match_all('/<meta\s+(?:property|name)=["\']og:image["\']\s+content=["\']([^"\']+)["\']/i', $html, $imgMatches)) {
-    foreach ($imgMatches[1] as $imgUrl) {
-        $decoded = html_entity_decode($imgUrl, ENT_QUOTES, 'UTF-8');
-        if (strpos($decoded, 'safe_image.php') !== false) continue;
-        if (strpos($decoded, '1x1') !== false) continue;
-        if (!isset($seen[$decoded])) {
-            $images[] = $decoded;
-            $seen[$decoded] = true;
-        }
+
+// Helper: add image URL if not seen, unescape Facebook JSON encoding
+function addImage(&$images, &$seen, $rawUrl, $isEscaped = false) {
+    $url = $rawUrl;
+    if ($isEscaped) {
+        $url = str_replace(['\\/', '\\u0025', '\\u003C', '\\u003E', '\\u0026'], ['/', '%', '<', '>', '&'], $url);
     }
+    $url = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
+    // Skip tracking pixels, profile pics, tiny images
+    if (strpos($url, 'safe_image.php') !== false) return;
+    if (strpos($url, '1x1') !== false) return;
+    if (strpos($url, 'emoji.php') !== false) return;
+    if (strpos($url, 'rsrc.php') !== false) return;
+    if (strpos($url, '/p50x50/') !== false) return;
+    if (strpos($url, '/p100x100/') !== false) return;
+    if (strpos($url, '/cp0/') !== false) return;
+    // Normalize: strip query params for dedup key (but keep full URL)
+    $key = preg_replace('/\?.*$/', '', $url);
+    if (!isset($seen[$key]) && preg_match('/^https?:\/\//i', $url)) {
+        $images[] = $url;
+        $seen[$key] = true;
+    }
+}
+
+// Source 1: og:image meta tags
+if (preg_match_all('/<meta\s+(?:property|name)=["\']og:image["\']\s+content=["\']([^"\']+)["\']/i', $html, $imgMatches)) {
+    foreach ($imgMatches[1] as $u) addImage($images, $seen, $u);
 }
 if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:image["\']/i', $html, $imgMatches)) {
-    foreach ($imgMatches[1] as $imgUrl) {
-        $decoded = html_entity_decode($imgUrl, ENT_QUOTES, 'UTF-8');
-        if (strpos($decoded, 'safe_image.php') !== false) continue;
-        if (strpos($decoded, '1x1') !== false) continue;
-        if (!isset($seen[$decoded])) {
-            $images[] = $decoded;
-            $seen[$decoded] = true;
+    foreach ($imgMatches[1] as $u) addImage($images, $seen, $u);
+}
+$ogImageCount = count($images);
+
+// Source 2: Facebook JSON — all image URIs in {"uri":"https://..."} patterns (covers gallery, media, attachments)
+if (preg_match_all('/"uri"\s*:\s*"(https:\\\\\/\\\\\/[^"]+)"/i', $html, $imgMatches)) {
+    foreach ($imgMatches[1] as $u) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
+        // Only keep actual photo URLs (scontent CDN), skip profile pics and icons
+        if (preg_match('/scontent/i', $decoded) && preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
+            addImage($images, $seen, $decoded);
         }
     }
 }
-$ogImageCount = count($images); // track how many came from og:image (before JSON patterns)
-// Also extract higher-res images from Facebook JSON data
-if (preg_match_all('/"(?:full_?size|large|high_?res)_?(?:src|url|image)":\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
-    foreach ($imgMatches[1] as $imgUrl) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $imgUrl);
-        if (!isset($seen[$decoded]) && preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
-            $images[] = $decoded;
-            $seen[$decoded] = true;
+
+// Source 3: Facebook JSON — various *_src, *_url, *_image keys
+if (preg_match_all('/"(?:full_?size|large|high_?res|viewer_image|preferred_media_image|base|representativeImage)_?(?:src|url|image|uri)?"\s*:\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
+    foreach ($imgMatches[1] as $u) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
+        if (preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
+            addImage($images, $seen, $decoded);
         }
     }
 }
-// Extract gallery images from Facebook inline JSON structures ("image":{"uri":"..."})
-if (preg_match_all('/"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
-    foreach ($imgMatches[1] as $imgUrl) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $imgUrl);
-        if (!isset($seen[$decoded]) && preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
-            $images[] = $decoded;
-            $seen[$decoded] = true;
+
+// Source 4: Facebook JSON — "image":{"uri":"..."} nested patterns
+if (preg_match_all('/"image"\s*:\s*\{[^}]*"uri"\s*:\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
+    foreach ($imgMatches[1] as $u) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
+        if (preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
+            addImage($images, $seen, $decoded);
         }
     }
 }
+
+// Source 5: Facebook JSON — media array entries with "image" > "uri"
+if (preg_match_all('/"all_subattachments".*?"nodes"\s*:\s*\[(.*?)\]/s', $html, $galleryMatches)) {
+    foreach ($galleryMatches[1] as $nodesJson) {
+        if (preg_match_all('/"uri"\s*:\s*"(https:[^"]+)"/i', $nodesJson, $nodeImgs)) {
+            foreach ($nodeImgs[1] as $u) {
+                $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
+                if (preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
+                    addImage($images, $seen, $decoded);
+                }
+            }
+        }
+    }
+}
+
 $images = array_slice($images, 0, 10);
 
 // Extract video URLs from Facebook HTML
