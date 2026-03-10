@@ -4,6 +4,21 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
+// Increase PCRE limits for large Facebook HTML
+@ini_set('pcre.backtrack_limit', '2000000');
+@ini_set('pcre.recursion_limit', '200000');
+
+// Ensure we always return valid JSON, even on fatal error
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+        }
+        echo json_encode(['error' => 'Server error: ' . $error['message'], 'text' => null, 'images' => [], 'videos' => []]);
+    }
+});
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -331,78 +346,77 @@ if (!$text) {
     }
 }
 
-// Extract images — collect from multiple sources, deduplicate by base URL
+// Extract images
 $images = [];
 $seen = [];
 
-// Helper: add image URL if not seen, unescape Facebook JSON encoding
-function addImage(&$images, &$seen, $rawUrl, $isEscaped = false) {
-    $url = $rawUrl;
-    if ($isEscaped) {
-        $url = str_replace(['\\/', '\\u0025', '\\u003C', '\\u003E', '\\u0026'], ['/', '%', '<', '>', '&'], $url);
-    }
-    $url = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
-    // Skip tracking pixels, profile pics, tiny images
-    if (strpos($url, 'safe_image.php') !== false) return;
-    if (strpos($url, '1x1') !== false) return;
-    if (strpos($url, 'emoji.php') !== false) return;
-    if (strpos($url, 'rsrc.php') !== false) return;
-    if (strpos($url, '/p50x50/') !== false) return;
-    if (strpos($url, '/p100x100/') !== false) return;
-    if (strpos($url, '/cp0/') !== false) return;
-    // Normalize: strip query params for dedup key (but keep full URL)
-    $key = preg_replace('/\?.*$/', '', $url);
-    if (!isset($seen[$key]) && preg_match('/^https?:\/\//i', $url)) {
-        $images[] = $url;
-        $seen[$key] = true;
-    }
-}
-
-// Source 1: og:image meta tags
+// og:image meta tags
 if (preg_match_all('/<meta\s+(?:property|name)=["\']og:image["\']\s+content=["\']([^"\']+)["\']/i', $html, $imgMatches)) {
-    foreach ($imgMatches[1] as $u) addImage($images, $seen, $u);
+    foreach ($imgMatches[1] as $imgUrl) {
+        $decoded = html_entity_decode($imgUrl, ENT_QUOTES, 'UTF-8');
+        if (strpos($decoded, 'safe_image.php') !== false) continue;
+        if (strpos($decoded, '1x1') !== false) continue;
+        if (!isset($seen[$decoded])) {
+            $images[] = $decoded;
+            $seen[$decoded] = true;
+        }
+    }
 }
 if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:image["\']/i', $html, $imgMatches)) {
-    foreach ($imgMatches[1] as $u) addImage($images, $seen, $u);
+    foreach ($imgMatches[1] as $imgUrl) {
+        $decoded = html_entity_decode($imgUrl, ENT_QUOTES, 'UTF-8');
+        if (strpos($decoded, 'safe_image.php') !== false) continue;
+        if (strpos($decoded, '1x1') !== false) continue;
+        if (!isset($seen[$decoded])) {
+            $images[] = $decoded;
+            $seen[$decoded] = true;
+        }
+    }
 }
 $ogImageCount = count($images);
 
-// Source 2: Facebook JSON — "uri":"https://..." patterns for scontent images
-if (preg_match_all('/"uri"\s*:\s*"(https?:[^"]+scontent[^"]+)"/i', $html, $imgMatches)) {
-    foreach ($imgMatches[1] as $u) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
-        if (preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
-            addImage($images, $seen, $decoded);
+// Facebook JSON: find scontent image URLs using string scanning (no complex regex)
+// Facebook escapes URLs as https:\/\/scontent... in their JSON
+$searchPos = 0;
+$scontentNeedle = 'scontent';
+while (($pos = strpos($html, $scontentNeedle, $searchPos)) !== false) {
+    // Walk backwards to find the start of the URL (look for "https)
+    $urlStart = $pos;
+    for ($back = $pos - 1; $back >= max(0, $pos - 60); $back--) {
+        if (substr($html, $back, 5) === 'https' || substr($html, $back, 4) === 'http') {
+            $urlStart = $back;
+            break;
         }
     }
-}
-
-// Source 3: Facebook JSON — various *_src, *_url, *_image keys
-if (preg_match_all('/"(?:full_?size|large|high_?res|viewer_image|preferred_media_image|base|representativeImage)_?(?:src|url|image|uri)?"\s*:\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
-    foreach ($imgMatches[1] as $u) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
+    if ($urlStart < $pos) {
+        // Walk forward to find end of URL (quote or whitespace)
+        $urlEnd = $pos;
+        for ($fwd = $pos; $fwd < min(strlen($html), $pos + 500); $fwd++) {
+            if ($html[$fwd] === '"' || $html[$fwd] === "'" || $html[$fwd] === ' ' || $html[$fwd] === '>') {
+                $urlEnd = $fwd;
+                break;
+            }
+        }
+        $rawUrl = substr($html, $urlStart, $urlEnd - $urlStart);
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $rawUrl);
+        // Only keep actual photo files
         if (preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
-            addImage($images, $seen, $decoded);
+            // Skip tiny images
+            if (strpos($decoded, '/p50x50/') === false
+                && strpos($decoded, '/p100x100/') === false
+                && strpos($decoded, '/cp0/') === false
+                && strpos($decoded, 'emoji') === false
+                && strpos($decoded, 'rsrc.php') === false) {
+                $key = preg_replace('/\?.*$/', '', $decoded);
+                if (!isset($seen[$key])) {
+                    $images[] = $decoded;
+                    $seen[$key] = true;
+                }
+            }
         }
     }
-}
-
-// Source 4: Facebook JSON — "image":{"uri":"..."} nested patterns
-if (preg_match_all('/"image"\s*:\s*\{[^}]*"uri"\s*:\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
-    foreach ($imgMatches[1] as $u) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
-        if (preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
-            addImage($images, $seen, $decoded);
-        }
-    }
-}
-
-// Source 5: Facebook JSON — look for scontent URLs broadly (covers gallery/album photos)
-if (preg_match_all('/https?:\\\\\/\\\\\/scontent[^"\\\\]+\.(?:jpg|jpeg|png|webp)[^"\\\\]*/i', $html, $scontentMatches)) {
-    foreach ($scontentMatches[0] as $u) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
-        addImage($images, $seen, $decoded);
-    }
+    $searchPos = $pos + 10;
+    if (count($images) >= 15) break; // enough
 }
 
 $images = array_slice($images, 0, 10);
