@@ -367,12 +367,11 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
 }
 $ogImageCount = count($images);
 
-// Source 2: Facebook JSON — all image URIs in {"uri":"https://..."} patterns (covers gallery, media, attachments)
-if (preg_match_all('/"uri"\s*:\s*"(https:\\\\\/\\\\\/[^"]+)"/i', $html, $imgMatches)) {
+// Source 2: Facebook JSON — "uri":"https://..." patterns for scontent images
+if (preg_match_all('/"uri"\s*:\s*"(https?:[^"]+scontent[^"]+)"/i', $html, $imgMatches)) {
     foreach ($imgMatches[1] as $u) {
         $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
-        // Only keep actual photo URLs (scontent CDN), skip profile pics and icons
-        if (preg_match('/scontent/i', $decoded) && preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
+        if (preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
             addImage($images, $seen, $decoded);
         }
     }
@@ -398,17 +397,11 @@ if (preg_match_all('/"image"\s*:\s*\{[^}]*"uri"\s*:\s*"(https:[^"]+)"/i', $html,
     }
 }
 
-// Source 5: Facebook JSON — media array entries with "image" > "uri"
-if (preg_match_all('/"all_subattachments".*?"nodes"\s*:\s*\[(.*?)\]/s', $html, $galleryMatches)) {
-    foreach ($galleryMatches[1] as $nodesJson) {
-        if (preg_match_all('/"uri"\s*:\s*"(https:[^"]+)"/i', $nodesJson, $nodeImgs)) {
-            foreach ($nodeImgs[1] as $u) {
-                $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
-                if (preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
-                    addImage($images, $seen, $decoded);
-                }
-            }
-        }
+// Source 5: Facebook JSON — look for scontent URLs broadly (covers gallery/album photos)
+if (preg_match_all('/https?:\\\\\/\\\\\/scontent[^"\\\\]+\.(?:jpg|jpeg|png|webp)[^"\\\\]*/i', $html, $scontentMatches)) {
+    foreach ($scontentMatches[0] as $u) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $u);
+        addImage($images, $seen, $decoded);
     }
 }
 
