@@ -1,5 +1,5 @@
 <?php
-// v7-strpos
+// v8-surrogate
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    echo json_encode(['version' => 'v7-strpos', 'php' => PHP_VERSION]);
+    echo json_encode(['version' => 'v8-surrogate', 'php' => PHP_VERSION]);
     exit;
 }
 
@@ -68,9 +68,16 @@ function fetchWithRedirects($url, $maxRedirects = 5) {
 function cleanText($text) {
     // Decode HTML entities
     $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
-    // Normalize unicode escapes
-    $text = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function ($m) {
-        return mb_convert_encoding(pack('H*', $m[1]), 'UTF-8', 'UCS-2BE');
+    // Normalize unicode escapes (handle surrogate pairs for emoji)
+    $text = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})(?:\\\\u([0-9a-fA-F]{4}))?/', function ($m) {
+        $cp = hexdec($m[1]);
+        if ($cp >= 0xD800 && $cp <= 0xDBFF && isset($m[2])) {
+            $lo = hexdec($m[2]);
+            $cp = 0x10000 + (($cp - 0xD800) << 10) + ($lo - 0xDC00);
+        } elseif ($cp >= 0xD800 && $cp <= 0xDFFF) {
+            return "\xEF\xBF\xBD";
+        }
+        return mb_chr($cp, 'UTF-8');
     }, $text);
     // Normalize whitespace (preserve intentional line breaks)
     $text = preg_replace('/[ \t]+/', ' ', $text);
