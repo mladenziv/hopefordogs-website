@@ -4,10 +4,6 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Increase PCRE limits for large Facebook HTML
-@ini_set('pcre.backtrack_limit', '2000000');
-@ini_set('pcre.recursion_limit', '200000');
-
 // Ensure we always return valid JSON, even on fatal error
 register_shutdown_function(function() {
     $error = error_get_last();
@@ -15,7 +11,7 @@ register_shutdown_function(function() {
         if (!headers_sent()) {
             header('Content-Type: application/json');
         }
-        echo json_encode(['error' => 'Server error: ' . $error['message'], 'text' => null, 'images' => [], 'videos' => []]);
+        echo json_encode(['error' => 'Server error', 'text' => null, 'images' => [], 'videos' => []]);
     }
 });
 
@@ -126,7 +122,6 @@ function parseFields($text) {
         $result['naam'] = mb_convert_case(trim($m[1]), MB_CASE_TITLE, 'UTF-8');
     }
     // Pattern: ALL-CAPS name surrounded by emoji or on its own line (very common in shelter posts)
-    // e.g. "🩷 AIRA 🩷" or "❤️ BELLA ❤️" or just "AIRA\n"
     // Use [^\n\r\p{L}\p{N}] instead of specific Unicode categories for server compatibility
     if (!$result['naam'] && preg_match('/(?:^|[\n\r])[^\n\r\p{L}\p{N}]*([A-Z\x{0100}-\x{024F}]{2,15})[^\n\r\p{L}\p{N}]*(?:[\n\r]|$)/u', $t, $m)) {
         $candidate = trim($m[1]);
@@ -273,22 +268,25 @@ if (empty($html)) {
 
 $text = null;
 
-// Strategy 1: Facebook inline JSON message text (full text, not truncated)
-if (preg_match_all('/"message"\s*:\s*\{\s*"text"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $allMsgMatches)) {
-    // Pick the longest match — Facebook embeds multiple JSON blobs, the longest is the actual post
-    $best = '';
-    foreach ($allMsgMatches[1] as $match) {
-        $candidate = cleanText($match);
-        if (!isBoilerplate($candidate) && mb_strlen($candidate, 'UTF-8') > mb_strlen($best, 'UTF-8')) {
-            $best = $candidate;
-        }
-    }
-    if (!empty($best)) {
-        $text = $best;
+// Strategy 1: Facebook inline JSON message text (full untruncated text)
+if (preg_match('/"message"\s*:\s*\{\s*"text"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
+    $candidate = cleanText($m[1]);
+    if (!isBoilerplate($candidate)) {
+        $text = $candidate;
     }
 }
 
-// Strategy 2: JSON-LD articleBody (full text)
+// If JSON gave us text, also check if og:description is longer (sometimes JSON is snippet)
+if ($text) {
+    if (preg_match('/<meta\s+(?:property|name)=["\']og:description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
+        $ogCandidate = cleanText($m[1]);
+        if (!isBoilerplate($ogCandidate) && mb_strlen($ogCandidate, 'UTF-8') > mb_strlen($text, 'UTF-8')) {
+            $text = $ogCandidate;
+        }
+    }
+}
+
+// Strategy 2: JSON-LD articleBody
 if (!$text) {
     if (preg_match('/"articleBody"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
         $candidate = cleanText($m[1]);
@@ -298,7 +296,7 @@ if (!$text) {
     }
 }
 
-// Strategy 3: og:description meta tag (often truncated, used as fallback)
+// Strategy 3: og:description meta tag
 if (!$text) {
     if (preg_match('/<meta\s+(?:property|name)=["\']og:description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
         $candidate = cleanText($m[1]);
@@ -346,11 +344,9 @@ if (!$text) {
     }
 }
 
-// Extract images
+// Extract images from og:image meta tags (original working code)
 $images = [];
 $seen = [];
-
-// og:image meta tags
 if (preg_match_all('/<meta\s+(?:property|name)=["\']og:image["\']\s+content=["\']([^"\']+)["\']/i', $html, $imgMatches)) {
     foreach ($imgMatches[1] as $imgUrl) {
         $decoded = html_entity_decode($imgUrl, ENT_QUOTES, 'UTF-8');
@@ -373,52 +369,27 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
         }
     }
 }
-$ogImageCount = count($images);
-
-// Facebook JSON: find scontent image URLs using string scanning (no complex regex)
-// Facebook escapes URLs as https:\/\/scontent... in their JSON
-$searchPos = 0;
-$scontentNeedle = 'scontent';
-while (($pos = strpos($html, $scontentNeedle, $searchPos)) !== false) {
-    // Walk backwards to find the start of the URL (look for "https)
-    $urlStart = $pos;
-    for ($back = $pos - 1; $back >= max(0, $pos - 60); $back--) {
-        if (substr($html, $back, 5) === 'https' || substr($html, $back, 4) === 'http') {
-            $urlStart = $back;
-            break;
+$ogImageCount = count($images); // track how many came from og:image (before JSON patterns)
+// Also extract higher-res images from Facebook JSON data
+if (preg_match_all('/"(?:full_?size|large|high_?res)_?(?:src|url|image)":\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
+    foreach ($imgMatches[1] as $imgUrl) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $imgUrl);
+        if (!isset($seen[$decoded]) && preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
+            $images[] = $decoded;
+            $seen[$decoded] = true;
         }
     }
-    if ($urlStart < $pos) {
-        // Walk forward to find end of URL (quote or whitespace)
-        $urlEnd = $pos;
-        for ($fwd = $pos; $fwd < min(strlen($html), $pos + 500); $fwd++) {
-            if ($html[$fwd] === '"' || $html[$fwd] === "'" || $html[$fwd] === ' ' || $html[$fwd] === '>') {
-                $urlEnd = $fwd;
-                break;
-            }
-        }
-        $rawUrl = substr($html, $urlStart, $urlEnd - $urlStart);
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $rawUrl);
-        // Only keep actual photo files
-        if (preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
-            // Skip tiny images
-            if (strpos($decoded, '/p50x50/') === false
-                && strpos($decoded, '/p100x100/') === false
-                && strpos($decoded, '/cp0/') === false
-                && strpos($decoded, 'emoji') === false
-                && strpos($decoded, 'rsrc.php') === false) {
-                $key = preg_replace('/\?.*$/', '', $decoded);
-                if (!isset($seen[$key])) {
-                    $images[] = $decoded;
-                    $seen[$key] = true;
-                }
-            }
-        }
-    }
-    $searchPos = $pos + 10;
-    if (count($images) >= 15) break; // enough
 }
-
+// Extract gallery images from Facebook inline JSON structures ("image":{"uri":"..."})
+if (preg_match_all('/"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
+    foreach ($imgMatches[1] as $imgUrl) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $imgUrl);
+        if (!isset($seen[$decoded]) && preg_match('/\.(jpg|jpeg|png|webp)/i', $decoded)) {
+            $images[] = $decoded;
+            $seen[$decoded] = true;
+        }
+    }
+}
 $images = array_slice($images, 0, 10);
 
 // Extract video URLs from Facebook HTML
