@@ -4,17 +4,6 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Ensure we always return valid JSON, even on fatal error
-register_shutdown_function(function() {
-    $error = error_get_last();
-    if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
-        if (!headers_sent()) {
-            header('Content-Type: application/json');
-        }
-        echo json_encode(['error' => 'Server error', 'text' => null, 'images' => [], 'videos' => []]);
-    }
-});
-
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -122,6 +111,7 @@ function parseFields($text) {
         $result['naam'] = mb_convert_case(trim($m[1]), MB_CASE_TITLE, 'UTF-8');
     }
     // Pattern: ALL-CAPS name surrounded by emoji or on its own line (very common in shelter posts)
+    // e.g. "🩷 AIRA 🩷" or "❤️ BELLA ❤️" or just "AIRA\n"
     // Use [^\n\r\p{L}\p{N}] instead of specific Unicode categories for server compatibility
     if (!$result['naam'] && preg_match('/(?:^|[\n\r])[^\n\r\p{L}\p{N}]*([A-Z\x{0100}-\x{024F}]{2,15})[^\n\r\p{L}\p{N}]*(?:[\n\r]|$)/u', $t, $m)) {
         $candidate = trim($m[1]);
@@ -268,25 +258,41 @@ if (empty($html)) {
 
 $text = null;
 
-// Strategy 1: Facebook inline JSON message text (full untruncated text)
-if (preg_match('/"message"\s*:\s*\{\s*"text"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
-    $candidate = cleanText($m[1]);
-    if (!isBoilerplate($candidate)) {
-        $text = $candidate;
-    }
-}
-
-// If JSON gave us text, also check if og:description is longer (sometimes JSON is snippet)
-if ($text) {
+// Strategy 1: og:description meta tag (most reliable for public posts)
+if (!$text) {
+    // property before content
     if (preg_match('/<meta\s+(?:property|name)=["\']og:description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
-        $ogCandidate = cleanText($m[1]);
-        if (!isBoilerplate($ogCandidate) && mb_strlen($ogCandidate, 'UTF-8') > mb_strlen($text, 'UTF-8')) {
-            $text = $ogCandidate;
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+    // content before property
+    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:description["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
         }
     }
 }
 
-// Strategy 2: JSON-LD articleBody
+// Strategy 2: Standard description meta tag
+if (!$text) {
+    if (preg_match('/<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+name=["\']description["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+}
+
+// Strategy 3: JSON-LD articleBody
 if (!$text) {
     if (preg_match('/"articleBody"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
         $candidate = cleanText($m[1]);
@@ -296,31 +302,9 @@ if (!$text) {
     }
 }
 
-// Strategy 3: og:description meta tag
+// Strategy 4: Facebook inline JSON message text
 if (!$text) {
-    if (preg_match('/<meta\s+(?:property|name)=["\']og:description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:description["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-}
-
-// Strategy 4: Standard description meta tag
-if (!$text) {
-    if (preg_match('/<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+name=["\']description["\']/i', $html, $m)) {
+    if (preg_match('/"message"\s*:\s*\{\s*"text"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
         $candidate = cleanText($m[1]);
         if (!isBoilerplate($candidate)) {
             $text = $candidate;
@@ -344,7 +328,7 @@ if (!$text) {
     }
 }
 
-// Extract images from og:image meta tags (original working code)
+// Extract images from og:image meta tags
 $images = [];
 $seen = [];
 if (preg_match_all('/<meta\s+(?:property|name)=["\']og:image["\']\s+content=["\']([^"\']+)["\']/i', $html, $imgMatches)) {
