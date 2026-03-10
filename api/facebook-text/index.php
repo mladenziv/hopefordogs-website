@@ -258,9 +258,17 @@ if (empty($html)) {
 
 $text = null;
 
-// Strategy 1: Facebook inline JSON message text (full untruncated text)
+// Strategy 1: og:description meta tag (most reliable for public posts)
 if (!$text) {
-    if (preg_match('/"message"\s*:\s*\{\s*"text"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
+    // property before content
+    if (preg_match('/<meta\s+(?:property|name)=["\']og:description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+    // content before property
+    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:description["\']/i', $html, $m)) {
         $candidate = cleanText($m[1]);
         if (!isBoilerplate($candidate)) {
             $text = $candidate;
@@ -268,7 +276,23 @@ if (!$text) {
     }
 }
 
-// Strategy 2: JSON-LD articleBody
+// Strategy 2: Standard description meta tag
+if (!$text) {
+    if (preg_match('/<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+name=["\']description["\']/i', $html, $m)) {
+        $candidate = cleanText($m[1]);
+        if (!isBoilerplate($candidate)) {
+            $text = $candidate;
+        }
+    }
+}
+
+// Strategy 3: JSON-LD articleBody
 if (!$text) {
     if (preg_match('/"articleBody"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
         $candidate = cleanText($m[1]);
@@ -278,31 +302,9 @@ if (!$text) {
     }
 }
 
-// Strategy 3: og:description meta tag (fallback, often truncated)
+// Strategy 4: Facebook inline JSON message text
 if (!$text) {
-    if (preg_match('/<meta\s+(?:property|name)=["\']og:description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:description["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-}
-
-// Strategy 4: Standard description meta tag
-if (!$text) {
-    if (preg_match('/<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
-        $candidate = cleanText($m[1]);
-        if (!isBoilerplate($candidate)) {
-            $text = $candidate;
-        }
-    }
-    if (!$text && preg_match('/<meta\s+content=["\']([^"\']+)["\']\s+name=["\']description["\']/i', $html, $m)) {
+    if (preg_match('/"message"\s*:\s*\{\s*"text"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/i', $html, $m)) {
         $candidate = cleanText($m[1]);
         if (!isBoilerplate($candidate)) {
             $text = $candidate;
@@ -413,6 +415,28 @@ $videos = array_slice($videos, 0, 3);
 // Keep only the og:image entries which are the canonical poster images
 if (!empty($videos)) {
     $images = array_slice($images, 0, min($ogImageCount, 2));
+}
+
+// Try to get full untruncated text from JSON using strpos (no regex, no crash risk)
+$needle = '"message":{"text":"';
+$msgPos = strpos($html, $needle);
+if ($msgPos !== false) {
+    $start = $msgPos + strlen($needle);
+    // Walk forward to find the closing quote (skip escaped quotes)
+    $end = $start;
+    $len = strlen($html);
+    while ($end < $len) {
+        if ($html[$end] === '"' && $html[$end - 1] !== '\\') break;
+        $end++;
+    }
+    if ($end > $start) {
+        $rawMsg = substr($html, $start, $end - $start);
+        $cleaned = cleanText($rawMsg);
+        // Only replace if JSON text is longer (og:description is often truncated)
+        if (!isBoilerplate($cleaned) && (!$text || mb_strlen($cleaned, 'UTF-8') > mb_strlen($text, 'UTF-8'))) {
+            $text = $cleaned;
+        }
+    }
 }
 
 // Parse structured dog fields from text
