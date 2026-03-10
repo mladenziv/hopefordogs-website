@@ -795,31 +795,27 @@
 
   <!-- JAVASCRIPT: Donation form logic & Mollie integration -->
   <script>
-    // ========================================
-    // MOLLIE PAYMENT INTEGRATION
-    // ========================================
-    // TODO: Replace with your Mollie payment link or API endpoint
-    // To set up Mollie:
-    // 1. Create account at https://www.mollie.com
-    // 2. Get your API key from the Mollie dashboard
-    // 3. Create a payment link at https://www.mollie.com/dashboard/payment-links
-    // Or set up a simple backend (Node.js/PHP) that creates payments via Mollie API
-    //
-    // Example Mollie payment link format:
-    // https://www.mollie.com/paymentlinks/pl_XXXXXXXXXX
-    //
-    // Example backend endpoint:
-    // https://your-api.com/create-payment?amount=25&frequency=eenmalig
-    // ========================================
-
-    const MOLLIE_PAYMENT_URL = null; // Set your Mollie payment link or API endpoint here
+    // Mollie payment API endpoint (PHP backend)
+    const MOLLIE_API_ENDPOINT = '/api/mollie/create-payment.php';
 
     // State
     let selectedAmount = 25;
     let selectedFrequency = 'maandelijks';
 
-    // Check URL for preselected amount
+    // Check URL for payment status or preselected amount
     const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.get('betaling') === 'succes') {
+      const successBanner = document.createElement('div');
+      successBanner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#16a34a;color:#fff;text-align:center;padding:16px 20px;font-family:Manrope,sans-serif;font-size:16px;font-weight:600;';
+      successBanner.innerHTML = 'Bedankt voor uw donatie! Uw betaling wordt verwerkt. &#10005;';
+      successBanner.style.cursor = 'pointer';
+      successBanner.onclick = function() { successBanner.remove(); };
+      document.body.prepend(successBanner);
+      // Clean up URL
+      window.history.replaceState({}, '', 'doneer.html');
+    }
+
     const presetAmount = urlParams.get('bedrag');
 
     // Amount buttons
@@ -874,7 +870,7 @@
     // Donate button
     const donateBtn = document.getElementById('donateBtn');
 
-    donateBtn.addEventListener('click', () => {
+    donateBtn.addEventListener('click', async () => {
       // Get custom amount if entered
       if (customAmountInput.value) {
         selectedAmount = parseFloat(customAmountInput.value);
@@ -889,36 +885,36 @@
       const donorName = document.getElementById('donorName').value.trim();
       const donorEmail = document.getElementById('donorEmail').value.trim();
 
-      // If Mollie is configured, redirect
-      if (MOLLIE_PAYMENT_URL) {
-        const params = new URLSearchParams({
-          amount: selectedAmount.toFixed(2),
-          frequency: selectedFrequency
+      // Disable button and show loading state
+      donateBtn.disabled = true;
+      donateBtn.textContent = 'Bezig...';
+
+      try {
+        const response = await fetch(MOLLIE_API_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: selectedAmount,
+            frequency: selectedFrequency,
+            name: donorName || '',
+            email: donorEmail || ''
+          })
         });
 
-        if (donorName) params.append('name', donorName);
-        if (donorEmail) params.append('email', donorEmail);
+        const data = await response.json();
 
-        const separator = MOLLIE_PAYMENT_URL.includes('?') ? '&' : '?';
-        window.location.href = MOLLIE_PAYMENT_URL + separator + params.toString();
-        return;
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        } else {
+          alert(data.error || 'Er is een fout opgetreden. Probeer het opnieuw.');
+          donateBtn.disabled = false;
+          donateBtn.textContent = 'Doneer nu';
+        }
+      } catch (err) {
+        alert('Er is een fout opgetreden. Probeer het opnieuw of doneer via bankoverschrijving.');
+        donateBtn.disabled = false;
+        donateBtn.textContent = 'Doneer nu';
       }
-
-      // If Mollie is not configured, show setup message
-      const frequencyText = selectedFrequency === 'maandelijks' ? 'maandelijkse' : 'eenmalige';
-      alert(
-        'Mollie betaallink moet nog worden ingesteld.\n\n' +
-        'Uw selectie:\n' +
-        '- Bedrag: \u20AC' + selectedAmount.toFixed(2) + '\n' +
-        '- Frequentie: ' + frequencyText + ' donatie\n' +
-        (donorName ? '- Naam: ' + donorName + '\n' : '') +
-        (donorEmail ? '- E-mail: ' + donorEmail + '\n' : '') +
-        '\nOm Mollie in te stellen:\n' +
-        '1. Maak een account aan op mollie.com\n' +
-        '2. Maak een betaallink aan in het Mollie dashboard\n' +
-        '3. Vul de MOLLIE_PAYMENT_URL variabele in dit script in\n\n' +
-        'U kunt ook doneren via bankoverschrijving (zie onderaan de pagina).'
-      );
     });
   </script>
 

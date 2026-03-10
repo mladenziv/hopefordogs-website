@@ -223,7 +223,7 @@
     @media (max-width: 767px) {
       .container { padding: 0 20px; }
       .testimonials-section { padding: 40px 0 80px; }
-      .testimonials-grid { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
+      .testimonials-grid { grid-template-columns: 1fr; max-width: 100%; }
       .cta-box { padding: 60px 24px; }
       .cta-buttons { flex-direction: column; align-items: center; }
       .cta-section { padding: 60px 0; }
@@ -281,7 +281,7 @@
     async function loadStories() {
       var grid = document.getElementById('storiesGrid');
       try {
-        var stories = await supabaseGet('stories', 'select=*&order=created_at.desc');
+        var stories = await supabaseGet('stories', 'select=*&order=sort_order.asc.nullslast,created_at.desc');
 
         if (!stories || stories.length === 0) {
           grid.innerHTML = '<div class="empty-state"><p>Er zijn nog geen ervaringen gedeeld.</p></div>';

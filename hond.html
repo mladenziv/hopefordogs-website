@@ -772,9 +772,12 @@
       const thumbs = document.getElementById('carouselThumbs');
 
       // Build slides
-      track.innerHTML = images.map(url =>
-        `<div class="carousel-slide"><img src="${url}" alt="Foto van ${dog.naam}"></div>`
-      ).join('');
+      track.innerHTML = images.map(url => {
+        const isVideo = url && (url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.mov'));
+        return isVideo
+          ? `<div class="carousel-slide"><video src="${url}" controls playsinline style="width:100%;height:100%;object-fit:contain;background:#000"></video></div>`
+          : `<div class="carousel-slide"><img src="${url}" alt="Foto van ${dog.naam}"></div>`;
+      }).join('');
 
       // Build dots
       dots.innerHTML = images.map((_, i) =>
@@ -782,9 +785,12 @@
       ).join('');
 
       // Build thumbs
-      thumbs.innerHTML = images.map((url, i) =>
-        `<div class="carousel-thumb ${i === 0 ? 'active' : ''}" data-index="${i}"><img src="${url}" alt="Foto ${i + 1} van ${dog.naam}"></div>`
-      ).join('');
+      thumbs.innerHTML = images.map((url, i) => {
+        const isVideo = url && (url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.mov'));
+        return isVideo
+          ? `<div class="carousel-thumb ${i === 0 ? 'active' : ''}" data-index="${i}"><div style="width:100%;height:100%;background:var(--beige);display:flex;align-items:center;justify-content:center;position:relative"><video src="${url}" style="width:100%;height:100%;object-fit:cover"></video><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.5))"><polygon points="5,3 19,12 5,21"/></svg></div></div></div>`
+          : `<div class="carousel-thumb ${i === 0 ? 'active' : ''}" data-index="${i}"><img src="${url}" alt="Foto ${i + 1} van ${dog.naam}"></div>`;
+      }).join('');
 
       // Hide nav if only 1 image
       if (images.length <= 1) {

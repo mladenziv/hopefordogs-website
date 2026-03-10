@@ -303,7 +303,7 @@
         // Set up "next story" button
         if (allStoryIds.length === 0) {
           try {
-            var all = await supabaseGet('stories', 'select=id&order=created_at.desc');
+            var all = await supabaseGet('stories', 'select=id&order=sort_order.asc.nullslast,created_at.desc');
             allStoryIds = all.map(function(s) { return s.id; });
           } catch(e) {}
         }

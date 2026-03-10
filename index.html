@@ -37,14 +37,15 @@
     }
 
     .hero-left {
-      flex-shrink: 0;
+      flex: 1;
+      min-width: 0;
       display: flex;
       flex-direction: column;
       gap: 40px;
     }
 
     .hero-text {
-      width: 462px;
+      max-width: 462px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -141,14 +142,15 @@
 
     /* Image Grid */
     .hero-grid {
-      width: 688px;
+      flex: 1;
+      min-width: 0;
+      max-width: 688px;
       height: 440px;
       border-radius: 31.381px;
       overflow: hidden;
       display: flex;
       flex-direction: row;
       gap: 6.276px;
-      flex-shrink: 0;
     }
 
     .hero-grid-large {
@@ -552,7 +554,7 @@
     }
 
     .problem-reveal-btn.hide-mode {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.55);
       color: rgba(255, 255, 255, 0.85);
     }
 
@@ -684,7 +686,7 @@
     .social-inner {
       width: 100%;
       max-width: 1560px;
-      padding: 0 40px;
+      padding: 0 40px 32px;
       display: flex;
       flex-direction: column;
     }
@@ -1634,7 +1636,9 @@
       .hero-grid { order: 4; width: 100%; height: auto; aspect-ratio: 688/440; border-radius: 24px; gap: 4px; max-width: none; }
       .hero-grid-stack { width: auto; flex: 1 0 0; gap: 4px; }
       .hero-grid-large { flex: 1 0 0; }
-      .hero-stats { order: 5; width: 100%; flex-wrap: wrap; gap: 40px; padding: 24px 0 0; border-top: 0.5px solid rgba(0,0,0,0.08); }
+      .hero-stats { order: 5; width: 100%; flex-wrap: nowrap; gap: 40px; padding: 24px 0 0; border-top: 0.5px solid rgba(0,0,0,0.08); overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+      .hero-stats::-webkit-scrollbar { display: none; }
+      .hero-stat { white-space: nowrap; flex-shrink: 0; }
       .hero-stat-secondary { display: flex; }
       .hero-stat-secondary .hero-stat-number { color: #7f7354; }
       .hero-stat-secondary .hero-stat-label { color: #545454; }
@@ -1651,7 +1655,9 @@
       .social-carousel { padding: 4px 40px 12px; scroll-padding-left: 40px; }
       .social-card { flex: 0 0 calc(25% - 15px); }
       .social-card.gallery { flex: 0 0 calc(50% - 10px); min-width: 320px; }
-      .carousel-arrow { display: none; }
+      /* Arrows: reposition inside the breakout area */
+      .carousel-arrow.prev { left: 16px; }
+      .carousel-arrow.next { right: 16px; }
 
       .before-after-inner { flex-direction: column; }
       .ba-left { width: 100%; }
@@ -1933,6 +1939,7 @@
       .social-carousel { gap: 12px; padding: 4px 20px 12px; scroll-padding-left: 20px; }
       .social-card { flex: 0 0 270px; min-width: 270px; }
       .social-card.gallery { flex: 0 0 270px; min-width: 270px; }
+      .carousel-arrow { display: none; }
 
       .section-divider { padding: 0 20px; }
 

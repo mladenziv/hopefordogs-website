@@ -1465,13 +1465,30 @@ blockquote {
         font-size: 16px;
     }
 
+    .team {
+        padding: 48px 0;
+    }
+    /* Team carousel: break out of padding to go edge-to-edge (like XS) */
+    .team-carousel-wrap {
+        margin-left: -40px;
+        margin-right: -40px;
+    }
+    .team-grid {
+        gap: 16px;
+        padding: 4px 40px 12px;
+        scroll-padding-left: 40px;
+    }
     .team-card {
-        flex: 0 0 calc(33.333% - 14px);
+        flex: 0 0 270px;
+        min-width: 270px;
     }
-    .team-arrow {
-        display: none;
-    }
+    /* Arrows: reposition inside the breakout area */
+    .team-arrow.prev { left: 16px; }
+    .team-arrow.next { right: 16px; }
 
+    .faq-inner {
+        padding: 48px 40px;
+    }
     .faq-cols {
         flex-direction: column;
         gap: 0;
@@ -1553,6 +1570,9 @@ blockquote {
     .faq-title {
         font-size: 28px;
     }
+    .faq-inner {
+        padding: 32px 20px;
+    }
 
     .nav-inner {
         padding: 0 20px;
@@ -1614,6 +1634,9 @@ blockquote {
 
     .team {
         padding: 32px 0;
+    }
+    .team-arrow {
+        display: none;
     }
     .team-inner {
         padding: 0 20px;

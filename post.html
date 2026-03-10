@@ -86,21 +86,46 @@
     }
 
     /* Rich HTML content styling */
-    .post-content h2 {
+    .post-content h1,
+    .post-content h2,
+    .post-content h3,
+    .post-content h4,
+    .post-content h5,
+    .post-content h6 {
       font-family: 'Nunito', sans-serif;
+      color: var(--dark-1);
+      text-transform: none;
+    }
+    .post-content h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 40px 0 16px;
+      line-height: 1.25;
+    }
+    .post-content h2 {
       font-size: 26px;
       font-weight: 800;
-      color: var(--dark-1);
       margin: 40px 0 16px;
       line-height: 1.3;
     }
     .post-content h3 {
-      font-family: 'Nunito', sans-serif;
       font-size: 20px;
       font-weight: 700;
-      color: var(--dark-1);
       margin: 32px 0 12px;
       line-height: 1.4;
+    }
+    .post-content h4 {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 24px 0 8px;
+      line-height: 1.4;
+    }
+    .post-content h5,
+    .post-content h6 {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 20px 0 8px;
+      line-height: 1.5;
     }
     .post-content p {
       margin: 0 0 20px;
@@ -277,6 +302,40 @@
         var isHTML = /<[a-z][\s\S]*>/i.test(rawContent);
         if (isHTML) {
           contentEl.innerHTML = rawContent;
+          // Convert bold-only paragraphs that look like headings into proper <h2> elements
+          var paragraphs = contentEl.querySelectorAll('p');
+          for (var i = 0; i < paragraphs.length; i++) {
+            var p = paragraphs[i];
+            // Check if paragraph contains only a single <strong> or <b> child (plus whitespace)
+            var text = p.textContent.trim();
+            if (!text) continue;
+            var children = p.childNodes;
+            var boldEl = null;
+            var onlyBold = true;
+            for (var j = 0; j < children.length; j++) {
+              var child = children[j];
+              if (child.nodeType === 3 && child.textContent.trim() === '') continue; // whitespace text node
+              if (child.nodeType === 1 && (child.tagName === 'STRONG' || child.tagName === 'B')) {
+                if (boldEl) { onlyBold = false; break; } // multiple bold elements
+                boldEl = child;
+              } else {
+                onlyBold = false;
+                break;
+              }
+            }
+            if (!onlyBold || !boldEl) continue;
+            // Check if text is short enough to be a heading (max ~120 chars) and is ALL CAPS
+            var boldText = boldEl.textContent.trim();
+            if (boldText.length > 120) continue;
+            var letters = boldText.replace(/[^a-zA-ZÀ-ÖØ-öø-ÿ]/g, '');
+            if (letters.length < 2) continue;
+            var upperLetters = boldText.replace(/[^A-ZÀ-ÖØ-Ý]/g, '');
+            if (upperLetters.length / letters.length < 0.8) continue;
+            // Convert to title case and create h2
+            var h2 = document.createElement('h2');
+            h2.textContent = boldText.charAt(0).toUpperCase() + boldText.slice(1).toLowerCase();
+            p.parentNode.replaceChild(h2, p);
+          }
         } else {
           contentEl.classList.add('plain-text');
           contentEl.textContent = rawContent;
