@@ -28,15 +28,18 @@ function dogCardHTML(dog, opts) {
     badge = '<div class="dog-card-badge ' + tagType + '"><span class="dog-card-badge-label">' + tagLabel + '</span><span class="dog-card-badge-tail"></span></div>';
   }
 
-  var linkLabel = 'Meer info';
-  if (typeof t === 'function') {
-    try { linkLabel = t('honden.meerinfo'); } catch(e) {}
-  }
-
   var safeName = escapeHTML(dog.naam);
   var safeDesc = escapeHTML(desc);
   var safeStatus = escapeHTML(dog.status);
   var safeImg = escapeHTML(img);
+
+  // Gender + age meta row
+  var genderLabel = dog.geslacht === 'reu' ? 'Reu' : dog.geslacht === 'teef' ? 'Teef' : '';
+  var ageLabel = dog.leeftijd || '';
+  var metaParts = [genderLabel, ageLabel].filter(Boolean);
+  var metaRow = metaParts.length > 0
+    ? '<div class="dog-card-meta">' + metaParts.map(function(p) { return '<span>' + escapeHTML(p) + '</span>'; }).join('') + '</div>'
+    : '';
 
   var inner =
     '<div class="dog-card-inner">' +
@@ -44,7 +47,7 @@ function dogCardHTML(dog, opts) {
       '<div class="dog-card-body">' +
         '<div class="dog-card-name">' + safeName + '</div>' +
         '<div class="dog-card-desc">' + safeDesc + '</div>' +
-        '<span class="dog-card-link">' + linkLabel + ' <svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>' +
+        metaRow +
       '</div>' +
     '</div>' +
     badge;

@@ -161,11 +161,6 @@
     }
 
     .dog-name {
-      font-family: 'Nunito', sans-serif;
-      font-size: 36px;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -0.02em /* -0.72px */;
     }
 
     .dog-status-badge {
@@ -440,7 +435,6 @@
     /* --- SM: 768–1023px --- */
     @media (max-width: 1023px) {
       /* Responsive type */
-      .dog-name { font-size: 32px; }
       .dog-meta-value { font-size: 15px; }
       .dog-description { font-size: 15px; }
       .modal h2 { font-size: 24px; }
@@ -456,7 +450,6 @@
     /* --- XS: 0–767px --- */
     @media (max-width: 767px) {
       /* Responsive type — XS */
-      .dog-name { font-size: 28px; }
       .modal h2 { font-size: 22px; }
       .error-screen h2 { font-size: 22px; }
 
@@ -512,7 +505,7 @@
       </div>
 
       <div class="dog-info">
-        <h1 class="dog-name" id="dogName"></h1>
+        <h1 class="dog-name t-heading-lg" id="dogName"></h1>
         <span class="dog-status-badge" id="dogStatusBadge"></span>
         <div class="dog-meta" id="dogMeta"></div>
         <p class="dog-description" id="dogDescription"></p>

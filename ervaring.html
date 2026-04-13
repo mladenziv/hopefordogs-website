@@ -62,13 +62,107 @@
       gap: 12px;
     }
 
-    .story-main-img {
-      width: 100%;
-      aspect-ratio: 4/3;
-      object-fit: cover;
+    /* ============ IMAGE CAROUSEL ============ */
+    .carousel {
+      position: relative;
       border-radius: 24px;
+      overflow: hidden;
       background: var(--beige);
+      aspect-ratio: 4/3;
+      user-select: none;
     }
+
+    .carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.3s ease;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      height: 100%;
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      transition: background 0.2s, transform 0.2s;
+      z-index: 2;
+    }
+
+    .carousel-btn:hover {
+      background: var(--white);
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .carousel-btn svg { width: 20px; height: 20px; }
+    .carousel-prev { left: 16px; }
+    .carousel-next { right: 16px; }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .carousel-dot.active {
+      background: var(--white);
+      transform: scale(1.3);
+    }
+
+    .carousel-thumbs {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .carousel-thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .carousel-thumb.active { border-color: var(--brand); }
+    .carousel-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
 
     /* ========== STORY INFO ========== */
@@ -170,11 +264,21 @@
 
     <div class="story-grid">
       <div class="story-gallery">
-        <img class="story-main-img" id="storyMainImg" src="" alt="">
+        <div class="carousel" id="storyCarousel">
+          <div class="carousel-track" id="storyCarouselTrack"></div>
+          <button class="carousel-btn carousel-prev" id="storyPrev">
+            <svg viewBox="0 0 16 16"><path d="M10 3l-5 5 5 5" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="carousel-btn carousel-next" id="storyNext">
+            <svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="carousel-dots" id="storyDots"></div>
+        </div>
+        <div class="carousel-thumbs" id="storyThumbs"></div>
       </div>
 
       <div class="story-info">
-        <h1 class="story-name t-heading-md" id="storyName"></h1>
+        <h1 class="story-name t-heading-lg" id="storyName"></h1>
         <div class="story-adopter" id="storyAdopter"></div>
         <div class="story-text" id="storyText"></div>
         <div class="story-cta">
@@ -192,6 +296,115 @@
   <script>
     var allStoryIds = [];
     var currentStoryId = null;
+    var storyCurrentSlide = 0;
+    var storyImages = [];
+    var storyTouchStartX = 0;
+    var storyTouchEndX = 0;
+
+    var storyCarouselBound = false;
+
+    function initStoryCarousel(images, dogName) {
+      storyImages = images;
+      storyCurrentSlide = 0;
+      var track = document.getElementById('storyCarouselTrack');
+      var dots = document.getElementById('storyDots');
+      var thumbs = document.getElementById('storyThumbs');
+
+      // Build slides
+      track.innerHTML = images.map(function(url) {
+        return '<div class="carousel-slide"><img src="' + url + '" alt="Foto van ' + dogName + '"></div>';
+      }).join('');
+
+      // Build dots
+      dots.innerHTML = images.map(function(_, i) {
+        return '<button class="carousel-dot ' + (i === 0 ? 'active' : '') + '" data-index="' + i + '"></button>';
+      }).join('');
+
+      // Build thumbs
+      thumbs.innerHTML = images.map(function(url, i) {
+        return '<div class="carousel-thumb ' + (i === 0 ? 'active' : '') + '" data-index="' + i + '"><img src="' + url + '" alt="Foto ' + (i + 1) + ' van ' + dogName + '"></div>';
+      }).join('');
+
+      // Hide nav if only 1 image
+      if (images.length <= 1) {
+        document.getElementById('storyPrev').style.display = 'none';
+        document.getElementById('storyNext').style.display = 'none';
+        dots.style.display = 'none';
+        thumbs.style.display = 'none';
+      } else {
+        document.getElementById('storyPrev').style.display = '';
+        document.getElementById('storyNext').style.display = '';
+        dots.style.display = '';
+        thumbs.style.display = '';
+      }
+
+      // Bind event listeners only once
+      if (!storyCarouselBound) {
+        storyCarouselBound = true;
+
+        // Dot clicks (delegated)
+        dots.addEventListener('click', function(e) {
+          var dot = e.target.closest('.carousel-dot');
+          if (dot) goToStorySlide(parseInt(dot.dataset.index));
+        });
+
+        // Thumb clicks (delegated)
+        thumbs.addEventListener('click', function(e) {
+          var thumb = e.target.closest('.carousel-thumb');
+          if (thumb) goToStorySlide(parseInt(thumb.dataset.index));
+        });
+
+        // Arrow clicks
+        document.getElementById('storyPrev').addEventListener('click', function() {
+          goToStorySlide(storyCurrentSlide > 0 ? storyCurrentSlide - 1 : storyImages.length - 1);
+        });
+
+        document.getElementById('storyNext').addEventListener('click', function() {
+          goToStorySlide(storyCurrentSlide < storyImages.length - 1 ? storyCurrentSlide + 1 : 0);
+        });
+
+        // Touch swipe
+        var carousel = document.getElementById('storyCarousel');
+        carousel.addEventListener('touchstart', function(e) {
+          storyTouchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        carousel.addEventListener('touchend', function(e) {
+          storyTouchEndX = e.changedTouches[0].screenX;
+          var diff = storyTouchStartX - storyTouchEndX;
+          if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+              goToStorySlide(storyCurrentSlide < storyImages.length - 1 ? storyCurrentSlide + 1 : 0);
+            } else {
+              goToStorySlide(storyCurrentSlide > 0 ? storyCurrentSlide - 1 : storyImages.length - 1);
+            }
+          }
+        }, { passive: true });
+      }
+
+      // Reset track position
+      track.style.transform = 'translateX(0)';
+    }
+
+    function goToStorySlide(index) {
+      storyCurrentSlide = index;
+      var track = document.getElementById('storyCarouselTrack');
+      track.style.transform = 'translateX(-' + (index * 100) + '%)';
+
+      // Update dots
+      var allDots = document.querySelectorAll('#storyDots .carousel-dot');
+      for (var i = 0; i < allDots.length; i++) {
+        if (i === index) allDots[i].classList.add('active');
+        else allDots[i].classList.remove('active');
+      }
+
+      // Update thumbs
+      var allThumbs = document.querySelectorAll('#storyThumbs .carousel-thumb');
+      for (var i = 0; i < allThumbs.length; i++) {
+        if (i === index) allThumbs[i].classList.add('active');
+        else allThumbs[i].classList.remove('active');
+      }
+    }
 
     async function loadStory(storyId, isTransition) {
       if (!storyId) {
@@ -260,15 +473,11 @@
           images = [story.photo_url];
         }
 
-        var mainImg = document.getElementById('storyMainImg');
-
         if (images.length > 0) {
-          mainImg.src = images[0];
-          mainImg.alt = story.dog_name;
+          initStoryCarousel(images, story.dog_name);
           document.querySelector('meta[property="og:image"]').setAttribute('content', images[0]);
         } else {
-          mainImg.src = 'images/placeholder-dog.png';
-          mainImg.alt = '';
+          initStoryCarousel(['images/placeholder-dog.png'], story.dog_name);
         }
 
         document.getElementById('loadingScreen').style.display = 'none';

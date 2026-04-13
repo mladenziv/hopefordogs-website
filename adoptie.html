@@ -24,52 +24,63 @@
     /* ===== HERO ===== */
     .adopt-hero {
       width: 100%;
-      background: radial-gradient(100% 100% at 50% 100%, #FAF8F4 0%, #FFF 100%);
+      background: #fff;
       display: flex;
       justify-content: center;
     }
 
     .adopt-hero-inner {
       width: 100%;
-      max-width: 1560px;
-      padding: 160px 40px 80px;
+      max-width: 1480px;
+      padding: 184px 0 72px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 64px;
+      gap: 80px;
+      border-bottom: 0.5px solid #d6d6d6;
     }
 
     .adopt-hero-text {
-      flex: 1;
+      width: 752px;
+      max-width: 100%;
+      padding: 0 40px;
+      text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      align-items: center;
+      gap: 19px;
     }
 
     .adopt-hero-text h1 {
       font-weight: 900;
+      color: #362709;
     }
 
-    .adopt-hero-text p {
-      max-width: 560px;
-    }
-
-    .adopt-hero-image {
-      flex: 1;
-      max-width: 520px;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.1);
-    }
-
-    .adopt-hero-image img {
+    .adopt-hero-collage {
+      position: relative;
       width: 100%;
-      aspect-ratio: 4/3;
+      aspect-ratio: 1480 / 440;
+      overflow: hidden;
+      border-radius: 20px 20px 0 0;
+    }
+
+    .collage-img {
+      position: absolute;
+      border-radius: 16px;
       object-fit: cover;
     }
 
-    .adopt-hero-images-xs {
-      display: none;
-    }
+    /* Positions: all values as % of container (1480×440) */
+    .collage-1 { left: 37.39%; top: 0%;     width: 22.23%; height: 100%;   z-index: 2; }
+    .collage-2 { left: 24.23%; top: 42.73%; width: 11.55%; height: 51.82%; }
+    .collage-3 { left: 6.39%;  top: 30.45%; width: 16.22%; height: 38.86%; }
+    .collage-4 { left: 61.86%; top: 4.55%;  width: 16.22%; height: 50%;    }
+    .collage-5 { left: 80.31%; top: 19.55%; width: 13.24%; height: 60.91%; }
+    .collage-6 { left: 24.23%; top: 5.45%;  width: 11.55%; height: 31.82%; }
+    .collage-7 { left: 61.86%; top: 60%;    width: 7.30%;  height: 35.45%; }
+    .collage-8 { left: 70.78%; top: 60%;    width: 7.30%;  height: 35.45%; }
+
+    .adopt-hero-grid-xs { display: none; }
 
     /* ===== STEPS ===== */
     .adopt-steps {
@@ -107,7 +118,7 @@
       background: #fff;
       border: 1px solid rgba(0, 0, 0, 0.12);
       border-radius: 20px;
-      padding: 33px 1px 33px 29px;
+      padding: 33px 29px;
       display: flex;
       flex-direction: column;
       gap: 24px;
@@ -172,8 +183,6 @@
     .adopt-timeline-header {
       flex: 1;
       min-width: 0;
-      position: sticky;
-      top: 120px;
     }
 
     .timeline-wrap {
@@ -330,7 +339,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       padding: 72px 0;
     }
 
@@ -347,26 +355,94 @@
       max-width: 1560px;
       padding: 0 40px;
       display: flex;
-      align-items: flex-start;
-      gap: 64px;
+      flex-direction: column;
+      gap: 40px;
     }
 
     .adopt-costs-text {
-      flex: 0 0 520px;
-      position: sticky;
-      top: 120px;
-    }
-
-    .adopt-costs-text h2 {
-      margin-bottom: 16px;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .costs-grid {
-      flex: 1;
       display: flex;
       align-items: stretch;
-      gap: 20px;
-      text-align: left;
+      gap: 40px;
+    }
+
+    .cost-item {
+      flex: 1;
+      min-width: 0;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cost-item-adoption {
+      padding: 0 32px;
+    }
+
+    .cost-item-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 24px 0;
+    }
+
+    .cost-item-title-row {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      white-space: nowrap;
+    }
+
+    .cost-item-amount {
+      color: #ff5314;
+    }
+
+    .cost-item-note {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 28px;
+      letter-spacing: 0.1px;
+      color: #424242;
+    }
+
+    .cost-item-divider {
+      height: 0.5px;
+      background: #d6d6d6;
+    }
+
+    .cost-checklist {
+      list-style: none;
+      padding: 16px 0;
+      margin: 0;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .cost-checklist li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 28px;
+      letter-spacing: 0.1px;
+      color: #424242;
+      white-space: nowrap;
+    }
+
+    .cost-checklist li svg { flex-shrink: 0; }
+
+    .cost-item-transport {
+      padding: 28px 32px;
+      gap: 16px;
     }
 
     .costs-plus {
@@ -379,8 +455,8 @@
     .costs-plus-icon {
       width: 40px;
       height: 40px;
-      border-radius: 50%;
-      background: var(--yellow);
+      border-radius: 20px;
+      background: #fdf0c5;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -391,51 +467,6 @@
       height: 20px;
       fill: var(--gold);
     }
-
-    .cost-item {
-      background: #fff;
-      border-radius: 16px;
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-
-    .cost-item-label {
-      margin-bottom: 4px;
-    }
-
-    .cost-item-amount {
-      color: var(--brand);
-    }
-
-    .cost-item-note {
-      font-size: 14px;
-      font-weight: 500;
-      line-height: 1.6;
-      color: var(--dark-2);
-    }
-
-    .cost-checklist {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px 24px;
-    }
-
-    .cost-checklist li {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--dark-1);
-    }
-
-    .cost-checklist li svg { flex-shrink: 0; }
 
     /* FAQ styles now in shared.css via component */
 
@@ -480,10 +511,10 @@
     /* ===== RESPONSIVE ===== */
     /* --- MD: 1024–1247px --- */
     @media (max-width: 1247px) {
-      .adopt-costs-text { flex: 0 0 400px; }
-      .adopt-costs-inner { gap: 40px; }
       .adopt-timeline-inner { gap: 48px; }
       .adopt-requirements-inner { gap: 48px; }
+      .costs-grid { flex-direction: column; gap: 0; }
+      .costs-plus { padding: 4px 0; }
     }
 
     /* --- SM: 768–1023px --- */
@@ -491,73 +522,36 @@
       /* Responsive type */
       .timeline-title { font-size: 18px; }
 
-      .adopt-hero-inner { flex-direction: column; gap: 32px; padding-top: 192px; }
-      .adopt-hero-image { max-width: 100%; }
+      .adopt-hero-inner { padding: 192px 0 56px; gap: 48px; }
+      /* collage-7, collage-8 stay visible at SM */
       .steps-grid { grid-template-columns: repeat(2, 1fr); }
       .adopt-timeline-inner { flex-direction: column; gap: 40px; }
-      .adopt-timeline-header { position: static; }
       .adopt-requirements-inner { flex-direction: column; gap: 40px; }
-      .adopt-costs-inner { flex-direction: column; gap: 32px; }
-      .adopt-costs-text { flex: auto; position: static; }
-      .costs-grid { flex-direction: column; }
+      .costs-grid { flex-direction: column; gap: 0; }
       .costs-plus { padding: 4px 0; }
-      .adopt-cta-inner { flex-direction: column; text-align: center; }
+      .adopt-cta-inner { flex-direction: column; }
       .adopt-cta-text p { max-width: 100%; }
-      .adopt-cta-buttons { flex-direction: column; align-items: center; }
     }
 
     /* --- XS: 0–767px --- */
     @media (max-width: 767px) {
-      .adopt-hero-inner { padding: 152px 20px 32px; gap: 32px; flex-direction: column; text-align: center; align-items: center; }
-      .adopt-hero-text { align-items: center; padding: 0 20px; gap: 8px; }
-      .adopt-hero-text h1 { font-size: 26px; line-height: 30px; font-weight: 900; }
-      .adopt-hero-text p { font-size: 17px; line-height: 28px; letter-spacing: 0.1px; }
-      .adopt-hero-image { display: none; }
-      .adopt-hero-images-xs {
+      .adopt-hero-inner { padding: 152px 20px 32px; gap: 32px; border-bottom: none; }
+      .adopt-hero-text { padding: 0; gap: 8px; }
+      .adopt-hero-text h1 { font-size: 26px; line-height: 30px; }
+      .adopt-hero-text p { font-size: 17px; line-height: 28px; }
+      .adopt-hero-collage { display: none; }
+      .adopt-hero-grid-xs {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 4px;
         width: 100%;
         border-radius: 20px;
         overflow: hidden;
-        position: relative;
       }
-      .adopt-hero-images-xs img {
+      .adopt-hero-grid-xs img {
         width: 100%;
         height: 240px;
         object-fit: cover;
-        display: block;
-      }
-      .adopt-hero-arrow {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 48px;
-        height: 48px;
-        background: #fff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-      .adopt-hero-arrow::before {
-        content: '';
-        position: absolute;
-        width: 40px;
-        height: 40px;
-        background: #dfb87e;
-        border-radius: 50%;
-      }
-      .adopt-hero-arrow svg {
-        width: 24px;
-        height: 24px;
-        position: relative;
-        z-index: 1;
-      }
-      .adopt-hero-arrow svg path {
-        stroke: #fff;
       }
       .adopt-costs-inner,
       .adopt-steps-inner,
@@ -585,17 +579,19 @@
         <h1 class="t-heading-lg" data-i18n="adoptie.hero">Waar hoop een thuis vindt</h1>
         <p class="t-body-lg" data-i18n="adoptie.hero.sub">Hun start was niet eerlijk, maar hun toekomst kan dat w&#233;l zijn.</p>
       </div>
-      <div class="adopt-hero-image">
-        <img src="images/adopted-dog.png" alt="Hond klaar voor adoptie">
+      <div class="adopt-hero-collage">
+        <img class="collage-img collage-1" src="images/adoption/collage-1.jpg" alt="">
+        <img class="collage-img collage-6" src="images/adoption/collage-6.jpg" alt="">
+        <img class="collage-img collage-2" src="images/adoption/collage-2.jpg" alt="">
+        <img class="collage-img collage-3" src="images/adoption/collage-3.jpg" alt="">
+        <img class="collage-img collage-4" src="images/adoption/collage-4.jpg" alt="">
+        <img class="collage-img collage-7" src="images/adoption/collage-7.jpg" alt="">
+        <img class="collage-img collage-8" src="images/adoption/collage-8.jpg" alt="">
+        <img class="collage-img collage-5" src="images/adoption/collage-5.jpg" alt="">
       </div>
-      <div class="adopt-hero-images-xs">
-        <img src="images/adoption/Adoption-1.png" alt="Hond klaar voor adoptie">
-        <img src="images/adoption/Adoption-2.png" alt="Hond klaar voor adoptie">
-        <div class="adopt-hero-arrow">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M5 12h14M13 6l6 6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+      <div class="adopt-hero-grid-xs">
+        <img src="images/adoption/collage-1.jpg" alt="">
+        <img src="images/adoption/collage-5.jpg" alt="">
       </div>
     </div>
   </section>
@@ -605,17 +601,22 @@
     <div class="adopt-costs-inner">
       <div class="adopt-costs-text">
         <h2 class="t-heading-md" data-i18n="adoptie.kosten">Wat kost een adoptie?</h2>
-        <p class="t-body" data-i18n="adoptie.kosten.sub">De adoptievergoeding dekt een deel van de medische kosten en het transport. Dit is wat inbegrepen is:</p>
+        <p class="t-body" data-i18n="adoptie.kosten.sub">De bijdrage gaat naar de verzorging en de veilige reis van jouw hond</p>
       </div>
       <div class="costs-grid">
-        <div class="cost-item" style="flex:1;">
-          <div class="cost-item-label t-body" data-i18n="adoptie.kosten.vergoeding">Adoptievergoeding</div>
-          <div class="cost-item-amount t-heading-sm">&#8364;230</div>
-          <div class="cost-item-note" data-i18n="adoptie.kosten.vergoeding.note">Eenmalige bijdrage voor de medische verzorging van jouw hond in het asiel.</div>
-          <ul class="cost-checklist" style="margin-top:12px;">
+        <div class="cost-item cost-item-adoption">
+          <div class="cost-item-header">
+            <div class="cost-item-title-row t-heading-sm">
+              <span data-i18n="adoptie.kosten.vergoeding">Adoptie</span>
+              <span class="cost-item-amount">&#8364;230</span>
+            </div>
+            <div class="cost-item-note" data-i18n="adoptie.kosten.vergoeding.note">Eenmalige bijdrage voor de medische verzorging van jouw hond in het asiel.</div>
+          </div>
+          <div class="cost-item-divider"></div>
+          <ul class="cost-checklist">
             <li><svg viewBox="0 0 20 20" width="18" height="18"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="#16a34a"/></svg> <span data-i18n="adoptie.kosten.vac">Vaccinatie</span></li>
-            <li><svg viewBox="0 0 20 20" width="18" height="18"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="#16a34a"/></svg> <span data-i18n="adoptie.kosten.ont">Ontworming</span></li>
             <li><svg viewBox="0 0 20 20" width="18" height="18"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="#16a34a"/></svg> <span data-i18n="adoptie.kosten.vlooien">Ontvlooiing</span></li>
+            <li><svg viewBox="0 0 20 20" width="18" height="18"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="#16a34a"/></svg> <span data-i18n="adoptie.kosten.ont">Ontworming</span></li>
             <li><svg viewBox="0 0 20 20" width="18" height="18"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="#16a34a"/></svg> <span data-i18n="adoptie.kosten.chip">Chip &amp; Paspoort</span></li>
           </ul>
         </div>
@@ -624,9 +625,11 @@
             <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
           </div>
         </div>
-        <div class="cost-item" style="flex:1;">
-          <div class="cost-item-label t-body" data-i18n="adoptie.kosten.transport">Transport</div>
-          <div class="cost-item-amount t-heading-sm">&#8364;200</div>
+        <div class="cost-item cost-item-transport">
+          <div class="cost-item-title-row t-heading-sm">
+            <span data-i18n="adoptie.kosten.transport">Transport</span>
+            <span class="cost-item-amount">&#8364;200</span>
+          </div>
           <div class="cost-item-note" data-i18n="adoptie.kosten.transport.note">Deze betaling is voor een gecertificeerde dierentransporteur, een derde partij die het veilige vervoer van jouw hond verzorgt.</div>
         </div>
       </div>
@@ -796,11 +799,10 @@
       <div class="adopt-cta-text">
         <h2 class="t-heading-md" data-i18n="adoptie.cta">Klaar om een leven te veranderen?</h2>
         <p class="t-body" data-i18n="adoptie.cta.sub">Bekijk onze beschikbare honden en vind jouw nieuwe gezinslid. Of neem contact met ons op — we helpen je graag.</p>
-        <p class="t-body" style="margin-top:12px;"><a href="ervaringen.html" style="color:var(--brand);font-weight:700;">Lees de ervaringen van onze adoptanten &rarr;</a></p>
       </div>
       <div class="adopt-cta-buttons">
-        <a href="honden.html" class="btn-primary" data-i18n="adoptie.bekijk">Bekijk beschikbare honden</a>
-        <a href="mailto:info@hopefordogs.nl" class="btn-secondary" data-i18n="adoptie.contact">Neem contact op</a>
+        <a href="ervaringen.html" class="btn-secondary" data-i18n="adoptie.contact">Lees de ervaringen</a>
+        <a href="honden.html" class="btn-primary" data-i18n="adoptie.bekijk">Onze honden</a>
       </div>
     </div>
   </section>

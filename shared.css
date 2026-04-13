@@ -25,15 +25,16 @@ html {
 .t-heading-lg {
     font-family: "Nunito", sans-serif;
     font-size: 40px;
-    font-weight: 800;
+    font-weight: 900;
     line-height: 44px;
     color: var(--dark-1);
 }
 .t-heading-md {
     font-family: "Nunito", sans-serif;
-    font-size: 36px;
+    font-size: 32px;
     font-weight: 800;
-    line-height: 40px;
+    line-height: 48px;
+    letter-spacing: -0.72px;
     color: var(--dark-1);
 }
 .t-heading-sm {
@@ -328,7 +329,7 @@ blockquote {
         #fff 100%
     );
     min-height: 160px;
-    padding: 168px 40px 80px;
+    padding: 184px 40px 80px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -347,12 +348,6 @@ blockquote {
 
 .page-hero h1,
 .page-hero h2 {
-    /* t-heading-lg */
-    font-family: "Nunito", sans-serif;
-    font-size: 40px;
-    font-weight: 900;
-    line-height: 44px;
-    color: var(--dark-1);
     margin-bottom: 8px;
 }
 
@@ -1412,8 +1407,8 @@ blockquote {
         line-height: 36px;
     }
     .t-heading-md {
-        font-size: 28px;
-        line-height: 32px;
+        font-size: 30px;
+        line-height: 40px;
     }
     .t-heading-sm {
         font-size: 24px;
@@ -1439,11 +1434,6 @@ blockquote {
     }
 
     /* Responsive type scale — shared component selectors */
-    .page-hero h1,
-.page-hero h2 {
-        font-size: 32px;
-        line-height: 36px;
-    }
     .page-hero p {
         font-size: 18px;
         line-height: 30px;
@@ -1504,7 +1494,7 @@ blockquote {
     }
 
     .page-hero {
-        padding: 200px 32px 64px;
+        padding: 192px 32px 64px;
     }
 }
 
@@ -1542,11 +1532,6 @@ blockquote {
         font-size: 16px;
     }
 
-    .page-hero h1,
-.page-hero h2 {
-        font-size: 26px;
-        line-height: 30px;
-    }
     .page-hero p {
         font-size: 17px;
         line-height: 28px;

@@ -15,8 +15,26 @@
   <meta property="og:image" content="https://www.hopefordogseurope.com/images/hero-1.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="shared.css?v=20">
+  <style>
+    @font-face {
+      font-family: 'Tanker';
+      src: url('fonts/Tanker-Regular.woff2') format('woff2'),
+           url('fonts/Tanker-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'iCiel Pony';
+      src: url('fonts/Pony.woff2') format('woff2'),
+           url('fonts/Pony.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
   <style>
     /* ===== HERO ===== */
     .hero {
@@ -25,6 +43,7 @@
       flex-direction: column;
       align-items: center;
       background: linear-gradient(to bottom, #fff, #fcf9f5);
+      overflow-x: clip;
     }
 
     .hero-content {
@@ -32,8 +51,8 @@
       max-width: 1560px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 136px 40px 48px;
+      gap: 40px;
+      padding: 0 40px;
     }
 
     .hero-left {
@@ -41,22 +60,30 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 40px;
+      gap: 80px;
+      padding-top: 152px;
+    }
+
+    .hero-top {
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
     }
 
     .hero-text {
-      max-width: 462px;
+      width: 614px;
+      max-width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 32px;
     }
 
     .hero-title {
-      font-family: 'Nunito', sans-serif;
-      font-size: 40px;
-      font-weight: 900;
-      line-height: 44px;
-      color: #362709;
+      font-family: 'iCiel Pony', 'Nunito', sans-serif;
+      font-weight: 400;
+      font-size: 62px;
+      line-height: 66px;
+      color: #181818;
       letter-spacing: 0px;
     }
 
@@ -65,7 +92,7 @@
       font-size: 19px;
       font-weight: 500;
       line-height: 32px;
-      color: #424242;
+      color: #6e6e6e;
     }
 
     .hero-buttons {
@@ -79,7 +106,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(253, 240, 197, 0.58);
+      background: rgba(171, 161, 129, 0.2);
       border-radius: 48px;
       padding: 2px 8px;
       width: fit-content;
@@ -95,86 +122,243 @@
       font-family: 'Manrope', sans-serif;
       font-size: 14px;
       font-weight: 700;
-      line-height: 24px;
-      letter-spacing: 0.2px;
-      color: #786526;
-    }
-
-    /* Divider */
-    .hero-divider {
-      height: 0.5px;
-      background: rgba(0, 0, 0, 0.08);
-      width: 100%;
-    }
-
-    /* Stats */
-    .hero-stats {
-      display: flex;
-      flex-direction: row;
-      gap: 72px;
-    }
-
-    .hero-stat {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .hero-stat-number {
-      font-family: 'Nunito', sans-serif;
-      font-size: 28px;
-      font-weight: 800;
-      line-height: 36px;
-      color: #6e5400;
-    }
-
-    .hero-stat-label {
-      font-family: 'Manrope', sans-serif;
-      font-size: 17px;
-      font-weight: 500;
       line-height: 28px;
       letter-spacing: 0.1px;
-      color: rgba(24, 24, 24, 0.6);
+      color: #544c33;
     }
 
-    .hero-stat-secondary {
-      display: none;
-    }
-
-    /* Image Grid */
-    .hero-grid {
-      flex: 1;
-      min-width: 0;
-      max-width: 688px;
-      height: 440px;
-      border-radius: 31.381px;
-      overflow: hidden;
+    /* Social Stats */
+    .hero-socials {
       display: flex;
       flex-direction: row;
-      gap: 6.276px;
+      flex-wrap: nowrap;
+      gap: 16px;
+      padding-top: 40px;
+      padding-bottom: 40px;
+      position: relative;
     }
 
-    .hero-grid-large {
-      flex: 1;
-      overflow: hidden;
+    .hero-socials::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 0.5px;
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0));
     }
 
-    .hero-grid-stack {
-      width: 229px;
+    .hero-social {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      align-items: center;
+      padding: 4px 0;
+      flex: 1 0 0;
+    }
+
+    .hero-social-icon {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-social-icon svg,
+    .hero-social-icon img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .hero-social-text {
       display: flex;
       flex-direction: column;
-      gap: 6.276px;
     }
 
-    .hero-grid-small {
+    .hero-social-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 20px;
+      letter-spacing: 0.05px;
+      color: #181818;
+    }
+
+    .hero-social-body {
+      font-family: 'Manrope', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 24px;
+      letter-spacing: 0.1px;
+      color: #6e6e6e;
+      white-space: nowrap;
+    }
+
+    /* Polaroid Cards */
+    .hero-polaroids {
       flex: 1;
-      overflow: hidden;
+      min-width: 0;
+      position: relative;
+      height: 752px;
+      overflow: visible;
     }
 
-    .hero-grid img {
+    .hero-polaroid {
+      position: absolute;
+      width: 312px;
+      height: 376px;
+      background: #fff;
+      border: 0.5px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      box-shadow: 0px 1px 3px rgba(0,0,0,0.03), 0px 2px 6.669px rgba(0,0,0,0.04);
+      padding: 16px 16px 0;
+      display: flex;
+      flex-direction: column;
+      will-change: transform, opacity;
+      animation: polaroidIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+      overflow: visible;
+    }
+
+    /* Washi tape */
+    .hero-polaroid::before {
+      content: '';
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92px;
+      height: 41px;
+      background: rgba(255, 255, 255, 0.55);
+      border: 0.5px solid rgba(0, 0, 0, 0.06);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 3;
+      clip-path: polygon(3% 0%, 97% 0%, 100% 15%, 100% 85%, 97% 100%, 3% 100%, 0% 85%, 0% 15%);
+    }
+
+    /* Background gradient overlay */
+    .hero-polaroid::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-polaroid > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Card 1: background image */
+    .hero-polaroid:nth-child(1)::after {
+      background: url('images/hero-polaroid-bg-2.png') center/cover no-repeat;
+    }
+
+    /* Card 2: background image */
+    .hero-polaroid:nth-child(2)::after {
+      background: url('images/hero-polaroid-bg-3.png') center/cover no-repeat;
+    }
+
+    /* Card 3: background image */
+    .hero-polaroid:nth-child(3)::after {
+      background: url('images/hero-polaroid-bg-1.png') center/cover no-repeat;
+    }
+
+    .hero-polaroid:nth-child(1) {
+      --rot: -14deg;
+      left: 50%;
+      margin-left: -262px;
+      top: 230px;
+      z-index: 1;
+      animation-delay: 0.2s;
+      transform: rotate(-14deg);
+    }
+
+    .hero-polaroid:nth-child(2) {
+      --rot: 14deg;
+      left: 50%;
+      margin-left: -50px;
+      top: -25px;
+      z-index: 2;
+      animation-delay: 0.45s;
+      transform: rotate(14deg);
+    }
+
+    .hero-polaroid:nth-child(3) {
+      --rot: 14deg;
+      left: 50%;
+      margin-left: -50px;
+      top: 440px;
+      z-index: 0;
+      animation-delay: 0.7s;
+      transform: rotate(14deg);
+    }
+
+    .hero-polaroid:nth-child(4) {
+      display: none;
+      animation-delay: 0.95s;
+    }
+
+    /* Card 4: background image */
+    .hero-polaroid:nth-child(4)::after {
+      background: url('images/hero-polaroid-bg-1.png') center/cover no-repeat;
+    }
+
+    .hero-polaroid-photo {
+      flex: 1;
+      border-radius: 4px;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .hero-polaroid-photo img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+
+    .hero-polaroid-caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+    }
+
+    .hero-polaroid-text {
+      font-family: 'Caveat', cursive;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 36px;
+      color: #000;
+    }
+
+    .hero-polaroid-name {
+      font-family: 'Caveat', cursive;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 36px;
+      color: #000;
+      opacity: 0.4;
+    }
+
+    @keyframes polaroidIn {
+      0% {
+        opacity: 0;
+        transform: rotate(var(--rot)) translateY(48px) scale(0.92);
+      }
+      100% {
+        opacity: 1;
+        transform: rotate(var(--rot)) translateY(0) scale(1);
+      }
+    }
+
+    .hero-polaroid:hover {
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
     /* ===== DOGS SECTION ===== */
@@ -196,16 +380,13 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      max-width: 600px;
+      max-width: 640px;
     }
 
     .dogs-header h2 {
-      font-family: 'Nunito', sans-serif;
-      font-size: 34px;
-      font-weight: 800;
-      line-height: 48px;
-      letter-spacing: -0.72px;
-      color: #1a1a1a;
+      color: #181818;
+      font-size: 30px;
+      line-height: 36px;
     }
 
     .dogs-header p {
@@ -213,7 +394,7 @@
       font-size: 18px;
       font-weight: 500;
       line-height: 28px;
-      color: #545454;
+      color: #6e6e6e;
     }
 
     .dogs-carousel {
@@ -262,19 +443,26 @@
       pointer-events: none;
     }
 
+    .dogs-carousel .carousel-arrow.prev { left: 18px; }
+    .dogs-carousel .carousel-arrow.next { right: 18px; }
+
     @keyframes scrollDogs {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
 
     .dog-card {
-      width: 328px;
+      width: 360px;
+      height: 420px;
       flex-shrink: 0;
       position: relative;
       transition: transform 0.3s;
       text-decoration: none;
       color: inherit;
       cursor: pointer;
+      background: #fdfbf8;
+      border-radius: 20px;
+      padding: 12px;
     }
 
     .dog-card:hover { transform: translateY(-4px); }
@@ -283,58 +471,69 @@
       width: 100%;
       height: 100%;
       border-radius: 20px;
+      border: none;
       overflow: hidden;
-      border: 1px solid rgba(0,0,0,0.12);
-      background: #ffffff;
+      background: transparent;
       display: flex;
       flex-direction: column;
     }
 
     .dog-card-img {
       width: 100%;
-      height: 288px;
-      object-fit: cover;
+      height: 280px;
       flex-shrink: 0;
+      object-fit: cover;
+      border-radius: 12px;
     }
 
     .dog-card-body {
-      padding: 16px 20px;
+      padding: 16px 12px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 8px;
       flex: 1;
       min-height: 0;
     }
 
     .dog-card-name {
-      font-family: 'Nunito', sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      color: #1a1a1a;
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 24px;
+      letter-spacing: 0.05px;
+      color: #181818;
     }
 
     .dog-card-desc {
       font-family: 'Manrope', sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 500;
-      line-height: 20px;
-      color: #424242;
+      line-height: 24px;
+      color: #6e6e6e;
+      height: 48px;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+      margin-top: -4px;
+    }
+
+    .dog-card-meta {
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 24px;
+      color: #6e6e6e;
+      opacity: 0.75;
+      margin-top: auto;
     }
 
     .dog-card-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--brand);
-      margin-top: auto;
-      padding-top: 12px;
+      display: none;
     }
 
     .dog-card-link svg {
@@ -386,7 +585,10 @@
     .dogs-buttons-wrap {
       width: 100%;
       max-width: 1560px;
-      padding: 40px 40px 72px;
+      padding: 48px 40px 72px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
     }
 
     .dogs-divider {
@@ -396,59 +598,62 @@
       background: rgba(0,0,0,0.16);
     }
 
-    /* ===== PROBLEM ===== */
+    /* ===== PROBLEM / CRISIS ===== */
     .problem {
       width: 100%;
-      background: var(--dark-1);
+      background: linear-gradient(-33.2deg, #101010 29.4%, #090909 100%);
+      box-shadow: inset 0px 4px 8px rgba(0,0,0,0.55);
       position: relative;
       overflow: hidden;
-      padding-bottom: 72px;
-    }
-
-    .problem-bg {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 1076px;
-      height: 520px;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .problem-bg img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
     }
 
     .problem-inner {
       max-width: 1560px;
       margin: 0 auto;
-      padding: 168px 40px 0;
+      padding: 140px 40px;
       position: relative;
       z-index: 1;
       display: flex;
-      flex-direction: column;
-      gap: 72px;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 0;
     }
 
-    .problem-text {
+    .problem-left {
+      width: 50%;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      padding-right: 64px;
+    }
+
+    .problem-header {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      max-width: 766px;
+      padding-right: 120px;
+      padding-bottom: 16px;
     }
 
-    .problem-text h2 {
-      font-family: 'Nunito', sans-serif;
-      font-size: 34px;
-      font-weight: 800;
+    .problem-title {
+      font-family: 'Tanker', 'Nunito', sans-serif;
+      font-size: 43px;
+      font-weight: 400;
       line-height: 48px;
-      letter-spacing: -0.72px;
-      color: #fff;
+      letter-spacing: 0px;
+      text-transform: uppercase;
     }
 
-    .problem-text p {
+    .problem-title .crisis-red {
+      color: #e33535;
+    }
+
+    .problem-title .crisis-muted {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .problem-desc {
       font-family: 'Manrope', sans-serif;
       font-size: 18px;
       font-weight: 500;
@@ -456,88 +661,126 @@
       color: rgba(255, 255, 255, 0.56);
     }
 
-    .problem-stats {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .problem-stat {
+    .problem-data {
       display: flex;
       flex-direction: column;
+      gap: 24px;
     }
 
-    .problem-stat-divider {
-      width: 1px;
-      height: 64px;
-      background: rgba(255, 255, 255, 0.1);
-      flex-shrink: 0;
+    .problem-data-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 24px;
+      letter-spacing: 0.05px;
+      color: white;
+      opacity: 0.88;
+    }
+
+    .problem-stats-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .problem-stats-row {
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+    }
+
+    .problem-stat-card {
+      flex: 1;
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 2px 22px;
+    }
+
+    .problem-stat-cell {
+      display: flex;
+      flex-direction: column;
+      padding: 16px 0;
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .problem-stat-cell:last-child {
+      border-bottom: none;
     }
 
     .problem-stat-number {
-      font-family: 'Nunito', sans-serif;
-      font-size: 34px;
-      font-weight: 800;
-      line-height: 48px;
-      letter-spacing: -0.72px;
-      color: #fdf0c5;
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 26px;
+      letter-spacing: 0.05px;
+      color: #e33535;
     }
 
     .problem-stat-label {
       font-family: 'Manrope', sans-serif;
       font-size: 16px;
       font-weight: 500;
-      line-height: 24px;
+      line-height: 26px;
+      letter-spacing: 0.05px;
       color: rgba(255, 255, 255, 0.56);
     }
 
-    /* Photo reveal */
-    .problem-photos-wrap {
-      position: relative;
-      z-index: 1;
-      margin-top: 72px;
+    .problem-stat-label.dim {
+      color: rgba(255, 255, 255, 0.40);
     }
 
-    .problem-photos {
-      display: flex;
-      width: 100%;
-      gap: 3px;
-      overflow-x: auto;
-      flex-wrap: nowrap;
-      scroll-snap-type: x proximity;
-      scrollbar-width: none;
-      transition: background 0.5s ease;
+    .problem-stat-cell.xs-only {
+      display: none;
     }
-    .problem-photos::-webkit-scrollbar { display: none; }
 
-    .problem-photo {
-      flex: none;
-      width: 320px;
-      aspect-ratio: 4/3;
-      background: rgba(255, 255, 255, 0.04);
-      position: relative;
+    /* Bottom stat bar — horizontal layout */
+    .problem-stat-bar {
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: row;
+      gap: 24px;
+      padding: 16px 0;
+    }
+
+    /* Right column: photo grid — absolutely positioned, fills full section height */
+    .problem-right {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      right: calc((100% - 100vw) / 2);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    .problem-photo img {
+    .problem-photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      flex: 1;
+      min-height: 0;
+      opacity: 0.02;
+      transition: opacity 0.8s ease;
+    }
+
+    .problem-photo-grid img {
       width: 100%;
       height: 100%;
+      min-height: 0;
       object-fit: cover;
-      opacity: 0;
-      transition: opacity 0.6s ease;
+      mix-blend-mode: luminosity;
+      transition: mix-blend-mode 0.8s ease;
     }
 
-    .problem-photos.visible .problem-photo img {
+    .problem-photo-grid.visible {
       opacity: 1;
     }
 
-    .problem-photos.visible {
-      background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+    .problem-photo-grid.visible img {
+      mix-blend-mode: normal;
     }
 
     .problem-reveal-btn {
@@ -546,10 +789,11 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 2;
-      background: #cd1d1d;
+      height: 43px;
+      background: #e33535;
       border: none;
       border-radius: 100px;
-      padding: 12px 24px;
+      padding: 0 24px;
       color: rgba(255, 255, 255, 0.9);
       font-family: 'Manrope', sans-serif;
       font-size: 14px;
@@ -558,7 +802,9 @@
       transition: opacity 0.3s;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
+      white-space: nowrap;
     }
 
     .problem-reveal-btn:hover {
@@ -576,30 +822,6 @@
       fill: currentColor;
       flex-shrink: 0;
     }
-
-    .problem-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.2s;
-    }
-    .problem-arrow:hover { background: rgba(255,255,255,0.25); }
-    .problem-arrow.hidden { opacity: 0; pointer-events: none; }
-    .problem-arrow svg { width: 20px; height: 20px; fill: rgba(255,255,255,0.9); }
-    .problem-arrow.prev { left: 8px; }
-    .problem-arrow.next { right: 8px; }
 
     /* ===== SOLUTION PILLARS ===== */
     .pillars {
@@ -722,18 +944,18 @@
     .social-inner {
       width: 100%;
       max-width: 1560px;
-      padding: 0 40px 32px;
+      padding: 72px 40px;
       display: flex;
       flex-direction: column;
+      gap: 48px;
+      border-bottom: 0.5px solid #D6D6D6;
     }
 
     .social-header {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      padding-top: 72px;
-      padding-bottom: 40px;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 600px;
     }
 
     .social-header-text {
@@ -751,60 +973,50 @@
       color: #545454;
     }
 
-    .social-follow {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
+    .social-header h2 {
+      color: #181818;
     }
 
-    .social-follow-icon {
-      height: 36px;
-      border-radius: 18px;
+    .social-platforms {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .social-platform-btn {
+      height: 58px;
+      border-radius: 100px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 0 12px;
+      padding: 0 22px;
       text-decoration: none;
-      transition: opacity 0.2s;
+      transition: background 0.2s;
       font-family: 'Manrope', sans-serif;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 700;
-      color: #fff;
+      color: #181818;
+      background: transparent;
+      border: 1.5px solid rgba(0, 0, 0, 0.12);
     }
 
-    .social-follow-icon:hover {
-      opacity: 0.9;
+    .social-platform-btn:hover {
+      background: rgba(0, 0, 0, 0.04);
     }
 
-    .social-follow-icon.tiktok {
-      background: #000;
-    }
-
-    .social-follow-icon.facebook {
-      background: #1877F2;
-    }
-
-    .social-follow-icon svg {
+    .social-platform-btn svg {
       width: 18px;
       height: 18px;
-      fill: #fff;
+      fill: #181818;
       flex-shrink: 0;
-    }
-
-    .social-header h2 {
-      font-family: 'Nunito', sans-serif;
-      font-size: 34px;
-      font-weight: 800;
-      line-height: 48px;
-      letter-spacing: -0.72px;
-      color: #1a1a1a;
     }
 
 
     .social-carousel-wrap {
       position: relative;
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
     }
 
     .carousel-arrow {
@@ -837,8 +1049,8 @@
       fill: var(--dark-1);
     }
 
-    .carousel-arrow.prev { left: -22px; }
-    .carousel-arrow.next { right: -22px; }
+    .carousel-arrow.prev { left: max(18px, calc(50vw - 762px)); }
+    .carousel-arrow.next { right: 18px; }
 
     .social-carousel {
       display: flex;
@@ -846,27 +1058,28 @@
       gap: 32px;
       overflow-x: auto;
       scroll-snap-type: x proximity;
-      scroll-padding-left: 0;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-      padding: 4px 0 12px 0;
+      padding: 4px 0 12px;
+      padding-left: max(40px, calc(50vw - 740px));
+      scroll-padding-left: max(40px, calc(50vw - 740px));
     }
 
     .social-carousel::-webkit-scrollbar { display: none; }
 
     .social-card {
-      flex: 0 0 calc(20% - 25.6px);
-      min-width: 200px;
+      flex: 0 0 332px;
+      min-width: 280px;
+      height: 432px;
       scroll-snap-align: start;
       display: flex;
       flex-direction: column;
       text-decoration: none;
       color: inherit;
-      background: #fff;
       border-radius: 20px;
-      border: 1px solid rgba(0,0,0,0.12);
       overflow: hidden;
       transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
     }
 
     .social-card:hover {
@@ -877,7 +1090,8 @@
     .social-card-media {
       position: relative;
       width: 100%;
-      aspect-ratio: 4 / 5;
+      flex: 1 0 0;
+      min-height: 0;
       cursor: pointer;
       background: #000;
       overflow: hidden;
@@ -888,6 +1102,7 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      pointer-events: none;
     }
 
     .social-card-media video {
@@ -896,8 +1111,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      background: #000;
+      object-fit: cover;
     }
 
     .social-card-play {
@@ -912,6 +1126,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding-left: 3px;
       pointer-events: none;
       transition: background 0.2s;
     }
@@ -924,7 +1139,6 @@
       width: 24px;
       height: 24px;
       fill: #fff;
-      margin-left: 3px;
     }
 
     .social-card-media.playing .social-card-play {
@@ -936,10 +1150,16 @@
     }
 
     .social-card-body {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
       padding: 16px 20px;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0), #000000);
       display: flex;
       flex-direction: column;
       gap: 8px;
+      z-index: 3;
     }
 
     .social-card-caption {
@@ -947,11 +1167,10 @@
       font-size: 15px;
       font-weight: 500;
       line-height: 24px;
-      color: #424242;
+      color: #ffffff;
       overflow: hidden;
       text-overflow: ellipsis;
-      min-height: 48px;
-      max-height: 48px;
+      height: 48px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -967,8 +1186,9 @@
       font-size: 15px;
       font-weight: 700;
       line-height: 24px;
-      color: #ff5314;
+      color: #ffffff;
       text-decoration: none;
+      white-space: nowrap;
       transition: opacity 0.2s;
     }
 
@@ -977,21 +1197,22 @@
     .social-card-link svg {
       width: 14px;
       height: 14px;
-      fill: currentColor;
+      stroke: currentColor;
+      fill: none;
     }
 
     /* Gallery card (2x width) */
     .social-card.gallery {
-      flex: 0 0 calc(40% - 19.2px);
+      flex: 0 0 664px;
       min-width: 400px;
     }
 
     .social-card-gallery {
       position: relative;
       width: 100%;
-      flex: 1;
+      flex: 1 0 0;
       min-height: 0;
-      background: var(--dark-1);
+      background: #000;
       overflow: hidden;
     }
 
@@ -1030,7 +1251,7 @@
       transform: translateX(-50%);
       display: flex;
       gap: 6px;
-      z-index: 2;
+      z-index: 4;
     }
 
     .gallery-dot {
@@ -1058,43 +1279,42 @@
       width: 100%;
       max-width: 1560px;
       margin: 0 auto;
-      padding: 72px 40px;
+      padding: 56px 40px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 40px;
+      align-items: center;
+      gap: 48px;
+      position: relative;
     }
 
     .ba-left {
-      width: 600px;
-      flex-shrink: 0;
+      flex: 1 0 0;
+      min-width: 0;
       display: flex;
       flex-direction: column;
-      align-self: stretch;
-      justify-content: space-between;
+      gap: 56px;
     }
 
     .ba-text-container {
       display: flex;
       flex-direction: column;
       gap: 16px;
-      padding-top: 32px;
+      min-height: 280px; /* label(36) + gap(16) + title-2-lines(72) + gap(16) + desc-5-lines(140) */
     }
 
     .ba-label {
-      font-family: 'Manrope', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 24px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 36px;
       color: #ff5314;
     }
 
     .ba-title {
       font-family: 'Nunito', sans-serif;
-      font-size: 34px;
+      font-size: 30px;
       font-weight: 800;
-      line-height: 43px;
-      letter-spacing: -0.72px;
+      line-height: 36px;
       color: #1a1a1a;
     }
 
@@ -1102,8 +1322,9 @@
       font-family: 'Manrope', sans-serif;
       font-size: 18px;
       font-weight: 500;
-      line-height: 30px;
+      line-height: 28px;
       color: #545454;
+      min-height: 140px; /* 5 lines × 28px */
     }
 
     .ba-nav {
@@ -1164,48 +1385,113 @@
       height: 24px;
     }
 
+    /* Right side — polaroid cards */
     .ba-right {
-      width: 708px;
-      height: 446px;
-      flex-shrink: 0;
-      background: #fff;
+      width: 801px;
+      height: 510px;
+      min-width: 0;
       border-radius: 20px;
       overflow: hidden;
-      display: flex;
-      gap: 8px;
-    }
-
-    .ba-image-half {
-      flex: 1;
-      min-width: 0;
       position: relative;
-      overflow: hidden;
+      flex-shrink: 0;
     }
 
-    .ba-image-half img {
+    /* Shared polaroid styles */
+    .ba-polaroid {
       position: absolute;
-      inset: 0;
+      background: #fff;
+      border: 0.5px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      box-shadow: 0px 1px 3px rgba(0,0,0,0.03), 0px 2px 6.669px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      overflow: visible;
+      z-index: 1;
+    }
+    /* Washi tape */
+    .ba-polaroid::before {
+      content: '';
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92px;
+      height: 41px;
+      background: url('images/tape.png') center/contain no-repeat;
+      z-index: 3;
+    }
+
+    .ba-polaroid-photo {
+      flex: 1;
+      border-radius: 4px;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .ba-polaroid-photo img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
 
-    .ba-photo-label {
-      position: absolute;
-      bottom: 37.5px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.46);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      padding: 8px 16px;
-      border-radius: 100px;
-      font-family: 'Manrope', sans-serif;
-      font-size: 15px;
+    .ba-polaroid-date {
+      font-family: 'Caveat', cursive;
       font-weight: 700;
-      line-height: 24px;
-      color: #fff;
+      color: #000;
       white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Before polaroid — smaller, left side */
+    .ba-polaroid-before {
+      width: 281px;
+      height: 338px;
+      left: 152px;
+      top: 48px;
+      padding: 14px;
+      transform: rotate(-6.59deg);
+    }
+    .ba-polaroid-before .ba-polaroid-date {
+      font-size: 18px;
+      line-height: 32px;
+      padding-top: 10px;
+      min-height: 42px;
+    }
+
+    /* After polaroid — larger, right side */
+    .ba-polaroid-after {
+      width: 312px;
+      height: 376px;
+      left: 375px;
+      top: 70px;
+      padding: 16px;
+      transform: rotate(14deg);
+      z-index: 2;
+    }
+    .ba-polaroid-after .ba-polaroid-date {
+      font-size: 20px;
+      line-height: 36px;
+      padding-top: 12px;
+      min-height: 48px;
+    }
+
+    /* Decorative before/after labels (SVG images) */
+    .ba-deco-label {
+      position: absolute;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .ba-before-label {
+      top: 72px;
+      left: calc(44.44% + 90px);
+      width: 80px;
+      height: 38px;
+    }
+    .ba-after-label {
+      top: 449px;
+      right: 120px;
+      width: 49px;
+      height: 53px;
     }
 
     .before-after-divider {
@@ -1387,11 +1673,6 @@
     }
 
     .cta-final-header-text h2 {
-      font-family: 'Nunito', sans-serif;
-      font-size: 34px;
-      font-weight: 800;
-      line-height: 48px;
-      letter-spacing: -0.72px;
       color: #1a1a1a;
     }
 
@@ -1632,72 +1913,89 @@
     /* ===== RESPONSIVE ===== */
     /* --- MD: 1024–1247px --- */
     @media (max-width: 1247px) {
-      .hero-content { padding: 168px 40px 48px; }
-      .hero-grid { width: auto; flex: 1; min-width: 0; max-width: 560px; height: auto; aspect-ratio: 688/440; }
-      .hero-grid-stack { width: auto; flex: 1; }
+      .hero-left { gap: 64px; }
+      .hero-polaroids { height: 677px; }
+      .hero-polaroid { width: 281px; height: 338px; animation: none; }
+      .hero-polaroid::before { width: 83px; height: 37px; top: -15px; }
+      .hero-polaroid:nth-child(1) { left: 50%; margin-left: -236px; top: 207px; }
+      .hero-polaroid:nth-child(2) { left: 50%; margin-left: -45px; top: -23px; }
+      .hero-polaroid:nth-child(3) { left: 50%; margin-left: -45px; top: 396px; }
+      .problem-left { padding-right: 32px; }
       .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .ba-right { width: 600px; height: 390px; }
+      .ba-polaroid-before { width: 211px; height: 254px; left: 110px; top: 36px; padding: 10px 10px 0; }
+      .ba-polaroid-before .ba-polaroid-date { font-size: 15px; line-height: 28px; padding: 10px 0; }
+      .ba-polaroid-after { width: 234px; height: 282px; left: 280px; top: 52px; padding: 12px 12px 0; }
+      .ba-polaroid-after .ba-polaroid-date { font-size: 17px; line-height: 30px; padding: 12px 0; }
+      .ba-polaroid::before { width: 68px; height: 30px; top: -13px; }
+      .ba-deco-label { display: none; }
     }
 
     /* --- SM: 768–1023px --- */
     @media (max-width: 1023px) {
       /* Responsive type */
-      .dogs-header h2 { font-size: 30px; }
       .dogs-header p { font-size: 16px; }
       .dog-card-name { font-size: 16px; }
-      .problem-text h2 { font-size: 30px; }
-      .problem-text p { font-size: 16px; }
-      .problem-stat-number { font-size: 30px; }
       .pillars-header h2 { font-size: 32px; }
       .pillars-header p { font-size: 15px; }
       .pillar-title { font-size: 18px; }
-      .social-header h2 { font-size: 30px; }
       .social-header p { font-size: 16px; }
-      .ba-title { font-size: 30px; }
-      .ba-label { font-size: 16px; }
+      .ba-title { font-size: 26px; line-height: 32px; }
+      .ba-label { font-size: 18px; }
       .ba-description { font-size: 16px; }
       .ba-modal-title { font-size: 24px; }
-      .cta-final-header-text h2 { font-size: 30px; }
       .cta-final-header-text p { font-size: 16px; }
       .cta-cost-amount { font-size: 30px; }
       .dog-modal-name { font-size: 24px; }
       .contact-modal h2 { font-size: 24px; }
 
       /* Hero: flatten .hero-left so children participate in parent flex ordering */
-      .hero-content { flex-direction: column; gap: 32px; padding: 200px 40px 48px; align-items: center; }
+      .hero-content { flex-direction: column; gap: 40px; padding: 0 40px; align-items: center; }
       .hero-left { display: contents; }
-      .hero-badge { order: 1; margin: 0 auto; }
-      .hero-text { order: 2; width: 100%; text-align: center; }
-      .hero-buttons { order: 3; display: flex; }
-      .hero-divider { display: none; }
-      .hero-grid { order: 4; width: 100%; height: auto; aspect-ratio: 688/440; border-radius: 24px; gap: 4px; max-width: none; }
-      .hero-grid-stack { width: auto; flex: 1 0 0; gap: 4px; }
-      .hero-grid-large { flex: 1 0 0; }
-      .hero-stats { order: 5; width: 100%; flex-wrap: nowrap; gap: 40px; padding: 24px 0 0; border-top: 0.5px solid rgba(0,0,0,0.08); overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
-      .hero-stats::-webkit-scrollbar { display: none; }
-      .hero-stat { white-space: nowrap; flex-shrink: 0; }
-      .hero-stat-secondary { display: flex; }
-      .hero-stat-secondary .hero-stat-number { color: #7f7354; }
-      .hero-stat-secondary .hero-stat-label { color: #545454; }
+      .hero-top { order: 1; width: 100%; max-width: 672px; align-items: center; gap: 48px; padding-top: 200px; padding-bottom: 40px; }
+      .hero-badge { margin: 0 auto; }
+      .hero-text { order: 2; width: 100%; text-align: center; gap: 24px; }
+      .hero-buttons { display: none; }
+      .hero-polaroids { order: 3; width: 100%; flex: none; display: flex; justify-content: center; align-items: flex-start; height: 407px; overflow: visible; }
+      .hero-polaroid { position: relative; width: 320px; height: 370px; flex-shrink: 0; }
+      .hero-polaroid:nth-child(4) { display: flex; }
+      .hero-polaroid:nth-child(1) { --rot: -7deg; transform: rotate(-7deg); z-index: 1; left: auto; top: auto; margin-left: 0; }
+      .hero-polaroid:nth-child(2) { --rot: 7deg; transform: rotate(7deg); z-index: 2; left: auto; top: auto; margin-left: -52px; }
+      .hero-polaroid:nth-child(3) { --rot: -7deg; transform: rotate(-7deg); z-index: 3; left: auto; top: auto; margin-left: -52px; }
+      .hero-polaroid:nth-child(4) { --rot: 7deg; transform: rotate(7deg); z-index: 4; left: auto; top: auto; margin-left: -52px; }
+      .hero-social-icon { width: 40px; height: 40px; }
+      .hero-social-icon svg, .hero-social-icon img { width: 40px; height: 40px; }
+      .hero-socials { order: 5; width: 100%; gap: 24px; padding-top: 40px; padding-bottom: 40px; justify-content: space-between; }
+      .hero-socials::before { background: rgba(0, 0, 0, 0.08); }
+      .hero-social { flex: none; }
+      .hero-social-title { line-height: 24px; }
+      .hero-social-body { line-height: 28px; }
 
-      .problem-bg { display: block; width: 100%; height: 375px; left: 0; right: 0; top: 0; }
-      .problem-bg img { object-position: center top; }
-      .problem-inner { padding-top: 200px; gap: 48px; }
-      .problem-stats { flex-wrap: wrap; gap: 40px; }
-      .problem-stat-divider { display: none; }
+      .problem-inner { flex-direction: column; padding: 96px 40px 0; gap: 56px; }
+      .problem-left { width: 100%; padding-right: 0; }
+      .problem-header { padding-right: 0; }
+      .problem-right { position: relative; top: auto; bottom: auto; left: auto; right: auto; min-height: 400px; max-height: 620px; margin-left: -40px; margin-right: -40px; }
+      .problem-stats-row { flex-direction: column; }
+      .problem-stat-card.xs-hidden { display: none; }
+      .problem-stat-cell.xs-only { display: flex; flex-direction: row; }
+      .problem-stat-bar.xs-hidden { display: none; }
+      .problem-stat-cell { flex-direction: row; gap: 8px; align-items: baseline; }
 
-      .problem-photo { width: 260px; }
-
-      .social-carousel-wrap { margin-left: -40px; margin-right: -40px; }
-      .social-carousel { padding: 4px 40px 12px; scroll-padding-left: 40px; }
-      .social-card { flex: 0 0 calc(25% - 15px); }
-      .social-card.gallery { flex: 0 0 calc(50% - 10px); min-width: 320px; }
-      /* Arrows: reposition inside the breakout area */
-      .carousel-arrow.prev { left: 16px; }
-      .carousel-arrow.next { right: 16px; }
+      .social-card { flex: 0 0 300px; }
+      .social-card.gallery { flex: 0 0 500px; min-width: 320px; }
+      .social-platform-btn { height: 48px; font-size: 15px; padding: 0 18px; }
 
       .before-after-inner { flex-direction: column; }
-      .ba-left { width: 100%; }
-      .ba-right { width: 100%; height: auto; aspect-ratio: 708/446; }
+      .ba-left { width: 100%; flex: unset; }
+      .ba-description { min-height: auto; }
+      .ba-right { width: 100%; height: auto; aspect-ratio: 801/510; }
+      .ba-polaroid-before { width: 35%; height: auto; aspect-ratio: 281/338; left: 18%; top: 9%; padding: 10px; }
+      .ba-polaroid-before .ba-polaroid-date { font-size: 15px; padding-top: 6px; min-height: 34px; }
+      .ba-polaroid-after { width: 39%; height: auto; aspect-ratio: 312/376; left: 42%; top: 13%; padding: 12px; }
+      .ba-polaroid-after .ba-polaroid-date { font-size: 17px; padding-top: 8px; min-height: 38px; }
+      .ba-polaroid::before { width: 64px; height: 28px; top: -12px; }
+      .ba-deco-label { display: none; }
       .ba-nav { margin-top: 32px; }
 
       .cta-costs { flex-wrap: wrap; gap: 16px; }
@@ -1718,37 +2016,41 @@
       .dog-modal-name { font-size: 22px; }
       .contact-modal h2 { font-size: 22px; }
 
-      /* ===== HERO — XS (Figma node 2720:9403) ===== */
-      .hero-content { padding: 160px 20px 0; gap: 32px; }
-      .hero-text { gap: 8px; margin-top: -12px; }
-      .hero-title { font-size: 26px; line-height: 30px; letter-spacing: 0px; }
-      .hero-description { font-size: 17px; line-height: 28px; opacity: 0.72; color: #181818; letter-spacing: 0.1px; }
+      /* ===== HERO — XS ===== */
+      .hero-content { padding: 0 24px; gap: 32px; }
+      .hero-top { gap: 40px; padding-top: 160px; max-width: none; }
+      .hero-text { gap: 16px; max-width: none; }
+      .hero-title { font-size: 36px; line-height: 42px; letter-spacing: 0px; }
+      .hero-description { font-size: 17px; line-height: 28px; }
       .hero-buttons { display: none; }
-      .hero-grid { border-radius: 20px; gap: 4px; aspect-ratio: 353/272; height: auto; max-height: none; overflow: hidden; }
-      .hero-grid-large { flex: 1 0 0; height: auto; min-height: 0; align-self: stretch; }
-      .hero-grid-stack { flex: 1 0 0; gap: 4px; height: auto; width: auto; align-self: stretch; }
-      .hero-grid-small { flex: 1; min-height: 0; height: auto; overflow: hidden; }
-      .hero-stats {
-        gap: 40px;
-        padding: 24px 0;
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        border-top: 0.5px solid rgba(0,0,0,0.08);
+      .hero-polaroids { height: 226px; }
+      .hero-polaroid { width: 178px; height: 206px; padding: 9px 9px 0; }
+      .hero-polaroid::before { width: 51px; height: 23px; top: -9px; }
+      .hero-polaroid-caption { padding: 9px 0; }
+      .hero-polaroid-text { font-size: 11px; line-height: 18px; }
+      .hero-polaroid-name { font-size: 12px; line-height: 18px; }
+      .hero-polaroid:nth-child(1) { margin-left: 0; }
+      .hero-polaroid:nth-child(2) { margin-left: -16px; }
+      .hero-polaroid:nth-child(3) { margin-left: -16px; }
+      .hero-polaroid:nth-child(4) { margin-left: -16px; }
+      .hero-socials {
+        padding-top: 24px;
+        padding-bottom: 24px;
+        gap: 80px;
         scrollbar-width: none;
         -ms-overflow-style: none;
+        justify-content: center;
       }
-      .hero-stats::-webkit-scrollbar { display: none; }
-      .hero-stat { white-space: nowrap; flex-shrink: 0; }
-      .hero-stat-number { font-size: 20px; line-height: 24px; color: #6e5400; }
-      .hero-stat-label { font-size: 15px; line-height: 24px; letter-spacing: 0.2px; white-space: nowrap; color: rgba(24,24,24,0.6); }
-      .hero-stat-secondary .hero-stat-number { font-size: 20px; line-height: 24px; color: #6e5400; }
-      .hero-stat-secondary .hero-stat-label { font-size: 15px; line-height: 24px; letter-spacing: 0.2px; color: rgba(24,24,24,0.6); }
+      .hero-socials::-webkit-scrollbar { display: none; }
+      .hero-social { flex: none; gap: 12px; }
+      .hero-social-icon { width: 24px; height: 24px; }
+      .hero-social-icon svg, .hero-social-icon img { width: 24px; height: 24px; }
+      .hero-social-text { display: none; }
 
       /* ===== DOGS — XS (Figma node 2720:9458): carousel → 2-col grid ===== */
       .dogs-section { padding: 0; }
       .dogs-header-wrap { padding: 40px 20px 0; }
       .dogs-header { gap: 8px; }
-      .dogs-header h2 { font-size: 22px; line-height: 28px; }
       .dogs-header p { font-size: 16px; line-height: 26px; letter-spacing: 0.15px; opacity: 0.72; }
       .dogs-carousel { overflow: visible; cursor: auto; padding: 0 20px; margin-top: 24px; }
       .dogs-track {
@@ -1762,17 +2064,18 @@
       .dogs-gradient-left, .dogs-gradient-right { display: none; }
       /* Hide duplicated cards (carousel clones them) — show max 4 */
       .dogs-track .dog-card:nth-child(n+5) { display: none; }
-      .dog-card { width: 100% !important; height: 225px; transform: none !important; overflow: visible; }
+      .dog-card { width: 100% !important; height: auto; transform: none !important; overflow: visible; padding: 8px; }
       .dog-card:hover { transform: none !important; }
       .dog-card-inner { height: 100%; }
-      .dog-card-img { height: 175px; }
-      .dog-card-body { padding: 12px; gap: 0; }
-      .dog-card-name { font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 500; line-height: 26px; }
+      .dog-card-img { flex: unset; height: auto; aspect-ratio: 1; border-radius: 8px; }
+      .dog-card-body { padding: 8px 4px 0; gap: 0; }
+      .dog-card-name { font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 600; line-height: 22px; }
       .dog-card-desc { display: none; }
-      .dog-card-link { display: none; }
+      .dog-card-meta { display: none; }
       .dog-card-badge { top: 15px; left: -3px; }
-      .dogs-buttons-wrap { padding: 0 20px 40px; margin-top: 24px; }
-      .dogs-buttons-wrap .btn-primary {
+      .dogs-buttons-wrap { padding: 0 20px 40px; margin-top: 24px; flex-direction: column; }
+      .dogs-buttons-wrap .btn-primary,
+      .dogs-buttons-wrap .btn-secondary {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1789,127 +2092,34 @@
       .dogs-divider { display: none; }
       .pillars-grid { grid-template-columns: 1fr; }
 
-      /* ===== CRISIS — XS (Figma node 2720:9477): table-like stat rows ===== */
-      .problem { padding-bottom: 40px; background: linear-gradient(to bottom, #1a1a1a, #090909); overflow: visible; }
-      .problem-bg { display: block !important; width: 100%; height: 375px; left: 0; right: 0; top: 0; }
-      .problem-bg img { object-position: right center; }
-      .problem-inner { padding: 200px 20px 0; gap: 24px; }
-      .problem-text { gap: 8px; padding-bottom: 0; max-width: none; width: 100%; }
-      .problem-text h2 { font-size: 22px; line-height: 28px; }
-      .problem-text p { font-size: 16px; line-height: 26px; letter-spacing: 0.15px; }
-      /* Divider between text and stats */
-      .problem-stats {
-        flex-direction: column;
-        gap: 0;
-        width: 100%;
-        text-align: left;
-        align-items: stretch;
-        border-top: 0.5px solid rgba(255,255,255,0.08);
-        padding-top: 24px;
-      }
-      .problem-stats::before {
-        content: 'Wat zegt de data?';
-        display: block;
-        font-family: 'Manrope', sans-serif;
-        font-size: 16px;
-        font-weight: 700;
-        line-height: 26px;
-        color: white;
-        opacity: 0.88;
-        padding: 0 0 8px;
-        order: -1;
-      }
-      .problem-stat {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 24px;
-        padding: 8px 0;
-        border-bottom: 0.5px solid rgba(255,255,255,0.08);
-        width: 100%;
-      }
-      .problem-stat:last-child { border-bottom: none; }
-      .problem-stat-label {
-        order: -1;
-        font-size: 15px;
-        line-height: 24px;
-        letter-spacing: 0.2px;
-        opacity: 0.56;
-        flex: 1;
-        color: white;
-      }
-      .problem-stat-number {
-        font-family: 'Manrope', sans-serif;
-        font-size: 15px;
-        font-weight: 500;
-        line-height: 24px;
-        letter-spacing: 0.2px;
-        color: #fdf0c5;
-        text-align: right;
-        flex-shrink: 0;
-      }
-      .problem-stat-divider { display: none; }
-
-      /* Photo reveal — compact (Figma node 2720:9505) */
-      .problem-photos-wrap {
-        margin-top: 24px;
-        padding: 24px 20px 0;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        border-top: 0.5px solid rgba(255,255,255,0.08);
-      }
-      .problem-photos-wrap::before {
-        content: 'Waar we dagelijks mee te maken hebben';
-        display: block;
-        font-family: 'Manrope', sans-serif;
-        font-size: 16px;
-        font-weight: 700;
-        line-height: 26px;
-        color: white;
-        opacity: 0.88;
-      }
-      .problem-photos { width: auto; flex-wrap: nowrap; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; scroll-snap-type: x proximity; scroll-padding-left: 20px; }
-      .problem-photos::-webkit-scrollbar { display: none; }
-      .problem-photo { flex: none; width: 200px; aspect-ratio: 4/3; scroll-snap-align: start; }
-      .problem-arrow { display: none; }
-      .problem-photo::before {
-        content: '';
+      /* ===== CRISIS — XS ===== */
+      .problem-inner { padding: 64px 20px 0; gap: 56px; }
+      .problem-left { padding-right: 0; width: 100%; }
+      .problem-header { padding-right: 0; }
+      .problem-stats-row { gap: 12px; }
+      .problem-stat-card { padding: 2px 16px; }
+      .problem-right { position: relative; top: auto; bottom: auto; left: auto; right: auto; min-height: 300px; max-height: 348px; margin-left: -20px; margin-right: -20px; }
+      .problem-photo-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); }
+      .problem-reveal-btn {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 24px;
-        height: 24px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 01-4.24-4.24'/%3E%3Cline x1='1' y1='1' x2='23' y2='23'/%3E%3C/svg%3E");
-        background-size: contain;
-        background-repeat: no-repeat;
-        z-index: 1;
-      }
-      .problem-photos.visible .problem-photo::before { display: none; }
-      .problem-reveal-btn {
-        position: static;
-        transform: none;
-        width: fit-content;
-        height: 43px;
         padding: 0 24px;
-        white-space: nowrap;
+        height: 43px;
         font-size: 14px;
-        align-self: flex-start;
       }
 
-      /* ===== BEFORE & AFTER — XS (Figma node 2720:9524) ===== */
+      /* ===== BEFORE & AFTER — XS ===== */
       /* Reorder: label → title → IMAGE → description → nav */
-      .before-after-inner { padding: 32px 20px; gap: 24px; justify-content: flex-start; }
-      .ba-left { display: contents; }
+      .before-after-inner { padding: 32px 20px; gap: 24px; justify-content: flex-start; align-items: stretch; }
+      .ba-left { display: contents; flex: unset; }
       .ba-text-container { display: contents; }
       .ba-label {
-        font-family: 'Nunito', sans-serif;
-        font-weight: 800;
         font-size: 20px;
         line-height: 24px;
         order: 1;
-        margin-bottom: -16px; /* reduce parent 24px gap to 8px before title */
+        margin-bottom: -16px;
       }
       .ba-title {
         font-size: 22px;
@@ -1917,35 +2127,19 @@
         order: 2;
         width: 100%;
         max-width: none;
-        letter-spacing: 0px;
       }
       .ba-right {
         order: 3;
-        border-radius: 20px;
-        gap: 4px;
         width: 100%;
         height: auto;
-        aspect-ratio: 708 / 446;
-        position: relative;
+        aspect-ratio: 801 / 510;
       }
-      .ba-right::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: white;
-        z-index: 2;
-        box-shadow: 0 0 0 4px white;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48' fill='none'%3E%3Ccircle cx='24' cy='24' r='24' fill='white'/%3E%3Ccircle cx='24' cy='24' r='20' fill='%23dfb87e'/%3E%3Cpath d='M20 16l8 8-8 8' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-        background-size: contain;
-        background-repeat: no-repeat;
-        box-shadow: none;
-      }
-      .ba-photo-label { display: none; }
+      .ba-polaroid-before { width: 35%; height: auto; aspect-ratio: 281/338; left: 12%; top: 9%; padding: 8px; }
+      .ba-polaroid-before .ba-polaroid-date { font-size: 13px; padding-top: 4px; min-height: 28px; }
+      .ba-polaroid-after { width: 39%; height: auto; aspect-ratio: 312/376; left: 42%; top: 13%; padding: 10px; }
+      .ba-polaroid-after .ba-polaroid-date { font-size: 15px; padding-top: 6px; min-height: 32px; }
+      .ba-polaroid::before { width: 52px; height: 24px; top: -10px; }
+      .ba-deco-label { display: none; }
       .ba-description {
         font-size: 16px;
         line-height: 26px;
@@ -1953,6 +2147,7 @@
         color: #181818;
         order: 4;
         width: 100%;
+        min-height: auto;
       }
       .ba-nav { margin-top: 0; order: 5; width: 100%; }
       .ba-nav-next { flex: 1; }
@@ -1960,23 +2155,20 @@
 
       /* ===== SOCIAL — XS (Figma node 2720:9553) ===== */
       .social { background: #fcf9f5; }
-      .social-inner { padding: 32px 20px; gap: 24px; }
+      .social-inner { padding: 32px 20px; gap: 24px; border-bottom: none; }
       .social-header {
         flex-direction: column;
         align-items: flex-start;
-        padding: 0;
-        gap: 24px;
+        gap: 12px;
       }
       .social-header-text { gap: 8px; }
-      .social-header h2 { font-size: 22px; line-height: 28px; }
       .social-header p { font-size: 16px; line-height: 26px; letter-spacing: 0.15px; opacity: 0.72; }
-      .social-follow { margin-top: 0; }
-      /* Carousel: break out of padding to go edge-to-edge */
-      .social-carousel-wrap { margin-left: -20px; margin-right: -20px; }
-      .social-carousel { gap: 12px; padding: 4px 20px 12px; scroll-padding-left: 20px; }
-      .social-card { flex: 0 0 270px; min-width: 270px; }
-      .social-card.gallery { flex: 0 0 270px; min-width: 270px; }
+      .social-carousel { gap: 12px; padding-left: 20px; scroll-padding-left: 20px; }
+      .social-card { flex: 0 0 270px; min-width: 270px; height: 360px; }
+      .social-card.gallery { flex: 0 0 270px; min-width: 270px; height: 360px; }
       .carousel-arrow { display: none; }
+      .social-platforms { flex-wrap: wrap; }
+      .social-platform-btn { height: 44px; font-size: 14px; padding: 0 16px; }
 
       .section-divider { padding: 0 20px; }
 
@@ -1984,7 +2176,7 @@
       .cta-final-inner { padding: 32px 20px; gap: 24px; }
       .cta-final-header { padding: 0; }
       .cta-final-header-text { width: 100%; gap: 8px; }
-      .cta-final-header-text h2 { font-size: 22px; line-height: 28px; color: #181818; }
+      .cta-final-header-text h2 { color: #181818; }
       .cta-final-header-text p { font-size: 16px; line-height: 26px; letter-spacing: 0.15px; opacity: 0.72; color: #181818; }
       .cta-costs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
       .cta-cost-item { flex: unset; min-width: 0; padding: 8px; border-width: 0.5px; gap: 0; }
@@ -2056,52 +2248,89 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-content">
-      <!-- Text -->
+      <!-- Left Column -->
       <div class="hero-left">
-        <div class="hero-badge">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 14s-5.5-3.5-5.5-7A3.5 3.5 0 0 1 8 4.5 3.5 3.5 0 0 1 13.5 7C13.5 10.5 8 14 8 14z" fill="#ff5314"/></svg>
-          <span data-i18n="index.hero.badge">non-profitorganisatie</span>
+        <div class="hero-top">
+          <div class="hero-badge">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 14s-5.5-3.5-5.5-7A3.5 3.5 0 0 1 8 4.5 3.5 3.5 0 0 1 13.5 7C13.5 10.5 8 14 8 14z" fill="#ff5314"/></svg>
+            <span data-i18n="index.hero.badge">non-profitorganisatie</span>
+          </div>
+          <div class="hero-text">
+            <h1 class="hero-title t-heading-lg" data-i18n-html="index.hero.title">Waar hoop een thuis vind</h1>
+            <p class="hero-description" data-i18n="index.hero.subtitle">Wij zijn een non-profitorganisatie die bestaat uit mensen uit Nederland, Belgie, Servie en Bosnie die hun krachten bundelen om samen een beter bestaan te geven aan de talloze zwerfhonden</p>
+          </div>
+          <div class="hero-buttons">
+            <a href="over-ons.html" class="btn-primary" data-i18n="index.hero.btn1">Ontdek onze missie</a>
+            <a href="honden.html" class="btn-secondary" data-i18n="index.hero.btn2">Onze honden</a>
+          </div>
         </div>
-        <div class="hero-text">
-          <h1 class="hero-title" data-i18n-html="index.hero.title">Waar hoop niet opgeeft</h1>
-          <p class="hero-description" data-i18n="index.hero.subtitle">Wat begint met opvang, eindigt met vertrouwen, stabiliteit en een liefdevol thuis.</p>
-        </div>
-        <div class="hero-buttons">
-          <a href="over-ons.html" class="btn-primary" data-i18n="index.hero.btn1">Ontdek onze missie</a>
-          <a href="honden.html" class="btn-secondary" data-i18n="index.hero.btn2">Onze honden</a>
-        </div>
-        <div class="hero-divider"></div>
-        <div class="hero-stats">
-          <div class="hero-stat">
-            <div class="hero-stat-number">800+</div>
-            <div class="hero-stat-label" data-i18n="index.stat.rescued">Honden gered</div>
+        <div class="hero-socials">
+          <div class="hero-social">
+            <div class="hero-social-icon">
+              <img src="images/Facebook.svg" alt="Facebook" width="40" height="40">
+            </div>
+            <div class="hero-social-text">
+              <div class="hero-social-title" data-i18n="index.hero.social.fb">Facebook</div>
+              <div class="hero-social-body" data-i18n="index.hero.social.fb.desc">6.600+ Volgers</div>
+            </div>
           </div>
-          <div class="hero-stat">
-            <div class="hero-stat-number">60+</div>
-            <div class="hero-stat-label" data-i18n="index.stat.incare">Honden in onze zorg</div>
+          <div class="hero-social">
+            <div class="hero-social-icon">
+              <img src="images/Instagram.svg" alt="Instagram" width="40" height="40">
+            </div>
+            <div class="hero-social-text">
+              <div class="hero-social-title" data-i18n="index.hero.social.ig">Instagram</div>
+              <div class="hero-social-body" data-i18n="index.hero.social.ig.desc">1.750+ Followers</div>
+            </div>
           </div>
-          <div class="hero-stat">
-            <div class="hero-stat-number">1200+</div>
-            <div class="hero-stat-label" data-i18n="index.stat.sterilized">Sterilisaties uitgevoerd</div>
-          </div>
-          <div class="hero-stat hero-stat-secondary">
-            <div class="hero-stat-number">100-200k</div>
-            <div class="hero-stat-label" data-i18n="index.stat.stray">Zwerfhonden in de regio</div>
-          </div>
-          <div class="hero-stat hero-stat-secondary">
-            <div class="hero-stat-number">&#8364;0</div>
-            <div class="hero-stat-label" data-i18n="index.stat.subsidy">Overheidssubsidie</div>
+          <div class="hero-social">
+            <div class="hero-social-icon">
+              <img src="images/Tiktok.svg" alt="TikTok" width="40" height="40">
+            </div>
+            <div class="hero-social-text">
+              <div class="hero-social-title" data-i18n="index.hero.social.tt">TikTok</div>
+              <div class="hero-social-body" data-i18n="index.hero.social.tt.desc">64+ Followers</div>
+            </div>
           </div>
         </div>
       </div>
-      <!-- Image Grid -->
-      <div class="hero-grid">
-        <div class="hero-grid-large">
-          <picture><source srcset="images/hero-1.webp" type="image/webp"><img src="images/hero-1.png" alt="Honden in het asiel" loading="eager"></picture>
+      <!-- Polaroid Cards -->
+      <div class="hero-polaroids">
+        <div class="hero-polaroid">
+          <div class="hero-polaroid-photo">
+            <img src="images/hero-polaroid-2.png" alt="Hond in het asiel" loading="eager">
+          </div>
+          <div class="hero-polaroid-caption">
+            <span class="hero-polaroid-text">Lekker dutten</span>
+            <span class="hero-polaroid-name">Lilli</span>
+          </div>
         </div>
-        <div class="hero-grid-stack">
-          <div class="hero-grid-small"><picture><source srcset="images/hero-2.webp" type="image/webp"><img src="images/hero-2.png" alt="Hond wordt verzorgd" loading="eager"></picture></div>
-          <div class="hero-grid-small"><picture><source srcset="images/hero-3.webp" type="image/webp"><img src="images/hero-3.png" alt="Hond vindt een thuis" loading="eager"></picture></div>
+        <div class="hero-polaroid">
+          <div class="hero-polaroid-photo">
+            <img src="images/hero-polaroid-3.png" alt="Beste vrienden" loading="eager">
+          </div>
+          <div class="hero-polaroid-caption">
+            <span class="hero-polaroid-text">Best friends &lt;3</span>
+            <span class="hero-polaroid-name">Lilli</span>
+          </div>
+        </div>
+        <div class="hero-polaroid">
+          <div class="hero-polaroid-photo">
+            <img src="images/hero-polaroid-1.png" alt="Hond vindt een thuis" loading="eager">
+          </div>
+          <div class="hero-polaroid-caption">
+            <span class="hero-polaroid-text">Ff uitrusten</span>
+            <span class="hero-polaroid-name">Lilli</span>
+          </div>
+        </div>
+        <div class="hero-polaroid">
+          <div class="hero-polaroid-photo">
+            <img src="images/hero-polaroid-1.png" alt="Beste vrienden" loading="eager">
+          </div>
+          <div class="hero-polaroid-caption">
+            <span class="hero-polaroid-text">Best friends &lt;3</span>
+            <span class="hero-polaroid-name">Lilli</span>
+          </div>
         </div>
       </div>
     </div>
@@ -2111,80 +2340,98 @@
   <section class="dogs-section">
     <div class="dogs-header-wrap">
       <div class="dogs-header">
-        <h2 data-i18n="index.dogs.title">Opzoek naar een warm huis</h2>
-        <p data-i18n="index.dogs.subtitle">Gered van de straat, medisch behandeld en klaar voor een nieuw begin.</p>
+        <h2 class="t-heading-md" data-i18n="index.dogs.title">Opzoek naar een warm huis</h2>
+        <p data-i18n="index.dogs.subtitle">Elk van deze honden is gered van de straat, medisch behandeld en klaar voor een nieuw begin.</p>
       </div>
     </div>
     <div class="dogs-carousel" id="dogsCarousel">
+      <button class="carousel-arrow prev hidden" id="dogsPrev" onclick="scrollDogCarousel(-1)">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </button>
       <div class="dogs-track" id="dogsTrack"></div>
+      <button class="carousel-arrow next hidden" id="dogsNext" onclick="scrollDogCarousel(1)">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+      </button>
       <div class="dogs-gradient-left"></div>
       <div class="dogs-gradient-right"></div>
     </div>
     <div class="dogs-buttons-wrap">
       <a href="honden.html" class="btn-primary" data-i18n="index.dogs.btn">Bekijk alle honden</a>
+      <a href="adoptie.html" class="btn-secondary" data-i18n="index.dogs.btn2">Meer over adopteren</a>
     </div>
     <div class="dogs-divider"></div>
   </section>
 
   <!-- THE PROBLEM -->
   <section class="problem">
-    <div class="problem-bg">
-      <picture>
-        <source media="(max-width: 1023px)" srcset="images/crisis-bg-mobile.webp" type="image/webp">
-        <source media="(max-width: 1023px)" srcset="images/crisis-bg-mobile.png">
-        <img src="images/crisis-bg.webp" alt="Zwerfhonden op straat in Bosnie en Servie" loading="lazy">
-      </picture>
-    </div>
-
     <div class="problem-inner">
-      <div class="problem-text">
-        <h2 data-i18n="index.crisis.title">Een crisis die niemand ziet</h2>
-        <p data-i18n="index.crisis.subtitle">Wat voor velen onzichtbaar is, is voor hen dagelijkse overleving. Honger, verwondingen en eindeloze voortplanting houden de cyclus van lijden in stand.</p>
+      <!-- Left column: text + stats -->
+      <div class="problem-left">
+        <div class="problem-header">
+          <div class="problem-title">
+            <span class="crisis-red" data-i18n="index.crisis.title.red">EEN CRISIS</span><br>
+            <span class="crisis-muted" data-i18n="index.crisis.title.muted">DIE NIEMAND ZIET</span>
+          </div>
+          <p class="problem-desc" data-i18n="index.crisis.subtitle">Wat voor velen onzichtbaar is, is voor hen dagelijkse overleving. Honger, verwondingen en eindeloze voortplanting houden de cyclus van lijden in stand.</p>
+        </div>
+
+        <div class="problem-data">
+          <div class="problem-data-label" data-i18n="index.crisis.datalabel">De data spreekt voor zich</div>
+          <div class="problem-stats-grid">
+            <div class="problem-stats-row">
+              <div class="problem-stat-card">
+                <div class="problem-stat-cell">
+                  <div class="problem-stat-number">200.000+</div>
+                  <div class="problem-stat-label dim" data-i18n="index.crisis.stat1">Zwerfhonden in de regio</div>
+                </div>
+                <div class="problem-stat-cell">
+                  <div class="problem-stat-number">20%</div>
+                  <div class="problem-stat-label dim" data-i18n="index.crisis.stat2">Overlevingskans van pups</div>
+                </div>
+                <div class="problem-stat-cell xs-only">
+                  <div class="problem-stat-number">3-4 jaar</div>
+                  <div class="problem-stat-label" data-i18n="index.crisis.stat3">Levensverwachting</div>
+                </div>
+                <div class="problem-stat-cell xs-only">
+                  <div class="problem-stat-number">1/10</div>
+                  <div class="problem-stat-label" data-i18n="index.crisis.stat4">Sterft in het verkeer</div>
+                </div>
+                <div class="problem-stat-cell xs-only">
+                  <div class="problem-stat-number">€0</div>
+                  <div class="problem-stat-label" data-i18n="index.crisis.stat5">Overheidssubsidie</div>
+                </div>
+              </div>
+              <div class="problem-stat-card xs-hidden">
+                <div class="problem-stat-cell">
+                  <div class="problem-stat-number">3-4 jaar</div>
+                  <div class="problem-stat-label" data-i18n="index.crisis.stat3">Levensverwachting</div>
+                </div>
+                <div class="problem-stat-cell">
+                  <div class="problem-stat-number">1/10</div>
+                  <div class="problem-stat-label" data-i18n="index.crisis.stat4">Sterft in het verkeer</div>
+                </div>
+              </div>
+            </div>
+            <div class="problem-stat-card xs-hidden">
+              <div class="problem-stat-bar">
+                <div class="problem-stat-number">€0</div>
+                <div class="problem-stat-label" data-i18n="index.crisis.stat5">Overheidssubsidie</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="problem-stats">
-        <div class="problem-stat">
-          <div class="problem-stat-number">200.000+</div>
-          <div class="problem-stat-label" data-i18n="index.crisis.stat1">Zwerfhonden in de regio</div>
-        </div>
-        <div class="problem-stat-divider"></div>
-        <div class="problem-stat">
-          <div class="problem-stat-number">20%</div>
-          <div class="problem-stat-label" data-i18n="index.crisis.stat2">Overlevingskans van pups</div>
-        </div>
-        <div class="problem-stat-divider"></div>
-        <div class="problem-stat">
-          <div class="problem-stat-number">3-4 jaar</div>
-          <div class="problem-stat-label" data-i18n="index.crisis.stat3">Gemiddelde levensverwachting</div>
-        </div>
-        <div class="problem-stat-divider"></div>
-        <div class="problem-stat">
-          <div class="problem-stat-number">1/10</div>
-          <div class="problem-stat-label" data-i18n="index.crisis.stat4">Sterft in het verkeer</div>
-        </div>
-        <div class="problem-stat-divider"></div>
-        <div class="problem-stat">
-          <div class="problem-stat-number">&#8364;0</div>
-          <div class="problem-stat-label" data-i18n="index.crisis.stat5">Overheidssubsidie</div>
-        </div>
+      <!-- Right column: photo grid -->
+      <div class="problem-right">
+        <div class="problem-photo-grid" id="problemPhotos"></div>
+        <button class="problem-reveal-btn" id="revealBtn">
+          <svg class="icon-hide" style="display:none" viewBox="0 0 24 24"><path d="M11.83 9L15 12.16V12a3 3 0 00-3-3h-.17m-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 003 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 01-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28.46.46A11.8 11.8 0 001 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3M12 7a5 5 0 015 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7z"/></svg>
+          <svg class="icon-show" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          <span data-i18n="index.crisis.reveal">Onthul gevoelige beelden</span>
+        </button>
       </div>
     </div>
-
-    <div class="problem-photos-wrap">
-      <button class="problem-arrow prev hidden" id="crisisPrev" onclick="scrollCrisis(-1)">
-        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-      </button>
-      <div class="problem-photos" id="problemPhotos"></div>
-      <button class="problem-arrow next hidden" id="crisisNext" onclick="scrollCrisis(1)">
-        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
-      </button>
-      <button class="problem-reveal-btn" id="revealBtn">
-        <svg class="icon-hide" style="display:none" viewBox="0 0 24 24"><path d="M11.83 9L15 12.16V12a3 3 0 00-3-3h-.17m-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 003 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 01-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28.46.46A11.8 11.8 0 001 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3M12 7a5 5 0 015 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7z"/></svg>
-        <svg class="icon-show" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-        <span data-i18n="index.crisis.reveal">Onthul gevoelige beelden</span>
-      </button>
-    </div>
-
   </section>
 
   <!-- BEFORE & AFTER -->
@@ -2207,15 +2454,21 @@
         </div>
       </div>
       <div class="ba-right">
-        <div class="ba-image-half">
-          <img id="baBeforeImg" src="images/before-rescue.jpg" alt="Hond voor de redding" loading="lazy">
-          <span class="ba-photo-label" data-i18n="ba.before">Before</span>
+        <div class="ba-polaroid ba-polaroid-before">
+          <div class="ba-polaroid-photo">
+            <img id="baBeforeImg" src="images/before-rescue.jpg" alt="Hond voor de redding" loading="lazy">
+          </div>
+          <span class="ba-polaroid-date" id="baBeforeDate">4 Juli 2025</span>
         </div>
-        <div class="ba-image-half">
-          <img id="baAfterImg" src="images/adopted-dog.png" alt="Hond na de redding en herstel" loading="lazy">
-          <span class="ba-photo-label" data-i18n="ba.after">After</span>
+        <div class="ba-polaroid ba-polaroid-after">
+          <div class="ba-polaroid-photo">
+            <img id="baAfterImg" src="images/adopted-dog.png" alt="Hond na de redding en herstel" loading="lazy">
+          </div>
+          <span class="ba-polaroid-date" id="baAfterDate">24 September 2025</span>
         </div>
       </div>
+      <img class="ba-deco-label ba-before-label" src="images/Before.svg" alt="Before" draggable="false">
+      <img class="ba-deco-label ba-after-label" src="images/After.svg" alt="After" draggable="false">
     </div>
     <div class="before-after-divider"></div>
   </section>
@@ -2225,18 +2478,8 @@
     <div class="social-inner">
       <div class="social-header">
         <div class="social-header-text">
-          <h2 data-i18n="index.social.title">Een kijkje in ons leven</h2>
+          <h2 class="t-heading-md" data-i18n="index.social.title">Een kijkje in ons leven</h2>
           <p data-i18n="index.social.subtitle">Blijf op de hoogte van onze reddingen en updates uit het asiel.</p>
-        </div>
-        <div class="social-follow">
-          <a href="https://www.tiktok.com/@hope_for_dogs_europe" target="_blank" rel="noopener" class="social-follow-icon tiktok" title="TikTok">
-            <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.73a8.19 8.19 0 004.76 1.52V6.8a4.84 4.84 0 01-1-.11z"/></svg>
-            <span>Tiktok</span>
-          </a>
-          <a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener" class="social-follow-icon facebook" title="Facebook">
-            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            <span>Facebook</span>
-          </a>
         </div>
       </div>
       <div class="social-carousel-wrap">
@@ -2248,6 +2491,16 @@
           <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
         </button>
       </div>
+      <div class="social-platforms">
+        <a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener" class="social-platform-btn" title="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          <span>Facebook</span>
+        </a>
+        <a href="https://www.tiktok.com/@hope_for_dogs_europe" target="_blank" rel="noopener" class="social-platform-btn" title="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.73a8.19 8.19 0 004.76 1.52V6.8a4.84 4.84 0 01-1-.11z"/></svg>
+          <span>Tiktok</span>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -2258,7 +2511,7 @@
     <div class="cta-final-inner">
       <div class="cta-final-header">
         <div class="cta-final-header-text">
-          <h2 data-i18n="index.cta.title">Jouw bijdrage maakt het verschil</h2>
+          <h2 class="t-heading-md" data-i18n="index.cta.title">Jouw bijdrage maakt het verschil</h2>
           <p data-i18n="index.cta.subtitle">Wij ontvangen geen overheidssteun. Elke euro die we besteden komt van donateurs en uit eigen zak.</p>
         </div>
       </div>
@@ -2405,22 +2658,27 @@
   <script src="dog-card.js"></script>
 
   <script>
+    // Remove will-change from polaroids after animation completes
+    document.querySelectorAll('.hero-polaroid').forEach(function(el) {
+      el.addEventListener('animationend', function() { el.style.willChange = 'auto'; }, { once: true });
+    });
+
     // Photo hide/show toggle
     document.getElementById('revealBtn').addEventListener('click', function() {
-      var photos = document.getElementById('problemPhotos');
+      var grid = document.getElementById('problemPhotos');
       var label = this.querySelector('span');
       var iconHide = this.querySelector('.icon-hide');
       var iconShow = this.querySelector('.icon-show');
       var lang = h4dGetLanguage();
-      if (photos.classList.contains('visible')) {
-        photos.classList.remove('visible');
+      if (grid.classList.contains('visible')) {
+        grid.classList.remove('visible');
         this.classList.remove('hide-mode');
         iconHide.style.display = 'none';
         iconShow.style.display = '';
         label.textContent = (H4D_I18N['index.crisis.reveal'] && H4D_I18N['index.crisis.reveal'][lang]) || 'Onthul gevoelige beelden';
         label.setAttribute('data-i18n', 'index.crisis.reveal');
       } else {
-        photos.classList.add('visible');
+        grid.classList.add('visible');
         this.classList.add('hide-mode');
         iconHide.style.display = '';
         iconShow.style.display = 'none';
@@ -2429,43 +2687,23 @@
       }
     });
 
-    // Load crisis photos from Supabase
+    // Load crisis photos into 3x3 grid from Supabase
     async function loadCrisisPhotos() {
       try {
-        var photos = await supabaseGet('crisis_photos', 'select=*&order=sort_order.asc,created_at.asc');
+        var photos = await supabaseGet('crisis_photos', 'select=*&order=sort_order.asc,created_at.asc&limit=9');
         var container = document.getElementById('problemPhotos');
         if (photos.length === 0) {
-          document.querySelector('.problem-photos-wrap').style.display = 'none';
+          document.querySelector('.problem-right').style.display = 'none';
           return;
         }
         container.innerHTML = photos.map(function(p) {
-          return '<div class="problem-photo"><img src="' + p.photo_url + '" alt="' + (p.alt_text || '') + '" loading="lazy"></div>';
+          return '<img src="' + p.photo_url + '" alt="' + (p.alt_text || '') + '" loading="lazy">';
         }).join('');
-        setTimeout(updateCrisisArrows, 100);
       } catch (err) {
         console.error('Error loading crisis photos:', err);
       }
     }
     loadCrisisPhotos();
-
-    function scrollCrisis(dir) {
-      var c = document.getElementById('problemPhotos');
-      var photo = c.querySelector('.problem-photo');
-      if (!photo) return;
-      var scrollAmount = photo.offsetWidth + 3;
-      c.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
-    }
-
-    function updateCrisisArrows() {
-      var c = document.getElementById('problemPhotos');
-      var prev = document.getElementById('crisisPrev');
-      var next = document.getElementById('crisisNext');
-      if (!c || !prev || !next) return;
-      prev.classList.toggle('hidden', c.scrollLeft <= 10);
-      next.classList.toggle('hidden', c.scrollLeft + c.clientWidth >= c.scrollWidth - 10);
-    }
-
-    document.getElementById('problemPhotos').addEventListener('scroll', updateCrisisArrows);
 
     // Dog carousel
     const carousel = document.getElementById('dogsCarousel');
@@ -2597,6 +2835,70 @@
 
     loadCarouselDogs();
 
+    // Dogs carousel arrows
+    function scrollDogCarousel(dir) {
+      var track = document.getElementById('dogsTrack');
+      var carousel = document.getElementById('dogsCarousel');
+      if (!track || !carousel) return;
+
+      // Get current visual position (from animation or manual transform)
+      var matrix = new DOMMatrix(window.getComputedStyle(track).transform);
+      var currentX = matrix.m41;
+
+      // Stop CSS animation, switch to manual
+      track.style.animation = 'none';
+      track.style.animationDelay = '';
+      track.style.transform = 'translateX(' + currentX + 'px)';
+      window._carouselPaused = true;
+
+      // Scroll by one card + gap
+      var card = track.querySelector('.dog-card');
+      var scrollAmount = card ? (card.offsetWidth + 32) : 392;
+      var newX = currentX + (dir * -scrollAmount);
+
+      // Clamp: first half of track only (second half is duplicate)
+      var halfWidth = track.scrollWidth / 2;
+      var maxX = 0;
+      var minX = -(halfWidth - carousel.offsetWidth + 40);
+      if (newX > maxX) newX = maxX;
+      if (newX < minX) newX = minX;
+
+      track.style.transition = 'transform 0.4s ease';
+      track.style.transform = 'translateX(' + newX + 'px)';
+      setTimeout(function() {
+        track.style.transition = '';
+        updateDogArrows();
+      }, 420);
+    }
+
+    function updateDogArrows() {
+      var track = document.getElementById('dogsTrack');
+      var carousel = document.getElementById('dogsCarousel');
+      var prev = document.getElementById('dogsPrev');
+      var next = document.getElementById('dogsNext');
+      if (!track || !prev || !next || !carousel) return;
+
+      var matrix = new DOMMatrix(window.getComputedStyle(track).transform);
+      var currentX = matrix.m41;
+      var halfWidth = track.scrollWidth / 2;
+      var minX = -(halfWidth - carousel.offsetWidth + 40);
+
+      prev.classList.toggle('hidden', currentX >= -10);
+      next.classList.toggle('hidden', currentX <= minX + 10);
+    }
+
+    // Show both arrows once dogs are loaded
+    new MutationObserver(function(mutations, obs) {
+      var track = document.getElementById('dogsTrack');
+      if (track && track.children.length > 0) {
+        var prev = document.getElementById('dogsPrev');
+        var next = document.getElementById('dogsNext');
+        if (prev) prev.classList.remove('hidden');
+        if (next) next.classList.remove('hidden');
+        obs.disconnect();
+      }
+    }).observe(document.getElementById('dogsTrack'), { childList: true });
+
     // Social feed
     var fbIcon = '<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>';
     var ttIcon = '<svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.78a8.21 8.21 0 004.77 1.52V6.84a4.86 4.86 0 01-1-.15z"/></svg>';
@@ -2664,20 +2966,27 @@
     }
 
     function playVideo(el) {
+      // Pause all other playing videos
       document.querySelectorAll('.social-card-media.playing video').forEach(function(v) {
         v.pause();
+        v.parentElement.classList.remove('playing');
       });
 
       if (el.classList.contains('playing')) {
-        el.querySelector('video').play();
+        // Already playing — toggle pause/play
+        var vid = el.querySelector('video');
+        if (vid.paused) { vid.play(); } else { vid.pause(); el.classList.remove('playing'); }
         return;
       }
       var src = el.getAttribute('data-video');
       var video = document.createElement('video');
       video.src = src;
-      video.controls = true;
       video.autoplay = true;
       video.playsInline = true;
+      video.loop = true;
+      video.muted = true;
+      video.setAttribute('playsinline', '');
+      video.style.pointerEvents = 'none';
       el.appendChild(video);
       el.classList.add('playing');
     }
@@ -2708,7 +3017,9 @@
         description: { nl: row.description_nl || '', de: row.description_de || '', en: row.description_en || '' },
         text: { nl: row.text_nl || '', de: row.text_de || '', en: row.text_en || '' },
         beforeImg: row.before_img,
-        afterImg: row.after_img
+        afterImg: row.after_img,
+        beforeDate: row.before_date || '',
+        afterDate: row.after_date || ''
       };
     }
 
@@ -2720,6 +3031,8 @@
       document.getElementById('baDescription').textContent = story.description[lang] || story.description.nl;
       document.getElementById('baBeforeImg').src = story.beforeImg;
       document.getElementById('baAfterImg').src = story.afterImg;
+      document.getElementById('baBeforeDate').textContent = story.beforeDate || '4 Juli 2025';
+      document.getElementById('baAfterDate').textContent = story.afterDate || '24 September 2025';
     }
 
     async function loadBAStories() {
@@ -2787,7 +3100,7 @@
       var c = document.getElementById('socialFeed');
       var card = c.querySelector('.social-card');
       if (!card) return;
-      var scrollAmount = (card.offsetWidth + 20) * 2;
+      var scrollAmount = (card.offsetWidth + 32) * 2;
       c.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
     }
 

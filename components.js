@@ -23,10 +23,16 @@ var H4D_I18N = {
 
   // --- Index: Hero ---
   'index.hero.badge':    { nl: 'non-profitorganisatie', de: 'Gemeinn\u00FCtzige Organisation', en: 'non-profit organization' },
-  'index.hero.title':    { nl: 'Waar hoop niet opgeeft', de: 'Wo Hoffnung nicht aufgibt', en: 'Where hope never gives up' },
-  'index.hero.subtitle': { nl: 'Wat begint met opvang, eindigt met vertrouwen, stabiliteit en een liefdevol thuis.', de: 'Was mit Auffangen beginnt, endet mit Vertrauen, Stabilit\u00E4t und einem liebevollen Zuhause.', en: 'What starts with shelter ends with trust, stability, and a loving home.' },
+  'index.hero.title':    { nl: 'Waar hoop een thuis vind', de: 'Wo Hoffnung ein Zuhause findet', en: 'Where hope finds a home' },
+  'index.hero.subtitle': { nl: 'Wij zijn een non-profitorganisatie die bestaat uit mensen uit Nederland, Belgie, Servie en Bosnie die hun krachten bundelen om samen een beter bestaan te geven aan de talloze zwerfhonden', de: 'Wir sind eine gemeinn\u00FCtzige Organisation aus Menschen aus den Niederlanden, Belgien, Serbien und Bosnien, die ihre Kr\u00E4fte b\u00FCndeln, um den zahllosen Stra\u00DFenhunden ein besseres Leben zu geben', en: 'We are a non-profit organization made up of people from the Netherlands, Belgium, Serbia and Bosnia who join forces to give a better life to the countless stray dogs' },
   'index.hero.btn1':     { nl: 'Ontdek onze missie', de: 'Entdecke unsere Mission', en: 'Discover our mission' },
   'index.hero.btn2':     { nl: 'Onze honden',   de: 'Unsere Hunde',     en: 'Our dogs' },
+  'index.hero.social.fb':      { nl: 'Facebook', de: 'Facebook', en: 'Facebook' },
+  'index.hero.social.fb.desc': { nl: '6.600+ Volgers', de: '6.600+ Follower', en: '6,600+ Followers' },
+  'index.hero.social.ig':      { nl: 'Instagram', de: 'Instagram', en: 'Instagram' },
+  'index.hero.social.ig.desc': { nl: '1.750+ Followers', de: '1.750+ Follower', en: '1,750+ Followers' },
+  'index.hero.social.tt':      { nl: 'TikTok', de: 'TikTok', en: 'TikTok' },
+  'index.hero.social.tt.desc': { nl: '64+ Followers', de: '64+ Follower', en: '64+ Followers' },
 
   // --- Index: Impact stats ---
   'index.stat.rescued':    { nl: 'Honden gered',              de: 'Hunde gerettet',               en: 'Dogs rescued' },
@@ -37,15 +43,19 @@ var H4D_I18N = {
 
   // --- Index: Dogs section ---
   'index.dogs.title':    { nl: 'Opzoek naar een warm huis', de: 'Auf der Suche nach einem warmen Zuhause', en: 'Looking for a loving home' },
-  'index.dogs.subtitle': { nl: 'Gered van de straat, medisch behandeld en klaar voor een nieuw begin.', de: 'Von der Stra\u00DFe gerettet, medizinisch versorgt und bereit f\u00FCr einen Neuanfang.', en: 'Rescued from the streets, medically treated, and ready for a fresh start.' },
+  'index.dogs.subtitle': { nl: 'Elk van deze honden is gered van de straat, medisch behandeld en klaar voor een nieuw begin.', de: 'Jeder dieser Hunde wurde von der Stra\u00DFe gerettet, medizinisch versorgt und ist bereit f\u00FCr einen Neuanfang.', en: 'Each of these dogs was rescued from the streets, medically treated, and ready for a fresh start.' },
   'index.dogs.btn':      { nl: 'Bekijk alle honden', de: 'Alle Hunde ansehen', en: 'View all dogs' },
+  'index.dogs.btn2':     { nl: 'Meer over adopteren', de: 'Mehr \u00FCber Adoption', en: 'More about adoption' },
 
   // --- Index: Crisis section ---
   'index.crisis.title':    { nl: 'Een crisis die niemand ziet', de: 'Eine Krise, die niemand sieht', en: 'A crisis nobody sees' },
+  'index.crisis.title.red':  { nl: 'EEN CRISIS', de: 'EINE KRISE', en: 'A CRISIS' },
+  'index.crisis.title.muted': { nl: 'DIE NIEMAND ZIET', de: 'DIE NIEMAND SIEHT', en: 'NOBODY SEES' },
+  'index.crisis.datalabel':   { nl: 'De data spreekt voor zich', de: 'Die Daten sprechen f\u00FCr sich', en: 'The data speaks for itself' },
   'index.crisis.subtitle': { nl: 'Wat voor velen onzichtbaar is, is voor hen dagelijkse overleving. Honger, verwondingen en eindeloze voortplanting houden de cyclus van lijden in stand.', de: 'Was f\u00FCr viele unsichtbar ist, ist f\u00FCr sie t\u00E4gliches \u00DCberleben. Hunger, Verletzungen und endlose Fortpflanzung halten den Kreislauf des Leidens aufrecht.', en: 'What is invisible to many is daily survival for them. Hunger, injuries, and endless breeding keep the cycle of suffering going.' },
   'index.crisis.stat1':    { nl: 'Zwerfhonden in de regio',        de: 'Stra\u00DFenhunde in der Region',    en: 'Stray dogs in the region' },
   'index.crisis.stat2':    { nl: 'Overlevingskans van pups',       de: '\u00DCberlebensrate von Welpen',      en: 'Puppy survival rate' },
-  'index.crisis.stat3':    { nl: 'Gemiddelde levensverwachting',   de: 'Durchschnittliche Lebenserwartung',   en: 'Average life expectancy' },
+  'index.crisis.stat3':    { nl: 'Levensverwachting',              de: 'Lebenserwartung',                     en: 'Life expectancy' },
   'index.crisis.stat4':    { nl: 'Sterft in het verkeer',          de: 'Stirbt im Stra\u00DFenverkehr',      en: 'Dies in traffic' },
   'index.crisis.stat5':    { nl: 'Overheidssubsidie',              de: 'Staatliche Subvention',               en: 'Government subsidy' },
   'index.crisis.reveal':   { nl: 'Onthul gevoelige beelden', de: 'Sensible Bilder enth\u00FCllen', en: 'Reveal sensitive images' },
@@ -193,7 +203,7 @@ var H4D_I18N = {
 
   // --- Adoptie page ---
   'adoptie.hero.sub':  { nl: 'Elke hond in ons asiel is gered, medisch behandeld en klaar voor een nieuw begin. Het adoptieproces is zorgvuldig opgezet om de beste match te vinden \u2014 voor de hond \u00E9n voor jou.', de: 'Jeder Hund in unserem Tierheim wurde gerettet, medizinisch versorgt und ist bereit f\u00FCr einen Neuanfang. Der Adoptionsprozess ist sorgf\u00E4ltig aufgebaut, um die beste \u00DCbereinstimmung zu finden \u2014 f\u00FCr den Hund und f\u00FCr Sie.', en: 'Every dog in our shelter has been rescued, medically treated, and is ready for a new beginning. The adoption process is carefully designed to find the best match \u2014 for the dog and for you.' },
-  'adoptie.bekijk':    { nl: 'Bekijk beschikbare honden', de: 'Verf\u00FCgbare Hunde ansehen', en: 'View available dogs' },
+  'adoptie.bekijk':    { nl: 'Onze honden', de: 'Unsere Hunde', en: 'Our dogs' },
   'adoptie.waarom':    { nl: 'Waarom adopteren via Hart voor Hond?', de: 'Warum \u00FCber Hope for Dogs adoptieren?', en: 'Why adopt through Hope for Dogs?' },
   'adoptie.waarom.sub':{ nl: 'Wij redden honden van de straat in Bosni\u00EB en Servi\u00EB, geven ze medische zorg en zoeken een warm thuis. Een adoptie via ons is geen impulsaankoop \u2014 het is een bewuste keuze die een leven redt en plek vrijmaakt voor de volgende hond in nood.', de: 'Wir retten Hunde von der Stra\u00DFe in Bosnien und Serbien, geben ihnen medizinische Versorgung und suchen ein warmes Zuhause. Eine Adoption \u00FCber uns ist kein Impulskauf \u2014 es ist eine bewusste Entscheidung, die ein Leben rettet und Platz f\u00FCr den n\u00E4chsten Hund in Not schafft.', en: 'We rescue dogs from the streets in Bosnia and Serbia, give them medical care, and find them a warm home. Adopting through us is not an impulse buy \u2014 it is a conscious choice that saves a life and makes room for the next dog in need.' },
   'adoptie.proces':     { nl: 'Hoe werkt het adoptieproces?', de: 'Wie funktioniert der Adoptionsprozess?', en: 'How does the adoption process work?' },
@@ -215,11 +225,11 @@ var H4D_I18N = {
   'adoptie.eisen':     { nl: 'Waar letten we op?', de: 'Worauf achten wir?', en: 'What do we look for?' },
   'adoptie.eisen.sub': { nl: 'We willen dat elke adoptie slaagt. Daarom kijken we naar een aantal belangrijke punten voordat we een hond plaatsen.', de: 'Wir m\u00F6chten, dass jede Adoption gelingt. Deshalb achten wir auf einige wichtige Punkte, bevor wir einen Hund platzieren.', en: 'We want every adoption to succeed. That\u2019s why we look at several important points before placing a dog.' },
   'adoptie.kosten':     { nl: 'Wat kost een adoptie?', de: 'Was kostet eine Adoption?', en: 'What does adoption cost?' },
-  'adoptie.kosten.sub': { nl: 'De adoptievergoeding dekt een deel van de medische kosten en het transport. Dit is wat inbegrepen is:', de: 'Die Adoptionsgeb\u00FChr deckt einen Teil der medizinischen Kosten und des Transports. Dies ist inbegriffen:', en: 'The adoption fee covers part of the medical costs and transport. This is what\u2019s included:' },
+  'adoptie.kosten.sub': { nl: 'De bijdrage gaat naar de verzorging en de veilige reis van jouw hond', de: 'Der Beitrag geht an die Pflege und die sichere Reise deines Hundes', en: 'The contribution goes towards the care and safe journey of your dog' },
   'adoptie.cta':     { nl: 'Klaar om een leven te veranderen?', de: 'Bereit, ein Leben zu ver\u00E4ndern?', en: 'Ready to change a life?' },
   'adoptie.cta.sub': { nl: 'Bekijk onze beschikbare honden en vind jouw nieuwe gezinslid. Of neem contact met ons op \u2014 we helpen je graag.', de: 'Sehen Sie sich unsere verf\u00FCgbaren Hunde an und finden Sie Ihr neues Familienmitglied. Oder kontaktieren Sie uns \u2014 wir helfen Ihnen gerne.', en: 'Browse our available dogs and find your new family member. Or contact us \u2014 we\u2019re happy to help.' },
-  'adoptie.contact':  { nl: 'Neem contact op', de: 'Kontaktiere uns', en: 'Get in touch' },
-  'adoptie.kosten.vergoeding':      { nl: 'Adoptievergoeding', de: 'Adoptionsgeb\u00FChr', en: 'Adoption fee' },
+  'adoptie.contact':  { nl: 'Lees de ervaringen', de: 'Erfahrungen lesen', en: 'Read experiences' },
+  'adoptie.kosten.vergoeding':      { nl: 'Adoptie', de: 'Adoption', en: 'Adoption' },
   'adoptie.kosten.vergoeding.note': { nl: 'Inclusief medische behandeling en voorbereiding', de: 'Inklusive medizinischer Behandlung und Vorbereitung', en: 'Including medical treatment and preparation' },
   'adoptie.kosten.vac':     { nl: 'Vaccinatie', de: 'Impfung', en: 'Vaccination' },
   'adoptie.kosten.ont':     { nl: 'Ontworming', de: 'Entwurmung', en: 'Deworming' },
