@@ -140,7 +140,7 @@ function parseFields($text) {
         // Skip common non-name words
         $skipWords = ['the', 'this', 'deze', 'een', 'het', 'hij', 'zij', 'wij', 'new', 'our', 'ons', 'onze',
                       'update', 'info', 'help', 'please', 'dringend', 'urgent', 'adopted', 'geadopteerd',
-                      'looking', 'zoeken', 'foster', 'rescue', 'shelter', 'aziel', 'stichting',
+                      'looking', 'zoeken', 'foster', 'rescue', 'shelter', 'asiel', 'stichting',
                       'today', 'vandaag', 'just', 'nog', 'meer', 'more', 'lieve', 'sweet', 'beautiful',
                       'ovaj', 'ova', 'ovo', 'ovde', 'jos'];
         if (!in_array(mb_strtolower($m[1], 'UTF-8'), $skipWords)) {
