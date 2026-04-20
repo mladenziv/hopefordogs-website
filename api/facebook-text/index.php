@@ -495,6 +495,31 @@ if ($msgPos !== false) {
     }
 }
 
+// Debug mode
+$debug = $input['debug'] ?? false;
+$debugInfo = null;
+if ($debug) {
+    $debugInfo = ['html_length' => strlen($html), 'is_video_post' => $isVideoPost];
+    // Check for video patterns
+    foreach (['"playable_url_quality_hd"', '"browser_native_hd_url"', '"playable_url"', '"browser_native_sd_url"'] as $p) {
+        $debugInfo['has_' . trim($p, '"')] = strpos($html, $p) !== false;
+    }
+    // Check for message text
+    $debugInfo['has_message_text'] = strpos($html, '"message":{"text":"') !== false;
+    // Find og:description
+    $debugInfo['has_og_description'] = strpos($html, 'og:description') !== false;
+    // Find any video CDN URLs
+    preg_match_all('/video-[a-z0-9-]+\.xx\.fbcdn\.net/', $html, $vcdn);
+    $debugInfo['video_cdn_domains'] = count(array_unique($vcdn[0] ?? []));
+    // Sample of what's around "playable" if it exists
+    $ppos = strpos($html, 'playable');
+    if ($ppos !== false) {
+        $debugInfo['playable_context'] = substr($html, max(0,$ppos-30), 200);
+    }
+}
+
 // Parse structured dog fields from text
 $fields = parseFields($text);
-echo json_encode(array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields));
+$result = array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields);
+if ($debug) $result['debug'] = $debugInfo;
+echo json_encode($result);
