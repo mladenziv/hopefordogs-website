@@ -366,41 +366,53 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
         }
     }
 }
-// Extract ALL "uri" fields near "__typename":"Photo" entries from the JSON
-// Collect by file ID, prefer full-size (no _sNNNxNNN in URL)
+// Step 1: Find post photo file IDs via "__typename":"Photo" entries
 $searchPos = 0;
 $photoNeedle = '"__typename":"Photo"';
-$seenFileIds = [];
-$photosByFile = []; // fileId => [urls...]
+$postFileIds = [];
 foreach ($images as $img) {
     if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $img, $fm)) {
-        $seenFileIds[$fm[1]] = true;
+        $postFileIds[$fm[1]] = true;
     }
 }
 while (($pos = strpos($html, $photoNeedle, $searchPos)) !== false) {
     $searchPos = $pos + strlen($photoNeedle);
-    // Look for "uri":"https://..." within the next 500 chars
     $chunk = substr($html, $pos, 500);
     if (preg_match('/"uri":\s*"(https:[^"]+)"/i', $chunk, $um)) {
         $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1]);
-        $fileId = null;
         if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
-            $fileId = $fm[1];
+            $postFileIds[$fm[1]] = true;
         }
-        if ($fileId && isset($seenFileIds[$fileId])) continue;
-        if ($fileId) {
-            $isFull = !preg_match('/_s\d+x\d+/', $decoded);
-            if (!isset($photosByFile[$fileId]) || $isFull) {
-                $photosByFile[$fileId] = $decoded;
-            }
-        }
+    }
+}
+
+// Step 2: Scan ALL "uri" fields in the HTML for these file IDs, prefer full-size
+$uriNeedle = '"uri":"https:';
+$uriPos = 0;
+$photosByFile = [];
+while (($uriPos = strpos($html, $uriNeedle, $uriPos)) !== false) {
+    $uriStart = $uriPos + 6; // skip "uri":"
+    $uriEnd = strpos($html, '"', $uriStart);
+    if ($uriEnd === false) break;
+    $rawUrl = substr($html, $uriStart, $uriEnd - $uriStart);
+    $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $rawUrl);
+    $uriPos = $uriEnd + 1;
+
+    // Only process URLs that match our post photo file IDs
+    if (!preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) continue;
+    $fileId = $fm[1];
+    if (!isset($postFileIds[$fileId])) continue;
+    if (isset($seen[$decoded])) continue; // skip og:image duplicate
+
+    $isThumbnail = preg_match('/_s\d+x\d+/', $decoded);
+    if (!isset($photosByFile[$fileId]) || !$isThumbnail) {
+        $photosByFile[$fileId] = $decoded;
     }
 }
 foreach ($photosByFile as $fid => $url) {
     if (!isset($seen[$url])) {
         $images[] = $url;
         $seen[$url] = true;
-        $seenFileIds[$fid] = true;
     }
 }
 $images = array_slice($images, 0, 10);
