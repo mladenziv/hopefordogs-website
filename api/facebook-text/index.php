@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $input = json_decode(file_get_contents('php://input'), true);
 $url = $input['url'] ?? '';
+$originalUrl = $url;
 
 if (empty($url) || strpos($url, 'facebook.com') === false) {
     echo json_encode(['error' => 'Invalid Facebook URL', 'text' => null]);
@@ -440,7 +441,7 @@ foreach ($images as $imgUrl) {
 // Extract videos
 $videos = [];
 $seenVideos = [];
-$isVideoPost = strpos($url, '/reel/') !== false || strpos($url, '/watch/') !== false;
+$isVideoPost = strpos($originalUrl, '/reel/') !== false || strpos($originalUrl, '/watch/') !== false;
 
 // og:video meta tags indicate this is a video post
 if (preg_match_all('/<meta\s+(?:property|name)=["\']og:video(?::url)?["\']\s+content=["\']([^"\']+)["\']/i', $html, $vidMatches)) {
@@ -489,44 +490,14 @@ if ($msgPos !== false) {
         $rawMsg = substr($html, $start, $end - $start);
         $cleaned = cleanText($rawMsg);
         // Only replace if JSON text is longer (og:description is often truncated)
-        if (!isBoilerplate($cleaned) && (!$text || mb_strlen($cleaned, 'UTF-8') > mb_strlen($text, 'UTF-8'))) {
+        // For reels/videos, accept short text (captions can be just a name)
+        $isReel = strpos($originalUrl, '/reel/') !== false || strpos($originalUrl, '/watch/') !== false;
+        if (($isReel || !isBoilerplate($cleaned)) && (!$text || mb_strlen($cleaned, 'UTF-8') > mb_strlen($text, 'UTF-8'))) {
             $text = $cleaned;
         }
     }
 }
 
-// Debug mode
-$debug = $input['debug'] ?? false;
-$debugInfo = null;
-if ($debug) {
-    $debugInfo = ['html_length' => strlen($html), 'is_video_post' => $isVideoPost];
-    // Check for video patterns
-    foreach (['"playable_url_quality_hd"', '"browser_native_hd_url"', '"playable_url"', '"browser_native_sd_url"'] as $p) {
-        $debugInfo['has_' . trim($p, '"')] = strpos($html, $p) !== false;
-    }
-    // Check for message text
-    $debugInfo['has_message_text'] = strpos($html, '"message":{"text":"') !== false;
-    // Find og:description
-    $debugInfo['has_og_description'] = strpos($html, 'og:description') !== false;
-    // Find any video CDN URLs
-    preg_match_all('/video-[a-z0-9-]+\.xx\.fbcdn\.net/', $html, $vcdn);
-    $debugInfo['video_cdn_domains'] = count(array_unique($vcdn[0] ?? []));
-    // Sample of what's around browser_native_hd_url
-    $ppos = strpos($html, 'browser_native_hd_url');
-    if ($ppos !== false) {
-        $debugInfo['hd_url_context'] = substr($html, max(0,$ppos-10), 300);
-    }
-    // Check message text context
-    $mpos = strpos($html, '"message":{"text":"');
-    if ($mpos !== false) {
-        $debugInfo['message_context'] = substr($html, $mpos, 200);
-    }
-    // Check the URL we received
-    $debugInfo['input_url'] = $url;
-}
-
 // Parse structured dog fields from text
 $fields = parseFields($text);
-$result = array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields);
-if ($debug) $result['debug'] = $debugInfo;
-echo json_encode($result);
+echo json_encode(array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields));
