@@ -495,6 +495,37 @@ if ($msgPos !== false) {
     }
 }
 
+// Debug mode
+$debug = $input['debug'] ?? false;
+$debugInfo = null;
+if ($debug) {
+    // Dump ALL uri fields that contain our post photo filenames
+    $testFileIds = array_keys($postFileIds);
+    $debugInfo = ['post_file_ids' => $testFileIds, 'uri_matches' => []];
+    $dp = 0;
+    $dn = '"uri":"';
+    while (($dp = strpos($html, $dn, $dp)) !== false) {
+        $ds = $dp + strlen($dn);
+        $de = strpos($html, '"', $ds);
+        if ($de === false) break;
+        $du = substr($html, $ds, min($de - $ds, 300));
+        $dd = str_replace(['\\/', '\\u0025'], ['/', '%'], $du);
+        $dp = $de + 1;
+        foreach ($testFileIds as $fid) {
+            if (strpos($dd, $fid) !== false) {
+                $hasSizeParam = preg_match('/_s\d+x\d+/', $dd);
+                $debugInfo['uri_matches'][] = [
+                    'file' => $fid,
+                    'thumb' => $hasSizeParam ? true : false,
+                    'url_start' => substr($dd, 0, 160)
+                ];
+            }
+        }
+    }
+}
+
 // Parse structured dog fields from text
 $fields = parseFields($text);
-echo json_encode(array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields));
+$result = array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields);
+if ($debug) $result['debug'] = $debugInfo;
+echo json_encode($result);
