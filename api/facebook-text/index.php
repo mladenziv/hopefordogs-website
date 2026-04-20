@@ -470,6 +470,18 @@ if ($debug) {
     preg_match_all('/.{0,50}"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)".{0,50}/i', $html, $dbgCtx);
     $debugInfo['image_uri_contexts'] = array_slice($dbgCtx[0] ?? [], 0, 10);
 
+    // Debug: test the actual extraction regex from the main code
+    $testImages = [];
+    if (preg_match_all('/"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)"/i', $html, $testM)) {
+        foreach ($testM[1] as $tu) {
+            $td = str_replace(['\\/', '\\u0025'], ['/', '%'], $tu);
+            $hasExt = preg_match('/\.(jpg|jpeg|png|webp)/i', $td);
+            $testImages[] = ['url_start' => substr($td, 0, 100), 'has_ext' => $hasExt, 'in_seen' => isset($seen[$td])];
+        }
+    }
+    $debugInfo['image_uri_regex_matches'] = array_slice($testImages, 0, 15);
+    $debugInfo['seen_count_at_json_stage'] = count($seen);
+
     // Check for media array patterns
     preg_match_all('/"all_subattachments".*?"uri":\s*"(https:[^"]+)"/iU', $html, $dbgSub);
     $debugInfo['subattachment_uris'] = count($dbgSub[1] ?? []);
