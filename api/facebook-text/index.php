@@ -366,11 +366,12 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
         }
     }
 }
-// Extract post photos from Facebook JSON using string scanning (no complex regex)
-// Look for "media":{"__typename":"Photo" patterns and extract the "uri" after "image":
+// Extract ALL "uri" fields near "__typename":"Photo" entries from the JSON
+// Collect by file ID, prefer full-size (no _sNNNxNNN in URL)
 $searchPos = 0;
 $photoNeedle = '"__typename":"Photo"';
 $seenFileIds = [];
+$photosByFile = []; // fileId => [urls...]
 foreach ($images as $img) {
     if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $img, $fm)) {
         $seenFileIds[$fm[1]] = true;
@@ -382,42 +383,60 @@ while (($pos = strpos($html, $photoNeedle, $searchPos)) !== false) {
     $chunk = substr($html, $pos, 500);
     if (preg_match('/"uri":\s*"(https:[^"]+)"/i', $chunk, $um)) {
         $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1]);
-        // Extract file ID for deduplication
         $fileId = null;
         if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
             $fileId = $fm[1];
         }
-        if (!isset($seen[$decoded]) && (!$fileId || !isset($seenFileIds[$fileId]))) {
-            $images[] = $decoded;
-            $seen[$decoded] = true;
-            if ($fileId) $seenFileIds[$fileId] = true;
+        if ($fileId && isset($seenFileIds[$fileId])) continue;
+        if ($fileId) {
+            $isFull = !preg_match('/_s\d+x\d+/', $decoded);
+            if (!isset($photosByFile[$fileId]) || $isFull) {
+                $photosByFile[$fileId] = $decoded;
+            }
         }
+    }
+}
+foreach ($photosByFile as $fid => $url) {
+    if (!isset($seen[$url])) {
+        $images[] = $url;
+        $seen[$url] = true;
+        $seenFileIds[$fid] = true;
     }
 }
 $images = array_slice($images, 0, 10);
 
-// Extract video URLs from Facebook HTML
-$videos = [];
-$seenVideos = [];
-
-// Inline JSON patterns — direct CDN video URLs (prefer HD, fall back to SD)
-foreach (['"playable_url_quality_hd"', '"browser_native_hd_url"', '"playable_url"', '"browser_native_sd_url"'] as $pattern) {
-    if (preg_match_all('/' . preg_quote($pattern, '/') . '\s*:\s*"(https:[^"]+)"/i', $html, $vidMatches)) {
-        foreach ($vidMatches[1] as $vidUrl) {
-            $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $vidUrl);
-            if ($decoded === 'https:' || strlen($decoded) < 20) continue;
-            if (!isset($seenVideos[$decoded])) { $videos[] = $decoded; $seenVideos[$decoded] = true; }
-        }
+// Fetch images server-side and return as base64 (Facebook CDN URLs are session-bound)
+$imageData = [];
+foreach ($images as $imgUrl) {
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL => $imgUrl,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    ]);
+    $imgData = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE) ?: 'image/jpeg';
+    curl_close($ch);
+    if ($httpCode === 200 && !empty($imgData) && strlen($imgData) > 1000) {
+        $imageData[] = 'data:' . $contentType . ';base64,' . base64_encode($imgData);
     }
 }
 
-// og:video meta tags — skip embed URLs on facebook.com
+// Extract videos — only for actual video posts (check og:video meta tag)
+$videos = [];
+$seenVideos = [];
+$isVideoPost = false;
+
+// og:video meta tags indicate this is a video post
 if (preg_match_all('/<meta\s+(?:property|name)=["\']og:video(?::url)?["\']\s+content=["\']([^"\']+)["\']/i', $html, $vidMatches)) {
     foreach ($vidMatches[1] as $vidUrl) {
         $decoded = html_entity_decode($vidUrl, ENT_QUOTES, 'UTF-8');
         $vHost = parse_url($decoded, PHP_URL_HOST);
         if ($vHost && (strpos($vHost, 'facebook.com') !== false || strpos($vHost, 'fb.com') !== false)) continue;
-        if (!isset($seenVideos[$decoded])) { $videos[] = $decoded; $seenVideos[$decoded] = true; }
+        if (!isset($seenVideos[$decoded])) { $videos[] = $decoded; $seenVideos[$decoded] = true; $isVideoPost = true; }
     }
 }
 if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:video(?::url)?["\']/i', $html, $vidMatches)) {
@@ -425,7 +444,19 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
         $decoded = html_entity_decode($vidUrl, ENT_QUOTES, 'UTF-8');
         $vHost = parse_url($decoded, PHP_URL_HOST);
         if ($vHost && (strpos($vHost, 'facebook.com') !== false || strpos($vHost, 'fb.com') !== false)) continue;
-        if (!isset($seenVideos[$decoded])) { $videos[] = $decoded; $seenVideos[$decoded] = true; }
+        if (!isset($seenVideos[$decoded])) { $videos[] = $decoded; $seenVideos[$decoded] = true; $isVideoPost = true; }
+    }
+}
+// Only look for inline JSON video URLs if this is actually a video post
+if ($isVideoPost) {
+    foreach (['"playable_url_quality_hd"', '"browser_native_hd_url"'] as $pattern) {
+        if (preg_match('/' . preg_quote($pattern, '/') . '\s*:\s*"(https:[^"]+)"/i', $html, $vidMatch)) {
+            $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $vidMatch[1]);
+            if ($decoded !== 'https:' && strlen($decoded) > 20 && !isset($seenVideos[$decoded])) {
+                array_unshift($videos, $decoded);
+                $seenVideos[$decoded] = true;
+            }
+        }
     }
 }
 $videos = array_slice($videos, 0, 3);
@@ -454,4 +485,4 @@ if ($msgPos !== false) {
 
 // Parse structured dog fields from text
 $fields = parseFields($text);
-echo json_encode(array_merge(['text' => $text, 'images' => $images, 'videos' => $videos], $fields));
+echo json_encode(array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields));
