@@ -437,10 +437,10 @@ foreach ($images as $imgUrl) {
     }
 }
 
-// Extract videos — only for actual video posts (check og:video meta tag)
+// Extract videos
 $videos = [];
 $seenVideos = [];
-$isVideoPost = false;
+$isVideoPost = strpos($url, '/reel/') !== false || strpos($url, '/watch/') !== false;
 
 // og:video meta tags indicate this is a video post
 if (preg_match_all('/<meta\s+(?:property|name)=["\']og:video(?::url)?["\']\s+content=["\']([^"\']+)["\']/i', $html, $vidMatches)) {
@@ -459,9 +459,9 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
         if (!isset($seenVideos[$decoded])) { $videos[] = $decoded; $seenVideos[$decoded] = true; $isVideoPost = true; }
     }
 }
-// Only look for inline JSON video URLs if this is actually a video post
+// Look for inline JSON video URLs for video posts and reels
 if ($isVideoPost) {
-    foreach (['"playable_url_quality_hd"', '"browser_native_hd_url"'] as $pattern) {
+    foreach (['"playable_url_quality_hd"', '"browser_native_hd_url"', '"playable_url"', '"browser_native_sd_url"'] as $pattern) {
         if (preg_match('/' . preg_quote($pattern, '/') . '\s*:\s*"(https:[^"]+)"/i', $html, $vidMatch)) {
             $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $vidMatch[1]);
             if ($decoded !== 'https:' && strlen($decoded) > 20 && !isset($seenVideos[$decoded])) {
