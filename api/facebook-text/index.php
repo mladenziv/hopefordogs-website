@@ -452,6 +452,38 @@ if ($msgPos !== false) {
     }
 }
 
+// Debug mode: add ?debug=1 or pass debug:true in body
+$debug = isset($_GET['debug']) || ($input['debug'] ?? false);
+$debugInfo = [];
+if ($debug) {
+    // Count all scontent image URLs (Facebook CDN photos)
+    preg_match_all('/"(https:\\\\\/\\\\\/scontent[^"]*\.jpg[^"]*)"/i', $html, $dbgImg);
+    $debugInfo['scontent_jpg_total'] = count($dbgImg[1] ?? []);
+
+    // Count all uri patterns with images
+    preg_match_all('/"uri":\s*"(https:[^"]*scontent[^"]*)/i', $html, $dbgUri);
+    $allUris = array_unique(array_map(function($u) { return str_replace('\\/', '/', $u); }, $dbgUri[1] ?? []));
+    $debugInfo['unique_scontent_uris'] = count($allUris);
+    $debugInfo['scontent_uri_samples'] = array_slice(array_values($allUris), 0, 20);
+
+    // Find all "image":{"uri":"..."} with surrounding context
+    preg_match_all('/.{0,50}"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)".{0,50}/i', $html, $dbgCtx);
+    $debugInfo['image_uri_contexts'] = array_slice($dbgCtx[0] ?? [], 0, 10);
+
+    // Check for media array patterns
+    preg_match_all('/"all_subattachments".*?"uri":\s*"(https:[^"]+)"/iU', $html, $dbgSub);
+    $debugInfo['subattachment_uris'] = count($dbgSub[1] ?? []);
+
+    // Video pattern counts
+    preg_match_all('/"playable_url[^"]*":\s*"(https:[^"]+)"/i', $html, $dbgVid);
+    $debugInfo['all_playable_urls'] = count($dbgVid[1] ?? []);
+
+    $debugInfo['html_length'] = strlen($html);
+    $debugInfo['og_image_count'] = $ogImageCount;
+}
+
 // Parse structured dog fields from text
 $fields = parseFields($text);
-echo json_encode(array_merge(['text' => $text, 'images' => $images, 'videos' => $videos], $fields));
+$result = array_merge(['text' => $text, 'images' => $images, 'videos' => $videos], $fields);
+if ($debug) $result['debug'] = $debugInfo;
+echo json_encode($result);
