@@ -418,6 +418,12 @@ foreach ($photosByFile as $fid => $url) {
 }
 $images = array_slice($images, 0, 10);
 
+// For reels/video posts, skip images (they're just video thumbnails)
+$isReel = strpos($originalUrl, '/reel/') !== false || strpos($originalUrl, '/watch/') !== false;
+if ($isReel) {
+    $images = [];
+}
+
 // Fetch images server-side and return as base64 (Facebook CDN URLs are session-bound)
 $imageData = [];
 foreach ($images as $imgUrl) {
