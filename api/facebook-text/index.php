@@ -511,11 +511,18 @@ if ($debug) {
     // Find any video CDN URLs
     preg_match_all('/video-[a-z0-9-]+\.xx\.fbcdn\.net/', $html, $vcdn);
     $debugInfo['video_cdn_domains'] = count(array_unique($vcdn[0] ?? []));
-    // Sample of what's around "playable" if it exists
-    $ppos = strpos($html, 'playable');
+    // Sample of what's around browser_native_hd_url
+    $ppos = strpos($html, 'browser_native_hd_url');
     if ($ppos !== false) {
-        $debugInfo['playable_context'] = substr($html, max(0,$ppos-30), 200);
+        $debugInfo['hd_url_context'] = substr($html, max(0,$ppos-10), 300);
     }
+    // Check message text context
+    $mpos = strpos($html, '"message":{"text":"');
+    if ($mpos !== false) {
+        $debugInfo['message_context'] = substr($html, $mpos, 200);
+    }
+    // Check the URL we received
+    $debugInfo['input_url'] = $url;
 }
 
 // Parse structured dog fields from text
