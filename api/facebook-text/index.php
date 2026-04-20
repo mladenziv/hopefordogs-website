@@ -377,6 +377,8 @@ foreach ($images as $img) {
 if (preg_match_all('/"media":\s*\{\s*"__typename":\s*"Photo"[^}]*"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
     foreach ($imgMatches[1] as $imgUrl) {
         $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $imgUrl);
+        // Upgrade to full resolution: remove size constraints like s590x590 from the URL
+        $decoded = preg_replace('/(_dst-jpg)_s\d+x\d+/', '$1', $decoded);
         // Deduplicate by filename (same photo may appear in different sizes)
         $fileId = null;
         if (preg_match('/\/([^\/\?]+_n\.(?:jpg|jpeg|png|webp))/i', $decoded, $fm)) {
