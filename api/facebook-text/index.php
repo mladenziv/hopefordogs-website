@@ -67,6 +67,8 @@ function fetchWithRedirects($url, $maxRedirects = 5) {
 }
 
 function cleanText($text) {
+    // Convert literal \n and \t to real newlines/tabs
+    $text = str_replace(['\\n', '\\t'], ["\n", "\t"], $text);
     // Decode HTML entities
     $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
     // Normalize unicode escapes (handle surrogate pairs for emoji)
