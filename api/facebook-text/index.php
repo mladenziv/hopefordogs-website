@@ -387,11 +387,12 @@ while (($pos = strpos($html, $photoNeedle, $searchPos)) !== false) {
 }
 
 // Step 2: Scan ALL "uri" fields in the HTML for these file IDs, prefer full-size
-$uriNeedle = '"uri":"https:';
+$uriNeedle = '"uri":"';
+$uriNeedleLen = strlen($uriNeedle);
 $uriPos = 0;
 $photosByFile = [];
 while (($uriPos = strpos($html, $uriNeedle, $uriPos)) !== false) {
-    $uriStart = $uriPos + 6; // skip "uri":"
+    $uriStart = $uriPos + $uriNeedleLen; // points to start of URL
     $uriEnd = strpos($html, '"', $uriStart);
     if ($uriEnd === false) break;
     $rawUrl = substr($html, $uriStart, $uriEnd - $uriStart);
@@ -402,7 +403,6 @@ while (($uriPos = strpos($html, $uriNeedle, $uriPos)) !== false) {
     if (!preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) continue;
     $fileId = $fm[1];
     if (!isset($postFileIds[$fileId])) continue;
-    if (isset($seen[$decoded])) continue; // skip og:image duplicate
 
     $isThumbnail = preg_match('/_s\d+x\d+/', $decoded);
     if (!isset($photosByFile[$fileId]) || !$isThumbnail) {
@@ -495,37 +495,6 @@ if ($msgPos !== false) {
     }
 }
 
-// Debug mode
-$debug = $input['debug'] ?? false;
-$debugInfo = null;
-if ($debug) {
-    // Dump ALL uri fields that contain our post photo filenames
-    $testFileIds = array_keys($postFileIds);
-    $debugInfo = ['post_file_ids' => $testFileIds, 'uri_matches' => []];
-    $dp = 0;
-    $dn = '"uri":"';
-    while (($dp = strpos($html, $dn, $dp)) !== false) {
-        $ds = $dp + strlen($dn);
-        $de = strpos($html, '"', $ds);
-        if ($de === false) break;
-        $du = substr($html, $ds, min($de - $ds, 300));
-        $dd = str_replace(['\\/', '\\u0025'], ['/', '%'], $du);
-        $dp = $de + 1;
-        foreach ($testFileIds as $fid) {
-            if (strpos($dd, $fid) !== false) {
-                $hasSizeParam = preg_match('/_s\d+x\d+/', $dd);
-                $debugInfo['uri_matches'][] = [
-                    'file' => $fid,
-                    'thumb' => $hasSizeParam ? true : false,
-                    'url_start' => substr($dd, 0, 160)
-                ];
-            }
-        }
-    }
-}
-
 // Parse structured dog fields from text
 $fields = parseFields($text);
-$result = array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields);
-if ($debug) $result['debug'] = $debugInfo;
-echo json_encode($result);
+echo json_encode(array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields));
