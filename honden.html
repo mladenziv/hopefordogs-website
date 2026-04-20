@@ -1146,14 +1146,14 @@
                         </button>
                         <button
                             class="filter-tab"
-                            data-filter="in_asiel"
+                            data-filter="in_aziel"
                             data-i18n="honden.filter.onsasiel"
                         >
                             Ons asiel
                         </button>
                         <button
                             class="filter-tab"
-                            data-filter="gemeente_asiel"
+                            data-filter="gemeente_aziel"
                             data-i18n="honden.filter.gemeente"
                             data-i18n-short="honden.filter.gemeente.short"
                         >
@@ -1559,7 +1559,7 @@
                 const grid = document.getElementById("dogsGrid");
                 const blurb = document.getElementById("filterBlurb");
                 blurb.style.display =
-                    activeFilter === "gemeente_asiel" ? "block" : "none";
+                    activeFilter === "gemeente_aziel" ? "block" : "none";
                 const filtered =
                     activeFilter === "alle"
                         ? allDogs
@@ -1643,8 +1643,8 @@
                 opzoek: "Op zoek naar een baasje",
                 in_gesprek: "In gesprek",
                 geadopteerd: "Geadopteerd",
-                in_asiel: "In asiel",
-                gemeente_asiel: "Gemeente asiel",
+                in_aziel: "In asiel",
+                gemeente_aziel: "Gemeente asiel",
                 in_opvang: "In opvang",
             };
 
