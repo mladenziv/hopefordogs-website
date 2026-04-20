@@ -367,12 +367,25 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
     }
 }
 // Extract post photos from Facebook JSON: "media":{"__typename":"Photo",...,"image":{"uri":"..."}}
+// Track seen file IDs to deduplicate same photo in different sizes
+$seenFileIds = [];
+foreach ($images as $img) {
+    if (preg_match('/\/([^\/\?]+_n\.(?:jpg|jpeg|png|webp))/i', $img, $fm)) {
+        $seenFileIds[$fm[1]] = true;
+    }
+}
 if (preg_match_all('/"media":\s*\{\s*"__typename":\s*"Photo"[^}]*"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
     foreach ($imgMatches[1] as $imgUrl) {
         $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $imgUrl);
-        if (!isset($seen[$decoded])) {
+        // Deduplicate by filename (same photo may appear in different sizes)
+        $fileId = null;
+        if (preg_match('/\/([^\/\?]+_n\.(?:jpg|jpeg|png|webp))/i', $decoded, $fm)) {
+            $fileId = $fm[1];
+        }
+        if (!isset($seen[$decoded]) && (!$fileId || !isset($seenFileIds[$fileId]))) {
             $images[] = $decoded;
             $seen[$decoded] = true;
+            if ($fileId) $seenFileIds[$fileId] = true;
         }
     }
 }
