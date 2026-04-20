@@ -367,7 +367,7 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
     }
 }
 // Extract post photos from Facebook JSON: "media":{"__typename":"Photo",...,"image":{"uri":"..."}}
-// Track seen file IDs to deduplicate same photo in different sizes
+// Collect all Photo URIs grouped by file ID, prefer non-thumbnail versions
 $seenFileIds = [];
 foreach ($images as $img) {
     if (preg_match('/\/([^\/\?]+_n\.(?:jpg|jpeg|png|webp))/i', $img, $fm)) {
@@ -375,19 +375,29 @@ foreach ($images as $img) {
     }
 }
 if (preg_match_all('/"media":\s*\{\s*"__typename":\s*"Photo"[^}]*"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)"/i', $html, $imgMatches)) {
+    // Group by file ID, prefer the non-thumbnail (no _sNNNxNNN) version
+    $photosByFile = [];
     foreach ($imgMatches[1] as $imgUrl) {
         $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $imgUrl);
-        // Upgrade to full resolution: remove size constraints like s590x590 from the URL
-        $decoded = preg_replace('/(_dst-jpg)_s\d+x\d+/', '$1', $decoded);
-        // Deduplicate by filename (same photo may appear in different sizes)
         $fileId = null;
         if (preg_match('/\/([^\/\?]+_n\.(?:jpg|jpeg|png|webp))/i', $decoded, $fm)) {
             $fileId = $fm[1];
         }
-        if (!isset($seen[$decoded]) && (!$fileId || !isset($seenFileIds[$fileId]))) {
-            $images[] = $decoded;
-            $seen[$decoded] = true;
-            if ($fileId) $seenFileIds[$fileId] = true;
+        if ($fileId && isset($seenFileIds[$fileId])) continue; // already from og:image
+        $isThumbnail = preg_match('/_s\d+x\d+/', $decoded);
+        if ($fileId) {
+            if (!isset($photosByFile[$fileId]) || $isThumbnail === 0) {
+                $photosByFile[$fileId] = $decoded; // prefer full-size
+            }
+        } else {
+            $photosByFile[$decoded] = $decoded;
+        }
+    }
+    foreach ($photosByFile as $fid => $url) {
+        if (!isset($seen[$url])) {
+            $images[] = $url;
+            $seen[$url] = true;
+            $seenFileIds[$fid] = true;
         }
     }
 }
