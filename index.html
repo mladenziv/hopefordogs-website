@@ -2712,7 +2712,7 @@
     async function loadCarouselDogs() {
       try {
         const [allDocs, primaryPhotos] = await Promise.all([
-          supabaseGet('dogs', 'select=*&status=neq.geadopteerd&order=created_at.desc&limit=20'),
+          supabaseGet('dogs', 'select=*&draft=eq.false&status=neq.geadopteerd&order=created_at.desc&limit=20'),
           supabaseGet('dog_photos', 'select=dog_id,photo_url&is_primary=eq.true')
         ]);
 
@@ -3250,7 +3250,7 @@
       try {
         var dog = cachedDog;
         if (!dog) {
-          var dogArr = await supabaseGet('dogs', 'select=*&id=eq.' + dogId);
+          var dogArr = await supabaseGet('dogs', 'select=*&id=eq.' + dogId + '&draft=eq.false');
           dog = dogArr && dogArr[0];
           if (!dog) { body.innerHTML = '<p style="padding:40px;text-align:center;color:var(--dark-2);">Hond niet gevonden.</p>'; return; }
           body.innerHTML = buildDogModalBody(dog);

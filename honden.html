@@ -1471,7 +1471,7 @@
                 try {
                     // Load dogs and photos from Supabase
                     const [dogs, primaryPhotos] = await Promise.all([
-                        supabaseGet("dogs", "select=*&order=created_at.desc"),
+                        supabaseGet("dogs", "select=*&draft=eq.false&order=created_at.desc"),
                         supabaseGet(
                             "dog_photos",
                             "select=dog_id,photo_url&is_primary=eq.true",

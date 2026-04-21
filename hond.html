@@ -596,7 +596,7 @@
       }
 
       try {
-        const dogs = await supabaseGet('dogs', `select=*&id=eq.${dogId}`);
+        const dogs = await supabaseGet('dogs', `select=*&id=eq.${dogId}&draft=eq.false`);
 
         if (!dogs || dogs.length === 0) {
           showError();
