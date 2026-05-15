@@ -1,298 +1,258 @@
 // Drag-to-reorder for photo thumbnails and dog cards in beheer
-// Uses native HTML5 drag and drop + MutationObserver to hook into React-rendered DOM
 (function() {
   const SUPABASE_URL = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
 
-  async function supabaseUpdate(table, id, data) {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+  async function sbPatch(table, id, data) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
       method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify(data)
     });
-    if (!res.ok) throw new Error(`Update failed: ${res.status}`);
+    if (!r.ok) throw new Error(`PATCH ${table} ${id}: ${r.status}`);
   }
 
-  async function supabaseGet(table, params) {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+  async function sbGet(table, params) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
     });
-    if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-    return res.json();
+    return r.json();
   }
 
-  function flash(el, color) {
-    el.style.outline = `2px solid ${color}`;
+  function flash(el, ok) {
+    el.style.outline = `2px solid ${ok ? '#22c55e' : '#ef4444'}`;
     el.style.outlineOffset = '-2px';
     setTimeout(() => { el.style.outline = ''; el.style.outlineOffset = ''; }, 800);
   }
 
-  // === SHARED DRAG HELPERS ===
-  function makeDraggable(container, itemSelector, onSave, handleClass) {
-    let dragEl = null;
-
-    function setup(item) {
-      if (item._dragReady) return;
-      item._dragReady = true;
-      item.style.position = 'relative';
-
-      const handle = document.createElement('div');
-      handle.className = handleClass;
-      handle.innerHTML = '⠿';
-      handle.addEventListener('mousedown', () => { item.draggable = true; });
-      item.appendChild(handle);
-
-      item.addEventListener('dragstart', (e) => {
-        dragEl = item;
-        item.classList.add('drag-sorting-active');
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', '');
-        // Delay opacity so drag image isn't faded
-        requestAnimationFrame(() => { item.style.opacity = '0.4'; });
-      });
-
-      item.addEventListener('dragend', () => {
-        item.style.opacity = '';
-        item.classList.remove('drag-sorting-active');
-        container.querySelectorAll('.drag-sort-over').forEach(el => el.classList.remove('drag-sort-over'));
-        if (dragEl) onSave(container);
-        dragEl = null;
-        item.draggable = false;
-      });
-
-      item.addEventListener('dragover', (e) => {
-        if (!dragEl || dragEl === item) return;
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        container.querySelectorAll('.drag-sort-over').forEach(el => el.classList.remove('drag-sort-over'));
-        item.classList.add('drag-sort-over');
-      });
-
-      item.addEventListener('dragleave', () => {
-        item.classList.remove('drag-sort-over');
-      });
-
-      item.addEventListener('drop', (e) => {
-        e.preventDefault();
-        item.classList.remove('drag-sort-over');
-        if (!dragEl || dragEl === item) return;
-        const items = [...container.querySelectorAll(itemSelector)];
-        const fromIdx = items.indexOf(dragEl);
-        const toIdx = items.indexOf(item);
-        if (fromIdx < 0 || toIdx < 0) return;
-        if (fromIdx < toIdx) {
-          item.after(dragEl);
-        } else {
-          item.before(dragEl);
-        }
-      });
-    }
-
-    container.querySelectorAll(itemSelector).forEach(setup);
-    const obs = new MutationObserver(() => {
-      container.querySelectorAll(itemSelector).forEach(setup);
-    });
-    obs.observe(container, { childList: true });
-  }
-
-  // === STYLES ===
-  const styleEl = document.createElement('style');
-  styleEl.textContent = `
-    .drag-sort-over { outline: 2px solid hsl(25, 95%, 53%) !important; outline-offset: -2px; }
-    .drag-handle-photo {
-      position: absolute; top: 2px; right: 2px; z-index: 20;
-      width: 20px; height: 20px; border-radius: 4px;
+  // ── Styles ──
+  const css = document.createElement('style');
+  css.textContent = `
+    .ds-over { outline: 2px solid hsl(25,95%,53%) !important; outline-offset: -2px; }
+    .ds-handle {
+      position: absolute; z-index: 20;
       background: rgba(0,0,0,0.55); color: white;
       display: flex; align-items: center; justify-content: center;
-      cursor: grab; font-size: 10px; line-height: 1;
-      opacity: 0; transition: opacity 0.15s; pointer-events: auto;
+      cursor: grab; opacity: 0; transition: opacity .15s;
+      user-select: none; -webkit-user-select: none;
     }
-    .shrink-0:hover .drag-handle-photo,
-    .drag-sorting-active .drag-handle-photo { opacity: 1; }
-    .drag-handle-dog {
-      position: absolute; top: 8px; left: 8px; z-index: 20;
-      width: 28px; height: 28px; border-radius: 8px;
-      background: rgba(0,0,0,0.6); color: white;
-      display: flex; align-items: center; justify-content: center;
-      cursor: grab; font-size: 14px; line-height: 1;
-      opacity: 0; transition: opacity 0.15s;
-      backdrop-filter: blur(4px); pointer-events: auto;
-    }
-    div:hover > .drag-handle-dog { opacity: 1; }
+    .ds-handle-photo { top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 4px; font-size: 10px; }
+    .ds-handle-dog { top: 8px; left: 8px; width: 28px; height: 28px; border-radius: 8px; font-size: 14px; backdrop-filter: blur(4px); }
+    *:hover > .ds-handle { opacity: 1; }
   `;
-  document.head.appendChild(styleEl);
+  document.head.appendChild(css);
 
-  // === PHOTO SORTING ===
-  // Get dog_id from the current URL (/dog/:id/edit)
+  // ── Generic drag engine (mouse + touch) ──
+  function enableDrag(container, sel, handleCls, onDone) {
+    if (container._ds) return;
+    container._ds = true;
+    let dragged = null, placeholder = null, startY = 0, startX = 0;
+
+    function items() { return [...container.querySelectorAll(sel)].filter(e => !e._dsPlaceholder); }
+
+    function setup(el) {
+      if (el._dsReady) return;
+      el._dsReady = true;
+      el.style.position = 'relative';
+      const h = document.createElement('div');
+      h.className = `ds-handle ${handleCls}`;
+      h.textContent = '⠿';
+      el.appendChild(h);
+
+      h.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        startDrag(el, e.clientX, e.clientY, e.pointerId, h);
+      });
+    }
+
+    function startDrag(el, cx, cy, pid, handle) {
+      dragged = el;
+      startX = cx; startY = cy;
+      handle.setPointerCapture(pid);
+
+      const rect = el.getBoundingClientRect();
+      // Create placeholder
+      placeholder = document.createElement('div');
+      placeholder._dsPlaceholder = true;
+      placeholder.style.cssText = `width:${rect.width}px;height:${rect.height}px;border:2px dashed #ccc;border-radius:12px;box-sizing:border-box;`;
+      el.parentNode.insertBefore(placeholder, el);
+
+      // Float the dragged element
+      el.style.position = 'fixed';
+      el.style.zIndex = '9999';
+      el.style.width = rect.width + 'px';
+      el.style.left = rect.left + 'px';
+      el.style.top = rect.top + 'px';
+      el.style.opacity = '0.85';
+      el.style.pointerEvents = 'none';
+      el.style.transition = 'none';
+      el.style.boxShadow = '0 8px 32px rgba(0,0,0,0.18)';
+      document.body.appendChild(el);
+
+      handle.addEventListener('pointermove', onMove);
+      handle.addEventListener('pointerup', onUp);
+      handle.addEventListener('pointercancel', onUp);
+
+      function onMove(ev) {
+        const dx = ev.clientX - startX, dy = ev.clientY - startY;
+        el.style.left = (rect.left + dx) + 'px';
+        el.style.top = (rect.top + dy) + 'px';
+
+        // Find drop target
+        const all = items();
+        for (const it of all) {
+          if (it === placeholder) continue;
+          const r2 = it.getBoundingClientRect();
+          const midX = r2.left + r2.width / 2, midY = r2.top + r2.height / 2;
+          // Check if pointer is inside this item
+          if (ev.clientX >= r2.left && ev.clientX <= r2.right && ev.clientY >= r2.top && ev.clientY <= r2.bottom) {
+            // Determine before or after based on direction
+            const isHorizontal = container.style.display === 'flex' || getComputedStyle(container).display === 'flex';
+            const before = isHorizontal ? ev.clientX < midX : ev.clientY < midY;
+            if (before) {
+              it.parentNode.insertBefore(placeholder, it);
+            } else {
+              it.parentNode.insertBefore(placeholder, it.nextSibling);
+            }
+            break;
+          }
+        }
+      }
+
+      function onUp() {
+        handle.removeEventListener('pointermove', onMove);
+        handle.removeEventListener('pointerup', onUp);
+        handle.removeEventListener('pointercancel', onUp);
+
+        // Put element back in place
+        el.style.position = ''; el.style.zIndex = ''; el.style.width = '';
+        el.style.left = ''; el.style.top = ''; el.style.opacity = '';
+        el.style.pointerEvents = ''; el.style.transition = ''; el.style.boxShadow = '';
+        if (placeholder && placeholder.parentNode) {
+          placeholder.parentNode.insertBefore(el, placeholder);
+          placeholder.remove();
+        }
+        placeholder = null;
+        dragged = null;
+        onDone(container);
+      }
+    }
+
+    items().forEach(setup);
+    new MutationObserver(() => items().forEach(setup)).observe(container, { childList: true });
+  }
+
+  // ── Photo sorting ──
   function getDogIdFromUrl() {
     const m = location.pathname.match(/\/dog\/([^/]+)/);
     return m ? m[1] : null;
   }
 
-  // Photo cache: filename -> photo record
-  let photoCache = null;
-  let photoCacheDogId = null;
-
-  function extractPhotoPath(url) {
-    // Extract the path after /dog-photos/ (works across different Supabase domains)
+  function photoPath(url) {
     const m = url.match(/\/dog-photos\/(.+?)(?:\?|$)/);
     return m ? m[1] : url.split('/').pop().split('?')[0];
   }
 
-  async function loadPhotoCache(dogId) {
-    if (photoCacheDogId === dogId && photoCache) return photoCache;
-    const photos = await supabaseGet('dog_photos', `select=id,photo_url,sort_order&dog_id=eq.${dogId}`);
-    photoCache = {};
-    photos.forEach(p => {
-      const key = extractPhotoPath(p.photo_url);
-      photoCache[key] = p;
-    });
-    photoCacheDogId = dogId;
-    return photoCache;
-  }
-
-  function getPhotoPathFromThumb(thumb) {
-    const img = thumb.querySelector('img');
-    if (img) return extractPhotoPath(img.src);
-    const vid = thumb.querySelector('video');
-    if (vid) return extractPhotoPath(vid.src);
-    return null;
-  }
+  let _photoCache = null, _photoCacheDog = null;
 
   async function savePhotoOrder(container) {
     const dogId = getDogIdFromUrl();
     if (!dogId) return;
-
     try {
-      const cache = await loadPhotoCache(dogId);
-      const thumbs = [...container.querySelectorAll('.shrink-0')];
-      const updates = [];
+      // Load photo records
+      if (_photoCacheDog !== dogId) {
+        const rows = await sbGet('dog_photos', `select=id,photo_url&dog_id=eq.${dogId}`);
+        _photoCache = {};
+        rows.forEach(r => { _photoCache[photoPath(r.photo_url)] = r.id; });
+        _photoCacheDog = dogId;
+      }
 
+      const thumbs = [...container.querySelectorAll('.shrink-0')].filter(e => !e._dsPlaceholder);
+      let updates = [];
       for (let i = 0; i < thumbs.length; i++) {
-        const path = getPhotoPathFromThumb(thumbs[i]);
-        if (!path) continue;
-        const photo = cache[path];
-        if (photo) {
-          updates.push({ id: photo.id, sort_order: i });
-        }
+        const img = thumbs[i].querySelector('img') || thumbs[i].querySelector('video');
+        if (!img) continue;
+        const path = photoPath(img.src);
+        const id = _photoCache[path];
+        if (id) updates.push({ id, sort_order: i });
       }
-
-      if (updates.length === 0) {
-        console.warn('drag-sort: no photo IDs matched');
-        return;
-      }
-
-      await Promise.all(updates.map(u => supabaseUpdate('dog_photos', u.id, { sort_order: u.sort_order })));
-      // Invalidate cache
-      photoCache = null;
-      flash(container, '#22c55e');
-    } catch (err) {
-      console.error('Failed to save photo order:', err);
-      flash(container, '#ef4444');
-    }
+      if (!updates.length) { flash(container, false); return; }
+      await Promise.all(updates.map(u => sbPatch('dog_photos', u.id, { sort_order: u.sort_order })));
+      _photoCache = null; _photoCacheDog = null; // invalidate
+      flash(container, true);
+    } catch (e) { console.error('Photo sort save failed:', e); flash(container, false); }
   }
 
-  // === DOG CARD SORTING ===
-  function getDogIdFromCard(card) {
-    // Dog cards have a link or click handler to /dog/{id}/edit or /dog/{id}
-    // Look for the dog name link, or extract from any anchor
-    const link = card.querySelector('a[href*="/dog/"]');
-    if (link) {
-      const m = link.href.match(/\/dog\/([^/]+)/);
-      if (m) return m[1];
-    }
-    // Try finding the ID from an onclick or data attribute
-    // React cards often navigate on click - try finding h3 text and matching
-    // Better: use React fiber to get the key
-    const key = getReactKey(card);
-    if (key) return key;
-    return null;
+  // ── Dog card sorting ──
+  // Load all dogs once, match by name from h3
+  let _dogsByName = null;
+
+  async function loadDogMap() {
+    if (_dogsByName) return _dogsByName;
+    const dogs = await sbGet('dogs', 'select=id,naam');
+    _dogsByName = {};
+    dogs.forEach(d => { _dogsByName[d.naam.trim()] = d.id; });
+    return _dogsByName;
   }
 
-  function getReactKey(el) {
-    const fiberKey = Object.keys(el).find(k =>
-      k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$')
-    );
-    if (!fiberKey) return null;
-    const fiber = el[fiberKey];
-    // Walk up a few levels to find the key
-    let node = fiber;
-    for (let i = 0; i < 5; i++) {
-      if (!node) break;
-      if (node.key && node.key.length > 8) return node.key; // UUID-like keys
-      node = node.return;
-    }
-    return null;
+  function getDogNameFromCard(card) {
+    const h3 = card.querySelector('h3');
+    if (!h3) return null;
+    // h3 may contain badges etc, get the first text span
+    const span = h3.querySelector('span');
+    return span ? span.textContent.trim() : h3.textContent.trim();
   }
 
   async function saveDogOrder(grid) {
-    const cards = [...grid.querySelectorAll(':scope > div')];
-    const updates = [];
-
-    for (let i = 0; i < cards.length; i++) {
-      const id = getDogIdFromCard(cards[i]);
-      if (id) {
-        updates.push({ id, sort_order: i + 1 });
-      }
-    }
-
-    if (updates.length === 0) {
-      console.warn('drag-sort: no dog IDs found');
-      flash(grid, '#ef4444');
-      return;
-    }
-
     try {
-      await Promise.all(updates.map(u => supabaseUpdate('dogs', u.id, { sort_order: u.sort_order })));
-      flash(grid, '#22c55e');
-    } catch (err) {
-      console.error('Failed to save dog order:', err);
-      flash(grid, '#ef4444');
-    }
+      const map = await loadDogMap();
+      const cards = [...grid.querySelectorAll(':scope > div')].filter(e => !e._dsPlaceholder);
+      let updates = [];
+      for (let i = 0; i < cards.length; i++) {
+        const name = getDogNameFromCard(cards[i]);
+        if (!name) continue;
+        const id = map[name];
+        if (id) updates.push({ id, sort_order: i + 1 });
+      }
+      if (!updates.length) { console.warn('No dog IDs matched'); flash(grid, false); return; }
+      await Promise.all(updates.map(u => sbPatch('dogs', u.id, { sort_order: u.sort_order })));
+      _dogsByName = null; // invalidate
+      flash(grid, true);
+    } catch (e) { console.error('Dog sort save failed:', e); flash(grid, false); }
   }
 
-  // === OBSERVER ===
+  // ── Observer: find grids and init drag ──
+  let lastPath = '';
+
   function scan() {
-    // Photo thumbnail grids
-    document.querySelectorAll('.flex.gap-2.overflow-x-auto.pb-2').forEach(el => {
-      if (el._dragSortInit) return;
-      if (el.querySelector('.shrink-0') && getDogIdFromUrl()) {
-        el._dragSortInit = true;
-        makeDraggable(el, '.shrink-0', savePhotoOrder, 'drag-handle-photo');
-      }
-    });
+    if (location.pathname !== lastPath) {
+      lastPath = location.pathname;
+      _photoCache = null; _photoCacheDog = null;
+    }
+
+    // Photo grids (on dog edit page)
+    if (getDogIdFromUrl()) {
+      document.querySelectorAll('.flex.gap-2.overflow-x-auto.pb-2').forEach(el => {
+        if (el.querySelector('.shrink-0') && !el._ds) {
+          enableDrag(el, '.shrink-0', 'ds-handle-photo', savePhotoOrder);
+        }
+      });
+    }
 
     // Dog card grids
     document.querySelectorAll('.grid.gap-4').forEach(el => {
-      if (el._dragSortInit) return;
-      const classes = el.className;
-      if ((classes.includes('grid-cols-3') || classes.includes('grid-cols-4')) &&
-          el.children.length > 1) {
-        const firstChild = el.children[0];
-        if (firstChild && firstChild.querySelector('h3')) {
-          el._dragSortInit = true;
-          makeDraggable(el, ':scope > div', saveDogOrder, 'drag-handle-dog');
-        }
-      }
+      if (el._ds) return;
+      const cls = el.className;
+      if (!(cls.includes('grid-cols-3') || cls.includes('grid-cols-4'))) return;
+      if (el.children.length < 2) return;
+      const first = el.children[0];
+      if (!first || !first.querySelector('h3')) return;
+      enableDrag(el, ':scope > div', 'ds-handle-dog', saveDogOrder);
     });
   }
 
-  const bodyObs = new MutationObserver(() => { setTimeout(scan, 150); });
-  bodyObs.observe(document.body, { childList: true, subtree: true });
-  // Also scan on route changes (React Router)
-  let lastPath = location.pathname;
-  setInterval(() => {
-    if (location.pathname !== lastPath) {
-      lastPath = location.pathname;
-      // Reset init flags on route change
-      document.querySelectorAll('[class*="_dragSortInit"]').forEach(el => { el._dragSortInit = false; });
-      setTimeout(scan, 300);
-    }
-    scan();
-  }, 1500);
+  new MutationObserver(() => setTimeout(scan, 200)).observe(document.body, { childList: true, subtree: true });
+  setInterval(scan, 2000);
 })();
