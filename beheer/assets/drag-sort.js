@@ -1,18 +1,35 @@
 // Drag-to-reorder for photo thumbnails and dog cards in beheer
 // Uses pointer events for mouse + touch support
 (function() {
-  const SB = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
-  const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
-  const hdrs = { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY, 'Content-Type': 'application/json' };
+  var SB = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
+  var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
+
+  function getAuthToken() {
+    try {
+      var raw = localStorage.getItem('sb-gdmntnrsgfntcgqmbmtj-auth-token');
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && parsed.access_token) return parsed.access_token;
+      }
+    } catch(e) {}
+    return ANON;
+  }
+
+  function makeHeaders(write) {
+    var token = getAuthToken();
+    var h = { 'apikey': ANON, 'Authorization': 'Bearer ' + token };
+    if (write) { h['Content-Type'] = 'application/json'; h['Prefer'] = 'return=minimal'; }
+    return h;
+  }
 
   async function patch(table, id, data) {
     const r = await fetch(SB + '/rest/v1/' + table + '?id=eq.' + id, {
-      method: 'PATCH', headers: { ...hdrs, 'Prefer': 'return=minimal' }, body: JSON.stringify(data)
+      method: 'PATCH', headers: makeHeaders(true), body: JSON.stringify(data)
     });
-    if (!r.ok) throw new Error('PATCH ' + r.status);
+    if (!r.ok) throw new Error('PATCH ' + table + ' ' + r.status + ' ' + (await r.text()));
   }
   async function get(table, q) {
-    const r = await fetch(SB + '/rest/v1/' + table + '?' + q, { headers: hdrs });
+    const r = await fetch(SB + '/rest/v1/' + table + '?' + q, { headers: makeHeaders(false) });
     return r.json();
   }
 
