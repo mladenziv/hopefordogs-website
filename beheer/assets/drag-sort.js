@@ -270,9 +270,12 @@
     }
 
     // Photo grids on dog edit page
-    if (getDogId()) {
-      document.querySelectorAll('.flex.gap-2.overflow-x-auto.pb-2').forEach(function(el) {
+    var dogId = getDogId();
+    if (dogId) {
+      var photoContainers = document.querySelectorAll('.flex.gap-2');
+      photoContainers.forEach(function(el) {
         if (el.querySelector('.shrink-0') && !el._ds) {
+          console.log('[drag-sort] Found photo grid, items:', el.querySelectorAll('.shrink-0').length);
           enableDrag(el, '.shrink-0', 'ds-h-photo', savePhotos);
         }
       });
