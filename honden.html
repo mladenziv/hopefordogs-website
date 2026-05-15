@@ -707,13 +707,11 @@
                 background: white;
                 border-radius: 24px;
                 width: 100%;
-                max-width: 1080px;
+                max-width: 760px;
                 max-height: 90vh;
-                overflow: hidden;
+                overflow-y: auto;
                 position: relative;
                 animation: dogModalIn 0.25s ease;
-                display: flex;
-                flex-direction: row;
             }
 
             @keyframes dogModalIn {
@@ -755,14 +753,12 @@
             /* Modal carousel */
             .dog-modal-carousel {
                 position: relative;
-                width: 45%;
-                flex-shrink: 0;
+                width: 100%;
+                aspect-ratio: 4/3;
                 overflow: hidden;
-                border-radius: 24px 0 0 24px;
+                border-radius: 24px 24px 0 0;
                 background: var(--beige);
                 user-select: none;
-                aspect-ratio: 4/3;
-                align-self: start;
             }
             .dog-modal-carousel-track {
                 display: flex;
@@ -846,9 +842,6 @@
             /* Modal body */
             .dog-modal-body {
                 padding: 32px;
-                flex: 1;
-                overflow-y: auto;
-                max-height: 90vh;
             }
             .dog-modal-name {
                 font-family: "Nunito", sans-serif;
@@ -968,21 +961,12 @@
             }
 
             @media (max-width: 767px) {
-                .dog-modal {
-                    flex-direction: column;
-                    max-height: 90vh;
-                    overflow-y: auto;
-                }
                 .dog-modal-carousel {
-                    width: 100%;
                     aspect-ratio: 4/3;
-                    align-self: stretch;
                     border-radius: 20px 20px 0 0;
                 }
                 .dog-modal-body {
                     padding: 24px;
-                    max-height: unset;
-                    overflow-y: visible;
                 }
                 .dog-modal-carousel-btn {
                     display: none;

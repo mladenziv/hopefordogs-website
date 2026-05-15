@@ -420,7 +420,7 @@ foreach ($photosByFile as $fid => $url) {
         $seen[$url] = true;
     }
 }
-$images = array_slice($images, 0, 10);
+$images = array_slice($images, 0, 16);
 
 // For reels/video posts, skip images (they're just video thumbnails)
 $isReel = strpos($originalUrl, '/reel/') !== false || strpos($originalUrl, '/watch/') !== false;

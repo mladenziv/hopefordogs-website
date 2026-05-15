@@ -118,7 +118,7 @@ if (preg_match_all('/"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)"/', $html, $match
     }
 }
 
-// Limit to 10 images max
-$images = array_slice($images, 0, 10);
+// Limit to 16 images max
+$images = array_slice($images, 0, 16);
 
 echo json_encode(['images' => $images]);
