@@ -737,7 +737,7 @@
         }
 
         // Load photos from dog_photos table
-        const photos = await supabaseGet('dog_photos', `select=*&dog_id=eq.${dogId}&order=is_primary.desc`);
+        const photos = await supabaseGet('dog_photos', `select=*&dog_id=eq.${dogId}&order=sort_order.asc.nullslast,is_primary.desc,created_at.asc`);
         images = photos.map(p => p.photo_url);
         if (images.length > 0) {
           initCarousel();

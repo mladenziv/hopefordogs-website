@@ -134,29 +134,33 @@
     return m ? m[1] : null;
   }
 
-  // Photo cache: photo_url -> photo record
+  // Photo cache: filename -> photo record
   let photoCache = null;
   let photoCacheDogId = null;
+
+  function extractPhotoPath(url) {
+    // Extract the path after /dog-photos/ (works across different Supabase domains)
+    const m = url.match(/\/dog-photos\/(.+?)(?:\?|$)/);
+    return m ? m[1] : url.split('/').pop().split('?')[0];
+  }
 
   async function loadPhotoCache(dogId) {
     if (photoCacheDogId === dogId && photoCache) return photoCache;
     const photos = await supabaseGet('dog_photos', `select=id,photo_url,sort_order&dog_id=eq.${dogId}`);
     photoCache = {};
     photos.forEach(p => {
-      // Normalize URL for matching (strip query params)
-      const key = p.photo_url.split('?')[0];
+      const key = extractPhotoPath(p.photo_url);
       photoCache[key] = p;
     });
     photoCacheDogId = dogId;
     return photoCache;
   }
 
-  function getPhotoUrlFromThumb(thumb) {
+  function getPhotoPathFromThumb(thumb) {
     const img = thumb.querySelector('img');
-    if (img) return img.src.split('?')[0];
-    // Video thumbnail
+    if (img) return extractPhotoPath(img.src);
     const vid = thumb.querySelector('video');
-    if (vid) return vid.src.split('?')[0];
+    if (vid) return extractPhotoPath(vid.src);
     return null;
   }
 
@@ -170,15 +174,9 @@
       const updates = [];
 
       for (let i = 0; i < thumbs.length; i++) {
-        const url = getPhotoUrlFromThumb(thumbs[i]);
-        if (!url) continue;
-        // Try exact match or partial match
-        let photo = cache[url];
-        if (!photo) {
-          // Try matching by filename
-          const filename = url.split('/').pop();
-          photo = Object.values(cache).find(p => p.photo_url.includes(filename));
-        }
+        const path = getPhotoPathFromThumb(thumbs[i]);
+        if (!path) continue;
+        const photo = cache[path];
         if (photo) {
           updates.push({ id: photo.id, sort_order: i });
         }

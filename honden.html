@@ -1842,7 +1842,7 @@
                         "dog_photos",
                         "select=*&dog_id=eq." +
                             dogId +
-                            "&order=is_primary.desc",
+                            "&order=sort_order.asc.nullslast,is_primary.desc,created_at.asc",
                     );
                     var photoUrls = photos.map(function (p) {
                         return p.photo_url;
