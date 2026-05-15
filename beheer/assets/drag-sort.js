@@ -180,7 +180,9 @@
 
   // ── Photo sorting ──
   function getDogId() {
-    var m = location.pathname.match(/\/dog\/([^/]+)/);
+    // Hash routing: beheer uses /#/dog/:id/edit
+    var path = location.hash.replace('#', '') || location.pathname;
+    var m = path.match(/\/dog\/([a-f0-9-]{36})/);
     return m ? m[1] : null;
   }
 
@@ -261,11 +263,10 @@
   // ── Scanner ──
   var lastPath = '';
   function scan() {
-    if (location.pathname !== lastPath) {
-      lastPath = location.pathname;
-      _pc = null; _pcDog = null;
-      // Clear init flags on all containers (page changed)
-      document.querySelectorAll('[data-ds]').forEach(function(el) { el._ds = false; });
+    var curPath = location.hash || location.pathname;
+    if (curPath !== lastPath) {
+      lastPath = curPath;
+      _pc = null; _pcDog = null; _dogs = null;
     }
 
     // Photo grids on dog edit page
