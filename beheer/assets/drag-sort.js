@@ -221,41 +221,22 @@
   }
 
   // ── Dog sorting ──
-  var _dogs = null;
-
   async function saveDogs(grid) {
     try {
-      if (!_dogs) {
-        var rows = await get('dogs', 'select=id,naam');
-        _dogs = rows; // keep full array for duplicate name handling
-      }
       var cards = Array.from(grid.querySelectorAll(':scope > div')).filter(function(e) {
         return !e.classList.contains('ds-placeholder');
       });
-      // Build ordered list of names from DOM
       var updates = [];
-      var usedIds = {};
       for (var i = 0; i < cards.length; i++) {
-        var h3 = cards[i].querySelector('h3');
-        if (!h3) continue;
-        var span = h3.querySelector('span');
-        var name = (span ? span.textContent : h3.textContent).trim();
-        // Find matching dog (handle duplicates by skipping already-used IDs)
-        var match = null;
-        for (var j = 0; j < _dogs.length; j++) {
-          if (_dogs[j].naam.trim() === name && !usedIds[_dogs[j].id]) {
-            match = _dogs[j];
-            break;
-          }
-        }
-        if (match) {
-          usedIds[match.id] = true;
-          updates.push({ id: match.id, sort_order: i + 1 });
+        // Use data-dog-id attribute (added to D0 component)
+        var card = cards[i];
+        var id = card.getAttribute('data-dog-id') || card.querySelector('[data-dog-id]')?.getAttribute('data-dog-id');
+        if (id) {
+          updates.push({ id: id, sort_order: i + 1 });
         }
       }
-      if (!updates.length) { flash(grid, false); return; }
+      if (!updates.length) { console.warn('[drag-sort] No data-dog-id found on cards'); flash(grid, false); return; }
       await Promise.all(updates.map(function(u) { return patch('dogs', u.id, { sort_order: u.sort_order }); }));
-      _dogs = null;
       flash(grid, true);
     } catch (e) { console.error('Dog sort:', e); flash(grid, false); }
   }
