@@ -371,72 +371,28 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
         }
     }
 }
-// Step 1: Collect ALL photo file IDs from the HTML
-// Facebook embeds photos as JSON with "__typename":"Photo" and URIs scattered throughout
-$postFileIds = [];
-
-// Seed from og:image URLs already found
-foreach ($images as $img) {
-    if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $img, $fm)) {
-        $postFileIds[$fm[1]] = true;
-    }
-}
-
-// Scan "__typename":"Photo" entries — look 2000 chars around each for URIs
+// Step 1: Extract photo fbids from the post HTML
+// Facebook only renders ~5 photos server-side; we'll fetch photo pages to find the rest
+$photoFbids = [];
 $searchPos = 0;
 $photoNeedle = '"__typename":"Photo"';
 while (($pos = strpos($html, $photoNeedle, $searchPos)) !== false) {
     $searchPos = $pos + strlen($photoNeedle);
-    // Look both before and after the typename marker
-    $chunkStart = max(0, $pos - 1000);
-    $chunk = substr($html, $chunkStart, 3000);
-    // Find all URIs in this chunk
-    $offset = 0;
-    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
-        $offset = $um[0][1] + strlen($um[0][0]);
-        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
-            $postFileIds[$fm[1]] = true;
-        }
+    $chunk = substr($html, max(0, $pos - 500), 1500);
+    if (preg_match('/"id"\s*:\s*"(\d{12,})"/', $chunk, $idm)) {
+        $photoFbids[$idm[1]] = true;
+    }
+}
+// Also extract from fbid= links
+if (preg_match_all('/fbid[=:](\d{12,})/', $html, $fbidMatches)) {
+    foreach ($fbidMatches[1] as $fid) {
+        $photoFbids[$fid] = true;
     }
 }
 
-// Also scan "all_subattachments" which contains ALL photos in multi-photo posts
-$subPos = 0;
-$subNeedle = 'all_subattachments';
-while (($pos = strpos($html, $subNeedle, $subPos)) !== false) {
-    $subPos = $pos + strlen($subNeedle);
-    // Grab a large chunk — subattachments can contain many photos
-    $chunk = substr($html, $pos, 20000);
-    $offset = 0;
-    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
-        $offset = $um[0][1] + strlen($um[0][0]);
-        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
-            $postFileIds[$fm[1]] = true;
-        }
-    }
-}
-
-// Also scan "edges" near "media" (another common Facebook JSON structure for photo albums)
-$edgePos = 0;
-$edgeNeedle = '"edges":[{"node":';
-while (($pos = strpos($html, $edgeNeedle, $edgePos)) !== false) {
-    $edgePos = $pos + strlen($edgeNeedle);
-    $chunk = substr($html, $pos, 20000);
-    // Only process if this looks like a media/photo edges block
-    if (strpos($chunk, 'Photo') === false && strpos($chunk, 'photo') === false) continue;
-    $offset = 0;
-    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
-        $offset = $um[0][1] + strlen($um[0][0]);
-        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
-            $postFileIds[$fm[1]] = true;
-        }
-    }
-}
-
-// Step 2: Scan ALL "uri" fields in the HTML for these file IDs, prefer full-size
+// Step 2: Collect post photo URIs from the post HTML (only actual post photos, not profile pics)
+// Post photos use path /t39.30808-6/, profile pics use /t39.30808-1/ or /t1.6435-1/
+$postFileIds = [];
 $uriNeedle = '"uri":"';
 $uriNeedleLen = strlen($uriNeedle);
 $uriPos = 0;
@@ -449,23 +405,151 @@ while (($uriPos = strpos($html, $uriNeedle, $uriPos)) !== false) {
     $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $rawUrl);
     $uriPos = $uriEnd + 1;
 
+    // Only include actual post photos (path contains -6/), skip profile pics (-1/)
+    if (strpos($decoded, '-6/') === false) continue;
     if (!preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) continue;
     $fileId = $fm[1];
-    if (!isset($postFileIds[$fileId])) continue;
+    $postFileIds[$fileId] = true;
 
-    // Prefer non-thumbnail versions (no _sNNNxNNN dimension suffix)
     $isThumbnail = preg_match('/_s\d+x\d+/', $decoded);
     if (!isset($photosByFile[$fileId]) || !$isThumbnail) {
         $photosByFile[$fileId] = $decoded;
     }
 }
+
+// Filter existing og:image results to only post photos
+$filteredImages = [];
+foreach ($images as $img) {
+    if (strpos($img, '-6/') !== false || strpos($img, 'stp=') !== false) {
+        $filteredImages[] = $img;
+    }
+}
+$images = $filteredImages;
+// Rebuild seen list
+$seen = [];
+foreach ($images as $img) { $seen[$img] = true; }
+
+// Add photos found via URI scanning
 foreach ($photosByFile as $fid => $url) {
     if (!isset($seen[$url])) {
         $images[] = $url;
         $seen[$url] = true;
     }
 }
-// No photo limit — return ALL photos from the post
+
+// Step 3: Fetch individual photo pages to discover ALL photos in the post
+// Facebook only puts ~5 photos in the post HTML; the rest need individual fetches
+// Each photo page contains the image + next/prev photo IDs
+$allFoundFbids = $photoFbids;
+$pendingFbids = array_keys($photoFbids);
+$fetchedFbids = [];
+$maxFetches = 25; // safety limit
+$fetchCount = 0;
+
+while (!empty($pendingFbids) && $fetchCount < $maxFetches) {
+    // Batch fetch up to 5 photo pages at a time using curl_multi
+    $batch = array_splice($pendingFbids, 0, 5);
+    $mh = curl_multi_init();
+    $handles = [];
+    foreach ($batch as $fbid) {
+        if (isset($fetchedFbids[$fbid])) continue;
+        $fetchedFbids[$fbid] = true;
+        $fetchCount++;
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => 'https://www.facebook.com/photo/?fbid=' . $fbid,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            CURLOPT_HTTPHEADER => [
+                'Accept: text/html,application/xhtml+xml',
+                'Accept-Language: nl,en;q=0.5',
+            ],
+            CURLOPT_SSL_VERIFYPEER => true,
+        ]);
+        $handles[$fbid] = $ch;
+        curl_multi_add_handle($mh, $ch);
+    }
+
+    // Execute all requests in parallel
+    do {
+        $status = curl_multi_exec($mh, $active);
+        if ($active) {
+            curl_multi_select($mh, 1);
+        }
+    } while ($active && $status == CURLM_OK);
+
+    // Process results
+    foreach ($handles as $fbid => $ch) {
+        $photoHtml = curl_multi_getcontent($ch);
+        curl_multi_remove_handle($mh, $ch);
+        curl_close($ch);
+        if (empty($photoHtml)) continue;
+
+        // Extract post photo URIs (only -6/ path = actual photos)
+        $pOffset = 0;
+        while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $photoHtml, $pum, PREG_OFFSET_CAPTURE, $pOffset)) {
+            $pDecoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $pum[1][0]);
+            $pOffset = $pum[0][1] + strlen($pum[0][0]);
+            if (strpos($pDecoded, '-6/') === false) continue;
+            if (!preg_match('/\/(\d+_\d+_\d+_n\.)/i', $pDecoded, $pfm)) continue;
+            $pFileId = $pfm[1];
+            $pIsThumbnail = preg_match('/_s\d+x\d+/', $pDecoded);
+            if (!isset($photosByFile[$pFileId]) || !$pIsThumbnail) {
+                $photosByFile[$pFileId] = $pDecoded;
+            }
+        }
+
+        // Discover new photo fbids from this page
+        if (preg_match_all('/fbid[=:](\d{12,})/', $photoHtml, $newFbids)) {
+            foreach ($newFbids[1] as $nfid) {
+                if (!isset($allFoundFbids[$nfid])) {
+                    $allFoundFbids[$nfid] = true;
+                    $pendingFbids[] = $nfid;
+                }
+            }
+        }
+        // Also check "id" fields near Photo typename
+        $pSearchPos = 0;
+        while (($pPos = strpos($photoHtml, $photoNeedle, $pSearchPos)) !== false) {
+            $pSearchPos = $pPos + strlen($photoNeedle);
+            $pChunk = substr($photoHtml, max(0, $pPos - 500), 1500);
+            if (preg_match('/"id"\s*:\s*"(\d{12,})"/', $pChunk, $pidm)) {
+                if (!isset($allFoundFbids[$pidm[1]])) {
+                    $allFoundFbids[$pidm[1]] = true;
+                    $pendingFbids[] = $pidm[1];
+                }
+            }
+        }
+    }
+    curl_multi_close($mh);
+}
+
+// Add all newly discovered photos to the image list
+foreach ($photosByFile as $fid => $url) {
+    if (!isset($seen[$url])) {
+        $images[] = $url;
+        $seen[$url] = true;
+    }
+}
+
+// Deduplicate by file ID (keep the best URL for each)
+$finalByFileId = [];
+foreach ($images as $img) {
+    if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $img, $fm)) {
+        $fid = $fm[1];
+        $isThumbnail = preg_match('/_s\d+x\d+/', $img);
+        if (!isset($finalByFileId[$fid]) || !$isThumbnail) {
+            $finalByFileId[$fid] = $img;
+        }
+    } else {
+        $finalByFileId[md5($img)] = $img;
+    }
+}
+$images = array_values($finalByFileId);
+$seen = [];
+foreach ($images as $img) { $seen[$img] = true; }
 
 // For reels/video posts, skip images (they're just video thumbnails)
 $isReel = strpos($originalUrl, '/reel/') !== false || strpos($originalUrl, '/watch/') !== false;
@@ -474,23 +558,39 @@ if ($isReel) {
 }
 
 // Fetch images server-side and return as base64 (Facebook CDN URLs are session-bound)
+// Use curl_multi for parallel downloading
 $imageData = [];
-foreach ($images as $imgUrl) {
-    $ch = curl_init();
-    curl_setopt_array($ch, [
-        CURLOPT_URL => $imgUrl,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_TIMEOUT => 10,
-        CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-    ]);
-    $imgData = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE) ?: 'image/jpeg';
-    curl_close($ch);
-    if ($httpCode === 200 && !empty($imgData) && strlen($imgData) > 1000) {
-        $imageData[] = 'data:' . $contentType . ';base64,' . base64_encode($imgData);
+$imgChunks = array_chunk($images, 5);
+foreach ($imgChunks as $chunk) {
+    $mh = curl_multi_init();
+    $handles = [];
+    foreach ($chunk as $idx => $imgUrl) {
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $imgUrl,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        ]);
+        $handles[$idx] = $ch;
+        curl_multi_add_handle($mh, $ch);
     }
+    do {
+        $status = curl_multi_exec($mh, $active);
+        if ($active) curl_multi_select($mh, 1);
+    } while ($active && $status == CURLM_OK);
+    foreach ($handles as $idx => $ch) {
+        $imgData = curl_multi_getcontent($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE) ?: 'image/jpeg';
+        curl_multi_remove_handle($mh, $ch);
+        curl_close($ch);
+        if ($httpCode === 200 && !empty($imgData) && strlen($imgData) > 1000) {
+            $imageData[] = 'data:' . $contentType . ';base64,' . base64_encode($imgData);
+        }
+    }
+    curl_multi_close($mh);
 }
 
 // Extract videos

@@ -118,69 +118,26 @@ if (preg_match_all('/"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)"/', $html, $match
     }
 }
 
-// Collect photo file IDs from og:image URLs
-$postFileIds = [];
-foreach ($images as $img) {
-    if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $img, $fm)) {
-        $postFileIds[$fm[1]] = true;
-    }
-}
-
-// Scan "__typename":"Photo" entries for more file IDs
-$searchPos = 0;
+// Extract photo fbids from the HTML
+$photoFbids = [];
 $photoNeedle = '"__typename":"Photo"';
+$searchPos = 0;
 while (($pos = strpos($html, $photoNeedle, $searchPos)) !== false) {
     $searchPos = $pos + strlen($photoNeedle);
-    $chunkStart = max(0, $pos - 1000);
-    $chunk = substr($html, $chunkStart, 3000);
-    $offset = 0;
-    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
-        $offset = $um[0][1] + strlen($um[0][0]);
-        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
-            $postFileIds[$fm[1]] = true;
-        }
+    $chunk = substr($html, max(0, $pos - 500), 1500);
+    if (preg_match('/"id"\s*:\s*"(\d{12,})"/', $chunk, $idm)) {
+        $photoFbids[$idm[1]] = true;
     }
 }
-
-// Scan "all_subattachments" for multi-photo posts
-$subPos = 0;
-$subNeedle = 'all_subattachments';
-while (($pos = strpos($html, $subNeedle, $subPos)) !== false) {
-    $subPos = $pos + strlen($subNeedle);
-    $chunk = substr($html, $pos, 20000);
-    $offset = 0;
-    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
-        $offset = $um[0][1] + strlen($um[0][0]);
-        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
-            $postFileIds[$fm[1]] = true;
-        }
-    }
+if (preg_match_all('/fbid[=:](\d{12,})/', $html, $fbidMatches)) {
+    foreach ($fbidMatches[1] as $fid) { $photoFbids[$fid] = true; }
 }
 
-// Scan media edges blocks
-$edgePos = 0;
-$edgeNeedle = '"edges":[{"node":';
-while (($pos = strpos($html, $edgeNeedle, $edgePos)) !== false) {
-    $edgePos = $pos + strlen($edgeNeedle);
-    $chunk = substr($html, $pos, 20000);
-    if (strpos($chunk, 'Photo') === false && strpos($chunk, 'photo') === false) continue;
-    $offset = 0;
-    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
-        $offset = $um[0][1] + strlen($um[0][0]);
-        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
-            $postFileIds[$fm[1]] = true;
-        }
-    }
-}
-
-// Scan ALL "uri" fields for matching file IDs, prefer full-size
+// Collect post photo URIs (only -6/ path = actual post photos, not -1/ profile pics)
+$photosByFile = [];
 $uriNeedle = '"uri":"';
 $uriNeedleLen = strlen($uriNeedle);
 $uriPos = 0;
-$photosByFile = [];
 while (($uriPos = strpos($html, $uriNeedle, $uriPos)) !== false) {
     $uriStart = $uriPos + $uriNeedleLen;
     $uriEnd = strpos($html, '"', $uriStart);
@@ -188,21 +145,114 @@ while (($uriPos = strpos($html, $uriNeedle, $uriPos)) !== false) {
     $rawUrl = substr($html, $uriStart, $uriEnd - $uriStart);
     $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $rawUrl);
     $uriPos = $uriEnd + 1;
+    if (strpos($decoded, '-6/') === false) continue;
     if (!preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) continue;
-    $fileId = $fm[1];
-    if (!isset($postFileIds[$fileId])) continue;
     $isThumbnail = preg_match('/_s\d+x\d+/', $decoded);
-    if (!isset($photosByFile[$fileId]) || !$isThumbnail) {
-        $photosByFile[$fileId] = $decoded;
-    }
-}
-foreach ($photosByFile as $fid => $url) {
-    if (!isset($seen[$url])) {
-        $images[] = $url;
-        $seen[$url] = true;
+    if (!isset($photosByFile[$fm[1]]) || !$isThumbnail) {
+        $photosByFile[$fm[1]] = $decoded;
     }
 }
 
-// No photo limit — return ALL photos from the post
+// Filter og:image results to only post photos
+$filteredImages = [];
+foreach ($images as $img) {
+    if (strpos($img, '-6/') !== false || strpos($img, 'stp=') !== false) {
+        $filteredImages[] = $img;
+    }
+}
+$images = $filteredImages;
+$seen = [];
+foreach ($images as $img) { $seen[$img] = true; }
+foreach ($photosByFile as $fid => $url) {
+    if (!isset($seen[$url])) { $images[] = $url; $seen[$url] = true; }
+}
+
+// Fetch individual photo pages to discover ALL photos (Facebook only renders ~5 in post HTML)
+$allFoundFbids = $photoFbids;
+$pendingFbids = array_keys($photoFbids);
+$fetchedFbids = [];
+$maxFetches = 25;
+$fetchCount = 0;
+
+while (!empty($pendingFbids) && $fetchCount < $maxFetches) {
+    $batch = array_splice($pendingFbids, 0, 5);
+    $mh = curl_multi_init();
+    $handles = [];
+    foreach ($batch as $fbid) {
+        if (isset($fetchedFbids[$fbid])) continue;
+        $fetchedFbids[$fbid] = true;
+        $fetchCount++;
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => 'https://www.facebook.com/photo/?fbid=' . $fbid,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            CURLOPT_HTTPHEADER => ['Accept: text/html', 'Accept-Language: nl,en;q=0.5'],
+            CURLOPT_SSL_VERIFYPEER => true,
+        ]);
+        $handles[$fbid] = $ch;
+        curl_multi_add_handle($mh, $ch);
+    }
+    do {
+        $status = curl_multi_exec($mh, $active);
+        if ($active) curl_multi_select($mh, 1);
+    } while ($active && $status == CURLM_OK);
+    foreach ($handles as $fbid => $ch) {
+        $photoHtml = curl_multi_getcontent($ch);
+        curl_multi_remove_handle($mh, $ch);
+        curl_close($ch);
+        if (empty($photoHtml)) continue;
+        $pOffset = 0;
+        while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $photoHtml, $pum, PREG_OFFSET_CAPTURE, $pOffset)) {
+            $pDecoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $pum[1][0]);
+            $pOffset = $pum[0][1] + strlen($pum[0][0]);
+            if (strpos($pDecoded, '-6/') === false) continue;
+            if (!preg_match('/\/(\d+_\d+_\d+_n\.)/i', $pDecoded, $pfm)) continue;
+            $pIsThumbnail = preg_match('/_s\d+x\d+/', $pDecoded);
+            if (!isset($photosByFile[$pfm[1]]) || !$pIsThumbnail) {
+                $photosByFile[$pfm[1]] = $pDecoded;
+            }
+        }
+        if (preg_match_all('/fbid[=:](\d{12,})/', $photoHtml, $newFbids)) {
+            foreach ($newFbids[1] as $nfid) {
+                if (!isset($allFoundFbids[$nfid])) {
+                    $allFoundFbids[$nfid] = true;
+                    $pendingFbids[] = $nfid;
+                }
+            }
+        }
+        $pSearchPos = 0;
+        while (($pPos = strpos($photoHtml, $photoNeedle, $pSearchPos)) !== false) {
+            $pSearchPos = $pPos + strlen($photoNeedle);
+            $pChunk = substr($photoHtml, max(0, $pPos - 500), 1500);
+            if (preg_match('/"id"\s*:\s*"(\d{12,})"/', $pChunk, $pidm)) {
+                if (!isset($allFoundFbids[$pidm[1]])) {
+                    $allFoundFbids[$pidm[1]] = true;
+                    $pendingFbids[] = $pidm[1];
+                }
+            }
+        }
+    }
+    curl_multi_close($mh);
+}
+foreach ($photosByFile as $fid => $url) {
+    if (!isset($seen[$url])) { $images[] = $url; $seen[$url] = true; }
+}
+
+// Deduplicate by file ID
+$finalByFileId = [];
+foreach ($images as $img) {
+    if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $img, $fm)) {
+        $isThumbnail = preg_match('/_s\d+x\d+/', $img);
+        if (!isset($finalByFileId[$fm[1]]) || !$isThumbnail) {
+            $finalByFileId[$fm[1]] = $img;
+        }
+    } else {
+        $finalByFileId[md5($img)] = $img;
+    }
+}
+$images = array_values($finalByFileId);
 
 echo json_encode(['images' => $images]);
