@@ -33,21 +33,12 @@ function dogCardHTML(dog, opts) {
   var safeStatus = escapeHTML(dog.status);
   var safeImg = escapeHTML(img);
 
-  // Gender + age meta row
-  var genderLabel = dog.geslacht === 'reu' ? 'Reu' : dog.geslacht === 'teef' ? 'Teef' : '';
-  var ageLabel = dog.leeftijd || '';
-  var metaParts = [genderLabel, ageLabel].filter(Boolean);
-  var metaRow = metaParts.length > 0
-    ? '<div class="dog-card-meta">' + metaParts.map(function(p) { return '<span>' + escapeHTML(p) + '</span>'; }).join('') + '</div>'
-    : '';
-
   var inner =
     '<div class="dog-card-inner">' +
       '<img src="' + safeImg + '" alt="' + safeName + '" class="dog-card-img" loading="lazy" draggable="false">' +
       '<div class="dog-card-body">' +
         '<div class="dog-card-name">' + safeName + '</div>' +
         '<div class="dog-card-desc">' + safeDesc + '</div>' +
-        metaRow +
       '</div>' +
     '</div>' +
     badge;
