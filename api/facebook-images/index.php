@@ -118,7 +118,91 @@ if (preg_match_all('/"image":\s*\{[^}]*"uri":\s*"(https:[^"]+)"/', $html, $match
     }
 }
 
-// Limit to 16 images max
-$images = array_slice($images, 0, 16);
+// Collect photo file IDs from og:image URLs
+$postFileIds = [];
+foreach ($images as $img) {
+    if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $img, $fm)) {
+        $postFileIds[$fm[1]] = true;
+    }
+}
+
+// Scan "__typename":"Photo" entries for more file IDs
+$searchPos = 0;
+$photoNeedle = '"__typename":"Photo"';
+while (($pos = strpos($html, $photoNeedle, $searchPos)) !== false) {
+    $searchPos = $pos + strlen($photoNeedle);
+    $chunkStart = max(0, $pos - 1000);
+    $chunk = substr($html, $chunkStart, 3000);
+    $offset = 0;
+    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
+        $offset = $um[0][1] + strlen($um[0][0]);
+        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
+            $postFileIds[$fm[1]] = true;
+        }
+    }
+}
+
+// Scan "all_subattachments" for multi-photo posts
+$subPos = 0;
+$subNeedle = 'all_subattachments';
+while (($pos = strpos($html, $subNeedle, $subPos)) !== false) {
+    $subPos = $pos + strlen($subNeedle);
+    $chunk = substr($html, $pos, 20000);
+    $offset = 0;
+    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
+        $offset = $um[0][1] + strlen($um[0][0]);
+        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
+            $postFileIds[$fm[1]] = true;
+        }
+    }
+}
+
+// Scan media edges blocks
+$edgePos = 0;
+$edgeNeedle = '"edges":[{"node":';
+while (($pos = strpos($html, $edgeNeedle, $edgePos)) !== false) {
+    $edgePos = $pos + strlen($edgeNeedle);
+    $chunk = substr($html, $pos, 20000);
+    if (strpos($chunk, 'Photo') === false && strpos($chunk, 'photo') === false) continue;
+    $offset = 0;
+    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
+        $offset = $um[0][1] + strlen($um[0][0]);
+        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
+            $postFileIds[$fm[1]] = true;
+        }
+    }
+}
+
+// Scan ALL "uri" fields for matching file IDs, prefer full-size
+$uriNeedle = '"uri":"';
+$uriNeedleLen = strlen($uriNeedle);
+$uriPos = 0;
+$photosByFile = [];
+while (($uriPos = strpos($html, $uriNeedle, $uriPos)) !== false) {
+    $uriStart = $uriPos + $uriNeedleLen;
+    $uriEnd = strpos($html, '"', $uriStart);
+    if ($uriEnd === false) break;
+    $rawUrl = substr($html, $uriStart, $uriEnd - $uriStart);
+    $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $rawUrl);
+    $uriPos = $uriEnd + 1;
+    if (!preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) continue;
+    $fileId = $fm[1];
+    if (!isset($postFileIds[$fileId])) continue;
+    $isThumbnail = preg_match('/_s\d+x\d+/', $decoded);
+    if (!isset($photosByFile[$fileId]) || !$isThumbnail) {
+        $photosByFile[$fileId] = $decoded;
+    }
+}
+foreach ($photosByFile as $fid => $url) {
+    if (!isset($seen[$url])) {
+        $images[] = $url;
+        $seen[$url] = true;
+    }
+}
+
+// No photo limit — return ALL photos from the post
 
 echo json_encode(['images' => $images]);

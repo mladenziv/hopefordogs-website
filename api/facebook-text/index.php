@@ -371,20 +371,65 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
         }
     }
 }
-// Step 1: Find post photo file IDs via "__typename":"Photo" entries
-$searchPos = 0;
-$photoNeedle = '"__typename":"Photo"';
+// Step 1: Collect ALL photo file IDs from the HTML
+// Facebook embeds photos as JSON with "__typename":"Photo" and URIs scattered throughout
 $postFileIds = [];
+
+// Seed from og:image URLs already found
 foreach ($images as $img) {
     if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $img, $fm)) {
         $postFileIds[$fm[1]] = true;
     }
 }
+
+// Scan "__typename":"Photo" entries — look 2000 chars around each for URIs
+$searchPos = 0;
+$photoNeedle = '"__typename":"Photo"';
 while (($pos = strpos($html, $photoNeedle, $searchPos)) !== false) {
     $searchPos = $pos + strlen($photoNeedle);
-    $chunk = substr($html, $pos, 500);
-    if (preg_match('/"uri":\s*"(https:[^"]+)"/i', $chunk, $um)) {
-        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1]);
+    // Look both before and after the typename marker
+    $chunkStart = max(0, $pos - 1000);
+    $chunk = substr($html, $chunkStart, 3000);
+    // Find all URIs in this chunk
+    $offset = 0;
+    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
+        $offset = $um[0][1] + strlen($um[0][0]);
+        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
+            $postFileIds[$fm[1]] = true;
+        }
+    }
+}
+
+// Also scan "all_subattachments" which contains ALL photos in multi-photo posts
+$subPos = 0;
+$subNeedle = 'all_subattachments';
+while (($pos = strpos($html, $subNeedle, $subPos)) !== false) {
+    $subPos = $pos + strlen($subNeedle);
+    // Grab a large chunk — subattachments can contain many photos
+    $chunk = substr($html, $pos, 20000);
+    $offset = 0;
+    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
+        $offset = $um[0][1] + strlen($um[0][0]);
+        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
+            $postFileIds[$fm[1]] = true;
+        }
+    }
+}
+
+// Also scan "edges" near "media" (another common Facebook JSON structure for photo albums)
+$edgePos = 0;
+$edgeNeedle = '"edges":[{"node":';
+while (($pos = strpos($html, $edgeNeedle, $edgePos)) !== false) {
+    $edgePos = $pos + strlen($edgeNeedle);
+    $chunk = substr($html, $pos, 20000);
+    // Only process if this looks like a media/photo edges block
+    if (strpos($chunk, 'Photo') === false && strpos($chunk, 'photo') === false) continue;
+    $offset = 0;
+    while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $chunk, $um, PREG_OFFSET_CAPTURE, $offset)) {
+        $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $um[1][0]);
+        $offset = $um[0][1] + strlen($um[0][0]);
         if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) {
             $postFileIds[$fm[1]] = true;
         }
@@ -397,18 +442,18 @@ $uriNeedleLen = strlen($uriNeedle);
 $uriPos = 0;
 $photosByFile = [];
 while (($uriPos = strpos($html, $uriNeedle, $uriPos)) !== false) {
-    $uriStart = $uriPos + $uriNeedleLen; // points to start of URL
+    $uriStart = $uriPos + $uriNeedleLen;
     $uriEnd = strpos($html, '"', $uriStart);
     if ($uriEnd === false) break;
     $rawUrl = substr($html, $uriStart, $uriEnd - $uriStart);
     $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $rawUrl);
     $uriPos = $uriEnd + 1;
 
-    // Only process URLs that match our post photo file IDs
     if (!preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) continue;
     $fileId = $fm[1];
     if (!isset($postFileIds[$fileId])) continue;
 
+    // Prefer non-thumbnail versions (no _sNNNxNNN dimension suffix)
     $isThumbnail = preg_match('/_s\d+x\d+/', $decoded);
     if (!isset($photosByFile[$fileId]) || !$isThumbnail) {
         $photosByFile[$fileId] = $decoded;
@@ -420,7 +465,7 @@ foreach ($photosByFile as $fid => $url) {
         $seen[$url] = true;
     }
 }
-$images = array_slice($images, 0, 16);
+// No photo limit — return ALL photos from the post
 
 // For reels/video posts, skip images (they're just video thumbnails)
 $isReel = strpos($originalUrl, '/reel/') !== false || strpos($originalUrl, '/watch/') !== false;
