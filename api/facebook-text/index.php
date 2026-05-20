@@ -445,6 +445,7 @@ $pendingFbids = array_keys($photoFbids);
 $fetchedFbids = [];
 $maxFetches = 25; // safety limit
 $fetchCount = 0;
+$_debugPhotoFetches = [];
 
 while (!empty($pendingFbids) && $fetchCount < $maxFetches) {
     // Batch fetch up to 5 photo pages at a time using curl_multi
@@ -460,13 +461,17 @@ while (!empty($pendingFbids) && $fetchCount < $maxFetches) {
             CURLOPT_URL => 'https://www.facebook.com/photo/?fbid=' . $fbid,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_TIMEOUT => 10,
+            CURLOPT_TIMEOUT => 15,
             CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             CURLOPT_HTTPHEADER => [
-                'Accept: text/html,application/xhtml+xml',
+                'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
                 'Accept-Language: nl,en;q=0.5',
+                'Sec-Fetch-Dest: document',
+                'Sec-Fetch-Mode: navigate',
+                'Sec-Fetch-Site: none',
+                'Sec-Fetch-User: ?1',
             ],
-            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYPEER => false,
         ]);
         $handles[$fbid] = $ch;
         curl_multi_add_handle($mh, $ch);
@@ -483,11 +488,28 @@ while (!empty($pendingFbids) && $fetchCount < $maxFetches) {
     // Process results
     foreach ($handles as $fbid => $ch) {
         $photoHtml = curl_multi_getcontent($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_multi_remove_handle($mh, $ch);
         curl_close($ch);
-        if (empty($photoHtml)) continue;
+
+        $debugEntry = [
+            'fbid' => $fbid,
+            'httpCode' => $httpCode,
+            'htmlLen' => strlen($photoHtml ?: ''),
+            'error' => $curlError ?: null,
+            'hasPhotoData' => $photoHtml ? (strpos($photoHtml, '__typename":"Photo"') !== false) : false,
+            'isErrorPage' => $photoHtml ? (strpos($photoHtml, 'Sorry, something went wrong') !== false) : true,
+        ];
+
+        if (empty($photoHtml) || strlen($photoHtml) < 5000) {
+            $debugEntry['snippet'] = substr($photoHtml ?: '', 0, 300);
+            $_debugPhotoFetches[] = $debugEntry;
+            continue;
+        }
 
         // Extract post photo URIs (only -6/ path = actual photos)
+        $newPhotosFound = 0;
         $pOffset = 0;
         while (preg_match('/"uri"\s*:\s*"(https:[^"]+)"/i', $photoHtml, $pum, PREG_OFFSET_CAPTURE, $pOffset)) {
             $pDecoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $pum[1][0]);
@@ -498,15 +520,19 @@ while (!empty($pendingFbids) && $fetchCount < $maxFetches) {
             $pIsThumbnail = preg_match('/_s\d+x\d+/', $pDecoded);
             if (!isset($photosByFile[$pFileId]) || !$pIsThumbnail) {
                 $photosByFile[$pFileId] = $pDecoded;
+                $newPhotosFound++;
             }
         }
+        $debugEntry['newPhotos'] = $newPhotosFound;
 
         // Discover new photo fbids from this page
+        $newFbidsFound = [];
         if (preg_match_all('/fbid[=:](\d{12,})/', $photoHtml, $newFbids)) {
             foreach ($newFbids[1] as $nfid) {
                 if (!isset($allFoundFbids[$nfid])) {
                     $allFoundFbids[$nfid] = true;
                     $pendingFbids[] = $nfid;
+                    $newFbidsFound[] = $nfid;
                 }
             }
         }
@@ -519,9 +545,12 @@ while (!empty($pendingFbids) && $fetchCount < $maxFetches) {
                 if (!isset($allFoundFbids[$pidm[1]])) {
                     $allFoundFbids[$pidm[1]] = true;
                     $pendingFbids[] = $pidm[1];
+                    $newFbidsFound[] = $pidm[1];
                 }
             }
         }
+        $debugEntry['newFbids'] = $newFbidsFound;
+        $_debugPhotoFetches[] = $debugEntry;
     }
     curl_multi_close($mh);
 }
@@ -655,4 +684,11 @@ if ($msgPos !== false) {
 
 // Parse structured dog fields from text
 $fields = parseFields($text);
-echo json_encode(array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields));
+$result = array_merge(['text' => $text, 'images' => $images, 'image_data' => $imageData, 'videos' => $videos], $fields);
+// Include debug info about photo page fetches (temporary, for troubleshooting)
+if (!empty($_debugPhotoFetches)) {
+    $result['_debug_photo_fetches'] = $_debugPhotoFetches;
+    $result['_debug_initial_fbids'] = array_keys($photoFbids);
+    $result['_debug_total_fbids_found'] = count($allFoundFbids);
+}
+echo json_encode($result);
