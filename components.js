@@ -108,7 +108,7 @@ var H4D_I18N = {
   'honden.cta.doneer':   { nl: 'Doneer nu',       de: 'Jetzt spenden',      en: 'Donate now' },
   'honden.cta.contact':  { nl: 'Neem contact op',  de: 'Kontaktiere uns',   en: 'Get in touch' },
 
-  'overons.hero':    { nl: 'Ons hart, onze drijfveer', de: 'Unser Herz, unser Antrieb', en: 'Our heart, our drive' },
+  'overons.hero':    { nl: 'Een klein team. Een grote missie.', de: 'Ein kleines Team. Eine große Mission.', en: 'A small team. A big mission.' },
   'adoptie.hero':    { nl: 'Geef een hond<br>een tweede kans', de: 'Gib einem Hund<br>eine zweite Chance', en: 'Give a dog<br>a second chance' },
   'ervaringen.hero': { nl: 'Van straat naar warm nestje', de: 'Von der Stra\u00DFe ins warme Nest', en: 'From street to loving home' },
   'nieuws.hero':     { nl: 'Actueel', de: 'Aktuell', en: 'News' },
@@ -132,7 +132,7 @@ var H4D_I18N = {
   'honden.geadopteerd': { nl: 'Geadopteerd', de: 'Adoptiert', en: 'Adopted' },
 
   // --- Over ons page ---
-  'overons.hero.sub':   { nl: 'Hope for Dogs is ontstaan uit een groep mensen uit Nederland, Servi\u00EB en Bosni\u00EB die \u00E9\u00E9n ding gemeen hebben: we konden niet wegkijken. Wat begon met het helpen van \u00E9\u00E9n hond en groeide uit tot een gezamenlijke missie.', de: 'Hope for Dogs entstand aus einer Gruppe von Menschen aus den Niederlanden, Serbien und Bosnien, die eines gemeinsam haben: Wir konnten nicht wegschauen. Was mit der Hilfe f\u00FCr einen Hund begann, wuchs zu einer gemeinsamen Mission.', en: 'Hope for Dogs was born from a group of people from the Netherlands, Serbia, and Bosnia who share one thing: we couldn\u2019t look away. What started with helping one dog grew into a shared mission.' },
+  'overons.hero.sub':   { nl: 'We zetten ons in om straathonden een beter bestaan te geven', de: 'Wir setzen uns daf\u00FCr ein, Stra\u00DFenhunden ein besseres Leben zu geben', en: 'We work to give stray dogs a better life' },
   'overons.leefomstandigheden': { nl: 'Er is geen overheid die ingrijpt. Geen vangnetten. Geen financi\u00EBle steun. Alleen mensen zoals wij \u2014 en zoals jij.', de: 'Es gibt keine Regierung, die eingreift. Keine Sicherheitsnetze. Keine finanzielle Unterst\u00FCtzung. Nur Menschen wie wir \u2014 und wie Sie.', en: 'There is no government stepping in. No safety nets. No financial support. Just people like us \u2014 and like you.' },
   'overons.hart':       { nl: 'Ons hart, onze drijfveer', de: 'Unser Herz, unser Antrieb', en: 'Our heart, our drive' },
   'overons.hart.p1':    { nl: 'Hope for Dogs draait volledig op een klein team van vrijwilligers. We hebben geen grote organisatie achter ons en geen vaste subsidies die alles betalen. Alles wat we doen, doen we naast ons werk, gezin en andere verplichtingen. Omdat we vinden dat deze honden een kans verdienen.', de: 'Hope for Dogs l\u00E4uft vollst\u00E4ndig auf einem kleinen Team von Freiwilligen. Wir haben keine gro\u00DFe Organisation hinter uns und keine festen Subventionen, die alles bezahlen. Alles was wir tun, tun wir neben unserer Arbeit, Familie und anderen Verpflichtungen. Weil wir finden, dass diese Hunde eine Chance verdienen.', en: 'Hope for Dogs runs entirely on a small team of volunteers. We have no large organization behind us and no fixed subsidies that cover everything. Everything we do, we do alongside our work, family and other commitments. Because we believe these dogs deserve a chance.' },
@@ -626,8 +626,7 @@ document.addEventListener('DOMContentLoaded', function () {
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/aa04d042-485e-4fa2-b768-ea4e50906ab5/10152aeb-3d7f-420f-9d22-e3472537d4e2+%281%29.jpg', name: 'Ivana', role: 'Asiel', years: '8 jaar' },
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/ffbbbe65-db73-474a-b484-4c4f1acaf25b/348892586_1445678299527776_3873644328475865037_n.jpeg', name: 'Mladen', role: 'Asiel', years: '8 jaar' },
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/078ee273-80ad-416e-99ae-b15172473079/noella.jpg', name: 'No\u00EBlla', role: 'Vrijwilliger', years: '2 jaar' },
-      { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/413db489-786e-4436-8eb7-d2d3bbe645ce/IMG-20260125-WA0077.jpg', name: 'Eva', role: 'Vrijwilliger', years: '1 jaar' },
-      { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/8aea7ec0-cf8a-4e20-81a9-05f8249f15b0/1000608235.jpg', name: 'Dejan', role: 'Vrijwilliger', years: '4 jaar' }
+      { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/413db489-786e-4436-8eb7-d2d3bbe645ce/IMG-20260125-WA0077.jpg', name: 'Eva', role: 'Vrijwilliger', years: '1 jaar' }
     ];
 
     var cardsHtml = teamMembers.map(function(m) {
