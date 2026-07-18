@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bedankt voor uw donatie | Hope for Dogs</title>
+  <title>Bedankt voor je donatie | Hope for Dogs</title>
   <meta name="robots" content="noindex">
   <link rel="canonical" href="https://www.hopefordogseurope.com/bedankt.html">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -22,16 +22,27 @@
     }
     .status-inner { max-width: 560px; }
     .status-icon {
-      width: 88px;
-      height: 88px;
+      width: 96px;
+      height: 96px;
       border-radius: 100px;
       margin: 0 auto 28px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .status-icon.success { background: rgba(22, 163, 74, 0.12); }
-    .status-icon svg { width: 44px; height: 44px; }
+    .status-icon.success { background: rgba(239, 68, 68, 0.12); }
+    .status-icon svg { width: 50px; height: 50px; }
+    /* gentle heartbeat on the heart */
+    .status-icon.success svg {
+      transform-origin: center;
+      animation: h4dbeat 1.2s ease-in-out 0.2s 3;
+    }
+    @keyframes h4dbeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.18); }
+      40% { transform: scale(1); }
+      60% { transform: scale(1.12); }
+    }
     .status-inner h1 { margin-bottom: 16px; }
     .status-inner p {
       font-size: 19px;
@@ -65,6 +76,32 @@
     }
     @keyframes h4dspin { to { transform: rotate(360deg); } }
     .hidden { display: none !important; }
+
+    /* Confetti */
+    #confetti-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 9999;
+    }
+    .confetti-piece {
+      position: absolute;
+      top: -24px;
+      will-change: transform, opacity;
+      animation-name: h4dconfetti;
+      animation-timing-function: cubic-bezier(0.3, 0.6, 0.5, 1);
+      animation-fill-mode: forwards;
+    }
+    @keyframes h4dconfetti {
+      0%   { opacity: 0; transform: translateY(0) translateX(0) rotate(0deg); }
+      8%   { opacity: 1; }
+      100% { opacity: 1; transform: translateY(108vh) translateX(var(--drift, 0)) rotate(720deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .status-icon.success svg { animation: none; }
+      #confetti-layer { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -78,22 +115,21 @@
         <!-- Checking state -->
         <div id="state-checking">
           <div class="spinner"></div>
-          <p data-i18n="bedankt.checking">Even geduld, we bevestigen uw betaling...</p>
+          <p data-i18n="bedankt.checking">Even geduld, we bevestigen je betaling...</p>
         </div>
 
         <!-- Success state -->
         <div id="state-success" class="hidden">
           <div class="status-icon success">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5"/>
+            <svg viewBox="0 0 24 24" fill="#ef4444" stroke="none" aria-hidden="true">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
           </div>
-          <h1 class="t-heading-lg" data-i18n="bedankt.hero">Bedankt voor uw donatie!</h1>
-          <p data-i18n="bedankt.sub">Uw steun betekent alles voor onze honden. Dankzij u kunnen wij straathonden blijven redden, verzorgen en een nieuw thuis geven.</p>
-          <p id="pending-note" class="status-note hidden" data-i18n="bedankt.pending">Uw betaling wordt nog verwerkt. U ontvangt een bevestiging zodra deze is voltooid.</p>
+          <h1 class="t-heading-lg" data-i18n="bedankt.hero">Wauw, heel erg bedankt!</h1>
+          <p data-i18n="bedankt.sub">Je donatie is goed ontvangen. Hiermee help je ons om honden in nood te redden, de zorg te geven die ze verdienen en een nieuw thuis voor ze te vinden.</p>
+          <p id="pending-note" class="status-note hidden" data-i18n="bedankt.pending">Je betaling wordt nog verwerkt. Je ontvangt een bevestiging zodra deze is voltooid.</p>
           <div class="status-actions">
-            <a href="honden.html" class="btn-primary" data-i18n="bedankt.honden">Bekijk onze honden</a>
-            <a href="index.html" class="btn-secondary" data-i18n="bedankt.terug">Terug naar home</a>
+            <a href="index.html" class="btn-primary" data-i18n="bedankt.terug">Terug naar home</a>
           </div>
         </div>
 
@@ -110,14 +146,51 @@
       var success  = document.getElementById('state-success');
       var pending  = document.getElementById('pending-note');
 
+      function launchConfetti() {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var colors = ['#ff5314', '#ffd34e', '#ef4444', '#16a34a', '#ec4899', '#3b82f6'];
+        var layer = document.createElement('div');
+        layer.id = 'confetti-layer';
+        document.body.appendChild(layer);
+        var count = 110;
+        for (var i = 0; i < count; i++) {
+          var piece = document.createElement('div');
+          piece.className = 'confetti-piece';
+          var size = 6 + Math.random() * 8;
+          var isRound = Math.random() > 0.7;
+          piece.style.left = (Math.random() * 100) + '%';
+          piece.style.width = size + 'px';
+          piece.style.height = (isRound ? size : size * 0.5) + 'px';
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.borderRadius = isRound ? '50%' : '2px';
+          piece.style.setProperty('--drift', (Math.random() * 200 - 100) + 'px');
+          piece.style.animationDuration = (2.6 + Math.random() * 2) + 's';
+          piece.style.animationDelay = (Math.random() * 0.5) + 's';
+          layer.appendChild(piece);
+        }
+        setTimeout(function () { layer.remove(); }, 6000);
+      }
+
       function showSuccess(isPending) {
         checking.classList.add('hidden');
         success.classList.remove('hidden');
         if (isPending) pending.classList.remove('hidden');
+        launchConfetti();
       }
       function goToFailure() {
         window.location.replace('betaling-mislukt.html');
       }
+      function handleStatus(s) {
+        if (s === 'paid' || s === 'authorized') showSuccess(false);
+        else if (s === 'pending') showSuccess(true);
+        else goToFailure(); // open, canceled, expired, failed, unknown
+      }
+
+      // Preview mode: ?status=paid|pending|failed lets you see each state
+      // in the browser without a real payment. Harmless in production.
+      var params = new URLSearchParams(window.location.search);
+      var override = params.get('status');
+      if (override) { handleStatus(override); return; }
 
       var pid = localStorage.getItem('h4d_payment_id');
 
@@ -128,15 +201,7 @@
         .then(function (r) { return r.json(); })
         .then(function (data) {
           localStorage.removeItem('h4d_payment_id');
-          var s = data && data.status;
-          if (s === 'paid' || s === 'authorized') {
-            showSuccess(false);
-          } else if (s === 'pending') {
-            showSuccess(true);
-          } else {
-            // open, canceled, expired, failed, or unknown
-            goToFailure();
-          }
+          handleStatus(data && data.status);
         })
         .catch(function () {
           // Network/API hiccup — don't punish the donor; show thank-you.
