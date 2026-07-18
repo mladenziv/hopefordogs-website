@@ -32,6 +32,13 @@ if ($amount < 1 || $amount > 50000) {
     exit;
 }
 
+// Monthly donations require an email to set up the recurring customer/mandate.
+if ($frequency === 'maandelijks' && $email === '') {
+    http_response_code(400);
+    echo json_encode(['error' => 'Voor een maandelijkse donatie is een e-mailadres verplicht.']);
+    exit;
+}
+
 // Check API key is configured
 if (MOLLIE_API_KEY === 'live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' || empty(MOLLIE_API_KEY)) {
     http_response_code(500);
@@ -48,24 +55,22 @@ $description = 'Donatie Hope for Dogs - €' . $amountStr;
 $baseUrl = siteBaseUrl();
 
 if ($frequency === 'maandelijks') {
-    // RECURRING: Create customer first, then first payment
-    $customerId = null;
+    // RECURRING: create the customer (email required, validated above), then
+    // the first payment that establishes the recurring mandate.
+    $customerResponse = mollieRequest('POST', '/customers', [
+        'name' => $name ?: 'Donateur',
+        'email' => $email
+    ]);
+    $customerId = isset($customerResponse['id']) ? $customerResponse['id'] : null;
 
-    if ($email) {
-        // Create or find customer
-        $customerData = [
-            'name' => $name ?: 'Donateur',
-            'email' => $email
-        ];
-
-        $customerResponse = mollieRequest('POST', '/customers', $customerData);
-
-        if (isset($customerResponse['id'])) {
-            $customerId = $customerResponse['id'];
-        }
+    if (!$customerId) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Kon de maandelijkse donatie niet opzetten. Probeer het opnieuw.']);
+        exit;
     }
 
-    // Create first payment for recurring mandate
+    // First payment for the recurring mandate (sequenceType 'first' restricts
+    // to recurring-capable methods so the webhook can create the subscription).
     $paymentData = [
         'amount' => [
             'currency' => 'EUR',
@@ -74,6 +79,8 @@ if ($frequency === 'maandelijks') {
         'description' => $description . ' (eerste betaling)',
         'redirectUrl' => $baseUrl . '/bedankt.html',
         'webhookUrl' => $baseUrl . '/api/mollie/webhook.php',
+        'customerId' => $customerId,
+        'sequenceType' => 'first',
         'metadata' => [
             'frequency' => 'maandelijks',
             'amount' => $amountStr,
@@ -81,11 +88,6 @@ if ($frequency === 'maandelijks') {
             'donor_email' => $email
         ]
     ];
-
-    if ($customerId) {
-        $paymentData['customerId'] = $customerId;
-        $paymentData['sequenceType'] = 'first';
-    }
 
     $payment = mollieRequest('POST', '/payments', $paymentData);
 

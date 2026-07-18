@@ -874,6 +874,15 @@
       const donorName = document.getElementById('donorName').value.trim();
       const donorEmail = document.getElementById('donorEmail').value.trim();
 
+      // Monthly donations require a valid email to set up the recurring
+      // subscription with Mollie.
+      if (selectedFrequency === 'maandelijks') {
+        if (!donorEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail)) {
+          alert('Voor een maandelijkse donatie hebben we uw e-mailadres nodig.');
+          return;
+        }
+      }
+
       // Disable button and show loading state
       donateBtn.disabled = true;
       donateBtn.textContent = 'Bezig...';

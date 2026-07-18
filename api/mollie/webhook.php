@@ -27,17 +27,34 @@ if ($status === 'paid' && $frequency === 'maandelijks') {
     $amount = isset($metadata['amount']) ? $metadata['amount'] : null;
 
     if ($customerId && $amount) {
-        $subscriptionData = [
-            'amount' => [
-                'currency' => 'EUR',
-                'value' => $amount
-            ],
-            'interval' => '1 month',
-            'description' => 'Maandelijkse donatie Hope for Dogs - €' . $amount,
-            'webhookUrl' => siteBaseUrl() . '/api/mollie/webhook.php'
-        ];
+        // Idempotency: Mollie may call this webhook more than once for the
+        // same payment. Since each donation uses a fresh customer, any
+        // existing subscription means we already handled this one — skip it
+        // so retries can't create duplicate subscriptions.
+        $existing = mollieRequest('GET', '/customers/' . $customerId . '/subscriptions');
+        $hasSubscription = false;
+        if (isset($existing['count']) && $existing['count'] > 0) {
+            $hasSubscription = true;
+        } elseif (isset($existing['_embedded']['subscriptions']) && count($existing['_embedded']['subscriptions']) > 0) {
+            $hasSubscription = true;
+        }
 
-        mollieRequest('POST', '/customers/' . $customerId . '/subscriptions', $subscriptionData);
+        if (!$hasSubscription) {
+            $subscriptionData = [
+                'amount' => [
+                    'currency' => 'EUR',
+                    'value' => $amount
+                ],
+                'interval' => '1 month',
+                // The first payment already covers this month — start the
+                // recurring charges one month from now to avoid a double charge.
+                'startDate' => date('Y-m-d', strtotime('+1 month')),
+                'description' => 'Maandelijkse donatie Hope for Dogs - €' . $amount,
+                'webhookUrl' => siteBaseUrl() . '/api/mollie/webhook.php'
+            ];
+
+            mollieRequest('POST', '/customers/' . $customerId . '/subscriptions', $subscriptionData);
+        }
     }
 }
 
