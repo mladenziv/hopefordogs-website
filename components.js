@@ -116,7 +116,8 @@ var H4D_I18N = {
 
   // --- Index: Before & After ---
   'ba.label':  { nl: 'The before & after', de: 'Das Vorher & Nachher', en: 'The before & after' },
-  'ba.next':   { nl: 'Volgend verhaal',    de: 'N\u00E4chste Geschichte', en: 'Next story' },
+  'ba.next':   { nl: 'Volgende',    de: 'Weiter', en: 'Next' },
+  'ba.playvideo': { nl: 'Video afspelen', de: 'Video abspielen', en: 'Play video' },
   'ba.before': { nl: 'Before', de: 'Vorher', en: 'Before' },
   'ba.after':  { nl: 'After',  de: 'Nachher', en: 'After' },
 

@@ -1419,6 +1419,84 @@
       height: 24px;
     }
 
+    .ba-play-btn {
+      height: 54px;
+      border-radius: 100px;
+      border: none;
+      background: var(--brand);
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 28px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 22px;
+      transition: opacity 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .ba-play-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .ba-play-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Full-screen centered video overlay for before/after stories */
+    .ba-video-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1100;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .ba-video-overlay.active {
+      display: flex;
+    }
+
+    .ba-video-overlay video {
+      width: 100%;
+      max-width: 880px;
+      max-height: 88vh;
+      border-radius: 12px;
+      background: #000;
+      outline: none;
+    }
+
+    .ba-video-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .ba-video-close:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+
     /* Right side — polaroid cards */
     .ba-right {
       width: 801px;
@@ -2478,11 +2556,15 @@
           <p class="ba-description" id="baDescription">Rex werd gevonden op straat in de buitenwijken van Bijeljina &#8212; uitgehongerd, bang en vol schurft. Na weken van intensieve medische zorg, goede voeding en veel liefde begon Rex langzaam te herstellen. Zijn vacht groeide terug, hij kwam aan in gewicht en zijn vertrouwen in mensen keerde terug.</p>
         </div>
         <div class="ba-nav">
-          <button class="ba-nav-prev" onclick="cycleBA(-1)" aria-label="Vorig verhaal">
+          <button class="ba-nav-prev" id="baPrev" onclick="cycleBA(-1)" aria-label="Vorig verhaal">
             <svg viewBox="0 0 24 24" fill="none" stroke="#181818" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l6-6M5 12l6 6"/></svg>
           </button>
-          <button class="ba-nav-next" onclick="cycleBA(1)">
-            <span data-i18n="ba.next">Volgend verhaal</span>
+          <button class="ba-play-btn" id="baPlayBtn" onclick="openBAVideo()" style="display:none">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            <span data-i18n="ba.playvideo">Video afspelen</span>
+          </button>
+          <button class="ba-nav-next" id="baNext" onclick="cycleBA(1)">
+            <span data-i18n="ba.next">Volgende</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#181818" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M19 12l-6-6M19 12l-6 6"/></svg>
           </button>
         </div>
@@ -2627,6 +2709,12 @@
         <div class="ba-modal-text" id="baModalText"></div>
       </div>
     </div>
+  </div>
+
+  <!-- BEFORE/AFTER VIDEO OVERLAY -->
+  <div class="ba-video-overlay" id="baVideoOverlay" onclick="closeBAVideo(event)">
+    <button class="ba-video-close" onclick="closeBAVideo(event, true)" aria-label="Sluiten">&#10005;</button>
+    <video id="baVideoEl" controls playsinline></video>
   </div>
 
   <!-- DOG MODAL (shared with honden.html) -->
@@ -3084,7 +3172,8 @@
         beforeImg: row.before_img,
         afterImg: row.after_img,
         beforeDate: row.before_date || '',
-        afterDate: row.after_date || ''
+        afterDate: row.after_date || '',
+        videoUrl: row.video_url || null
       };
     }
 
@@ -3098,6 +3187,15 @@
       document.getElementById('baAfterImg').src = story.afterImg;
       document.getElementById('baBeforeDate').textContent = story.beforeDate || '4 Juli 2025';
       document.getElementById('baAfterDate').textContent = story.afterDate || '24 September 2025';
+
+      // Stepper nav: no back on the first story, no next on the last.
+      var prevBtn = document.getElementById('baPrev');
+      var nextBtn = document.getElementById('baNext');
+      if (prevBtn) prevBtn.style.display = (index <= 0) ? 'none' : '';
+      if (nextBtn) nextBtn.style.display = (index >= baStories.length - 1) ? 'none' : '';
+      // Orange play button only when this story has a video.
+      var playBtn = document.getElementById('baPlayBtn');
+      if (playBtn) playBtn.style.display = story.videoUrl ? '' : 'none';
     }
 
     async function loadBAStories() {
@@ -3121,9 +3219,39 @@
 
     function cycleBA(dir) {
       if (baStories.length === 0) return;
-      currentBA = (currentBA + dir + baStories.length) % baStories.length;
+      var next = currentBA + dir;
+      if (next < 0 || next >= baStories.length) return; // no wrap
+      currentBA = next;
       showBAStory(currentBA);
     }
+
+    function openBAVideo() {
+      var story = baStories[currentBA];
+      if (!story || !story.videoUrl) return;
+      var el = document.getElementById('baVideoEl');
+      var ov = document.getElementById('baVideoOverlay');
+      el.src = story.videoUrl;
+      ov.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      var p = el.play();
+      if (p && typeof p.catch === 'function') { p.catch(function () {}); }
+    }
+
+    function closeBAVideo(e, force) {
+      var ov = document.getElementById('baVideoOverlay');
+      if (!ov.classList.contains('active')) return;
+      if (!force && e && e.target !== ov) return; // ignore clicks on the video itself
+      var el = document.getElementById('baVideoEl');
+      el.pause();
+      el.removeAttribute('src');
+      el.load();
+      ov.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeBAVideo(null, true);
+    });
 
     function openBAModal(idx) {
       if (!baStories[idx]) return;
