@@ -206,7 +206,7 @@
       // in the browser without a real payment. Harmless in production.
       var params = new URLSearchParams(window.location.search);
       var override = params.get('status');
-      if (override) { handleStatus(override); return; }
+      if (override) { donorEmail = params.get('email') || ''; handleStatus(override); return; }
 
       var pid = localStorage.getItem('h4d_payment_id');
 
