@@ -59,9 +59,13 @@
                 border-radius: 20px 20px 0 0;
                 overflow: hidden;
                 display: grid;
+                gap: 8px;
+                /* Desktop: 5-column collage — two tall portraits + three 2-stacks */
                 grid-template-columns: 1.45fr 1fr 1fr 1.25fr 1fr;
                 grid-template-rows: 1fr 1fr;
-                gap: 8px;
+                grid-template-areas:
+                    "a b d f g"
+                    "a c e f h";
                 aspect-ratio: 1480 / 512;
             }
 
@@ -78,15 +82,15 @@
                 display: block;
             }
 
-            /* Collage placement: two tall portraits (1 & 6) + three 2-stacks */
-            .about-gallery .ag-item:nth-child(1) { grid-column: 1; grid-row: 1 / span 2; }
-            .about-gallery .ag-item:nth-child(2) { grid-column: 2; grid-row: 1; }
-            .about-gallery .ag-item:nth-child(3) { grid-column: 2; grid-row: 2; }
-            .about-gallery .ag-item:nth-child(4) { grid-column: 3; grid-row: 1; }
-            .about-gallery .ag-item:nth-child(5) { grid-column: 3; grid-row: 2; }
-            .about-gallery .ag-item:nth-child(6) { grid-column: 4; grid-row: 1 / span 2; }
-            .about-gallery .ag-item:nth-child(7) { grid-column: 5; grid-row: 1; }
-            .about-gallery .ag-item:nth-child(8) { grid-column: 5; grid-row: 2; }
+            /* Each photo maps to a named area; breakpoints re-arrange the areas */
+            .about-gallery .ag-item:nth-child(1) { grid-area: a; }
+            .about-gallery .ag-item:nth-child(2) { grid-area: b; }
+            .about-gallery .ag-item:nth-child(3) { grid-area: c; }
+            .about-gallery .ag-item:nth-child(4) { grid-area: d; }
+            .about-gallery .ag-item:nth-child(5) { grid-area: e; }
+            .about-gallery .ag-item:nth-child(6) { grid-area: f; }
+            .about-gallery .ag-item:nth-child(7) { grid-area: g; }
+            .about-gallery .ag-item:nth-child(8) { grid-area: h; }
 
             /* ===== QUOTE + TEXT SECTION ===== */
             .intro {
@@ -710,16 +714,15 @@
                     padding-bottom: 48px;
                 }
                 .about-gallery {
+                    /* Tablet: mosaic with a big hero feature + wide accent */
                     grid-template-columns: repeat(4, 1fr);
-                    grid-template-rows: auto;
-                    grid-auto-rows: 1fr;
-                    aspect-ratio: auto;
+                    grid-template-rows: repeat(3, 1fr);
+                    grid-template-areas:
+                        "a a b c"
+                        "a a d e"
+                        "f g h h";
+                    aspect-ratio: 16 / 9;
                     border-radius: 20px;
-                }
-                .about-gallery .ag-item:nth-child(n) {
-                    grid-column: auto;
-                    grid-row: auto;
-                    aspect-ratio: 1;
                 }
 
                 .intro-inner {
@@ -766,7 +769,14 @@
             /* --- XS: 0–767px --- */
             @media (max-width: 767px) {
                 .about-gallery {
-                    grid-template-columns: repeat(2, 1fr);
+                    /* Mobile: compact collage band — feature + wide accent, all 8 photos */
+                    grid-template-columns: repeat(4, 1fr);
+                    grid-template-rows: repeat(3, 1fr);
+                    grid-template-areas:
+                        "a a b c"
+                        "a a d e"
+                        "f f g h";
+                    aspect-ratio: 4 / 3;
                 }
                 .shelter-images {
                     aspect-ratio: 4/3;
