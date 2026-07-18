@@ -54,57 +54,39 @@
             /* hero-text h1 inherits from .t-heading-lg (matching homepage) */
             /* hero-text p inherits from .t-body-lg (matching homepage) */
 
-            .hero-images {
+            .about-gallery {
                 width: 100%;
                 border-radius: 20px 20px 0 0;
                 overflow: hidden;
                 display: grid;
-                grid-template-columns: 2.5fr 1fr 1fr 1fr;
-                gap: 4px;
-                aspect-ratio: 26/9;
+                grid-template-columns: 1.45fr 1fr 1fr 1.25fr 1fr;
+                grid-template-rows: 1fr 1fr;
+                gap: 8px;
+                aspect-ratio: 1480 / 512;
             }
 
-            .hero-img-large {
+            .about-gallery .ag-item {
                 overflow: hidden;
-            }
-
-            .hero-img-large img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                display: block;
-            }
-
-            .hero-img-col {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-                overflow: hidden;
-            }
-
-            .hero-img-col .hero-img-sq {
-                flex: 1;
+                min-width: 0;
                 min-height: 0;
-                overflow: hidden;
             }
 
-            .hero-img-col .hero-img-sq img {
+            .about-gallery .ag-item img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 display: block;
             }
 
-            .hero-img-single {
-                overflow: hidden;
-            }
-
-            .hero-img-single img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                display: block;
-            }
+            /* Collage placement: two tall portraits (1 & 6) + three 2-stacks */
+            .about-gallery .ag-item:nth-child(1) { grid-column: 1; grid-row: 1 / span 2; }
+            .about-gallery .ag-item:nth-child(2) { grid-column: 2; grid-row: 1; }
+            .about-gallery .ag-item:nth-child(3) { grid-column: 2; grid-row: 2; }
+            .about-gallery .ag-item:nth-child(4) { grid-column: 3; grid-row: 1; }
+            .about-gallery .ag-item:nth-child(5) { grid-column: 3; grid-row: 2; }
+            .about-gallery .ag-item:nth-child(6) { grid-column: 4; grid-row: 1 / span 2; }
+            .about-gallery .ag-item:nth-child(7) { grid-column: 5; grid-row: 1; }
+            .about-gallery .ag-item:nth-child(8) { grid-column: 5; grid-row: 2; }
 
             /* ===== QUOTE + TEXT SECTION ===== */
             .intro {
@@ -727,13 +709,17 @@
                 .cta-final-inner {
                     padding-bottom: 48px;
                 }
-                .hero-images {
-                    grid-template-columns: 2.5fr 1fr 1fr;
+                .about-gallery {
+                    grid-template-columns: repeat(4, 1fr);
+                    grid-template-rows: auto;
+                    grid-auto-rows: 1fr;
+                    aspect-ratio: auto;
                     border-radius: 20px;
-                    isolation: isolate;
                 }
-                .hero-img-col:last-child {
-                    display: none;
+                .about-gallery .ag-item:nth-child(n) {
+                    grid-column: auto;
+                    grid-row: auto;
+                    aspect-ratio: 1;
                 }
 
                 .intro-inner {
@@ -779,21 +765,8 @@
 
             /* --- XS: 0–767px --- */
             @media (max-width: 767px) {
-                .hero-images {
-                    aspect-ratio: auto;
-                    grid-template-columns: 1fr 1fr;
-                    grid-template-rows: 240px 160px;
-                    border-radius: 20px;
-                }
-                .hero-img-single {
-                    height: auto;
-                }
-                .hero-img-col:last-child {
-                    display: flex;
-                    height: auto;
-                }
-                .hero-img-col:last-child .hero-img-sq:last-child {
-                    display: none;
+                .about-gallery {
+                    grid-template-columns: repeat(2, 1fr);
                 }
                 .shelter-images {
                     aspect-ratio: 4/3;
@@ -853,53 +826,15 @@
                         een gezamenlijke missie.
                     </p>
                 </div>
-                <div class="hero-images">
-                    <div class="hero-img-large">
-                        <img
-                            src="images/about/hero/Aboutus-1.png"
-                            alt="Hope for Dogs team"
-                            loading="lazy"
-                        />
-                    </div>
-                    <div class="hero-img-col">
-                        <div class="hero-img-sq">
-                            <img
-                                src="images/about/hero/Aboutus-2.png"
-                                alt="Vrijwilligerswerk"
-                                loading="lazy"
-                            />
-                        </div>
-                        <div class="hero-img-sq">
-                            <img
-                                src="images/about/hero/Aboutus-3.png"
-                                alt="Vrijwilligers"
-                                loading="lazy"
-                            />
-                        </div>
-                    </div>
-                    <div class="hero-img-single">
-                        <img
-                            src="images/about/hero/Aboutus-4.png"
-                            alt="Honden verzorgen"
-                            loading="lazy"
-                        />
-                    </div>
-                    <div class="hero-img-col">
-                        <div class="hero-img-sq">
-                            <img
-                                src="images/about/hero/Aboutus-5.png"
-                                alt="Asiel werk"
-                                loading="lazy"
-                            />
-                        </div>
-                        <div class="hero-img-sq">
-                            <img
-                                src="images/about/hero/Aboutus-5.png"
-                                alt="Onze honden"
-                                loading="lazy"
-                            />
-                        </div>
-                    </div>
+                <div class="about-gallery">
+                    <div class="ag-item"><img src="images/about/gallery/1.jpg" alt="Vrijwilliger van Hope for Dogs met hond" loading="lazy" /></div>
+                    <div class="ag-item"><img src="images/about/gallery/2.jpg" alt="Vrijwilliger met hond" loading="lazy" /></div>
+                    <div class="ag-item"><img src="images/about/gallery/3.jpg" alt="Vrijwilliger met hond" loading="lazy" /></div>
+                    <div class="ag-item"><img src="images/about/gallery/4.jpg" alt="Vrijwilliger met hond op pad" loading="lazy" /></div>
+                    <div class="ag-item"><img src="images/about/gallery/5.jpg" alt="Vrijwilliger met puppy" loading="lazy" /></div>
+                    <div class="ag-item"><img src="images/about/gallery/6.jpg" alt="Vrijwilliger met hond" loading="lazy" /></div>
+                    <div class="ag-item"><img src="images/about/gallery/7.jpg" alt="Vrijwilliger met hond op het strand" loading="lazy" /></div>
+                    <div class="ag-item"><img src="images/about/gallery/8.jpg" alt="Vrijwilliger met hond" loading="lazy" /></div>
                 </div>
             </div>
         </section>
@@ -919,19 +854,21 @@
                 </div>
                 <div class="intro-text t-body-lg">
                     <p data-i18n="overons.hart.p1">
-                        Hope for Dogs draait volledig op vrijwilligers. We
-                        hebben geen grote organisatie achter ons en geen vaste
-                        subsidies die alles opvangen. Alles wat we doen, doen we
-                        naast ons werk en gezin — simpelweg omdat we geloven dat
-                        deze honden iemand nodig hebben die voor hen opkomt.
+                        Hope for Dogs draait volledig op een klein team van
+                        vrijwilligers. We hebben geen grote organisatie achter
+                        ons en geen vaste subsidies die alles betalen. Alles wat
+                        we doen, doen we naast ons werk, gezin en andere
+                        verplichtingen. Gewoon omdat we vinden dat deze honden
+                        een kans verdienen.
                     </p>
                     <p data-i18n="overons.hart.p2">
-                        Onze kracht zit in samenwerking. Mensen uit
-                        verschillende landen, met verschillende achtergronden,
-                        maar met hetzelfde hart. Sommigen helpen met opvang,
-                        anderen met adopties, transport, medische zorg of
-                        fondsenwerving. Iedereen draagt bij op zijn of haar
-                        manier.
+                        We proberen het leven van straathonden in Bosnië stap
+                        voor stap beter te maken. Op welke manier dan ook, op
+                        micro en ook macro niveau. Misschien lijkt het een
+                        druppel op een gloeiende plaat, maar dankzij de steun van
+                        onze vrijwilligers, donateurs en volgers hebben we samen
+                        al ontzettend veel honden kunnen helpen. En daar zijn we
+                        nog lang niet klaar mee.
                     </p>
                 </div>
             </div>
@@ -1144,139 +1081,6 @@
             </div>
         </section>
 
-        <!-- HOE WIJ WERKEN -->
-        <section class="process">
-            <div class="process-inner">
-                <div class="process-header">
-                    <h2 class="t-heading-md" data-i18n="overons.werkwijze">
-                        Hoe wij werken
-                    </h2>
-                    <p class="t-body-lg" data-i18n="overons.werkwijze.sub">
-                        Elke hond doorloopt een zorgvuldig traject. Van de
-                        straat tot een warm thuis — stap voor stap.
-                    </p>
-                </div>
-                <div class="process-steps">
-                    <div class="process-step">
-                        <div class="step-number t-body">1</div>
-                        <div class="step-content">
-                            <div
-                                class="step-title t-heading-sm"
-                                data-i18n="overons.stap.redding"
-                            >
-                                Redding
-                            </div>
-                            <div
-                                class="step-desc t-body-sm"
-                                data-i18n="overons.stap.redding.d"
-                            >
-                                We halen honden van de straat, van
-                                vuilnisbelten, langs wegen en uit gevaarlijke
-                                situaties. Vaak zijn ze ziek, ondervoed of
-                                gewond.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="process-step">
-                        <div class="step-number t-body">2</div>
-                        <div class="step-content">
-                            <div
-                                class="step-title t-heading-sm"
-                                data-i18n="overons.stap.quarantaine"
-                            >
-                                Quarantaine
-                            </div>
-                            <div
-                                class="step-desc t-body-sm"
-                                data-i18n="overons.stap.quarantaine.d"
-                            >
-                                Elke nieuwe hond wordt eerst apart gehouden om
-                                te checken op besmettelijke ziektes en om rustig
-                                te wennen aan de veilige omgeving.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="process-step">
-                        <div class="step-number t-body">3</div>
-                        <div class="step-content">
-                            <div
-                                class="step-title t-heading-sm"
-                                data-i18n="overons.stap.medisch"
-                            >
-                                Medische zorg
-                            </div>
-                            <div
-                                class="step-desc t-body-sm"
-                                data-i18n="overons.stap.medisch.d"
-                            >
-                                Alle honden krijgen diergeneeskundige zorg:
-                                vaccinaties, ontworming, behandeling van ziektes
-                                en verwondingen. Wat ze ook nodig hebben.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="process-step">
-                        <div class="step-number t-body">4</div>
-                        <div class="step-content">
-                            <div
-                                class="step-title t-heading-sm"
-                                data-i18n="overons.stap.sterilisatie"
-                            >
-                                Sterilisatie
-                            </div>
-                            <div
-                                class="step-desc t-body-sm"
-                                data-i18n="overons.stap.sterilisatie.d"
-                            >
-                                We steriliseren en castreren elke hond. Dit is
-                                cruciaal om de cyclus van overbevolking te
-                                doorbreken en toekomstig lijden te voorkomen.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="process-step">
-                        <div class="step-number t-body">5</div>
-                        <div class="step-content">
-                            <div
-                                class="step-title t-heading-sm"
-                                data-i18n="overons.stap.socialisatie"
-                            >
-                                Socialisatie
-                            </div>
-                            <div
-                                class="step-desc t-body-sm"
-                                data-i18n="overons.stap.socialisatie.d"
-                            >
-                                In onze binnentuin leren de honden weer
-                                vertrouwen in mensen. Ze spelen met elkaar,
-                                krijgen aandacht en worden klaargestoomd voor
-                                adoptie.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="process-step">
-                        <div class="step-number t-body">6</div>
-                        <div class="step-content">
-                            <div
-                                class="step-title t-heading-sm"
-                                data-i18n="overons.stap.adoptie"
-                            >
-                                Adoptie
-                            </div>
-                            <div
-                                class="step-desc t-body-sm"
-                                data-i18n="overons.stap.adoptie.d"
-                            >
-                                We zoeken een zorgvuldig gematcht, warm thuis —
-                                in Nederland of dichter bij huis. Elke adoptie
-                                maakt plek vrij voor de volgende hond in nood.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="process-divider"></div>
-        </section>
 
         <!-- TEAM (shared component) -->
         <div id="team-placeholder"></div>
