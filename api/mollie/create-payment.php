@@ -67,7 +67,7 @@ if ($frequency === 'maandelijks') {
             'value' => $amountStr
         ],
         'description' => $description . ' (eerste betaling)',
-        'redirectUrl' => SITE_URL . '/doneer.html?betaling=succes',
+        'redirectUrl' => SITE_URL . '/bedankt.html',
         'webhookUrl' => SITE_URL . '/api/mollie/webhook.php',
         'metadata' => [
             'frequency' => 'maandelijks',
@@ -92,7 +92,7 @@ if ($frequency === 'maandelijks') {
             'value' => $amountStr
         ],
         'description' => $description,
-        'redirectUrl' => SITE_URL . '/doneer.html?betaling=succes',
+        'redirectUrl' => SITE_URL . '/bedankt.html',
         'webhookUrl' => SITE_URL . '/api/mollie/webhook.php',
         'metadata' => [
             'frequency' => 'eenmalig',

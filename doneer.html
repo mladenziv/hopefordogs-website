@@ -805,17 +805,6 @@
     // Check URL for payment status or preselected amount
     const urlParams = new URLSearchParams(window.location.search);
 
-    if (urlParams.get('betaling') === 'succes') {
-      const successBanner = document.createElement('div');
-      successBanner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#16a34a;color:#fff;text-align:center;padding:16px 20px;font-family:Manrope,sans-serif;font-size:16px;font-weight:600;';
-      successBanner.innerHTML = 'Bedankt voor uw donatie! Uw betaling wordt verwerkt. &#10005;';
-      successBanner.style.cursor = 'pointer';
-      successBanner.onclick = function() { successBanner.remove(); };
-      document.body.prepend(successBanner);
-      // Clean up URL
-      window.history.replaceState({}, '', 'doneer.html');
-    }
-
     const presetAmount = urlParams.get('bedrag');
 
     // Amount buttons
@@ -904,6 +893,11 @@
         const data = await response.json();
 
         if (data.checkoutUrl) {
+          // Remember the payment so the return page (bedankt.html) can verify
+          // the real status — Mollie redirects there regardless of outcome.
+          if (data.paymentId) {
+            localStorage.setItem('h4d_payment_id', data.paymentId);
+          }
           window.location.href = data.checkoutUrl;
         } else {
           alert(data.error || 'Er is een fout opgetreden. Probeer het opnieuw.');

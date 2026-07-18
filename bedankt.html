@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bedankt voor uw donatie | Hope for Dogs</title>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://www.hopefordogseurope.com/bedankt.html">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=20">
+  <style>
+    .status-section {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 160px 40px 100px;
+      text-align: center;
+    }
+    .status-inner { max-width: 560px; }
+    .status-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 100px;
+      margin: 0 auto 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .status-icon.success { background: rgba(22, 163, 74, 0.12); }
+    .status-icon svg { width: 44px; height: 44px; }
+    .status-inner h1 { margin-bottom: 16px; }
+    .status-inner p {
+      font-size: 19px;
+      font-weight: 500;
+      color: var(--dark-2);
+      line-height: 32px;
+      margin-bottom: 32px;
+    }
+    .status-note {
+      font-size: 15px !important;
+      color: var(--dark-2);
+      background: var(--beige);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 28px !important;
+    }
+    .status-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid rgba(0, 0, 0, 0.08);
+      border-top-color: var(--brand);
+      border-radius: 50%;
+      margin: 0 auto 24px;
+      animation: h4dspin 0.8s linear infinite;
+    }
+    @keyframes h4dspin { to { transform: rotate(360deg); } }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <main>
+    <section class="status-section">
+      <div class="status-inner">
+
+        <!-- Checking state -->
+        <div id="state-checking">
+          <div class="spinner"></div>
+          <p data-i18n="bedankt.checking">Even geduld, we bevestigen uw betaling...</p>
+        </div>
+
+        <!-- Success state -->
+        <div id="state-success" class="hidden">
+          <div class="status-icon success">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5"/>
+            </svg>
+          </div>
+          <h1 class="t-heading-lg" data-i18n="bedankt.hero">Bedankt voor uw donatie!</h1>
+          <p data-i18n="bedankt.sub">Uw steun betekent alles voor onze honden. Dankzij u kunnen wij straathonden blijven redden, verzorgen en een nieuw thuis geven.</p>
+          <p id="pending-note" class="status-note hidden" data-i18n="bedankt.pending">Uw betaling wordt nog verwerkt. U ontvangt een bevestiging zodra deze is voltooid.</p>
+          <div class="status-actions">
+            <a href="honden.html" class="btn-primary" data-i18n="bedankt.honden">Bekijk onze honden</a>
+            <a href="index.html" class="btn-secondary" data-i18n="bedankt.terug">Terug naar home</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="components.js?v=20"></script>
+  <script>
+    (function () {
+      var checking = document.getElementById('state-checking');
+      var success  = document.getElementById('state-success');
+      var pending  = document.getElementById('pending-note');
+
+      function showSuccess(isPending) {
+        checking.classList.add('hidden');
+        success.classList.remove('hidden');
+        if (isPending) pending.classList.remove('hidden');
+      }
+      function goToFailure() {
+        window.location.replace('betaling-mislukt.html');
+      }
+
+      var pid = localStorage.getItem('h4d_payment_id');
+
+      // No payment id to verify (e.g. direct visit) — show a friendly thank-you.
+      if (!pid) { showSuccess(false); return; }
+
+      fetch('/api/mollie/check-payment.php?id=' + encodeURIComponent(pid))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          localStorage.removeItem('h4d_payment_id');
+          var s = data && data.status;
+          if (s === 'paid' || s === 'authorized') {
+            showSuccess(false);
+          } else if (s === 'pending') {
+            showSuccess(true);
+          } else {
+            // open, canceled, expired, failed, or unknown
+            goToFailure();
+          }
+        })
+        .catch(function () {
+          // Network/API hiccup — don't punish the donor; show thank-you.
+          showSuccess(false);
+        });
+    })();
+  </script>
+</body>
+</html>

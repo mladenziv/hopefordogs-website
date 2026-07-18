@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Betaling niet gelukt | Hope for Dogs</title>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://www.hopefordogseurope.com/betaling-mislukt.html">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=20">
+  <style>
+    .status-section {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 160px 40px 100px;
+      text-align: center;
+    }
+    .status-inner { max-width: 560px; }
+    .status-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 100px;
+      margin: 0 auto 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(220, 38, 38, 0.10);
+    }
+    .status-icon svg { width: 44px; height: 44px; }
+    .status-inner h1 { margin-bottom: 16px; }
+    .status-inner p {
+      font-size: 19px;
+      font-weight: 500;
+      color: var(--dark-2);
+      line-height: 32px;
+      margin-bottom: 32px;
+    }
+    .status-note {
+      font-size: 15px !important;
+      color: var(--dark-2);
+      background: var(--beige);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 28px !important;
+    }
+    .status-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <main>
+    <section class="status-section">
+      <div class="status-inner">
+        <div class="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </div>
+        <h1 class="t-heading-lg" data-i18n="mislukt.hero">Betaling niet gelukt</h1>
+        <p data-i18n="mislukt.sub">Er is iets misgegaan met uw betaling, of deze is geannuleerd. Er is geen bedrag afgeschreven.</p>
+        <p class="status-note" data-i18n="mislukt.bank">Liever via bankoverschrijving? Op de donatiepagina vindt u onze bankgegevens.</p>
+        <div class="status-actions">
+          <a href="doneer.html" class="btn-primary" data-i18n="mislukt.opnieuw">Probeer opnieuw</a>
+          <a href="index.html" class="btn-secondary" data-i18n="mislukt.terug">Terug naar home</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="components.js?v=20"></script>
+  <script>
+    // Clean up any stored payment id from the aborted attempt.
+    localStorage.removeItem('h4d_payment_id');
+  </script>
+</body>
+</html>

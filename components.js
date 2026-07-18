@@ -276,6 +276,19 @@ var H4D_I18N = {
   'doneer.omschrijving':    { nl: 'Omschrijving', de: 'Verwendungszweck', en: 'Description' },
   'doneer.donatie':         { nl: 'Donatie', de: 'Spende', en: 'Donation' },
   'doneer.vermeld':         { nl: "Vermeld 'Donatie' bij de omschrijving zodat wij uw bijdrage correct kunnen verwerken.", de: "Geben Sie 'Spende' als Verwendungszweck an, damit wir Ihren Beitrag korrekt verarbeiten k\u00F6nnen.", en: "Enter 'Donation' as the description so we can process your contribution correctly." },
+
+  // ===== Payment result pages (bedankt.html / betaling-mislukt.html) =====
+  'bedankt.checking':   { nl: 'Even geduld, we bevestigen uw betaling...', de: 'Einen Moment, wir best\u00E4tigen Ihre Zahlung...', en: 'One moment, we\u2019re confirming your payment...' },
+  'bedankt.hero':       { nl: 'Bedankt voor uw donatie!', de: 'Danke f\u00FCr Ihre Spende!', en: 'Thank you for your donation!' },
+  'bedankt.sub':        { nl: 'Uw steun betekent alles voor onze honden. Dankzij u kunnen wij straathonden blijven redden, verzorgen en een nieuw thuis geven.', de: 'Ihre Unterst\u00FCtzung bedeutet unseren Hunden alles. Dank Ihnen k\u00F6nnen wir Stra\u00DFenhunde weiterhin retten, versorgen und ein neues Zuhause geben.', en: 'Your support means everything to our dogs. Thanks to you we can keep rescuing, caring for and rehoming stray dogs.' },
+  'bedankt.pending':    { nl: 'Uw betaling wordt nog verwerkt. U ontvangt een bevestiging zodra deze is voltooid.', de: 'Ihre Zahlung wird noch verarbeitet. Sie erhalten eine Best\u00E4tigung, sobald sie abgeschlossen ist.', en: 'Your payment is still being processed. You will receive a confirmation once it is complete.' },
+  'bedankt.honden':     { nl: 'Bekijk onze honden', de: 'Unsere Hunde ansehen', en: 'See our dogs' },
+  'bedankt.terug':      { nl: 'Terug naar home', de: 'Zur\u00FCck zur Startseite', en: 'Back to home' },
+  'mislukt.hero':       { nl: 'Betaling niet gelukt', de: 'Zahlung fehlgeschlagen', en: 'Payment unsuccessful' },
+  'mislukt.sub':        { nl: 'Er is iets misgegaan met uw betaling, of deze is geannuleerd. Er is geen bedrag afgeschreven.', de: 'Bei Ihrer Zahlung ist etwas schiefgelaufen oder sie wurde abgebrochen. Es wurde kein Betrag abgebucht.', en: 'Something went wrong with your payment, or it was cancelled. No amount has been charged.' },
+  'mislukt.bank':       { nl: 'Liever via bankoverschrijving? Op de donatiepagina vindt u onze bankgegevens.', de: 'Lieber per Bank\u00FCberweisung? Auf der Spendenseite finden Sie unsere Bankdaten.', en: 'Prefer a bank transfer? You\u2019ll find our bank details on the donation page.' },
+  'mislukt.opnieuw':    { nl: 'Probeer opnieuw', de: 'Erneut versuchen', en: 'Try again' },
+  'mislukt.terug':      { nl: 'Terug naar home', de: 'Zur\u00FCck zur Startseite', en: 'Back to home' },
 };
 
 function h4dGetLanguage() {
