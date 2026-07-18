@@ -34,7 +34,7 @@ if ($status === 'paid' && $frequency === 'maandelijks') {
             ],
             'interval' => '1 month',
             'description' => 'Maandelijkse donatie Hope for Dogs - €' . $amount,
-            'webhookUrl' => SITE_URL . '/api/mollie/webhook.php'
+            'webhookUrl' => siteBaseUrl() . '/api/mollie/webhook.php'
         ];
 
         mollieRequest('POST', '/customers/' . $customerId . '/subscriptions', $subscriptionData);
@@ -70,4 +70,17 @@ function mollieRequest($method, $endpoint, $data = null) {
     curl_close($ch);
 
     return json_decode($response, true) ?: [];
+}
+
+// Derive the site's base URL (scheme + host) from the incoming request.
+// Falls back to the SITE_URL constant if the host can't be determined.
+function siteBaseUrl() {
+    $https = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
+        || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
+        || (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on');
+    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+    if ($host === '') {
+        return defined('SITE_URL') ? rtrim(SITE_URL, '/') : '';
+    }
+    return ($https ? 'https' : 'http') . '://' . $host;
 }

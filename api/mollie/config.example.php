@@ -16,7 +16,10 @@
 
 define('MOLLIE_API_KEY', 'live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'); // <-- Replace with your Mollie API key
 
-// Base URL of your website (used for redirect and webhook URLs)
+// Base URL of your website. NOTE: redirect and webhook URLs are now
+// auto-detected from the incoming request domain, so this value is only
+// used as a fallback if the host can't be determined. No need to change
+// it when moving between temp/staging/live domains.
 define('SITE_URL', 'https://www.hopefordogseurope.com');
 
 // Mollie API base URL

@@ -42,6 +42,11 @@ if (MOLLIE_API_KEY === 'live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' || empty(MOLLIE_A
 $amountStr = number_format($amount, 2, '.', '');
 $description = 'Donatie Hope for Dogs - €' . $amountStr;
 
+// Build absolute URLs from the domain this request came in on, so the
+// redirect and webhook work on whatever domain is serving the site
+// (temp domain, staging, or the live domain) without editing config.
+$baseUrl = siteBaseUrl();
+
 if ($frequency === 'maandelijks') {
     // RECURRING: Create customer first, then first payment
     $customerId = null;
@@ -67,8 +72,8 @@ if ($frequency === 'maandelijks') {
             'value' => $amountStr
         ],
         'description' => $description . ' (eerste betaling)',
-        'redirectUrl' => SITE_URL . '/bedankt.html',
-        'webhookUrl' => SITE_URL . '/api/mollie/webhook.php',
+        'redirectUrl' => $baseUrl . '/bedankt.html',
+        'webhookUrl' => $baseUrl . '/api/mollie/webhook.php',
         'metadata' => [
             'frequency' => 'maandelijks',
             'amount' => $amountStr,
@@ -92,8 +97,8 @@ if ($frequency === 'maandelijks') {
             'value' => $amountStr
         ],
         'description' => $description,
-        'redirectUrl' => SITE_URL . '/bedankt.html',
-        'webhookUrl' => SITE_URL . '/api/mollie/webhook.php',
+        'redirectUrl' => $baseUrl . '/bedankt.html',
+        'webhookUrl' => $baseUrl . '/api/mollie/webhook.php',
         'metadata' => [
             'frequency' => 'eenmalig',
             'donor_name' => $name,
@@ -144,4 +149,17 @@ function mollieRequest($method, $endpoint, $data = null) {
     curl_close($ch);
 
     return json_decode($response, true) ?: [];
+}
+
+// Derive the site's base URL (scheme + host) from the incoming request.
+// Falls back to the SITE_URL constant if the host can't be determined.
+function siteBaseUrl() {
+    $https = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
+        || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
+        || (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on');
+    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+    if ($host === '') {
+        return defined('SITE_URL') ? rtrim(SITE_URL, '/') : '';
+    }
+    return ($https ? 'https' : 'http') . '://' . $host;
 }
