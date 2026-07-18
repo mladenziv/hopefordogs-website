@@ -625,7 +625,18 @@ foreach ($imgChunks as $chunk) {
 // Extract videos
 $videos = [];
 $seenVideos = [];
-$isVideoPost = strpos($originalUrl, '/reel/') !== false || strpos($originalUrl, '/watch/') !== false;
+// Treat as a video post for reels/watch/videos and share links (which redirect
+// to those), and — most reliably — whenever the page itself contains a native
+// video URL. Share links (/share/v/, /share/r/) don't have /reel/ or /watch/ in
+// the URL, so detect the markers directly.
+$isVideoPost = strpos($originalUrl, '/reel/') !== false
+    || strpos($originalUrl, '/watch/') !== false
+    || strpos($originalUrl, '/videos/') !== false
+    || strpos($originalUrl, '/share/v/') !== false
+    || strpos($originalUrl, '/share/r/') !== false
+    || strpos($html, 'browser_native_hd_url') !== false
+    || strpos($html, 'browser_native_sd_url') !== false
+    || strpos($html, 'playable_url') !== false;
 
 // og:video meta tags indicate this is a video post
 if (preg_match_all('/<meta\s+(?:property|name)=["\']og:video(?::url)?["\']\s+content=["\']([^"\']+)["\']/i', $html, $vidMatches)) {
