@@ -2985,12 +2985,19 @@
       video.src = src;
       video.autoplay = true;
       video.playsInline = true;
-      video.loop = true;
-      video.muted = true;
+      video.controls = true;
       video.setAttribute('playsinline', '');
-      video.style.pointerEvents = 'none';
+      // Keep clicks on the video/controls from bubbling to the card's
+      // onclick handler (which would toggle pause/play unexpectedly).
+      video.addEventListener('click', function(e) { e.stopPropagation(); });
       el.appendChild(video);
       el.classList.add('playing');
+      // Playback is user-initiated (a click), so sound is allowed. If a
+      // browser still blocks unmuted autoplay, fall back to muted playback.
+      var p = video.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(function() { video.muted = true; video.play(); });
+      }
     }
 
     async function loadSocialFeed() {
