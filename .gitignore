@@ -8,3 +8,6 @@ node_modules/
 
 # Mollie live API key — set directly on the server, never commit
 api/mollie/config.php
+
+# Supabase service_role key — set on server, never commit
+api/social-media/config.php
