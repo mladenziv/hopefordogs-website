@@ -40,6 +40,7 @@ $metadata = isset($payment['metadata']) ? $payment['metadata'] : [];
 echo json_encode([
     'status'    => $payment['status'],
     'frequency' => isset($metadata['frequency']) ? $metadata['frequency'] : 'eenmalig',
+    'email'     => isset($metadata['donor_email']) ? $metadata['donor_email'] : '',
 ]);
 
 // ---- Helper ----

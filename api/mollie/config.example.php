@@ -24,3 +24,10 @@ define('SITE_URL', 'https://www.hopefordogseurope.com');
 
 // Mollie API base URL
 define('MOLLIE_API_URL', 'https://api.mollie.com/v2');
+
+// Optional — donor confirmation email sender. If omitted, the webhook uses
+// these same defaults. Use an address on your own domain as the From for the
+// best deliverability (SPF/DKIM).
+define('DONATION_FROM_EMAIL', 'info@hopefordogseurope.com');
+define('DONATION_FROM_NAME', 'Hope for Dogs');
+define('DONATION_REPLY_TO', 'info@hopefordogs.nl');

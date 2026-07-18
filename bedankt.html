@@ -127,6 +127,7 @@
           </div>
           <h1 class="t-heading-lg" data-i18n="bedankt.hero">Wauw, heel erg bedankt!</h1>
           <p data-i18n="bedankt.sub">Je donatie is goed ontvangen. Hiermee help je ons om honden in nood te redden, de zorg te geven die ze verdienen en een nieuw thuis voor ze te vinden.</p>
+          <p id="email-note" class="status-note hidden"></p>
           <p id="pending-note" class="status-note hidden" data-i18n="bedankt.pending">Je betaling wordt nog verwerkt. Je ontvangt een bevestiging zodra deze is voltooid.</p>
           <div class="status-actions">
             <a href="index.html" class="btn-primary" data-i18n="bedankt.terug">Terug naar home</a>
@@ -142,9 +143,19 @@
   <script src="components.js?v=20"></script>
   <script>
     (function () {
-      var checking = document.getElementById('state-checking');
-      var success  = document.getElementById('state-success');
-      var pending  = document.getElementById('pending-note');
+      var checking  = document.getElementById('state-checking');
+      var success   = document.getElementById('state-success');
+      var pending   = document.getElementById('pending-note');
+      var emailNote = document.getElementById('email-note');
+      var donorEmail = '';
+
+      // Localized "we've sent a confirmation to X" line (built in JS because
+      // it contains a dynamic email address).
+      var EMAIL_NOTE = {
+        nl: 'We hebben een bevestiging gestuurd naar ',
+        de: 'Wir haben eine Bestätigung gesendet an ',
+        en: 'We’ve sent a confirmation to '
+      };
 
       function launchConfetti() {
         if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -175,6 +186,11 @@
         checking.classList.add('hidden');
         success.classList.remove('hidden');
         if (isPending) pending.classList.remove('hidden');
+        if (donorEmail) {
+          var lang = localStorage.getItem('h4d-lang') || 'nl';
+          emailNote.textContent = (EMAIL_NOTE[lang] || EMAIL_NOTE.nl) + donorEmail + '.';
+          emailNote.classList.remove('hidden');
+        }
         launchConfetti();
       }
       function goToFailure() {
@@ -201,6 +217,7 @@
         .then(function (r) { return r.json(); })
         .then(function (data) {
           localStorage.removeItem('h4d_payment_id');
+          donorEmail = (data && data.email) || '';
           handleStatus(data && data.status);
         })
         .catch(function () {
