@@ -5,3 +5,6 @@ node_modules/
 .cursor/
 *.sql
 *.jsonl
+
+# Mollie live API key — set directly on the server, never commit
+api/mollie/config.php
