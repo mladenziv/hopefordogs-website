@@ -319,15 +319,10 @@
           var raw = story.photo_url || 'images/placeholder-dog.svg';
           var desc = story.description || '';
           var adopter = story.adopter_name || '';
-          // Serve a resized copy of Supabase-hosted photos; fall back to the
-          // original if the resizer isn't available.
-          var isSupa = raw.indexOf('/storage/v1/object/public/') !== -1;
-          var displaySrc = isSupa ? ('api/img/?src=' + encodeURIComponent(raw) + '&w=700') : raw;
-          var onerr = isSupa ? (' onerror="this.onerror=null;this.src=\'' + raw.replace(/'/g, '%27') + '\'"') : '';
           // First 3 load eagerly (above the fold); the rest lazy + async decode
           var loadAttr = i < 3 ? 'eager' : 'lazy';
           return '<a href="ervaring.html?id=' + story.id + '" class="testimonial-card" style="animation-delay:' + (i * 0.05) + 's">' +
-            '<img src="' + displaySrc + '" alt="' + escapeAttr(story.dog_name) + '" class="testimonial-card-img" loading="' + loadAttr + '" decoding="async"' + onerr + '>' +
+            '<img src="' + raw + '" alt="' + escapeAttr(story.dog_name) + '" class="testimonial-card-img" loading="' + loadAttr + '" decoding="async">' +
             '<div class="testimonial-card-body">' +
               '<div class="testimonial-card-name t-heading-sm">' + escapeHtml(story.dog_name) + '</div>' +
               (adopter ? '<div class="testimonial-card-adopter">' + escapeHtml(adopter) + '</div>' : '') +

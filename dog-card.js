@@ -31,17 +31,11 @@ function dogCardHTML(dog, opts) {
   var safeName = escapeHTML(dog.naam);
   var safeDesc = escapeHTML(desc);
   var safeStatus = escapeHTML(dog.status);
-
-  // Serve a resized copy of Supabase-hosted card photos (much lighter than the
-  // originals); fall back to the original if the resizer isn't available.
-  var isSupa = typeof img === 'string' && img.indexOf('/storage/v1/object/public/') !== -1;
-  var displaySrc = isSupa ? ('api/img/?src=' + encodeURIComponent(img) + '&w=600') : img;
-  var safeImg = escapeHTML(displaySrc);
-  var onerr = isSupa ? (' onerror="this.onerror=null;this.src=\'' + escapeHTML(img).replace(/'/g, '%27') + '\'"') : '';
+  var safeImg = escapeHTML(img);
 
   var inner =
     '<div class="dog-card-inner">' +
-      '<img src="' + safeImg + '" alt="' + safeName + '" class="dog-card-img" loading="lazy" decoding="async"' + onerr + ' draggable="false">' +
+      '<img src="' + safeImg + '" alt="' + safeName + '" class="dog-card-img" loading="lazy" decoding="async" draggable="false">' +
       '<div class="dog-card-body">' +
         '<div class="dog-card-name">' + safeName + '</div>' +
         '<div class="dog-card-desc">' + safeDesc + '</div>' +
