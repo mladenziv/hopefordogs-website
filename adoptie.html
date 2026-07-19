@@ -476,7 +476,7 @@
       background: #fff;
       display: flex;
       justify-content: center;
-      padding: 80px 0;
+      padding: 72px 0;
       border-top: 1px solid rgba(0, 0, 0, 0.08);
     }
 
@@ -558,11 +558,12 @@
       .adopt-timeline-inner,
       .adopt-requirements-inner,
       .adopt-cta-inner { padding: 0 20px; }
-      .adopt-costs { padding: 64px 0; }
-      .adopt-steps { padding: 72px 0; }
-      .adopt-timeline { padding: 72px 0; }
-      .adopt-requirements { padding: 72px 0; }
-      .adopt-cta { padding: 56px 0; }
+      /* Consistent, tighter section spacing on mobile (like the over-ons page) */
+      .adopt-costs { padding: 48px 0; }
+      .adopt-steps { padding: 48px 0; }
+      .adopt-timeline { padding: 48px 0; }
+      .adopt-requirements { padding: 48px 0; }
+      .adopt-cta { padding: 48px 0; }
       /* Single column on phones so step cards can't overflow (grid items were
          held wider than the viewport by their min-content width). */
       .steps-grid { grid-template-columns: 1fr; }
