@@ -1815,7 +1815,7 @@ blockquote {
     display: flex;
     gap: 0;
     width: fit-content;
-    margin: 0 0 24px;
+    margin: 0;
     background: var(--beige);
     border-radius: 100px;
     padding: 4px;
@@ -1846,4 +1846,37 @@ blockquote {
 
 .cta-cost-custom {
     margin: 24px 0 0;
+}
+
+/* Donate section: frequency toggle + payment logos on one row */
+.cta-freq-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+/* Payment logos inside the toggle row: wrap + shrink on small screens
+   (2-class selectors so they win over the per-page .cta-payment-logos rules) */
+.cta-freq-row .cta-payment-logos {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    padding: 0;
+}
+@media (max-width: 767px) {
+    .cta-freq-row {
+        gap: 16px;
+    }
+    .cta-freq-row .cta-payment-logos {
+        justify-content: flex-start;
+        gap: 12px;
+        row-gap: 10px;
+    }
+    .cta-freq-row .cta-payment-logos img {
+        height: 22px;
+        width: auto;
+    }
 }
