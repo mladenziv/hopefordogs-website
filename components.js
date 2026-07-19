@@ -742,6 +742,15 @@ document.addEventListener('DOMContentLoaded', function () {
           return d.innerHTML;
         }
 
+        // Escape first (XSS-safe), then allow a tiny bit of formatting the admin
+        // can type: **bold** and line breaks (Enter in the answer field).
+        function faqFormat(str) {
+          var s = faqEscape(str);
+          s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+          s = s.replace(/\r\n|\r|\n/g, '<br>');
+          return s;
+        }
+
         function renderFaqCol(items) {
           return '<div class="faq-col">' + items.map(function(f) {
             var q = f['question_' + lang] || f.question_nl;
@@ -752,7 +761,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>' +
               '</button>' +
               '<div class="faq-answer">' +
-                '<div class="faq-answer-inner">' + faqEscape(a) + '</div>' +
+                '<div class="faq-answer-inner">' + faqFormat(a) + '</div>' +
               '</div>' +
             '</div>';
           }).join('') + '</div>';
