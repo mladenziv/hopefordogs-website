@@ -289,7 +289,7 @@
         }
 
         grid.innerHTML = stories.map(function(story, i) {
-          var img = story.photo_url || 'images/placeholder-dog.png';
+          var img = story.photo_url || 'images/placeholder-dog.svg';
           var desc = story.description || '';
           var adopter = story.adopter_name || '';
           return '<a href="ervaring.html?id=' + story.id + '" class="testimonial-card" style="animation-delay:' + (i * 0.05) + 's">' +

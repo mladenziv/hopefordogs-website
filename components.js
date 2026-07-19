@@ -7,6 +7,20 @@ var H4D_I18N = {
   'nav.adoptie':     { nl: 'Adoptie',     de: 'Adoption',     en: 'Adoption' },
   'nav.ervaringen':  { nl: 'Ervaringen',  de: 'Erfahrungen',  en: 'Experiences' },
   'nav.nieuws':      { nl: 'Nieuws',      de: 'Neuigkeiten',  en: 'News' },
+  'nav.contact':     { nl: 'Contact',     de: 'Kontakt',      en: 'Contact' },
+  'contact.hero':          { nl: 'Neem contact op', de: 'Kontakt aufnehmen', en: 'Get in touch' },
+  'contact.hero.sub':      { nl: 'Heb je een vraag over adoptie, ons werk of wil je helpen? Stuur ons een bericht — we reageren zo snel mogelijk.', de: 'Hast du eine Frage zur Adoption, zu unserer Arbeit oder möchtest du helfen? Schreib uns — wir antworten so schnell wie möglich.', en: 'Have a question about adoption, our work, or want to help? Send us a message — we’ll reply as soon as we can.' },
+  'contact.form.title':    { nl: 'Stuur ons een bericht', de: 'Schreib uns eine Nachricht', en: 'Send us a message' },
+  'contact.naam':          { nl: 'Naam', de: 'Name', en: 'Name' },
+  'contact.email':         { nl: 'E-mailadres', de: 'E-Mail-Adresse', en: 'Email address' },
+  'contact.telefoon':      { nl: 'Telefoonnummer (optioneel)', de: 'Telefonnummer (optional)', en: 'Phone number (optional)' },
+  'contact.onderwerp':     { nl: 'Onderwerp', de: 'Betreff', en: 'Subject' },
+  'contact.bericht':       { nl: 'Bericht', de: 'Nachricht', en: 'Message' },
+  'contact.verstuur':      { nl: 'Verstuur bericht', de: 'Nachricht senden', en: 'Send message' },
+  'contact.success.title': { nl: 'Bericht verstuurd!', de: 'Nachricht gesendet!', en: 'Message sent!' },
+  'contact.success.msg':   { nl: 'Bedankt voor je bericht. We nemen zo snel mogelijk contact met je op.', de: 'Danke für deine Nachricht. Wir melden uns so schnell wie möglich.', en: 'Thanks for your message. We’ll get back to you as soon as possible.' },
+  'contact.details.title': { nl: 'Direct contact', de: 'Direkter Kontakt', en: 'Direct contact' },
+  'contact.details.sub':   { nl: 'Liever mailen of via social media? Je vindt ons hier.', de: 'Lieber per E-Mail oder Social Media? Hier findest du uns.', en: 'Prefer email or social media? You’ll find us here.' },
   'nav.doneer':      { nl: 'Doneer nu',   de: 'Jetzt spenden', en: 'Donate now' },
   'nav.doneer.short':{ nl: 'Doneer',     de: 'Spenden',      en: 'Donate' },
   'nav.beheer':      { nl: 'Beheer',      de: 'Verwaltung',   en: 'Admin' },
@@ -42,7 +56,7 @@ var H4D_I18N = {
   'index.stat.subsidy':    { nl: 'Overheidssubsidie',         de: 'Staatliche Subvention',        en: 'Government subsidy' },
 
   // --- Index: Dogs section ---
-  'index.dogs.title':    { nl: 'Opzoek naar een warm huis', de: 'Auf der Suche nach einem warmen Zuhause', en: 'Looking for a loving home' },
+  'index.dogs.title':    { nl: 'Op zoek naar een warm huis', de: 'Auf der Suche nach einem warmen Zuhause', en: 'Looking for a loving home' },
   'index.dogs.subtitle': { nl: 'Elk van deze honden is gered van de straat, medisch behandeld en klaar voor een nieuw begin.', de: 'Jeder dieser Hunde wurde von der Stra\u00DFe gerettet, medizinisch versorgt und ist bereit f\u00FCr einen Neuanfang.', en: 'Each of these dogs was rescued from the streets, medically treated, and ready for a fresh start.' },
   'index.dogs.btn':      { nl: 'Bekijk alle honden', de: 'Alle Hunde ansehen', en: 'View all dogs' },
   'index.dogs.btn2':     { nl: 'Meer over adopteren', de: 'Mehr \u00FCber Adoption', en: 'More about adoption' },
@@ -94,7 +108,7 @@ var H4D_I18N = {
   'cta.mollie':     { nl: 'Veilig betalen via Mollie', de: 'Sicher bezahlen \u00FCber Mollie', en: 'Secure payment via Mollie' },
 
   // --- Other page hero headings ---
-  'honden.hero':     { nl: 'Lieverds opzoek naar een huisje', de: 'Lieblinge auf der Suche nach einem Zuhause', en: 'Sweethearts looking for a home' },
+  'honden.hero':     { nl: 'Lieverds op zoek naar een huisje', de: 'Lieblinge auf der Suche nach einem Zuhause', en: 'Sweethearts looking for a home' },
   'honden.adopted':  { nl: 'Whoohoo, wij zijn geadopteerd!', de: 'Juhu, wir sind adoptiert!', en: 'Woohoo, we\u2019ve been adopted!' },
   'honden.filter.alle':      { nl: 'Alle honden',     de: 'Alle Hunde',       en: 'All dogs' },
   'honden.filter.alle.short':      { nl: 'Alle',            de: 'Alle',             en: 'All' },
@@ -253,30 +267,30 @@ var H4D_I18N = {
   'ervaringen.cta.btn1': { nl: 'Bekijk onze honden', de: 'Unsere Hunde ansehen', en: 'View our dogs' },
 
   // --- Doneer page ---
-  'doneer.hero.sub':    { nl: 'Uw donatie maakt het verschil. Elke euro helpt ons om zwerfhonden te redden, te verzorgen en een nieuw thuis te geven.', de: 'Ihre Spende macht den Unterschied. Jeder Euro hilft uns, Stra\u00DFenhunde zu retten, zu versorgen und ein neues Zuhause zu geben.', en: 'Your donation makes the difference. Every euro helps us rescue stray dogs, care for them, and find them a new home.' },
+  'doneer.hero.sub':    { nl: 'Jouw donatie maakt het verschil. Elke euro helpt ons om zwerfhonden te redden, te verzorgen en een nieuw thuis te geven.', de: 'Ihre Spende macht den Unterschied. Jeder Euro hilft uns, Stra\u00DFenhunde zu retten, zu versorgen und ein neues Zuhause zu geben.', en: 'Your donation makes the difference. Every euro helps us rescue stray dogs, care for them, and find them a new home.' },
   'doneer.kies':        { nl: 'Kies een bedrag', de: 'W\u00E4hlen Sie einen Betrag', en: 'Choose an amount' },
   'doneer.anders':      { nl: 'Anders', de: 'Andere', en: 'Other' },
   'doneer.frequentie':  { nl: 'Frequentie', de: 'H\u00E4ufigkeit', en: 'Frequency' },
   'doneer.maandelijks': { nl: 'Maandelijks', de: 'Monatlich', en: 'Monthly' },
   'doneer.eenmalig':    { nl: 'Eenmalig', de: 'Einmalig', en: 'One-time' },
-  'doneer.gegevens':    { nl: 'Uw gegevens', de: 'Ihre Daten', en: 'Your details' },
-  'doneer.optioneel':   { nl: 'Optioneel - vul in als u een bevestiging wilt ontvangen', de: 'Optional - ausf\u00FCllen, wenn Sie eine Best\u00E4tigung erhalten m\u00F6chten', en: 'Optional - fill in if you want to receive a confirmation' },
+  'doneer.gegevens':    { nl: 'Jouw gegevens', de: 'Ihre Daten', en: 'Your details' },
+  'doneer.optioneel':   { nl: 'Optioneel - vul in als je een bevestiging wilt ontvangen', de: 'Optional - ausf\u00FCllen, wenn Sie eine Best\u00E4tigung erhalten m\u00F6chten', en: 'Optional - fill in if you want to receive a confirmation' },
   'doneer.naam':        { nl: 'Naam', de: 'Name', en: 'Name' },
   'doneer.email':       { nl: 'E-mailadres', de: 'E-Mail-Adresse', en: 'Email address' },
   'doneer.btn':         { nl: 'Doneer nu', de: 'Jetzt spenden', en: 'Donate now' },
-  'doneer.impact':      { nl: 'Uw donatie maakt impact', de: 'Ihre Spende hat Wirkung', en: 'Your donation makes an impact' },
+  'doneer.impact':      { nl: 'Jouw donatie maakt impact', de: 'Ihre Spende hat Wirkung', en: 'Your donation makes an impact' },
   'doneer.met10':       { nl: 'Met \u20AC10', de: 'Mit \u20AC10', en: 'With \u20AC10' },
-  'doneer.met10.d':     { nl: 'Voorziet u een hond een week lang van voer. Zo hoeft geen enkel hondje met een lege maag te slapen.', de: 'Versorgen Sie einen Hund eine Woche lang mit Futter. So muss kein Hund mit leerem Magen schlafen.', en: 'You provide a dog with food for a week. No dog has to sleep on an empty stomach.' },
+  'doneer.met10.d':     { nl: 'Voorzie je een hond een week lang van voer. Zo hoeft geen enkel hondje met een lege maag te slapen.', de: 'Versorgen Sie einen Hund eine Woche lang mit Futter. So muss kein Hund mit leerem Magen schlafen.', en: 'You provide a dog with food for a week. No dog has to sleep on an empty stomach.' },
   'doneer.met25':       { nl: 'Met \u20AC25', de: 'Mit \u20AC25', en: 'With \u20AC25' },
-  'doneer.met25.d':     { nl: 'Betaalt u de vaccinaties voor een puppy. Een gezonde start is essentieel voor hun toekomst.', de: 'Bezahlen Sie die Impfungen f\u00FCr einen Welpen. Ein gesunder Start ist wichtig f\u00FCr ihre Zukunft.', en: 'You pay for a puppy\u2019s vaccinations. A healthy start is essential for their future.' },
+  'doneer.met25.d':     { nl: 'Betaal je de vaccinaties voor een puppy. Een gezonde start is essentieel voor hun toekomst.', de: 'Bezahlen Sie die Impfungen f\u00FCr einen Welpen. Ein gesunder Start ist wichtig f\u00FCr ihre Zukunft.', en: 'You pay for a puppy\u2019s vaccinations. A healthy start is essential for their future.' },
   'doneer.met50':       { nl: 'Met \u20AC50', de: 'Mit \u20AC50', en: 'With \u20AC50' },
-  'doneer.met50.d':     { nl: 'Financiert u de sterilisatie van een zwerfhond. Dit helpt de eindeloze cyclus te doorbreken.', de: 'Finanzieren Sie die Sterilisation eines Stra\u00DFenhundes. Dies hilft, den endlosen Kreislauf zu durchbrechen.', en: 'You fund the sterilization of a stray dog. This helps break the endless cycle.' },
-  'doneer.waargaat':    { nl: 'Waar gaat uw geld naartoe?', de: 'Wohin flie\u00DFt Ihr Geld?', en: 'Where does your money go?' },
+  'doneer.met50.d':     { nl: 'Financier je de sterilisatie van een zwerfhond. Dit helpt de eindeloze cyclus te doorbreken.', de: 'Finanzieren Sie die Sterilisation eines Stra\u00DFenhundes. Dies hilft, den endlosen Kreislauf zu durchbrechen.', en: 'You fund the sterilization of a stray dog. This helps break the endless cycle.' },
+  'doneer.waargaat':    { nl: 'Waar gaat jouw geld naartoe?', de: 'Wohin flie\u00DFt Ihr Geld?', en: 'Where does your money go?' },
   'doneer.bank':        { nl: 'Liever via bankoverschrijving?', de: 'Lieber per Bank\u00FCberweisung?', en: 'Prefer bank transfer?' },
-  'doneer.bank.sub':    { nl: 'U kunt ook direct een donatie overmaken naar onze bankrekening. Elke bijdrage, groot of klein, wordt enorm gewaardeerd.', de: 'Sie k\u00F6nnen auch direkt eine Spende auf unser Bankkonto \u00FCberweisen. Jeder Beitrag, gro\u00DF oder klein, wird sehr gesch\u00E4tzt.', en: 'You can also transfer a donation directly to our bank account. Every contribution, big or small, is greatly appreciated.' },
+  'doneer.bank.sub':    { nl: 'Je kunt ook direct een donatie overmaken naar onze bankrekening. Elke bijdrage, groot of klein, wordt enorm gewaardeerd.', de: 'Sie k\u00F6nnen auch direkt eine Spende auf unser Bankkonto \u00FCberweisen. Jeder Beitrag, gro\u00DF oder klein, wird sehr gesch\u00E4tzt.', en: 'You can also transfer a donation directly to our bank account. Every contribution, big or small, is greatly appreciated.' },
   'doneer.omschrijving':    { nl: 'Omschrijving', de: 'Verwendungszweck', en: 'Description' },
   'doneer.donatie':         { nl: 'Donatie', de: 'Spende', en: 'Donation' },
-  'doneer.vermeld':         { nl: "Vermeld 'Donatie' bij de omschrijving zodat wij uw bijdrage correct kunnen verwerken.", de: "Geben Sie 'Spende' als Verwendungszweck an, damit wir Ihren Beitrag korrekt verarbeiten k\u00F6nnen.", en: "Enter 'Donation' as the description so we can process your contribution correctly." },
+  'doneer.vermeld':         { nl: "Vermeld 'Donatie' bij de omschrijving zodat wij jouw bijdrage correct kunnen verwerken.", de: "Geben Sie 'Spende' als Verwendungszweck an, damit wir Ihren Beitrag korrekt verarbeiten k\u00F6nnen.", en: "Enter 'Donation' as the description so we can process your contribution correctly." },
 
   // ===== Payment result pages (bedankt.html / betaling-mislukt.html) =====
   'bedankt.checking':   { nl: 'Even geduld, we bevestigen je betaling...', de: 'Einen Moment, wir best\u00E4tigen deine Zahlung...', en: 'One moment, we\u2019re confirming your payment...' },
@@ -296,6 +310,13 @@ function h4dGetLanguage() {
   return localStorage.getItem('h4d-lang') || 'nl';
 }
 
+// Rounded flag icons for the language selector (clipped to a circle via CSS)
+var H4D_FLAGS = {
+  nl: '<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice"><rect width="3" height="2" fill="#fff"/><rect width="3" height=".6667" fill="#AE1C28"/><rect y="1.3333" width="3" height=".6667" fill="#21468B"/></svg>',
+  de: '<svg viewBox="0 0 5 3" preserveAspectRatio="xMidYMid slice"><rect width="5" height="3" fill="#FFCE00"/><rect width="5" height="2" fill="#DD0000"/><rect width="5" height="1"/></svg>',
+  en: '<svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice"><rect width="60" height="30" fill="#012169"/><path d="M0 0 60 30 M60 0 0 30" stroke="#fff" stroke-width="6"/><path d="M0 0 60 30 M60 0 0 30" stroke="#C8102E" stroke-width="4"/><rect x="25" width="10" height="30" fill="#fff"/><rect y="10" width="60" height="10" fill="#fff"/><rect x="27" width="6" height="30" fill="#C8102E"/><rect y="12" width="60" height="6" fill="#C8102E"/></svg>'
+};
+
 function h4dSetLanguage(lang) {
   // Update all elements with data-i18n (text content)
   document.querySelectorAll('[data-i18n]').forEach(function (el) {
@@ -311,10 +332,10 @@ function h4dSetLanguage(lang) {
       el.innerHTML = H4D_I18N[key][lang];
     }
   });
-  // Update the nav lang button label
-  var langLabel = document.querySelector('.nav-lang-label');
-  if (langLabel) {
-    langLabel.textContent = { nl: 'NL', de: 'DE', en: 'EN' }[lang] || 'NL';
+  // Update the nav lang button flag
+  var langFlag = document.getElementById('navLangFlag');
+  if (langFlag && H4D_FLAGS[lang]) {
+    langFlag.innerHTML = H4D_FLAGS[lang];
   }
   // Update active state in dropdown
   document.querySelectorAll('.nav-lang-option').forEach(function (opt) {
@@ -356,26 +377,19 @@ document.addEventListener('DOMContentLoaded', function () {
             '<a href="adoptie.html" data-nav="adoptie" data-i18n="nav.adoptie">Adoptie</a>' +
             '<a href="ervaringen.html" data-nav="ervaringen" data-i18n="nav.ervaringen">Ervaringen</a>' +
             '<a href="nieuws.html" data-nav="nieuws" data-i18n="nav.nieuws">Nieuws</a>' +
+            '<a href="contact.html" data-nav="contact" data-i18n="nav.contact">Contact</a>' +
           '</div>' +
         '</div>' +
         '<div class="nav-right">' +
-          '<div class="nav-socials">' +
-            '<a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener noreferrer" class="nav-social-icon" title="Facebook">' +
-              '<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' +
-            '</a>' +
-            '<a href="https://www.tiktok.com/@hope_for_dogs_europe" target="_blank" rel="noopener noreferrer" class="nav-social-icon" title="TikTok">' +
-              '<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.78a8.21 8.21 0 004.77 1.52V6.84a4.86 4.86 0 01-1-.15z"/></svg>' +
-            '</a>' +
-          '</div>' +
           '<div class="nav-lang">' +
-            '<button class="nav-lang-btn" id="navLangBtn">' +
-              '<span class="nav-lang-label">NL</span>' +
+            '<button class="nav-lang-btn" id="navLangBtn" aria-label="Taal / Language">' +
+              '<span class="nav-lang-flag" id="navLangFlag">' + H4D_FLAGS.nl + '</span>' +
               '<svg class="nav-lang-arrow" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.25L7 8.75l3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
             '</button>' +
             '<div class="nav-lang-dropdown" id="navLangDropdown">' +
-              '<a href="#" class="nav-lang-option active" data-lang="nl">Nederlands</a>' +
-              '<a href="#" class="nav-lang-option" data-lang="de">Deutsch</a>' +
-              '<a href="#" class="nav-lang-option" data-lang="en">English</a>' +
+              '<a href="#" class="nav-lang-option active" data-lang="nl"><span class="nav-lang-flag">' + H4D_FLAGS.nl + '</span>Nederlands</a>' +
+              '<a href="#" class="nav-lang-option" data-lang="de"><span class="nav-lang-flag">' + H4D_FLAGS.de + '</span>Deutsch</a>' +
+              '<a href="#" class="nav-lang-option" data-lang="en"><span class="nav-lang-flag">' + H4D_FLAGS.en + '</span>English</a>' +
             '</div>' +
           '</div>' +
           '<a href="doneer.html" class="nav-btn nav-btn-desktop" data-nav="doneer" data-i18n="nav.doneer">Doneer nu</a>' +
@@ -388,9 +402,9 @@ document.addEventListener('DOMContentLoaded', function () {
     '<div class="nav-dropdown" id="navDropdown">' +
       '<div class="nav-dropdown-section-label" data-i18n="nav.taal">Taal</div>' +
       '<div class="nav-dropdown-lang">' +
-        '<a href="#" class="nav-dropdown-lang-opt" data-lang="nl">Nederlands</a>' +
-        '<a href="#" class="nav-dropdown-lang-opt" data-lang="de">Deutsch</a>' +
-        '<a href="#" class="nav-dropdown-lang-opt" data-lang="en">English</a>' +
+        '<a href="#" class="nav-dropdown-lang-opt" data-lang="nl"><span class="nav-lang-flag">' + H4D_FLAGS.nl + '</span>Nederlands</a>' +
+        '<a href="#" class="nav-dropdown-lang-opt" data-lang="de"><span class="nav-lang-flag">' + H4D_FLAGS.de + '</span>Deutsch</a>' +
+        '<a href="#" class="nav-dropdown-lang-opt" data-lang="en"><span class="nav-lang-flag">' + H4D_FLAGS.en + '</span>English</a>' +
       '</div>' +
       '<div class="nav-dropdown-divider"></div>' +
       '<div class="nav-dropdown-socials">' +
@@ -618,14 +632,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var clockSvg = '<svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>';
     var teamMembers = [
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/2a449ff9-1f76-4ff6-89c7-c7f29051ca88/6e83e274-fe27-44f8-beae-24932940c108.JPG', name: 'Slavica', role: 'Oprichtster &amp; asiel', years: '10+ jaar' },
-      { img: 'images/about/team/jennifer.jpg', name: 'Jennifer', role: 'Co\u00F6rdinator NL', years: '5 jaar' },
-      { img: 'images/about/team/merel.jpg', name: 'Merel', role: 'Vrijwilliger', years: '1 jaar' },
+      { img: 'images/about/team/jennifer.webp', name: 'Jennifer', role: 'Co\u00F6rdinator NL', years: '5 jaar' },
+      { img: 'images/about/team/merel.webp', name: 'Merel', role: 'Vrijwilliger', years: '1 jaar' },
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/ebb7b2e5-6a34-4acb-a01d-467f31a10266/1000608236.jpg', name: 'Mira', role: 'Vrijwilliger', years: '3 jaar' },
       { img: 'images/about/mira2.webp', name: 'Mira', role: 'Vrijwilliger', years: '1 jaar' },
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/208b8755-bb96-4fe5-b237-10bab1fb0eb7/lindsay.jpg', name: 'Lindsay', role: 'Vrijwilliger', years: '2 jaar' },
-      { img: 'images/about/team/aleksandra.jpg', name: 'Aleksandra', role: 'Vrijwilliger', years: '3 jaar' },
-      { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/aa04d042-485e-4fa2-b768-ea4e50906ab5/10152aeb-3d7f-420f-9d22-e3472537d4e2+%281%29.jpg', name: 'Ivana', role: 'Asiel', years: '8 jaar' },
-      { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/ffbbbe65-db73-474a-b484-4c4f1acaf25b/348892586_1445678299527776_3873644328475865037_n.jpeg', name: 'Mladen', role: 'Asiel', years: '8 jaar' },
+      { img: 'images/about/team/aleksandra.webp', name: 'Aleksandra', role: 'Vrijwilliger', years: '3 jaar' },
+      { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/aa04d042-485e-4fa2-b768-ea4e50906ab5/10152aeb-3d7f-420f-9d22-e3472537d4e2+%281%29.jpg', name: 'Ivana', role: 'Vrijwilliger', years: '8 jaar' },
+      { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/ffbbbe65-db73-474a-b484-4c4f1acaf25b/348892586_1445678299527776_3873644328475865037_n.jpeg', name: 'Mladen', role: 'Vrijwilliger', years: '8 jaar' },
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/078ee273-80ad-416e-99ae-b15172473079/noella.jpg', name: 'No\u00EBlla', role: 'Vrijwilliger', years: '2 jaar' },
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/413db489-786e-4436-8eb7-d2d3bbe645ce/IMG-20260125-WA0077.jpg', name: 'Eva', role: 'Vrijwilliger', years: '1 jaar' }
     ];

@@ -12,7 +12,7 @@ function escapeHTML(str) {
 
 function dogCardHTML(dog, opts) {
   opts = opts || {};
-  var img = dog.photo || (dog.photos && dog.photos.length > 0 ? dog.photos[0].photo_url : null) || 'images/placeholder-dog.png';
+  var img = dog.photo || (dog.photos && dog.photos.length > 0 ? dog.photos[0].photo_url : null) || 'images/placeholder-dog.svg';
   var breed = dog.ras || '';
   var sizeStr = dog.grootte === 'klein' ? 'Klein' : dog.grootte === 'middel' ? 'Middel' : dog.grootte === 'groot' ? 'Groot' : '';
   var desc = (dog.beschrijving && !dog.beschrijving.startsWith('http'))
