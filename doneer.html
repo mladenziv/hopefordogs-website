@@ -547,6 +547,19 @@
         gap: 8px;
       }
 
+      /* Full-width Maandelijks/Eenmalig toggle on mobile */
+      .frequency-toggle { width: 100%; }
+      .frequency-btn { flex: 1; }
+
+      /* Match the payment icon size used in the home donate section (20px) */
+      .payment-trust-logos img { height: 20px; width: auto; }
+
+      /* Divider between the two stacked help columns (item 3 -> item 4): the
+         last item of column 1 has no border, so add one where they meet. */
+      #help-placeholder .faq-col + .faq-col {
+        border-top: 0.5px solid rgba(0, 0, 0, 0.12);
+      }
+
       .amount-btn {
         padding: 12px 18px;
         min-width: 60px;
@@ -694,50 +707,10 @@
     </div>
   </section>
 
+  <div class="faq-divider"></div>
+
   <!-- HOW YOU CAN HELP (accordion, rendered by help-section.js) -->
   <section class="faq" id="help-placeholder"></section>
-
-  <!-- TRUST SECTION -->
-  <section class="trust-section">
-    <div class="trust-inner">
-      <div class="trust-content">
-        <h2 data-i18n="doneer.waargaat">Waar gaat jouw geld naartoe?</h2>
-        <ul class="trust-list">
-          <li>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="12" fill="rgb(255, 83, 20)" opacity="0.1"/>
-              <path d="M7 12.5l3 3 7-7" stroke="rgb(255, 83, 20)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span><strong>Dagelijks voer</strong> - Elke hond in ons asiel krijgt dagelijks kwalitatief voer om gezond en sterk te blijven.</span>
-          </li>
-          <li>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="12" fill="rgb(255, 83, 20)" opacity="0.1"/>
-              <path d="M7 12.5l3 3 7-7" stroke="rgb(255, 83, 20)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span><strong>Medische zorg en vaccinaties</strong> - Alle honden die we opnemen krijgen direct diergeneeskundige zorg en hun benodigde vaccinaties.</span>
-          </li>
-          <li>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="12" fill="rgb(255, 83, 20)" opacity="0.1"/>
-              <path d="M7 12.5l3 3 7-7" stroke="rgb(255, 83, 20)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span><strong>Sterilisatie en castratie</strong> - We proberen zoveel mogelijk zwerfhonden te steriliseren om de eindeloze cyclus te doorbreken.</span>
-          </li>
-          <li>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="12" fill="rgb(255, 83, 20)" opacity="0.1"/>
-              <path d="M7 12.5l3 3 7-7" stroke="rgb(255, 83, 20)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span><strong>Transport naar hun nieuwe thuis</strong> - Het veilig vervoeren van honden naar hun adoptiegezinnen in Nederland en Belgi&euml;.</span>
-          </li>
-        </ul>
-      </div>
-      <div class="trust-image">
-        <img src="images/shelter-dogs.webp" alt="Onze honden in het asiel" loading="lazy">
-      </div>
-    </div>
-  </section>
 
   <!-- BANK TRANSFER SECTION -->
   <section class="bank-section">

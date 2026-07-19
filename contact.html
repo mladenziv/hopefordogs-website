@@ -34,9 +34,13 @@
       align-items: start;
     }
     /* Keep the FAQ on this page the same width as the contact block */
-    .contact-section + .faq .faq-inner,
-    #faq-placeholder ~ * .faq-inner,
     .faq .faq-inner { max-width: 960px; }
+    /* Single-column FAQ on the contact page (the two columns stack in order) */
+    .faq .faq-cols { flex-direction: column; gap: 0; }
+    .faq .faq-col { padding-bottom: 0; }
+    /* Re-add a divider where the two columns meet, since the first column's
+       last item drops its border. */
+    .faq .faq-col + .faq-col { border-top: 0.5px solid rgba(0, 0, 0, 0.12); }
     .contact-form-wrap h2,
     .contact-details h2 {
       font-family: 'Nunito', sans-serif;
