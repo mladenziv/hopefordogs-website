@@ -587,6 +587,26 @@
     .impact-card:nth-child(1) { animation-delay: 0.1s; }
     .impact-card:nth-child(2) { animation-delay: 0.2s; }
     .impact-card:nth-child(3) { animation-delay: 0.3s; }
+
+    /* "Hoe kunt u helpen?" accordion (rich content in the FAQ component) */
+    .help-intro {
+      max-width: 760px;
+      margin: -16px 0 0;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.7;
+      color: var(--dark-2);
+    }
+    .help-answer-inner p { margin: 0 0 12px; }
+    .help-answer-inner p:last-child { margin-bottom: 0; }
+    .help-answer-inner ul { margin: 0 0 12px; padding-left: 20px; }
+    .help-answer-inner li { margin-bottom: 6px; }
+    .help-answer-inner li:last-child { margin-bottom: 0; }
+    .help-answer-inner strong { color: var(--dark-1); font-weight: 700; }
+    .help-cta { display: flex; justify-content: flex-start; }
+    @media (max-width: 767px) {
+      .help-cta .btn-primary { width: 100%; text-align: center; justify-content: center; }
+    }
   </style>
 </head>
 <body>
@@ -762,6 +782,9 @@
     </div>
   </section>
 
+  <!-- HOW YOU CAN HELP (accordion, rendered by help-section.js) -->
+  <section class="faq" id="help-placeholder"></section>
+
   <!-- BANK TRANSFER SECTION -->
   <section class="bank-section">
     <div class="bank-inner">
@@ -797,6 +820,7 @@
   <div id="footer-placeholder"></div>
 
   <script src="components.js?v=20"></script>
+  <script src="help-section.js"></script>
 
   <!-- JAVASCRIPT: Donation form logic & Mollie integration -->
   <script>
