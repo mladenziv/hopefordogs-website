@@ -1474,6 +1474,17 @@
       outline: none;
     }
 
+    /* Instagram embed (portrait player) inside the overlay */
+    .ba-video-overlay .ba-video-frame {
+      width: 100%;
+      max-width: 420px;
+      height: 88vh;
+      max-height: 720px;
+      border: none;
+      border-radius: 12px;
+      background: #fff;
+    }
+
     .ba-video-close {
       position: absolute;
       top: 20px;
@@ -2715,6 +2726,7 @@
   <div class="ba-video-overlay" id="baVideoOverlay" onclick="closeBAVideo(event)">
     <button class="ba-video-close" onclick="closeBAVideo(event, true)" aria-label="Sluiten">&#10005;</button>
     <video id="baVideoEl" controls playsinline></video>
+    <iframe id="baVideoFrame" class="ba-video-frame" allow="autoplay; encrypted-media; clipboard-write; picture-in-picture; fullscreen" allowfullscreen scrolling="no" style="display:none"></iframe>
   </div>
 
   <!-- DOG MODAL (shared with honden.html) -->
@@ -3225,26 +3237,48 @@
       showBAStory(currentBA);
     }
 
+    // Instagram videos can't be downloaded, so we embed them. Returns the
+    // embed URL for an Instagram link, or null for a normal (mp4) video.
+    function instagramEmbedUrl(url) {
+      if (!url || url.indexOf('instagram.com') === -1) return null;
+      var m = url.match(/instagram\.com\/(reel|reels|p|tv)\/([A-Za-z0-9_-]+)/);
+      if (!m) return null;
+      var type = (m[1] === 'p' || m[1] === 'tv') ? 'p' : 'reel';
+      return 'https://www.instagram.com/' + type + '/' + m[2] + '/embed/';
+    }
+
     function openBAVideo() {
       var story = baStories[currentBA];
       if (!story || !story.videoUrl) return;
       var el = document.getElementById('baVideoEl');
+      var fr = document.getElementById('baVideoFrame');
       var ov = document.getElementById('baVideoOverlay');
-      el.src = story.videoUrl;
+      var ig = instagramEmbedUrl(story.videoUrl);
+      if (ig) {
+        el.style.display = 'none';
+        fr.style.display = '';
+        fr.src = ig;
+      } else {
+        fr.style.display = 'none';
+        el.style.display = '';
+        el.src = story.videoUrl;
+        var p = el.play();
+        if (p && typeof p.catch === 'function') { p.catch(function () {}); }
+      }
       ov.classList.add('active');
       document.body.style.overflow = 'hidden';
-      var p = el.play();
-      if (p && typeof p.catch === 'function') { p.catch(function () {}); }
     }
 
     function closeBAVideo(e, force) {
       var ov = document.getElementById('baVideoOverlay');
       if (!ov.classList.contains('active')) return;
-      if (!force && e && e.target !== ov) return; // ignore clicks on the video itself
+      if (!force && e && e.target !== ov) return; // ignore clicks on the video/embed itself
       var el = document.getElementById('baVideoEl');
+      var fr = document.getElementById('baVideoFrame');
       el.pause();
       el.removeAttribute('src');
       el.load();
+      fr.removeAttribute('src');
       ov.classList.remove('active');
       document.body.style.overflow = '';
     }
