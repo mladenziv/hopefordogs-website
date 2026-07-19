@@ -817,6 +817,26 @@
                 .step-desc {
                     max-width: none;
                 }
+
+                /* Match section side padding to the team section (20px), not 40px */
+                .intro-inner,
+                .shelter-inner,
+                .timeline-inner,
+                .cta-final-inner {
+                    padding-left: 20px;
+                    padding-right: 20px;
+                }
+
+                /* Donate cards: let the 2-col grid items shrink to fit instead of
+                   holding a 200px min-width that overflows the viewport (h-scroll). */
+                .cta-cost-item {
+                    min-width: 0;
+                    flex: unset;
+                    padding: 8px;
+                }
+                .cta-cost-btn {
+                    display: none;
+                }
             }
         </style>
     </head>
