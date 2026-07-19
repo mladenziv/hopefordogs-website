@@ -1515,7 +1515,9 @@
                     );
 
                     renderDogs();
-                    renderAdopted();
+                    // Defer the large adopted section to a later frame so the
+                    // available dogs paint and become tappable immediately.
+                    requestAnimationFrame(renderAdopted);
                 } catch (err) {
                     console.error("Error loading dogs:", err);
                     document.getElementById("dogsGrid").innerHTML =
@@ -1576,20 +1578,38 @@
                 }
 
                 const adoptedLabel = t("honden.geadopteerd");
-                grid.innerHTML = adoptedDogs
-                    .map((dog, index) => {
-                        const img = getPhoto(dog);
-                        return `
+                const adoptedCardHTML = (dog, index) => {
+                    const img = getPhoto(dog);
+                    return `
           <a href="hond.html?id=${dog.id}" class="adopted-card" style="animation-delay: ${index * 0.05}s; text-decoration: none; color: inherit;">
             <span class="adopted-badge">${adoptedLabel}</span>
-            <img src="${img}" alt="${dog.naam}" class="adopted-card-img">
+            <img src="${img}" alt="${dog.naam}" class="adopted-card-img" loading="lazy" decoding="async">
             <div class="adopted-card-body">
               <div class="adopted-card-name">${dog.naam}</div>
             </div>
           </a>
         `;
-                    })
-                    .join("");
+                };
+
+                // There can be hundreds of adopted dogs. Rendering them all at
+                // once (plus eagerly loading every image) blocks the main thread
+                // for several seconds on mobile, which left the available dog
+                // cards up top untappable until it finished. Render in small
+                // chunks across animation frames so the thread stays responsive;
+                // images are lazy so only the ones scrolled into view load.
+                grid.innerHTML = "";
+                let ai = 0;
+                const ADOPTED_CHUNK = 24;
+                const renderAdoptedChunk = () => {
+                    let html = "";
+                    const end = Math.min(ai + ADOPTED_CHUNK, adoptedDogs.length);
+                    for (; ai < end; ai++) html += adoptedCardHTML(adoptedDogs[ai], ai);
+                    grid.insertAdjacentHTML("beforeend", html);
+                    if (ai < adoptedDogs.length) {
+                        requestAnimationFrame(renderAdoptedChunk);
+                    }
+                };
+                requestAnimationFrame(renderAdoptedChunk);
             }
 
             // Filter tabs interaction

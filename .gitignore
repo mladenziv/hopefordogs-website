@@ -11,3 +11,6 @@ api/mollie/config.php
 
 # Supabase service_role key — set on server, never commit
 api/social-media/config.php
+
+# Manual backups (pre-edit copies)
+/backups/
