@@ -2309,7 +2309,9 @@
         width: 100%;
         min-height: auto;
       }
-      .ba-nav { margin-top: 0; order: 5; width: 100%; gap: 12px; }
+      .ba-nav { margin-top: 0; order: 5; width: 100%; gap: 12px; justify-content: center; }
+      /* Center all before/after text + buttons on mobile (full width) */
+      .ba-label, .ba-title, .ba-description { text-align: center; }
       /* Compact buttons on mobile: play = "Video", next = arrow-only icon */
       .ba-btn-full { display: none; }
       .ba-btn-short { display: inline; }
