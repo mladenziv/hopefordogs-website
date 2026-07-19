@@ -2075,7 +2075,7 @@
 
                     try {
                         var body = {
-                            dog_id: contactDogId,
+                            dog_id: contactDogId, hond: (document.getElementById("contactDogName").textContent || "").trim(),
                             naam: document
                                 .getElementById("contactNaam")
                                 .value.trim(),
@@ -2091,25 +2091,15 @@
                                 .value.trim(),
                         };
 
-                        var res = await fetch(
-                            SUPABASE_URL + "/rest/v1/contact_messages",
-                            {
-                                method: "POST",
-                                headers: {
-                                    apikey: SUPABASE_ANON_KEY,
-                                    Authorization:
-                                        "Bearer " + SUPABASE_ANON_KEY,
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify(body),
-                            },
-                        );
+                        var res = await fetch("/api/contact/", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(body),
+                        });
+                        var data = await res.json();
 
-                        if (!res.ok) {
-                            var errBody = await res.text();
-                            throw new Error(
-                                "HTTP " + res.status + ": " + errBody,
-                            );
+                        if (!res.ok || !data.success) {
+                            throw new Error((data && data.error) || ("HTTP " + res.status));
                         }
 
                         document.getElementById("contactForm").style.display =

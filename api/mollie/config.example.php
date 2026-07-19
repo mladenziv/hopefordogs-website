@@ -30,4 +30,4 @@ define('MOLLIE_API_URL', 'https://api.mollie.com/v2');
 // best deliverability (SPF/DKIM).
 define('DONATION_FROM_EMAIL', 'info@hopefordogseurope.com');
 define('DONATION_FROM_NAME', 'Hope for Dogs');
-define('DONATION_REPLY_TO', 'info@hopefordogs.nl');
+define('DONATION_REPLY_TO', 'info@hopefordogseurope.com');

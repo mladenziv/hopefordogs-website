@@ -126,7 +126,7 @@ function markProcessed($paymentId) {
 function sendDonationConfirmation($to, $name, $amountValue, $frequency) {
     $fromEmail = defined('DONATION_FROM_EMAIL') ? DONATION_FROM_EMAIL : 'info@hopefordogseurope.com';
     $fromName  = defined('DONATION_FROM_NAME')  ? DONATION_FROM_NAME  : 'Hope for Dogs';
-    $replyTo   = defined('DONATION_REPLY_TO')   ? DONATION_REPLY_TO   : 'info@hopefordogs.nl';
+    $replyTo   = defined('DONATION_REPLY_TO')   ? DONATION_REPLY_TO   : 'info@hopefordogseurope.com';
 
     $isMonthly = ($frequency === 'maandelijks');
     $greeting  = $name !== '' ? ('Beste ' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8')) : 'Beste donateur';

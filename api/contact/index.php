@@ -37,11 +37,17 @@ if ($naam === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || $bericht === '
     exit;
 }
 
+// Optional dog inquiry: dog_id (a UUID) links the message to a specific dog;
+// "hond" is that dog's name (for the notification email only).
+$dogId = (isset($input['dog_id']) && is_string($input['dog_id']) && preg_match('/^[0-9a-fA-F-]{36}$/', $input['dog_id']))
+    ? $input['dog_id'] : null;
+$hond  = isset($input['hond']) ? trim($input['hond']) : '';
+
 // Fold the optional subject into the message body (no dedicated column).
 $fullMessage = ($onderwerp !== '' ? ('Onderwerp: ' . $onderwerp . "\n\n") : '') . $bericht;
 
 $row = [
-    'dog_id'   => null,
+    'dog_id'   => $dogId,
     'naam'     => $naam,
     'email'    => $email,
     'telefoon' => ($telefoon !== '' ? $telefoon : null),
@@ -74,9 +80,11 @@ if ($code < 200 || $code >= 300) {
 }
 
 // Best-effort email notification to the team (does not affect the response).
-$to      = 'info@hopefordogs.nl';
-$subject = '=?UTF-8?B?' . base64_encode('Nieuw contactbericht via de website') . '?=';
+$to      = 'info@hopefordogseurope.com';
+$subjectText = $hond !== '' ? ('Interesse in ' . $hond . ' — via de website') : 'Nieuw contactbericht via de website';
+$subject = '=?UTF-8?B?' . base64_encode($subjectText) . '?=';
 $body    = "Naam: $naam\nE-mail: $email\nTelefoon: " . ($telefoon !== '' ? $telefoon : '-') . "\n"
+         . ($hond !== '' ? "Interesse in hond: $hond\n" : '')
          . ($onderwerp !== '' ? "Onderwerp: $onderwerp\n" : '')
          . "\nBericht:\n$bericht\n";
 $fromEmail = defined('DONATION_FROM_EMAIL') ? DONATION_FROM_EMAIL : 'info@hopefordogseurope.com';

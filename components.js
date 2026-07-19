@@ -604,7 +604,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '<div class="footer-col">' +
               '<h4 data-i18n="footer.contact">Contact</h4>' +
               '<ul>' +
-                '<li><a href="mailto:info@hopefordogs.nl">info@hopefordogs.nl</a></li>' +
+                '<li><a href="mailto:info@hopefordogseurope.com">info@hopefordogseurope.com</a></li>' +
                 '<li><a href="https://www.facebook.com/hopefordogseurope" target="_blank">Facebook</a></li>' +
                 '<li><a href="https://www.tiktok.com/@hope_for_dogs_europe" target="_blank">TikTok</a></li>' +
               '</ul>' +
@@ -831,7 +831,7 @@ document.addEventListener('DOMContentLoaded', function () {
     "url": "https://www.hopefordogseurope.com",
     "logo": "https://www.hopefordogseurope.com/logo.png",
     "description": "Non-profit organisatie die straathonden redt in Bosnie en Servie en hen een liefdevol thuis vindt in Nederland en Belgie.",
-    "email": "info@hopefordogs.nl",
+    "email": "info@hopefordogseurope.com",
     "sameAs": [
       "https://www.facebook.com/hopefordogseurope",
       "https://www.tiktok.com/@hope_for_dogs_europe"
