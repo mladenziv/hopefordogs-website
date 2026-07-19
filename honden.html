@@ -710,6 +710,7 @@
                 max-width: 760px;
                 max-height: 90vh;
                 overflow-y: auto;
+                overflow-x: hidden;
                 position: relative;
                 animation: dogModalIn 0.25s ease;
             }
@@ -734,6 +735,7 @@
                 border-radius: 50%;
                 border: none;
                 background: rgba(255, 255, 255, 0.9);
+                color: var(--brand);
                 cursor: pointer;
                 display: flex;
                 align-items: center;
@@ -999,6 +1001,7 @@
                 max-width: 560px;
                 max-height: 90vh;
                 overflow-y: auto;
+                overflow-x: hidden;
                 padding: 40px;
                 position: relative;
                 animation: dogModalIn 0.25s ease;
@@ -1012,6 +1015,7 @@
                 border-radius: 50%;
                 border: none;
                 background: rgba(0, 0, 0, 0.06);
+                color: var(--brand);
                 cursor: pointer;
                 display: flex;
                 align-items: center;
@@ -1117,6 +1121,11 @@
                 }
                 .contact-modal {
                     padding: 28px 20px;
+                }
+                /* 16px prevents iOS Safari from auto-zooming the sheet on focus */
+                .form-group input,
+                .form-group textarea {
+                    font-size: 16px;
                 }
             }
         </style>

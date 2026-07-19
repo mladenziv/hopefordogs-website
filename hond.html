@@ -457,6 +457,9 @@
       .carousel-btn { display: none; }
       .form-row { grid-template-columns: 1fr; }
       .modal { padding: 28px 20px; }
+      /* 16px prevents iOS Safari from auto-zooming the sheet on focus */
+      .form-group input,
+      .form-group textarea { font-size: 16px; }
     }
   </style>
 </head>

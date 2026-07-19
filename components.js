@@ -133,6 +133,7 @@ var H4D_I18N = {
   'ba.label':  { nl: 'The before & after', de: 'Das Vorher & Nachher', en: 'The before & after' },
   'ba.next':   { nl: 'Volgende',    de: 'Weiter', en: 'Next' },
   'ba.playvideo': { nl: 'Video afspelen', de: 'Video abspielen', en: 'Play video' },
+  'ba.playvideo.short': { nl: 'Video', de: 'Video', en: 'Video' },
   'ba.before': { nl: 'Before', de: 'Vorher', en: 'Before' },
   'ba.after':  { nl: 'After',  de: 'Nachher', en: 'After' },
 
@@ -1145,6 +1146,9 @@ function h4dSheetDrag(modal, overlay, closeFn) {
   }
 
   function onOpen() {
+    // Always start a freshly opened sheet at the top — the element is reused
+    // between opens, so a previous scroll position would otherwise carry over.
+    modal.scrollTop = 0;
     if (!mq.matches) return;
     var w = getWrapper();
     if (!w) return;
@@ -1200,20 +1204,24 @@ function h4dSheetDrag(modal, overlay, closeFn) {
     // Force reflow to commit the "no transition + off-screen" state.
     void modal.offsetHeight;
 
-    // Set up transitions and target states. The reflow above acts as a barrier —
-    // the browser has committed the initial off-screen state, so setting the
-    // target now triggers a real transition (no rAF needed).
-    w.style.transitionProperty = 'transform, border-radius';
-    w.style.transitionDuration = dur;
-    w.style.transitionTimingFunction = spring;
-    modal.style.transition = 'transform ' + dur + ' ' + spring;
-    overlay.style.transition = 'background-color ' + dur + ' ' + spring;
+    // Next animation frame: enable transitions, then set the target states.
+    // The forced reflow alone is occasionally coalesced by Safari (the sheet
+    // snaps to its end position with no animation); the extra rAF guarantees the
+    // browser has painted the off-screen start state before we set the target,
+    // so every open animates consistently.
+    requestAnimationFrame(function() {
+      w.style.transitionProperty = 'transform, border-radius';
+      w.style.transitionDuration = dur;
+      w.style.transitionTimingFunction = spring;
+      modal.style.transition = 'transform ' + dur + ' ' + spring;
+      overlay.style.transition = 'background-color ' + dur + ' ' + spring;
 
-    // Set target states — synchronized animation for wrapper + modal + overlay
-    w.style.transform = 'scale(' + VAUL.getScale() + ') translate3d(0, 14px, 0)';
-    w.style.borderRadius = VAUL.BORDER_RADIUS + 'px';
-    modal.style.transform = 'translate3d(0, 0, 0)';
-    overlay.style.backgroundColor = 'rgba(0,0,0,' + VAUL.OVERLAY_ALPHA + ')';
+      // Set target states — synchronized animation for wrapper + modal + overlay
+      w.style.transform = 'scale(' + VAUL.getScale() + ') translate3d(0, 14px, 0)';
+      w.style.borderRadius = VAUL.BORDER_RADIUS + 'px';
+      modal.style.transform = 'translate3d(0, 0, 0)';
+      overlay.style.backgroundColor = 'rgba(0,0,0,' + VAUL.OVERLAY_ALPHA + ')';
+    });
 
     document.body.style.overflow = 'hidden';
     openTime = Date.now();

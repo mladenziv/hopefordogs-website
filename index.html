@@ -764,7 +764,7 @@
       gap: 0;
       flex: 1;
       min-height: 0;
-      opacity: 0.02;
+      opacity: 0.12;
       transition: opacity 0.8s ease;
     }
 
@@ -1448,6 +1448,9 @@
       width: 20px;
       height: 20px;
     }
+
+    /* Compact labels only shown on mobile */
+    .ba-btn-short { display: none; }
 
     /* Full-screen centered video overlay for before/after stories */
     .ba-video-overlay {
@@ -2221,8 +2224,10 @@
       .problem-header { padding-right: 0; }
       .problem-stats-row { gap: 12px; }
       .problem-stat-card { padding: 2px 16px; }
-      .problem-right { position: relative; top: auto; bottom: auto; left: auto; right: auto; min-height: 300px; max-height: 348px; margin-left: -20px; margin-right: -20px; }
-      .problem-photo-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); }
+      .problem-right { position: relative; top: auto; bottom: auto; left: auto; right: auto; min-height: 375px; max-height: 435px; margin-left: -20px; margin-right: -20px; }
+      .problem-photo-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); }
+      /* Show exactly 6 images on mobile (3 rows x 2 cols); hide the rest */
+      .problem-photo-grid img:nth-child(n+7) { display: none; }
       .problem-reveal-btn {
         position: absolute;
         top: 50%;
@@ -2231,6 +2236,7 @@
         padding: 0 24px;
         height: 43px;
         font-size: 14px;
+        white-space: nowrap;
       }
 
       /* ===== BEFORE & AFTER — XS ===== */
@@ -2272,8 +2278,12 @@
         width: 100%;
         min-height: auto;
       }
-      .ba-nav { margin-top: 0; order: 5; width: 100%; }
-      .ba-nav-next { flex: 1; }
+      .ba-nav { margin-top: 0; order: 5; width: 100%; gap: 12px; }
+      /* Compact buttons on mobile: play = "Video", next = arrow-only icon */
+      .ba-btn-full { display: none; }
+      .ba-btn-short { display: inline; }
+      .ba-nav-next-label { display: none; }
+      .ba-nav-next { flex: 0 0 auto; width: 54px; padding: 0; gap: 0; margin-left: auto; }
       .before-after-divider { display: none; }
 
       /* ===== SOCIAL — XS (Figma node 2720:9553) ===== */
@@ -2448,11 +2458,11 @@
         </div>
         <div class="hero-polaroid">
           <div class="hero-polaroid-photo">
-            <img src="images/hero-polaroid-1.webp" alt="Beste vrienden" loading="eager">
+            <img src="images/hero-polaroid-4.webp" alt="Chase" loading="eager">
           </div>
           <div class="hero-polaroid-caption">
-            <span class="hero-polaroid-text">Best friends &lt;3</span>
-            <span class="hero-polaroid-name">Lilli</span>
+            <span class="hero-polaroid-text">Lekker knuffelen</span>
+            <span class="hero-polaroid-name">Chase</span>
           </div>
         </div>
       </div>
@@ -2572,10 +2582,11 @@
           </button>
           <button class="ba-play-btn" id="baPlayBtn" onclick="openBAVideo()" style="display:none">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-            <span data-i18n="ba.playvideo">Video afspelen</span>
+            <span class="ba-btn-full" data-i18n="ba.playvideo">Video afspelen</span>
+            <span class="ba-btn-short" data-i18n="ba.playvideo.short">Video</span>
           </button>
-          <button class="ba-nav-next" id="baNext" onclick="cycleBA(1)">
-            <span data-i18n="ba.next">Volgende</span>
+          <button class="ba-nav-next" id="baNext" onclick="cycleBA(1)" aria-label="Volgende">
+            <span class="ba-nav-next-label" data-i18n="ba.next">Volgende</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#181818" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M19 12l-6-6M19 12l-6 6"/></svg>
           </button>
         </div>

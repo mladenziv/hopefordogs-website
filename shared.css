@@ -76,7 +76,11 @@ body {
     font-family: "Manrope", "Inter", sans-serif;
     color: var(--dark-1);
     background: var(--white);
-    overflow-x: hidden;
+    /* `clip` (not `hidden`) so body doesn't implicitly become a vertical scroll
+       container (overflow-x:hidden forces overflow-y:auto). Keeping html as the
+       scroller lets iOS Safari's bottom toolbar stay translucent instead of
+       rendering a solid white band, while still clipping horizontal overflow. */
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -1390,7 +1394,7 @@ blockquote {
         border-radius: 12px;
         color: var(--dark-1);
         background: none;
-        gap: 0;
+        gap: 12px;
         justify-content: flex-start;
     }
 
@@ -1516,6 +1520,10 @@ blockquote {
 
     .footer-brand {
         max-width: none;
+        /* In the stacked (column) footer, flex-basis:300px would apply to the
+           main axis (height) and leave a tall empty gap below the tagline —
+           size to content instead. */
+        flex: none;
     }
 
     .footer-cols {
@@ -1638,8 +1646,21 @@ blockquote {
         padding: 48px 20px 24px;
     }
 
+    /* Tighten the gap between the tagline block and the link lists on mobile */
+    .footer-top {
+        gap: 24px;
+    }
+
     .footer-cols {
         gap: 32px;
+    }
+
+    /* iOS Safari auto-zooms when a focused field is < 16px. Keep form controls
+       at 16px on phones so focusing an input never zooms the page/sheet. */
+    input,
+    textarea,
+    select {
+        font-size: 16px;
     }
 
     .btn-primary,
