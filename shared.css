@@ -1866,17 +1866,28 @@ blockquote {
     justify-content: flex-end;
     padding: 0;
 }
+
+.cta-freq-row .cta-payment-logos img {
+    height: 20px;
+    width: auto;
+}
 @media (max-width: 767px) {
     .cta-freq-row {
-        gap: 16px;
+        gap: 24px;
     }
     .cta-freq-row .cta-payment-logos {
         justify-content: flex-start;
         gap: 12px;
         row-gap: 10px;
     }
-    .cta-freq-row .cta-payment-logos img {
-        height: 22px;
-        width: auto;
+    /* Show all 5 amount cards: first four 2-up, the last (€200) full-width */
+    .cta-final-inner .cta-costs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .cta-final-inner .cta-cost-item:nth-child(5) {
+        display: flex;
+        grid-column: 1 / -1;
     }
 }
