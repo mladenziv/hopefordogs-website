@@ -76,11 +76,7 @@ body {
     font-family: "Manrope", "Inter", sans-serif;
     color: var(--dark-1);
     background: var(--white);
-    /* `clip` (not `hidden`) so body doesn't implicitly become a vertical scroll
-       container (overflow-x:hidden forces overflow-y:auto). Keeping html as the
-       scroller lets iOS Safari's bottom toolbar stay translucent instead of
-       rendering a solid white band, while still clipping horizontal overflow. */
-    overflow-x: clip;
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

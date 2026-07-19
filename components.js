@@ -651,7 +651,6 @@ document.addEventListener('DOMContentLoaded', function () {
         '<img src="' + m.img + '" alt="' + m.name + '" loading="lazy">' +
         '<div class="team-card-overlay">' +
           '<div class="team-name">' + m.name + '</div>' +
-          '<div class="team-role">' + m.role + '</div>' +
         '</div>' +
       '</div>';
     }).join('');
