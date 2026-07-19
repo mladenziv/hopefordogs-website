@@ -2237,6 +2237,11 @@
         height: 43px;
         font-size: 14px;
         white-space: nowrap;
+        /* Pin to content width so the absolutely-positioned, shrink-to-fit
+           button can't clamp to the available space and wrap onto two lines. */
+        width: max-content;
+        max-width: none;
+        flex-wrap: nowrap;
       }
 
       /* ===== BEFORE & AFTER — XS ===== */
