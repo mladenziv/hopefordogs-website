@@ -1809,3 +1809,60 @@ blockquote {
         background: black;
     }
 }
+
+/* ===== DONATE SECTION: frequency toggle + custom-amount button ===== */
+.cta-freq {
+    display: flex;
+    gap: 0;
+    width: fit-content;
+    margin: 0 auto 24px;
+    background: var(--beige);
+    border-radius: 100px;
+    padding: 4px;
+}
+
+.cta-freq-btn {
+    padding: 10px 26px;
+    border-radius: 100px;
+    border: none;
+    background: transparent;
+    font-family: "Manrope", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--dark-2);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cta-freq-btn.active {
+    background: var(--brand);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(255, 83, 20, 0.25);
+}
+
+.cta-freq-btn:hover:not(.active) {
+    color: var(--dark-1);
+}
+
+.cta-cost-custom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    margin: 24px auto 0;
+    padding: 15px 34px;
+    border-radius: 100px;
+    border: 1.5px solid var(--brand);
+    background: transparent;
+    color: var(--brand);
+    font-family: "Manrope", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.cta-cost-custom:hover {
+    background: var(--brand);
+    color: #fff;
+}

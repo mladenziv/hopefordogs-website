@@ -105,6 +105,7 @@ var H4D_I18N = {
   'index.cta.d100': { nl: 'Noodoperatie voor een gewonde hond',        de: 'Notoperation f\u00FCr einen verletzten Hund',           en: 'Emergency surgery for an injured dog' },
   'index.cta.d200': { nl: 'Volledige behandeling en opvang',           de: 'Vollst\u00E4ndige Behandlung und Unterbringung',        en: 'Complete treatment and shelter' },
   'cta.select':     { nl: 'Selecteer',    de: 'Ausw\u00E4hlen',  en: 'Select' },
+  'cta.eigenbedrag': { nl: 'Kies je eigen bedrag', de: 'Eigenen Betrag w\u00E4hlen', en: 'Choose your own amount' },
   'cta.mollie':     { nl: 'Veilig betalen via Mollie', de: 'Sicher bezahlen \u00FCber Mollie', en: 'Secure payment via Mollie' },
 
   // --- Other page hero headings ---
@@ -1362,3 +1363,26 @@ function h4dSheetDrag(modal, overlay, closeFn) {
     currentY = 0;
   }, { passive: true });
 }
+
+// ===== DONATE SECTION: frequency toggle -> carries amount + freq to donate page =====
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.cta-freq').forEach(function (freq) {
+    var root = freq.closest('.cta-final-inner') || freq.parentElement;
+    function apply(f) {
+      freq.querySelectorAll('.cta-freq-btn').forEach(function (b) {
+        b.classList.toggle('active', b.getAttribute('data-freq') === f);
+      });
+      root.querySelectorAll('.cta-cost-item').forEach(function (a) {
+        var m = (a.getAttribute('href') || '').match(/bedrag=([^&]+)/);
+        var bed = m ? m[1] : '';
+        a.setAttribute('href', 'doneer.html?bedrag=' + bed + '&freq=' + f);
+      });
+      var cust = root.querySelector('.cta-cost-custom');
+      if (cust) cust.setAttribute('href', 'doneer.html?bedrag=eigen&freq=' + f);
+    }
+    freq.querySelectorAll('.cta-freq-btn').forEach(function (b) {
+      b.addEventListener('click', function () { apply(b.getAttribute('data-freq')); });
+    });
+    apply('maandelijks');
+  });
+});

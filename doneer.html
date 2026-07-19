@@ -811,7 +811,12 @@
     const amountBtns = document.querySelectorAll('.amount-btn');
     const customAmountInput = document.getElementById('customAmount');
 
-    if (presetAmount) {
+    if (presetAmount === "eigen") {
+      // Custom amount from a donate section: clear presets, focus the free field.
+      amountBtns.forEach(b => b.classList.remove("selected"));
+      selectedAmount = 0;
+      setTimeout(function () { customAmountInput.focus(); }, 150);
+    } else if (presetAmount) {
       const amt = parseInt(presetAmount);
       if (amt > 0) {
         selectedAmount = amt;
@@ -855,6 +860,13 @@
         selectedFrequency = btn.dataset.frequency;
       });
     });
+
+    // Preselect frequency from a donate section (?freq=)
+    const presetFreq = urlParams.get("freq");
+    if (presetFreq === "eenmalig" || presetFreq === "maandelijks") {
+      selectedFrequency = presetFreq;
+      frequencyBtns.forEach(b => b.classList.toggle("selected", b.dataset.frequency === presetFreq));
+    }
 
     // Donate button
     const donateBtn = document.getElementById('donateBtn');
