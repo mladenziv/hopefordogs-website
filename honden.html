@@ -196,10 +196,8 @@
                 position: relative;
                 transition: transform 0.3s ease;
                 cursor: pointer;
-            }
-
-            .dog-card:hover {
-                transform: translateY(-4px);
+                /* Register taps immediately (no 300ms delay / double-tap zoom) */
+                touch-action: manipulation;
             }
 
             .dog-card-inner {
@@ -210,8 +208,16 @@
                 transition: box-shadow 0.3s ease;
             }
 
-            .dog-card:hover .dog-card-inner {
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+            /* Hover lift only on real hover devices. On touch, a :hover rule
+               makes the first tap apply hover (the shadow) and swallow the
+               click, so the card looks tapped but the sheet doesn't open. */
+            @media (hover: hover) {
+                .dog-card:hover {
+                    transform: translateY(-4px);
+                }
+                .dog-card:hover .dog-card-inner {
+                    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+                }
             }
 
             .dog-card-img {
