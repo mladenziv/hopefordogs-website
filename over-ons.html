@@ -221,7 +221,10 @@
             .shelter-images {
                 flex: 1;
                 min-width: 0;
-                height: 560px;
+                /* Use an aspect ratio (like the working "Van toen tot nu"
+                   gallery) instead of a fixed 560px height — the fixed height
+                   with nested flex columns collapses the left image in Safari. */
+                aspect-ratio: 4 / 3;
                 border-radius: 24px;
                 overflow: hidden;
                 display: flex;
@@ -488,6 +491,11 @@
             .cta-final {
                 width: 100%;
                 background: #ffffff;
+            }
+
+            /* About-us FAQ: tighter gap between heading and questions (-16px) */
+            .faq-inner {
+                gap: 24px;
             }
 
             .cta-final-inner {
@@ -840,6 +848,39 @@
                 /* Dividers should span the content width (20px page padding) */
                 .section-divider {
                     max-width: calc(100% - 40px);
+                }
+
+                /* 22px type on mobile: intro quote + the two section headings */
+                .intro-quote {
+                    font-size: 22px;
+                    line-height: 28px;
+                }
+                .shelter-text h2 {
+                    font-size: 22px;
+                    line-height: 28px;
+                }
+                .timeline-header h2 {
+                    font-size: 22px;
+                    line-height: 28px;
+                }
+                /* Donate section heading to 22px on mobile */
+                .cta-final-header-text h2 {
+                    font-size: 22px;
+                    line-height: 28px;
+                }
+                /* FAQ divider should span the content width */
+                .faq-divider {
+                    max-width: calc(100% - 40px);
+                }
+                /* Hide the donate section's bottom divider on mobile — the
+                   footer already has a full-width divider, so they doubled up. */
+                .cta-final-divider {
+                    display: none;
+                }
+                /* Remove the oversized 88px space above the donate heading so it
+                   matches the other sections' top spacing (~40px). */
+                .cta-final-header {
+                    padding-top: 40px;
                 }
             }
         </style>

@@ -2345,6 +2345,12 @@
       .cta-costs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
       .cta-cost-item { flex: unset; min-width: 0; padding: 8px; border-width: 0.5px; gap: 0; }
       .cta-freq-row { margin-bottom: 0; }
+      /* Tighten amount-cards -> custom button by ~8px (48 -> 40) */
+      .cta-cost-custom { margin-top: 16px; }
+      /* Equal spacing: custom button -> icons (32) == icons -> divider (32) */
+      .cta-payment-logos-below { margin-top: 8px; }
+      /* Divider spans the content width (20px gutters), not 40px */
+      .cta-final-divider { width: calc(100% - 40px); }
       .cta-cost-text { padding: 16px 24px; flex: 1; }
       .cta-cost-amount { font-size: 34px; line-height: 48px; letter-spacing: -0.72px; }
       .cta-cost-label { font-size: 15px; line-height: 24px; }
