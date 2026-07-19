@@ -57,7 +57,26 @@
       width: 100%;
       aspect-ratio: 4 / 3;
       object-fit: cover;
+      background: #f3efe9;
     }
+
+    /* Skeleton placeholders shown while stories load (avoids a blank page) */
+    .testimonial-skeleton {
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+    .sk-img { width: 100%; aspect-ratio: 4 / 3; }
+    .sk-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .sk-line { height: 12px; border-radius: 6px; }
+    .sk-img, .sk-line {
+      background: linear-gradient(90deg, #f0ece6 25%, #f7f4ef 37%, #f0ece6 63%);
+      background-size: 400% 100%;
+      animation: sk-shimmer 1.4s ease infinite;
+    }
+    @keyframes sk-shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+    @media (prefers-reduced-motion: reduce) { .sk-img, .sk-line { animation: none; } }
 
     .testimonial-card-body {
       padding: 24px 28px 28px;
@@ -280,8 +299,16 @@
   <script>
     async function loadStories() {
       var grid = document.getElementById('storiesGrid');
+      // Show skeleton cards immediately so the page isn't blank during the fetch
+      grid.innerHTML = new Array(6).fill(0).map(function () {
+        return '<div class="testimonial-skeleton"><div class="sk-img"></div>' +
+          '<div class="sk-body"><div class="sk-line" style="width:55%"></div>' +
+          '<div class="sk-line" style="width:35%"></div>' +
+          '<div class="sk-line" style="width:90%"></div></div></div>';
+      }).join('');
       try {
-        var stories = await supabaseGet('stories', 'select=*&order=sort_order.asc.nullslast,created_at.desc');
+        // Only the columns the card needs (smaller payload than select=*)
+        var stories = await supabaseGet('stories', 'select=id,photo_url,dog_name,adopter_name,description,sort_order,created_at&order=sort_order.asc.nullslast,created_at.desc');
 
         if (!stories || stories.length === 0) {
           grid.innerHTML = '<div class="empty-state"><p>Er zijn nog geen ervaringen gedeeld.</p></div>';
@@ -289,11 +316,18 @@
         }
 
         grid.innerHTML = stories.map(function(story, i) {
-          var img = story.photo_url || 'images/placeholder-dog.svg';
+          var raw = story.photo_url || 'images/placeholder-dog.svg';
           var desc = story.description || '';
           var adopter = story.adopter_name || '';
+          // Serve a resized copy of Supabase-hosted photos; fall back to the
+          // original if the resizer isn't available.
+          var isSupa = raw.indexOf('/storage/v1/object/public/') !== -1;
+          var displaySrc = isSupa ? ('api/img/?src=' + encodeURIComponent(raw) + '&w=700') : raw;
+          var onerr = isSupa ? (' onerror="this.onerror=null;this.src=\'' + raw.replace(/'/g, '%27') + '\'"') : '';
+          // First 3 load eagerly (above the fold); the rest lazy + async decode
+          var loadAttr = i < 3 ? 'eager' : 'lazy';
           return '<a href="ervaring.html?id=' + story.id + '" class="testimonial-card" style="animation-delay:' + (i * 0.05) + 's">' +
-            '<img src="' + img + '" alt="' + escapeAttr(story.dog_name) + '" class="testimonial-card-img" loading="lazy">' +
+            '<img src="' + displaySrc + '" alt="' + escapeAttr(story.dog_name) + '" class="testimonial-card-img" loading="' + loadAttr + '" decoding="async"' + onerr + '>' +
             '<div class="testimonial-card-body">' +
               '<div class="testimonial-card-name t-heading-sm">' + escapeHtml(story.dog_name) + '</div>' +
               (adopter ? '<div class="testimonial-card-adopter">' + escapeHtml(adopter) + '</div>' : '') +
