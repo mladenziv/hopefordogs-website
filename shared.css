@@ -1888,14 +1888,45 @@ blockquote {
     height: 20px;
     width: auto;
 }
+
+/* Mobile-only copy of the payment logos, shown below the custom button */
+.cta-payment-logos-below {
+    display: none;
+}
+
 @media (max-width: 767px) {
     .cta-freq-row {
         gap: 24px;
     }
+    /* Full-width toggle */
+    .cta-freq {
+        width: 100%;
+    }
+    .cta-freq-btn {
+        flex: 1;
+    }
+    /* Full-width "Kies je eigen bedrag" button */
+    .cta-cost-custom {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+    /* Move the payment icons out of the toggle row to below the custom button */
     .cta-freq-row .cta-payment-logos {
-        justify-content: flex-start;
+        display: none;
+    }
+    .cta-payment-logos-below {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 12px;
         row-gap: 10px;
+        margin-top: 20px;
+        width: 100%;
+    }
+    .cta-payment-logos-below img {
+        height: 20px;
+        width: auto;
     }
     /* Show all 5 amount cards: first four 2-up, the last (€200) full-width */
     .cta-final-inner .cta-costs {

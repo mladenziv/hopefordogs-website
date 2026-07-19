@@ -837,6 +837,10 @@
                 .cta-cost-btn {
                     display: none;
                 }
+                /* Dividers should span the content width (20px page padding) */
+                .section-divider {
+                    max-width: calc(100% - 40px);
+                }
             }
         </style>
     </head>
@@ -1228,6 +1232,7 @@
                     </a>
                 </div>
                 <a href="doneer.html?bedrag=eigen&freq=maandelijks" class="btn-secondary cta-cost-custom" data-i18n="cta.eigenbedrag">Kies je eigen bedrag</a>
+                <div class="cta-payment-logos cta-payment-logos-below"><img src="images/payment/Visa.svg" alt="Visa" width="47" height="32"><img src="images/payment/Mastercard.svg" alt="Mastercard" width="47" height="32"><img src="images/payment/Paypal.svg" alt="PayPal" width="47" height="32"><img src="images/payment/Gpay.svg" alt="Google Pay" width="47" height="32"><img src="images/payment/Apple pay.svg" alt="Apple Pay" width="47" height="32"><img src="images/payment/Ideal.svg" alt="iDEAL" width="47" height="32"><img src="images/payment/Sepa.svg" alt="SEPA" width="47" height="32"></div>
       
             </div>
             <div class="cta-final-divider"></div>

@@ -567,6 +567,8 @@
          held wider than the viewport by their min-content width). */
       .steps-grid { grid-template-columns: 1fr; }
       .step-card { min-width: 0; }
+      /* Dividers should span the content width (20px page padding) */
+      .section-divider { max-width: calc(100% - 40px); }
       /* Stack the two CTA buttons vertically so their labels don't wrap */
       .adopt-cta-buttons { flex-direction: column; align-items: stretch; width: 100%; }
       .adopt-cta-buttons .btn-primary,
