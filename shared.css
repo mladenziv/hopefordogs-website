@@ -535,6 +535,14 @@ blockquote {
     line-height: 1.7;
 }
 
+/* Registered-foundation trust line (KvK). Language-neutral, so no data-i18n. */
+.footer-legal {
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dark-2);
+}
+
 .footer-cols {
     display: flex;
     gap: 96px;

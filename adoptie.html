@@ -468,6 +468,86 @@
       fill: var(--gold);
     }
 
+    /* ===== ORIGIN (adopting from Serbia & Bosnia) ===== */
+    .adopt-origin {
+      width: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 72px 0;
+    }
+
+    .adopt-origin-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 0 40px;
+    }
+
+    .adopt-origin-header {
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .adopt-origin-intro {
+      max-width: 720px;
+      margin: 20px 0 48px;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 26px;
+      color: #424242;
+    }
+
+    .origin-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .origin-card {
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 28px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .origin-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .origin-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--gold);
+    }
+
+    .origin-card-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: normal;
+      color: var(--dark-1);
+    }
+
+    .origin-card-desc {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 24px;
+      color: #424242;
+    }
+
     /* FAQ styles now in shared.css via component */
 
     /* ===== CTA ===== */
@@ -525,6 +605,7 @@
       .adopt-hero-inner { padding: 192px 0 56px; gap: 48px; }
       /* collage-7, collage-8 stay visible at SM */
       .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .origin-grid { grid-template-columns: repeat(2, 1fr); }
       .adopt-timeline-inner { flex-direction: column; gap: 40px; }
       .adopt-requirements-inner { flex-direction: column; gap: 40px; }
       .costs-grid { flex-direction: column; gap: 0; }
@@ -555,15 +636,18 @@
       }
       .adopt-costs-inner,
       .adopt-steps-inner,
+      .adopt-origin-inner,
       .adopt-timeline-inner,
       .adopt-requirements-inner,
       .adopt-cta-inner { padding: 0 20px; }
       /* Consistent, tighter section spacing on mobile (like the over-ons page) */
       .adopt-costs { padding: 48px 0; }
       .adopt-steps { padding: 48px 0; }
+      .adopt-origin { padding: 48px 0; }
       .adopt-timeline { padding: 48px 0; }
       .adopt-requirements { padding: 48px 0; }
       .adopt-cta { padding: 48px 0; }
+      .origin-grid { grid-template-columns: 1fr; }
       /* Single column on phones so step cards can't overflow (grid items were
          held wider than the viewport by their min-content width). */
       .steps-grid { grid-template-columns: 1fr; }
@@ -607,6 +691,41 @@
     </div>
   </section>
 
+  <div class="section-divider"></div>
+
+  <!-- ORIGIN: adopting from Serbia & Bosnia -->
+  <section class="adopt-origin">
+    <div class="adopt-origin-inner">
+      <div class="adopt-origin-header">
+        <h2 class="t-heading-md" data-i18n="adoptie.origin.title">Adopteren uit Servi&#235; &amp; Bosni&#235;</h2>
+        <p class="t-body" data-i18n="adoptie.origin.sub">Al onze honden komen uit de grensstreek van Servi&#235; en Bosni&#235;, waar honderdduizenden zwerfhonden leven zonder opvang of hulp van de overheid. Een adoptie geeft &#233;&#233;n van hen een echte tweede kans.</p>
+      </div>
+      <p class="adopt-origin-intro" data-i18n="adoptie.origin.intro">Omdat Servi&#235; en Bosni&#235; buiten de EU liggen, gelden er strengere regels voor de invoer van honden. Daar hoef jij je geen zorgen over te maken: wij regelen alle benodigde documenten, vaccinaties en het volledige transport, zodat jouw hond veilig en volgens de regels naar Nederland of Belgi&#235; reist.</p>
+      <div class="origin-grid">
+        <div class="origin-card">
+          <div class="origin-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          </div>
+          <div class="origin-card-title" data-i18n="adoptie.origin.c1">EU-dierenpaspoort &amp; documenten</div>
+          <div class="origin-card-desc" data-i18n="adoptie.origin.c1d">Elke hond reist met een geldig Europees dierenpaspoort, een microchip en alle vereiste reisdocumenten.</div>
+        </div>
+        <div class="origin-card">
+          <div class="origin-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 8h-2V6a2 2 0 00-2-2H9a2 2 0 00-2 2v2H5a2 2 0 00-2 2v6a2 2 0 002 2h14a2 2 0 002-2v-6a2 2 0 00-2-2zm-6 7h-2v-2H9v-2h2V9h2v2h2v2h-2v2z"/></svg>
+          </div>
+          <div class="origin-card-title" data-i18n="adoptie.origin.c2">Medisch volledig in orde</div>
+          <div class="origin-card-desc" data-i18n="adoptie.origin.c2d">Voor vertrek is elke hond gevaccineerd (inclusief rabi&#235;s), ontwormd, ontvlooid en gesteriliseerd of gecastreerd.</div>
+        </div>
+        <div class="origin-card">
+          <div class="origin-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3a2 2 0 00-2 2v11h2a3 3 0 006 0h6a3 3 0 006 0h2v-5l-3-4zM6 18.5A1.5 1.5 0 116 15.5a1.5 1.5 0 010 3zm12 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zM17 12V9.5h2.5L21 12h-4z"/></svg>
+          </div>
+          <div class="origin-card-title" data-i18n="adoptie.origin.c3">Veilig, gecertificeerd transport</div>
+          <div class="origin-card-desc" data-i18n="adoptie.origin.c3d">Een gecertificeerde dierentransporteur brengt jouw hond rechtstreeks van het asiel naar het afleverpunt in Nederland of Belgi&#235;.</div>
+        </div>
+      </div>
+    </div>
+  </section>
   <div class="section-divider"></div>
 
   <!-- COSTS -->
