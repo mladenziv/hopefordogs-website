@@ -289,6 +289,28 @@ if (empty($html)) {
     exit;
 }
 
+// Multi-photo posts only server-render ~5 of N photos in the post HTML. The full
+// set lives at the post's photo-set page (set=pcb.<id>). Fetch it and fold it
+// into the image/fbid scans so we discover every photo (and every photo fbid,
+// which then gets upgraded to full-res by the photo-page traversal below).
+// Use the pcb. set (this post's photos) — NOT set=a.<id>, which is the page's
+// entire album. Kept in a separate var so the post text/video detection (which
+// read $html) are unaffected; only the image + fbid scans read $imgHtml.
+$imgHtml = $html;
+$setFileIds = [];
+if (preg_match('/set=(pcb\.\d+)/', $html, $setMatch)) {
+    $setHtml = fetchWithRedirects('https://www.facebook.com/media/set/?set=' . $setMatch[1]);
+    if (!empty($setHtml)) {
+        $imgHtml .= "\n" . $setHtml;
+        // The set page lists EXACTLY this post's photos. Record their file-ids so
+        // we can bound the final list to them — the photo-page traversal below
+        // can otherwise wander into unrelated photos and over-pull.
+        if (preg_match_all('#-6/(\d+_\d+_\d+_n\.)#', str_replace('\\/', '/', $setHtml), $sfm)) {
+            foreach ($sfm[1] as $sfid) { $setFileIds[$sfid] = true; }
+        }
+    }
+}
+
 $text = null;
 
 // Strategy 1: og:description meta tag (most reliable for public posts)
@@ -391,15 +413,15 @@ if (preg_match_all('/<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\
 $photoFbids = [];
 $searchPos = 0;
 $photoNeedle = '"__typename":"Photo"';
-while (($pos = strpos($html, $photoNeedle, $searchPos)) !== false) {
+while (($pos = strpos($imgHtml, $photoNeedle, $searchPos)) !== false) {
     $searchPos = $pos + strlen($photoNeedle);
-    $chunk = substr($html, max(0, $pos - 500), 1500);
+    $chunk = substr($imgHtml, max(0, $pos - 500), 1500);
     if (preg_match('/"id"\s*:\s*"(\d{12,})"/', $chunk, $idm)) {
         $photoFbids[$idm[1]] = true;
     }
 }
 // Also extract from fbid= links
-if (preg_match_all('/fbid[=:](\d{12,})/', $html, $fbidMatches)) {
+if (preg_match_all('/fbid[=:](\d{12,})/', $imgHtml, $fbidMatches)) {
     foreach ($fbidMatches[1] as $fid) {
         $photoFbids[$fid] = true;
     }
@@ -412,11 +434,11 @@ $uriNeedle = '"uri":"';
 $uriNeedleLen = strlen($uriNeedle);
 $uriPos = 0;
 $photosByFile = [];
-while (($uriPos = strpos($html, $uriNeedle, $uriPos)) !== false) {
+while (($uriPos = strpos($imgHtml, $uriNeedle, $uriPos)) !== false) {
     $uriStart = $uriPos + $uriNeedleLen;
-    $uriEnd = strpos($html, '"', $uriStart);
+    $uriEnd = strpos($imgHtml, '"', $uriStart);
     if ($uriEnd === false) break;
-    $rawUrl = substr($html, $uriStart, $uriEnd - $uriStart);
+    $rawUrl = substr($imgHtml, $uriStart, $uriEnd - $uriStart);
     $decoded = str_replace(['\\/', '\\u0025'], ['/', '%'], $rawUrl);
     $uriPos = $uriEnd + 1;
 
@@ -590,6 +612,22 @@ foreach ($images as $img) {
     }
 }
 $images = array_values($finalByFileId);
+
+// If we found this post's photo set, bound the results to exactly those photos.
+// The photo-page traversal can wander into unrelated photos (next/prev links go
+// beyond the post), so without this a 10-photo post could return 20+ images.
+if (!empty($setFileIds)) {
+    $bounded = [];
+    foreach ($images as $img) {
+        if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $img, $bm) && isset($setFileIds[$bm[1]])) {
+            $bounded[] = $img;
+        }
+    }
+    if (!empty($bounded)) {
+        $images = $bounded;
+    }
+}
+
 $seen = [];
 foreach ($images as $img) { $seen[$img] = true; }
 
