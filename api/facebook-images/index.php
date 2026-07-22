@@ -59,6 +59,23 @@ function fetchWithRedirects($url, $maxRedirects = 5) {
     return '';
 }
 
+// Rank Facebook CDN image variants by their ACTUAL served resolution so we keep
+// the largest version of each photo. Facebook signs every sized variant
+// separately (oh/oe), so we can't strip params to get the original — we must
+// pick the biggest URL that's already in the HTML.
+//
+// The real output size is the "scale-to" value: modern URLs put it in
+// ctp=s{W}x{H}; older ones use _s{W}x{H} / _p{W}x{H}. IMPORTANT: cstp=mx{W}x{H}
+// is only the max *canvas* and lies about size — a 160x160 thumbnail can carry
+// cstp=mx1500x1500 — so it is only a last-resort fallback. Runs on a single URL
+// string (never the whole HTML), so there is no PCRE backtrack risk.
+function fbSizeScore($url) {
+    if (preg_match('/[?&]ctp=[^&]*?(\d{2,5})x(\d{2,5})/', $url, $m)) return max((int)$m[1], (int)$m[2]);
+    if (preg_match('#[_/][sp](\d{2,5})x(\d{2,5})#', $url, $m)) return max((int)$m[1], (int)$m[2]);
+    if (preg_match('/[?&]cstp=[^&]*?(\d{2,5})x(\d{2,5})/', $url, $m)) return max((int)$m[1], (int)$m[2]);
+    return 100000; // no scale markers at all → full-size original, rank highest
+}
+
 $html = fetchWithRedirects($url);
 
 if (empty($html)) {
@@ -147,8 +164,8 @@ while (($uriPos = strpos($html, $uriNeedle, $uriPos)) !== false) {
     $uriPos = $uriEnd + 1;
     if (strpos($decoded, '-6/') === false) continue;
     if (!preg_match('/\/(\d+_\d+_\d+_n\.)/i', $decoded, $fm)) continue;
-    $isThumbnail = preg_match('/_s\d+x\d+/', $decoded);
-    if (!isset($photosByFile[$fm[1]]) || !$isThumbnail) {
+    // Keep the highest-resolution variant of each photo.
+    if (!isset($photosByFile[$fm[1]]) || fbSizeScore($decoded) > fbSizeScore($photosByFile[$fm[1]])) {
         $photosByFile[$fm[1]] = $decoded;
     }
 }
@@ -210,8 +227,7 @@ while (!empty($pendingFbids) && $fetchCount < $maxFetches) {
             $pOffset = $pum[0][1] + strlen($pum[0][0]);
             if (strpos($pDecoded, '-6/') === false) continue;
             if (!preg_match('/\/(\d+_\d+_\d+_n\.)/i', $pDecoded, $pfm)) continue;
-            $pIsThumbnail = preg_match('/_s\d+x\d+/', $pDecoded);
-            if (!isset($photosByFile[$pfm[1]]) || !$pIsThumbnail) {
+            if (!isset($photosByFile[$pfm[1]]) || fbSizeScore($pDecoded) > fbSizeScore($photosByFile[$pfm[1]])) {
                 $photosByFile[$pfm[1]] = $pDecoded;
             }
         }
@@ -245,8 +261,7 @@ foreach ($photosByFile as $fid => $url) {
 $finalByFileId = [];
 foreach ($images as $img) {
     if (preg_match('/\/(\d+_\d+_\d+_n\.)/i', $img, $fm)) {
-        $isThumbnail = preg_match('/_s\d+x\d+/', $img);
-        if (!isset($finalByFileId[$fm[1]]) || !$isThumbnail) {
+        if (!isset($finalByFileId[$fm[1]]) || fbSizeScore($img) > fbSizeScore($finalByFileId[$fm[1]])) {
             $finalByFileId[$fm[1]] = $img;
         }
     } else {
