@@ -468,6 +468,20 @@
       fill: var(--gold);
     }
 
+    .adopt-costs-notes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 760px;
+    }
+
+    .adopt-costs-notes p {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 22px;
+      color: #6b6b6b;
+    }
+
     /* ===== ORIGIN (adopting from Serbia & Bosnia) ===== */
     .adopt-origin {
       width: 100%;
@@ -714,7 +728,7 @@
             <svg viewBox="0 0 24 24"><path d="M19 8h-2V6a2 2 0 00-2-2H9a2 2 0 00-2 2v2H5a2 2 0 00-2 2v6a2 2 0 002 2h14a2 2 0 002-2v-6a2 2 0 00-2-2zm-6 7h-2v-2H9v-2h2V9h2v2h2v2h-2v2z"/></svg>
           </div>
           <div class="origin-card-title" data-i18n="adoptie.origin.c2">Medisch volledig in orde</div>
-          <div class="origin-card-desc" data-i18n="adoptie.origin.c2d">Voor vertrek is elke hond gevaccineerd (inclusief rabi&#235;s), ontwormd, ontvlooid en gesteriliseerd of gecastreerd.</div>
+          <div class="origin-card-desc" data-i18n="adoptie.origin.c2d">Voor vertrek is elke hond gevaccineerd (inclusief rabi&#235;s), ontwormd, ontvlooid en door een dierenarts gecontroleerd. Sterilisatie verschilt per hond.</div>
         </div>
         <div class="origin-card">
           <div class="origin-icon">
@@ -765,6 +779,10 @@
           <div class="cost-item-note" data-i18n="adoptie.kosten.transport.note">Deze betaling is voor een gecertificeerde dierentransporteur, een derde partij die het veilige vervoer van jouw hond verzorgt.</div>
         </div>
       </div>
+      <div class="adopt-costs-notes">
+        <p data-i18n="adoptie.kosten.note.steri">Sterilisatie of castratie zit niet standaard bij de adoptiekosten. Veel honden zijn al geholpen; is dat nog niet zo, dan kan het via ons tegen een gereduceerd tarief van &#8364;60 &#8212; of later door jou.</p>
+        <p data-i18n="adoptie.kosten.note.tuig">Bij adoptie krijg je ook een passend anti-ontsnappingstuig mee. Zelf regel je alleen nog een riem.</p>
+      </div>
     </div>
   </section>
   <div class="section-divider"></div>
@@ -781,42 +799,42 @@
           <div class="step-number">1</div>
           <div class="step-content">
             <div class="step-title" data-i18n="adoptie.stap1">Kies een hond</div>
-            <div class="step-desc" data-i18n="adoptie.stap1.d">Bekijk de beschikbare honden op onze website. Lees hun verhaal en kijk wie bij jouw situatie past. Twijfel je? Wij helpen je graag.</div>
+            <div class="step-desc" data-i18n="adoptie.stap1.d">Bekijk de beschikbare honden en lees hun verhaal. Een foto vertelt nooit het hele verhaal, dus vraag ons gerust om meer foto&#8217;s, video&#8217;s of info over het karakter.</div>
           </div>
         </div>
         <div class="step-card">
           <div class="step-number">2</div>
           <div class="step-content">
-            <div class="step-title" data-i18n="adoptie.stap2">Kennismakingsgesprek</div>
-            <div class="step-desc" data-i18n="adoptie.stap2.d">We plannen een gesprek (telefonisch of video) om jouw woon- en leefsituatie te bespreken. We kijken samen of de hond bij jou past.</div>
+            <div class="step-title" data-i18n="adoptie.stap2">Adoptieformulier</div>
+            <div class="step-desc" data-i18n="adoptie.stap2.d">Heb je interesse? Dan sturen we je een vragenlijst. Niet omdat er goede of foute antwoorden zijn, maar om te begrijpen hoe jouw dag eruitziet en welke hond daarbij past.</div>
           </div>
         </div>
         <div class="step-card">
           <div class="step-number">3</div>
           <div class="step-content">
-            <div class="step-title" data-i18n="adoptie.stap3">Adoptieformulier</div>
-            <div class="step-desc" data-i18n="adoptie.stap3.d">Je vult een adoptieformulier in met je gegevens en leefsituatie. Dit helpt ons om de juiste match te maken en de hond goed voor te bereiden.</div>
+            <div class="step-title" data-i18n="adoptie.stap3">Kennismakingsgesprek</div>
+            <div class="step-desc" data-i18n="adoptie.stap3.d">Daarna plannen we een persoonlijk gesprek. Rustig kennismaken, je vragen beantwoorden en samen kijken of het klikt. We bespreken ook de adoptievergoeding, het transport en wat je kunt verwachten.</div>
           </div>
         </div>
         <div class="step-card">
           <div class="step-number">4</div>
           <div class="step-content">
-            <div class="step-title" data-i18n="adoptie.stap4">Voorbereiden &amp; transport</div>
-            <div class="step-desc" data-i18n="adoptie.stap4.d">De hond wordt medisch gecontroleerd, gevaccineerd, gechipt en gesteriliseerd. We regelen het transport van het asiel naar Nederland.</div>
+            <div class="step-title" data-i18n="adoptie.stap4">Voorbereiding &amp; wachten</div>
+            <div class="step-desc" data-i18n="adoptie.stap4.d">Is er een match? Dan bereiden we je hond voor op de reis. Elk medisch traject is maatwerk. Tijdens het wachten krijg je foto&#8217;s en video&#8217;s, en leggen we alle afspraken vast in een reserverings- en adoptiecontract.</div>
           </div>
         </div>
         <div class="step-card">
           <div class="step-number">5</div>
           <div class="step-content">
-            <div class="step-title" data-i18n="adoptie.stap5">Ophalen &amp; wenperiode</div>
-            <div class="step-desc" data-i18n="adoptie.stap5.d">Je haalt je hond op bij het afleverpunt. De eerste weken zijn spannend — wij blijven beschikbaar voor advies en begeleiding.</div>
+            <div class="step-title" data-i18n="adoptie.stap5">Transport &amp; thuiskomst</div>
+            <div class="step-desc" data-i18n="adoptie.stap5.d">Je hond reist met een gereguleerd transport. In een groepsapp houden we contact en delen we updates, zodat je stap voor stap kunt meeleven tot de deur opengaat en je hond thuiskomt.</div>
           </div>
         </div>
         <div class="step-card">
           <div class="step-number">6</div>
           <div class="step-content">
-            <div class="step-title" data-i18n="adoptie.stap6">Thuiscontrole</div>
-            <div class="step-desc" data-i18n="adoptie.stap6.d">Na enkele weken doen we een check-up om te zien hoe het gaat. We willen zeker weten dat zowel jij als de hond gelukkig zijn.</div>
+            <div class="step-title" data-i18n="adoptie.stap6">Nazorg</div>
+            <div class="step-desc" data-i18n="adoptie.stap6.d">Ook na de adoptie blijven we bereikbaar. Onze vrijwilligers hebben zelf ervaring met straathonden. Een vraag of een onzeker moment? Je mag altijd contact opnemen.</div>
           </div>
         </div>
       </div>
@@ -840,8 +858,8 @@
           </div>
           <div class="timeline-item">
             <div class="timeline-dot"></div>
-            <div class="timeline-title">Vaccinatie &amp; sterilisatie</div>
-            <div class="timeline-desc t-body-sm">Alle benodigde vaccinaties worden gegeven en de hond wordt gesteriliseerd of gecastreerd.</div>
+            <div class="timeline-title">Medische voorbereiding</div>
+            <div class="timeline-desc t-body-sm">Vaccinaties (waaronder rabi&#235;s), ontworming, een behandeling tegen vlooien en teken en een gezondheidscontrole door een dierenarts.</div>
           </div>
           <div class="timeline-item">
             <div class="timeline-dot"></div>
