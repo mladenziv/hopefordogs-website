@@ -69,10 +69,11 @@
     }
 
     .post-content {
-      font-size: 17px;
+      font-size: 18px;
       font-weight: 500;
-      line-height: 1.9;
-      color: var(--dark-2);
+      line-height: 1.75;
+      color: var(--dark-1);
+      letter-spacing: 0.01em;
     }
 
     /* Plain text posts (no HTML) */
@@ -91,66 +92,67 @@
       color: var(--dark-1);
       text-transform: none;
     }
-    .post-content h1 {
-      font-size: 32px;
-      font-weight: 800;
-      margin: 40px 0 16px;
-      line-height: 1.25;
-    }
+    .post-content h1 { font-size: 34px; font-weight: 800; margin: 48px 0 18px; line-height: 1.2; }
     .post-content h2 {
-      font-size: 26px;
+      font-size: 30px;
       font-weight: 800;
-      margin: 40px 0 16px;
-      line-height: 1.3;
+      margin: 48px 0 18px;
+      line-height: 1.25;
+      padding-top: 40px;
+      border-top: 1px solid rgba(26, 26, 26, 0.10);
     }
-    .post-content h3 {
-      font-size: 20px;
-      font-weight: 700;
-      margin: 32px 0 12px;
-      line-height: 1.4;
-    }
-    .post-content h4 {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 24px 0 8px;
-      line-height: 1.4;
-    }
+    /* First heading shouldn't carry a top divider */
+    .post-content > h2:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    .post-content h3 { font-size: 22px; font-weight: 800; margin: 36px 0 12px; line-height: 1.35; }
+    .post-content h4 { font-size: 19px; font-weight: 700; margin: 28px 0 8px; line-height: 1.4; }
     .post-content h5,
-    .post-content h6 {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 20px 0 8px;
-      line-height: 1.5;
-    }
-    .post-content p {
-      margin: 0 0 20px;
-    }
-    .post-content ul, .post-content ol {
-      margin: 0 0 20px;
-      padding-left: 24px;
-    }
-    .post-content li {
-      margin-bottom: 8px;
-    }
-    .post-content strong {
-      font-weight: 700;
-      color: var(--dark-1);
-    }
+    .post-content h6 { font-size: 17px; font-weight: 700; margin: 22px 0 8px; line-height: 1.5; }
+
+    .post-content p { margin: 0 0 22px; }
+
+    .post-content ul,
+    .post-content ol { margin: 0 0 22px; padding-left: 26px; }
+    .post-content ul { list-style: disc; }
+    .post-content ol { list-style: decimal; }
+    .post-content li { margin-bottom: 10px; padding-left: 4px; line-height: 1.7; }
+    .post-content li::marker { color: var(--dark-2); }
+    /* Bold label at start of a list item / paragraph reads as a mini-heading */
+    .post-content li > strong:first-child,
+    .post-content p > strong:first-child { color: var(--dark-1); }
+
+    .post-content strong { font-weight: 700; color: var(--dark-1); }
+    .post-content em { font-style: italic; }
+
     .post-content a {
       color: var(--brand);
       font-weight: 600;
       text-decoration: underline;
       text-underline-offset: 2px;
     }
-    .post-content a:hover {
-      opacity: 0.8;
-    }
+    .post-content a:hover { opacity: 0.8; }
+
     .post-content blockquote {
-      border-left: 3px solid var(--brand);
-      padding-left: 20px;
-      margin: 24px 0;
-      font-style: italic;
+      border-left: 3px solid rgba(26, 26, 26, 0.15);
+      padding: 4px 0 4px 22px;
+      margin: 28px 0;
       color: var(--dark-2);
+      font-style: normal;
+    }
+    .post-content blockquote > :first-child { margin-top: 0; }
+    .post-content blockquote > :last-child { margin-bottom: 0; }
+    /* A bold first line inside a quote acts as its heading */
+    .post-content blockquote strong,
+    .post-content blockquote b { color: var(--dark-1); font-weight: 700; }
+
+    .post-content hr {
+      border: none;
+      border-top: 1px solid rgba(26, 26, 26, 0.12);
+      margin: 44px 0;
+    }
+
+    .post-content img {
+      border-radius: 14px;
+      margin: 28px 0;
     }
 
     /* ========== LOADING / ERROR ========== */
@@ -177,7 +179,9 @@
     /* --- SM: 768–1023px --- */
     @media (max-width: 1023px) {
       /* Responsive type */
-      .post-content { font-size: 15px; }
+      .post-content { font-size: 17px; }
+      .post-content h2 { font-size: 26px; padding-top: 32px; margin-top: 40px; }
+      .post-content h3 { font-size: 20px; }
 
       .post-section { padding: 144px 40px 80px; }
     }
@@ -185,6 +189,10 @@
     /* --- XS: 0–767px --- */
     @media (max-width: 767px) {
       /* Responsive type — XS */
+      .post-content { font-size: 16px; line-height: 1.7; }
+      .post-content h2 { font-size: 24px; margin: 36px 0 14px; padding-top: 28px; }
+      .post-content h3 { font-size: 19px; }
+      .post-content p { margin: 0 0 18px; }
       .post-section { padding: 144px 20px 60px; }
     }
   </style>
@@ -245,6 +253,111 @@
       return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
     }
 
+    // Clean up Word/Notes-pasted HTML so the site's own CSS controls typography.
+    function renameTags(root, from, to) {
+      root.querySelectorAll(from).forEach(function (o) {
+        var e = document.createElement(to);
+        while (o.firstChild) e.appendChild(o.firstChild);
+        o.parentNode.replaceChild(e, o);
+      });
+    }
+    function unwrap(el) {
+      var p = el.parentNode;
+      if (!p) return;
+      while (el.firstChild) p.insertBefore(el.firstChild, el);
+      p.removeChild(el);
+    }
+    function normalizePostContent(root) {
+      // 1) Strip polluting inline styles (denylist). Keep width/height only on <img>.
+      var STRIP_RE = /(?:^|;)\s*(?:font[\w-]*|line-height|letter-spacing|white-space|color|background[\w-]*|-webkit-[\w-]*|-moz-[\w-]*|mso-[\w-]*|min-height|max-height|height|margin[\w-]*|padding[\w-]*|text-indent|list-style[\w-]*|vertical-align|text-transform|word-spacing|orphans|widows|text-decoration[\w-]*)\s*:[^;]*/gi;
+      root.querySelectorAll('[style]').forEach(function (el) {
+        var keepHW = el.tagName === 'IMG';
+        var c = el.getAttribute('style').replace(STRIP_RE, '');
+        if (!keepHW) c = c.replace(/(?:^|;)\s*(?:width|height)\s*:[^;]*/gi, '');
+        c = c.replace(/^;+|;+$/g, '').replace(/;;+/g, ';').trim();
+        if (c) el.setAttribute('style', c); else el.removeAttribute('style');
+        el.removeAttribute('class');
+      });
+
+      // 2) Normalize tags.
+      renameTags(root, 'b', 'strong');
+      renameTags(root, 'i', 'em');
+      root.querySelectorAll('font').forEach(unwrap);
+      root.querySelectorAll('span').forEach(unwrap);
+
+      // 3) Wrap bare text/inline runs into <p> so stray text becomes a real paragraph
+      //    (instead of merging into the next block).
+      wrapBareRuns(root);
+
+      // 4) Promote bold-only paragraphs to <h2>; drop the first one (duplicates the page title).
+      var firstDone = false, idx = 0;
+      root.querySelectorAll('p').forEach(function (para) {
+        var i = idx++;
+        var txt = para.textContent.replace(/ /g, ' ').trim();
+        if (!txt) return;
+        var onlyBold = null, ok = true;
+        para.childNodes.forEach(function (ch) {
+          if (ch.nodeType === 3 && ch.textContent.trim() === '') return;
+          if (ch.nodeType === 1 && ch.tagName === 'STRONG' && !onlyBold) { onlyBold = ch; return; }
+          ok = false;
+        });
+        if (!ok || !onlyBold) return;
+        if (txt.length > 100) return;
+        if (/[.!?]\s*$/.test(txt) && txt.split(/\s+/).length > 8) return;
+        if (!firstDone && i <= 1) { firstDone = true; para.parentNode.removeChild(para); return; }
+        var h = document.createElement('h2');
+        h.textContent = txt;
+        para.parentNode.replaceChild(h, para);
+      });
+
+      // 4) Remove empty spacer <p>/<div> (no text, no media).
+      root.querySelectorAll('p, div').forEach(function (b) {
+        if (!b.textContent.replace(/ /g, '').trim() && !b.querySelector('img,iframe,video')) {
+          b.parentNode.removeChild(b);
+        }
+      });
+
+      // 6) Drop empty list items (Word leaves junk empty <li>).
+      root.querySelectorAll('li').forEach(function (li) {
+        if (!li.textContent.trim() && !li.querySelector('img')) li.parentNode.removeChild(li);
+      });
+
+      // 7) Strip leading markdown heading markers ("* "/"** ") the author typed as headings.
+      root.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(function (h) {
+        var t = h.textContent.replace(/^\s*\*+\s*/, '').trim();
+        if (t !== h.textContent) h.textContent = t;
+      });
+
+      // 8) Convert the author's " -- " into a proper em dash (text-only; done last).
+      root.innerHTML = root.innerHTML.replace(/ +-- +/g, ' — ');
+    }
+
+    // Wrap consecutive bare inline/text nodes (direct children of root) into <p>.
+    function wrapBareRuns(root) {
+      var BLOCK = {P:1,DIV:1,H1:1,H2:1,H3:1,H4:1,H5:1,H6:1,UL:1,OL:1,LI:1,BLOCKQUOTE:1,HR:1,TABLE:1,FIGURE:1,PRE:1,SECTION:1,ARTICLE:1};
+      var run = [];
+      function flush() {
+        if (!run.length) return;
+        var keep = run.some(function (n) {
+          return (n.nodeType === 3 && n.textContent.trim()) ||
+                 (n.nodeType === 1 && (n.textContent.trim() || n.tagName === 'IMG' || (n.querySelector && n.querySelector('img'))));
+        });
+        if (keep) {
+          var p = document.createElement('p');
+          run[0].parentNode.insertBefore(p, run[0]);
+          run.forEach(function (n) { p.appendChild(n); });
+        } else {
+          run.forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
+        }
+        run = [];
+      }
+      Array.prototype.slice.call(root.childNodes).forEach(function (n) {
+        if (n.nodeType === 1 && BLOCK[n.tagName]) flush();
+        else run.push(n);
+      });
+      flush();
+    }
+
     async function loadPost() {
       var params = new URLSearchParams(window.location.search);
       var postId = params.get('id');
@@ -294,40 +407,7 @@
         var isHTML = /<[a-z][\s\S]*>/i.test(rawContent);
         if (isHTML) {
           contentEl.innerHTML = rawContent;
-          // Convert bold-only paragraphs that look like headings into proper <h2> elements
-          var paragraphs = contentEl.querySelectorAll('p');
-          for (var i = 0; i < paragraphs.length; i++) {
-            var p = paragraphs[i];
-            // Check if paragraph contains only a single <strong> or <b> child (plus whitespace)
-            var text = p.textContent.trim();
-            if (!text) continue;
-            var children = p.childNodes;
-            var boldEl = null;
-            var onlyBold = true;
-            for (var j = 0; j < children.length; j++) {
-              var child = children[j];
-              if (child.nodeType === 3 && child.textContent.trim() === '') continue; // whitespace text node
-              if (child.nodeType === 1 && (child.tagName === 'STRONG' || child.tagName === 'B')) {
-                if (boldEl) { onlyBold = false; break; } // multiple bold elements
-                boldEl = child;
-              } else {
-                onlyBold = false;
-                break;
-              }
-            }
-            if (!onlyBold || !boldEl) continue;
-            // Check if text is short enough to be a heading (max ~120 chars) and is ALL CAPS
-            var boldText = boldEl.textContent.trim();
-            if (boldText.length > 120) continue;
-            var letters = boldText.replace(/[^a-zA-ZÀ-ÖØ-öø-ÿ]/g, '');
-            if (letters.length < 2) continue;
-            var upperLetters = boldText.replace(/[^A-ZÀ-ÖØ-Ý]/g, '');
-            if (upperLetters.length / letters.length < 0.8) continue;
-            // Convert to title case and create h2
-            var h2 = document.createElement('h2');
-            h2.textContent = boldText.charAt(0).toUpperCase() + boldText.slice(1).toLowerCase();
-            p.parentNode.replaceChild(h2, p);
-          }
+          normalizePostContent(contentEl);
         } else {
           contentEl.classList.add('plain-text');
           contentEl.textContent = rawContent;
