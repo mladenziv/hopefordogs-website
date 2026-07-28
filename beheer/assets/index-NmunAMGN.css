@@ -20,10 +20,18 @@
 
 /* ===== Quill rich-text editor (replaces the old contentEditable) ===== */
 .h4d-quill .ql-toolbar{position:sticky;top:0;z-index:30;background:#fff;border-top-left-radius:.5rem;border-top-right-radius:.5rem}
-.h4d-quill .ql-container{font-family:inherit;font-size:15px;border-bottom-left-radius:.5rem;border-bottom-right-radius:.5rem}
-.h4d-quill .ql-editor{min-height:340px;line-height:1.7;color:#1a1a1a}
-.h4d-quill .ql-editor h2{font-size:1.6rem;font-weight:800;line-height:1.25;margin-top:1.2rem}
-.h4d-quill .ql-editor h3{font-size:1.2rem;font-weight:700;color:#374151;line-height:1.3}
-.h4d-quill .ql-editor blockquote{border-left:3px solid rgba(0,0,0,.18);padding-left:1rem;color:#444;font-style:normal}
-.h4d-quill .ql-editor a{color:#ff5314;text-decoration:underline}
+/* Editor typography mirrors the live blog (post.html .post-content) so what you
+   see in beheer matches the published page: 18px Manrope body, Nunito headings,
+   22px paragraph gaps, same list/quote spacing. */
+.h4d-quill .ql-container{font-family:'Manrope',sans-serif;font-size:18px;border-bottom-left-radius:.5rem;border-bottom-right-radius:.5rem}
+.h4d-quill .ql-editor{min-height:340px;max-width:760px;font-weight:500;line-height:1.75;letter-spacing:.01em;color:#1a1a1a}
+.h4d-quill .ql-editor p{margin:0 0 22px}
+.h4d-quill .ql-editor h2,.h4d-quill .ql-editor h3{font-family:'Nunito',sans-serif;color:#1a1a1a}
+.h4d-quill .ql-editor h2{font-size:30px;font-weight:800;line-height:1.25;margin:40px 0 18px}
+.h4d-quill .ql-editor h3{font-size:22px;font-weight:800;line-height:1.35;margin:36px 0 12px}
+.h4d-quill .ql-editor ul,.h4d-quill .ql-editor ol{margin:0 0 22px}
+.h4d-quill .ql-editor li{line-height:1.7;padding-bottom:6px}
+.h4d-quill .ql-editor strong{font-weight:700}
+.h4d-quill .ql-editor blockquote{border-left:3px solid rgba(26,26,26,.15);padding:4px 0 4px 22px;margin:28px 0;color:#555;font-style:normal}
+.h4d-quill .ql-editor a{color:#ff5314;font-weight:600;text-decoration:underline}
 .h4d-quill .ql-editor.ql-blank::before{color:#9aa0a6;font-style:normal}
