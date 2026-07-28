@@ -10,14 +10,9 @@
 .prose a{color:#ff5314;text-decoration:underline}
 .prose blockquote{border-left:3px solid rgba(0,0,0,.15);padding:.15rem 0 .15rem .85rem;margin:.75rem 0;color:#444;font-style:normal}
 .prose hr{border:0;border-top:1px solid rgba(0,0,0,.15);margin:1rem 0}
-/* section divider above each heading (matches the live post) */
-.prose h2{border-top:1px solid rgba(0,0,0,.12);padding-top:1rem}
-.prose > h2:first-child{border-top:none;padding-top:0}
 /* clear H2 vs H3 difference in the editor */
 .prose h2{font-size:1.6rem;font-weight:800;line-height:1.25}
 .prose h3{font-size:1.2rem;font-weight:700;color:#374151;line-height:1.3}
-/* no section-divider line on an empty heading (e.g. right after pressing Enter) */
-.prose h2:empty{border-top:none;padding-top:0}
 /* sticky styling toolbar so buttons stay reachable on long posts */
 .border-b.bg-muted\/30{position:sticky;top:0;z-index:20;background:#f3f2f0}
 /* active toolbar button = the current block / inline format */
@@ -27,8 +22,7 @@
 .h4d-quill .ql-toolbar{position:sticky;top:0;z-index:30;background:#fff;border-top-left-radius:.5rem;border-top-right-radius:.5rem}
 .h4d-quill .ql-container{font-family:inherit;font-size:15px;border-bottom-left-radius:.5rem;border-bottom-right-radius:.5rem}
 .h4d-quill .ql-editor{min-height:340px;line-height:1.7;color:#1a1a1a}
-.h4d-quill .ql-editor h2{font-size:1.6rem;font-weight:800;line-height:1.25;border-top:1px solid rgba(0,0,0,.12);padding-top:1rem;margin-top:1.2rem}
-.h4d-quill .ql-editor h2:first-child{border-top:none;padding-top:0;margin-top:.2rem}
+.h4d-quill .ql-editor h2{font-size:1.6rem;font-weight:800;line-height:1.25;margin-top:1.2rem}
 .h4d-quill .ql-editor h3{font-size:1.2rem;font-weight:700;color:#374151;line-height:1.3}
 .h4d-quill .ql-editor blockquote{border-left:3px solid rgba(0,0,0,.18);padding-left:1rem;color:#444;font-style:normal}
 .h4d-quill .ql-editor a{color:#ff5314;text-decoration:underline}
