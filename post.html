@@ -244,117 +244,13 @@
 
   <script src="components.js?v=20"></script>
   <script src="supabase-config.js"></script>
+  <script src="blog-normalize.js?v=1"></script>
   <script>
     function formatDate(dateStr) {
       if (!dateStr) return '';
       var d = new Date(dateStr);
       var months = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
       return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-    }
-
-    // Clean up Word/Notes-pasted HTML so the site's own CSS controls typography.
-    function renameTags(root, from, to) {
-      root.querySelectorAll(from).forEach(function (o) {
-        var e = document.createElement(to);
-        while (o.firstChild) e.appendChild(o.firstChild);
-        o.parentNode.replaceChild(e, o);
-      });
-    }
-    function unwrap(el) {
-      var p = el.parentNode;
-      if (!p) return;
-      while (el.firstChild) p.insertBefore(el.firstChild, el);
-      p.removeChild(el);
-    }
-    function normalizePostContent(root) {
-      // 1) Strip polluting inline styles (denylist). Keep width/height only on <img>.
-      var STRIP_RE = /(?:^|;)\s*(?:font[\w-]*|line-height|letter-spacing|white-space|color|background[\w-]*|-webkit-[\w-]*|-moz-[\w-]*|mso-[\w-]*|min-height|max-height|height|margin[\w-]*|padding[\w-]*|text-indent|list-style[\w-]*|vertical-align|text-transform|word-spacing|orphans|widows|text-decoration[\w-]*)\s*:[^;]*/gi;
-      root.querySelectorAll('[style]').forEach(function (el) {
-        var keepHW = el.tagName === 'IMG';
-        var c = el.getAttribute('style').replace(STRIP_RE, '');
-        if (!keepHW) c = c.replace(/(?:^|;)\s*(?:width|height)\s*:[^;]*/gi, '');
-        c = c.replace(/^;+|;+$/g, '').replace(/;;+/g, ';').trim();
-        if (c) el.setAttribute('style', c); else el.removeAttribute('style');
-        el.removeAttribute('class');
-      });
-
-      // 2) Normalize tags.
-      renameTags(root, 'b', 'strong');
-      renameTags(root, 'i', 'em');
-      root.querySelectorAll('font').forEach(unwrap);
-      root.querySelectorAll('span').forEach(unwrap);
-
-      // 3) Wrap bare text/inline runs into <p> so stray text becomes a real paragraph
-      //    (instead of merging into the next block).
-      wrapBareRuns(root);
-
-      // 4) Promote bold-only paragraphs to <h2>; drop the first one (duplicates the page title).
-      var firstDone = false, idx = 0;
-      root.querySelectorAll('p').forEach(function (para) {
-        var i = idx++;
-        var txt = para.textContent.replace(/ /g, ' ').trim();
-        if (!txt) return;
-        var onlyBold = null, ok = true;
-        para.childNodes.forEach(function (ch) {
-          if (ch.nodeType === 3 && ch.textContent.trim() === '') return;
-          if (ch.nodeType === 1 && ch.tagName === 'STRONG' && !onlyBold) { onlyBold = ch; return; }
-          ok = false;
-        });
-        if (!ok || !onlyBold) return;
-        if (txt.length > 100) return;
-        if (/[.!?]\s*$/.test(txt) && txt.split(/\s+/).length > 8) return;
-        if (!firstDone && i <= 1) { firstDone = true; para.parentNode.removeChild(para); return; }
-        var h = document.createElement('h2');
-        h.textContent = txt;
-        para.parentNode.replaceChild(h, para);
-      });
-
-      // 4) Remove empty spacer <p>/<div> (no text, no media).
-      root.querySelectorAll('p, div').forEach(function (b) {
-        if (!b.textContent.replace(/ /g, '').trim() && !b.querySelector('img,iframe,video')) {
-          b.parentNode.removeChild(b);
-        }
-      });
-
-      // 6) Drop empty list items (Word leaves junk empty <li>).
-      root.querySelectorAll('li').forEach(function (li) {
-        if (!li.textContent.trim() && !li.querySelector('img')) li.parentNode.removeChild(li);
-      });
-
-      // 7) Strip leading markdown heading markers ("* "/"** ") the author typed as headings.
-      root.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(function (h) {
-        var t = h.textContent.replace(/^\s*\*+\s*/, '').trim();
-        if (t !== h.textContent) h.textContent = t;
-      });
-
-      // 8) Convert the author's " -- " into a proper em dash (text-only; done last).
-      root.innerHTML = root.innerHTML.replace(/ +-- +/g, ' — ');
-    }
-
-    // Wrap consecutive bare inline/text nodes (direct children of root) into <p>.
-    function wrapBareRuns(root) {
-      var BLOCK = {P:1,DIV:1,H1:1,H2:1,H3:1,H4:1,H5:1,H6:1,UL:1,OL:1,LI:1,BLOCKQUOTE:1,HR:1,TABLE:1,FIGURE:1,PRE:1,SECTION:1,ARTICLE:1};
-      var run = [];
-      function flush() {
-        if (!run.length) return;
-        var keep = run.some(function (n) {
-          return (n.nodeType === 3 && n.textContent.trim()) ||
-                 (n.nodeType === 1 && (n.textContent.trim() || n.tagName === 'IMG' || (n.querySelector && n.querySelector('img'))));
-        });
-        if (keep) {
-          var p = document.createElement('p');
-          run[0].parentNode.insertBefore(p, run[0]);
-          run.forEach(function (n) { p.appendChild(n); });
-        } else {
-          run.forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
-        }
-        run = [];
-      }
-      Array.prototype.slice.call(root.childNodes).forEach(function (n) {
-        if (n.nodeType === 1 && BLOCK[n.tagName]) flush();
-        else run.push(n);
-      });
-      flush();
     }
 
     async function loadPost() {
@@ -406,7 +302,7 @@
         var isHTML = /<[a-z][\s\S]*>/i.test(rawContent);
         if (isHTML) {
           contentEl.innerHTML = rawContent;
-          normalizePostContent(contentEl);
+          if (window.h4dCleanBlog) window.h4dCleanBlog(contentEl);
         } else {
           contentEl.classList.add('plain-text');
           contentEl.textContent = rawContent;
