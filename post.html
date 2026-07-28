@@ -97,11 +97,9 @@
       font-weight: 800;
       margin: 48px 0 18px;
       line-height: 1.25;
-      padding-top: 40px;
-      border-top: 1px solid rgba(26, 26, 26, 0.10);
     }
-    /* First heading shouldn't carry a top divider */
-    .post-content > h2:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    /* First heading sits flush under the hero image */
+    .post-content > h2:first-child { margin-top: 0; }
     .post-content h3 { font-size: 22px; font-weight: 800; margin: 36px 0 12px; line-height: 1.35; }
     .post-content h4 { font-size: 19px; font-weight: 700; margin: 28px 0 8px; line-height: 1.4; }
     .post-content h5,
@@ -179,7 +177,7 @@
     @media (max-width: 1023px) {
       /* Responsive type */
       .post-content { font-size: 17px; }
-      .post-content h2 { font-size: 26px; padding-top: 32px; margin-top: 40px; }
+      .post-content h2 { font-size: 26px; margin-top: 40px; }
       .post-content h3 { font-size: 20px; }
 
       .post-section { padding: 144px 40px 80px; }
@@ -189,7 +187,7 @@
     @media (max-width: 767px) {
       /* Responsive type — XS */
       .post-content { font-size: 16px; line-height: 1.7; }
-      .post-content h2 { font-size: 24px; margin: 36px 0 14px; padding-top: 28px; }
+      .post-content h2 { font-size: 24px; margin: 36px 0 14px; }
       .post-content h3 { font-size: 19px; }
       .post-content p { margin: 0 0 18px; }
       .post-section { padding: 144px 20px 60px; }
