@@ -5,6 +5,10 @@
  * output back into the original element's `input` event — which is how the
  * bundle already syncs content into React state and saves it. If Quill fails
  * to load, nothing is hidden and the original editor keeps working.
+ *
+ * Also adds a Rich <-> Markdown toggle: switch to a plain Markdown box (via
+ * turndown/marked from CDN), paste Markdown from e.g. ChatGPT, switch back and
+ * it renders into Quill and saves as clean HTML.
  */
 (function () {
   var TOOLBAR = [
@@ -24,6 +28,32 @@
     return h.replace(/&nbsp;/g, ' ');
   }
 
+  function htmlToMarkdown(html) {
+    try {
+      if (window.TurndownService) {
+        var td = new window.TurndownService({
+          headingStyle: 'atx',
+          hr: '---',
+          bulletListMarker: '-',
+          codeBlockStyle: 'fenced',
+          emDelimiter: '*'
+        });
+        return td.turndown(html || '');
+      }
+    } catch (_) {}
+    return html || '';
+  }
+
+  function markdownToHTML(md) {
+    try {
+      if (window.marked) {
+        var fn = window.marked.parse || window.marked;
+        return fn(md || '', { breaks: false, mangle: false, headerIds: false });
+      }
+    } catch (_) {}
+    return md || '';
+  }
+
   function mount(el) {
     if (el.__quillDone) return;
     if (!window.Quill) return; // CDN not ready/failed -> leave original editor intact
@@ -33,8 +63,30 @@
     var host = document.createElement('div');
     host.className = 'h4d-quill';
     el.parentNode.insertBefore(host, el);
+
+    var mode = 'rich';
+
+    // Mode bar with the Rich <-> Markdown toggle.
+    var bar = document.createElement('div');
+    bar.className = 'h4d-modebar';
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'h4d-mdtoggle';
+    toggle.textContent = 'Markdown';
+    toggle.title = 'Wissel naar Markdown (bijv. om tekst van ChatGPT te plakken)';
+    bar.appendChild(toggle);
+    host.appendChild(bar);
+
     var editorDiv = document.createElement('div');
     host.appendChild(editorDiv);
+
+    // Markdown source box (hidden until toggled on).
+    var ta = document.createElement('textarea');
+    ta.className = 'h4d-md';
+    ta.style.display = 'none';
+    ta.setAttribute('spellcheck', 'false');
+    ta.placeholder = 'Plak hier Markdown… (bijv. van ChatGPT). Klik daarna op “Rich tekst”.';
+    host.appendChild(ta);
 
     var quill;
     try {
@@ -55,13 +107,55 @@
     el.style.display = 'none';
     if (oldToolbar && oldToolbar !== host) oldToolbar.style.display = 'none';
 
-    // Bridge: Quill change -> write into the original element and fire its
-    // native `input` listener so the bundle updates React state (and saves).
-    quill.on('text-change', function () {
+    // Bridge: write into the original element and fire its native `input`
+    // listener so the bundle updates React state (and saves).
+    function syncState(html) {
       try {
-        el.innerHTML = toHTML(quill);
+        el.innerHTML = html;
         el.dispatchEvent(new Event('input', { bubbles: true }));
       } catch (_) {}
+    }
+
+    // Quill edits -> state (only while in rich mode).
+    quill.on('text-change', function () {
+      if (mode !== 'rich') return;
+      syncState(toHTML(quill));
+    });
+
+    function qlToolbar() { return host.querySelector('.ql-toolbar'); }
+
+    function toMarkdown() {
+      ta.value = htmlToMarkdown(toHTML(quill));
+      editorDiv.style.display = 'none';
+      var tb = qlToolbar(); if (tb) tb.style.display = 'none';
+      ta.style.display = 'block';
+      toggle.textContent = 'Rich tekst';
+      toggle.classList.add('h4d-active');
+      mode = 'md';
+      ta.focus();
+    }
+
+    function toRich() {
+      var html = markdownToHTML(ta.value);
+      mode = 'rich';
+      try { quill.clipboard.dangerouslyPasteHTML(html); } catch (_) {}
+      syncState(toHTML(quill));
+      ta.style.display = 'none';
+      editorDiv.style.display = '';
+      var tb = qlToolbar(); if (tb) tb.style.display = '';
+      toggle.textContent = 'Markdown';
+      toggle.classList.remove('h4d-active');
+    }
+
+    toggle.addEventListener('click', function () {
+      if (mode === 'rich') toMarkdown(); else toRich();
+    });
+
+    // Keep state in sync while editing in Markdown mode too, so Save works
+    // regardless of which mode is active.
+    ta.addEventListener('input', function () {
+      if (mode !== 'md') return;
+      syncState(markdownToHTML(ta.value));
     });
   }
 

@@ -35,3 +35,10 @@
 .h4d-quill .ql-editor blockquote{border-left:3px solid rgba(26,26,26,.15);padding:4px 0 4px 22px;margin:28px 0;color:#555;font-style:normal}
 .h4d-quill .ql-editor a{color:#ff5314;font-weight:600;text-decoration:underline}
 .h4d-quill .ql-editor.ql-blank::before{color:#9aa0a6;font-style:normal}
+/* Rich <-> Markdown toggle */
+.h4d-modebar{display:flex;justify-content:flex-end;padding:0 0 6px}
+.h4d-mdtoggle{font:600 12px 'Manrope',sans-serif;padding:5px 12px;border:1px solid #d8d5d0;border-radius:6px;background:#fff;color:#444;cursor:pointer;line-height:1}
+.h4d-mdtoggle:hover{background:#f3f2f0}
+.h4d-mdtoggle.h4d-active{background:rgba(255,83,20,.12);border-color:#ff5314;color:#ff5314}
+.h4d-md{width:100%;min-height:340px;box-sizing:border-box;padding:14px;border:1px solid #d8d5d0;border-radius:.5rem;font:14px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#1a1a1a;resize:vertical;outline:none}
+.h4d-md:focus{border-color:#ff5314}
