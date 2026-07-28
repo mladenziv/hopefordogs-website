@@ -1,111 +1,75 @@
-/* Progressive enhancement for the beheer blog-post editor (a plain
- * contentEditable + execCommand toolbar in the compiled bundle). All additive —
- * we attach listeners, never replace React's handlers. Guarded so any error
- * can never break the editor.
- *
- * Adds: Enter after a heading starts a normal paragraph (no stray divider),
- * clicking the active H2/H3 toggles back to paragraph, P also clears inline
- * bold/italic, and the toolbar highlights the current block/format.
+/* Replace the beheer blog editor's bare contentEditable with Quill (a
+ * well-supported open-source rich-text editor loaded from CDN). We can't touch
+ * the compiled bundle's editor, so instead we mount Quill next to the existing
+ * contentEditable, hide the original + its custom toolbar, and bridge Quill's
+ * output back into the original element's `input` event — which is how the
+ * bundle already syncs content into React state and saves it. If Quill fails
+ * to load, nothing is hidden and the original editor keeps working.
  */
 (function () {
-  var BLOCK = { 'H2': 'h2', 'H3': 'h3', 'P': 'p' };
+  var TOOLBAR = [
+    [{ header: [2, 3, false] }],
+    ['bold', 'italic'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['blockquote'],
+    ['link'],
+    ['clean']
+  ];
 
-  function currentBlock(editor) {
+  // Quill's getSemanticHTML() emits proper <ul>/<ol> and semantic tags, but
+  // escapes every space as &nbsp; (which would break normal wrapping). Undo that.
+  function toHTML(quill) {
+    var h = '';
+    try { h = quill.getSemanticHTML(); } catch (_) { h = quill.root.innerHTML; }
+    return h.replace(/&nbsp;/g, ' ');
+  }
+
+  function mount(el) {
+    if (el.__quillDone) return;
+    if (!window.Quill) return; // CDN not ready/failed -> leave original editor intact
+    el.__quillDone = true;
+
+    var oldToolbar = el.previousElementSibling; // the custom .border-b.bg-muted/30 buttons
+    var host = document.createElement('div');
+    host.className = 'h4d-quill';
+    el.parentNode.insertBefore(host, el);
+    var editorDiv = document.createElement('div');
+    host.appendChild(editorDiv);
+
+    var quill;
     try {
-      var sel = window.getSelection();
-      if (!sel || !sel.rangeCount) return null;
-      var n = sel.getRangeAt(0).startContainer;
-      if (n.nodeType === 3) n = n.parentNode;
-      while (n && n !== editor && !/^(P|H1|H2|H3|H4|H5|H6|LI|BLOCKQUOTE)$/.test(n.tagName || '')) n = n.parentNode;
-      return (n && n !== editor) ? n : null;
-    } catch (_) { return null; }
-  }
-
-  function formatButtons(toolbar) {
-    var out = {};
-    if (!toolbar) return out;
-    Array.prototype.slice.call(toolbar.querySelectorAll('button')).forEach(function (b) {
-      var t = (b.textContent || '').trim();
-      if (t === 'H2' || t === 'H3' || t === 'P' || t === 'B' || t === 'I') out[t] = b;
-    });
-    return out;
-  }
-
-  function updateActive(editor) {
-    try {
-      var toolbar = editor.previousElementSibling;
-      var btns = formatButtons(toolbar);
-      var cb = currentBlock(editor);
-      var tag = cb ? cb.tagName : '';
-      ['H2', 'H3', 'P'].forEach(function (k) {
-        if (btns[k]) btns[k].classList.toggle('h4d-active', tag === k);
+      quill = new Quill(editorDiv, {
+        theme: 'snow',
+        modules: { toolbar: TOOLBAR },
+        placeholder: 'Schrijf hier het bericht…'
       });
-      if (btns.B) btns.B.classList.toggle('h4d-active', document.queryCommandState('bold'));
-      if (btns.I) btns.I.classList.toggle('h4d-active', document.queryCommandState('italic'));
-    } catch (_) {}
-  }
+      quill.clipboard.dangerouslyPasteHTML(el.innerHTML || '');
+    } catch (e) {
+      // roll back on failure
+      el.__quillDone = false;
+      if (host.parentNode) host.parentNode.removeChild(host);
+      return;
+    }
 
-  function enhance(editor) {
-    if (editor.__h4dEnh) return;
-    editor.__h4dEnh = true;
-    var toolbar = editor.previousElementSibling;
-    if (!toolbar) return;
-    var allBtns = Array.prototype.slice.call(toolbar.querySelectorAll('button'));
-    var preTag = '';
+    // Hide the original contentEditable + its toolbar; Quill takes over.
+    el.style.display = 'none';
+    if (oldToolbar && oldToolbar !== host) oldToolbar.style.display = 'none';
 
-    allBtns.forEach(function (b) {
-      // Keep the editor's selection when a toolbar button is pressed.
-      b.addEventListener('mousedown', function (e) {
-        e.preventDefault();
-        var cb = currentBlock(editor);
-        preTag = cb ? cb.tagName : '';
-      });
-      var label = (b.textContent || '').trim();
-      // Run AFTER React's execCommand (setTimeout 0), additive.
-      b.addEventListener('click', function () {
-        setTimeout(function () {
-          try {
-            if ((label === 'H2' || label === 'H3') && preTag === label) {
-              document.execCommand('formatBlock', false, 'p'); // toggle heading off
-            } else if (label === 'P') {
-              document.execCommand('removeFormat'); // P => plain paragraph, drop bold/italic
-            }
-          } catch (_) {}
-          updateActive(editor);
-        }, 0);
-      });
+    // Bridge: Quill change -> write into the original element and fire its
+    // native `input` listener so the bundle updates React state (and saves).
+    quill.on('text-change', function () {
+      try {
+        el.innerHTML = toHTML(quill);
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      } catch (_) {}
     });
-
-    // Enter after a heading should continue as a normal paragraph.
-    editor.addEventListener('keydown', function (e) {
-      if (e.key !== 'Enter' || e.shiftKey) return;
-      var cb = currentBlock(editor);
-      if (cb && /^H[1-6]$/.test(cb.tagName)) {
-        setTimeout(function () {
-          var nb = currentBlock(editor);
-          if (nb && /^H[1-6]$/.test(nb.tagName) && !nb.textContent.trim()) {
-            try { document.execCommand('formatBlock', false, 'p'); } catch (_) {}
-            updateActive(editor);
-          }
-        }, 0);
-      }
-    });
-
-    editor.addEventListener('keyup', function () { updateActive(editor); });
-    editor.addEventListener('mouseup', function () { updateActive(editor); });
-    updateActive(editor);
   }
-
-  // Keep the active-state in sync as the caret moves.
-  document.addEventListener('selectionchange', function () {
-    var a = document.activeElement;
-    if (a && a.isContentEditable) updateActive(a);
-  });
 
   function scan() {
     var eds = document.querySelectorAll('[contenteditable="true"], [contenteditable=""]');
     for (var i = 0; i < eds.length; i++) {
-      if (eds[i].isContentEditable && eds[i].className && eds[i].className.indexOf('prose') !== -1) enhance(eds[i]);
+      var e = eds[i];
+      if (e.isContentEditable && e.className && e.className.indexOf('prose') !== -1) mount(e);
     }
   }
 
@@ -113,5 +77,6 @@
     new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
   }
   document.addEventListener('DOMContentLoaded', scan);
+  window.addEventListener('load', scan);
   scan();
 })();

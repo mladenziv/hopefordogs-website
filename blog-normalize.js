@@ -159,4 +159,21 @@
     window.h4dCleanBlog(d);
     return d.innerHTML;
   };
+
+  // Light clean for SAVE: strip styles/classes + unwrap span/font only. Quill
+  // output is already clean, so we must NOT re-run the aggressive heading/bullet
+  // heuristics (they'd wrongly transform intentional formatting). Aggressive
+  // cleanup (h4dCleanBlog) is for LOAD/RENDER of the old messy content.
+  window.h4dStripHTML = function (html) {
+    try {
+      var d = document.createElement('div');
+      d.innerHTML = html || '';
+      d.querySelectorAll('[style]').forEach(function (e) { e.removeAttribute('style'); });
+      d.querySelectorAll('[class]').forEach(function (e) { e.removeAttribute('class'); });
+      d.querySelectorAll('span,font').forEach(function (e) {
+        var p = e.parentNode; while (e.firstChild) p.insertBefore(e.firstChild, e); p.removeChild(e);
+      });
+      return d.innerHTML;
+    } catch (_) { return html; }
+  };
 })();
