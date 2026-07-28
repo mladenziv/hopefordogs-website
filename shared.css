@@ -82,17 +82,20 @@ body {
 }
 
 h1,
+/* Balance only headings (short display text) — NOT body text. On paragraphs
+   text-wrap:balance forces all lines to equal length, so a short paragraph
+   breaks in the middle with room to spare. Body text should fill each line. */
 h2,
 h3,
 h4,
 h5,
-h6,
+h6 {
+    text-wrap: balance;
+}
 p,
 li,
-a,
-span,
 blockquote {
-    text-wrap: balance;
+    text-wrap: pretty;
 }
 
 /* ===== NAVIGATION ===== */
