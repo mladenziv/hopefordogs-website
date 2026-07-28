@@ -10,3 +10,6 @@
 .prose a{color:#ff5314;text-decoration:underline}
 .prose blockquote{border-left:3px solid rgba(0,0,0,.15);padding:.15rem 0 .15rem .85rem;margin:.75rem 0;color:#444;font-style:normal}
 .prose hr{border:0;border-top:1px solid rgba(0,0,0,.15);margin:1rem 0}
+/* section divider above each heading (matches the live post) */
+.prose h2{border-top:1px solid rgba(0,0,0,.12);padding-top:1rem}
+.prose > h2:first-child{border-top:none;padding-top:0}

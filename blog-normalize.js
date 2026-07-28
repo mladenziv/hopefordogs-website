@@ -128,11 +128,14 @@
       para.parentNode.replaceChild(h, para);
     });
 
-    // 5) Remove empty spacer <p>/<div> (no text, no media) — these are the "empty rows".
+    // 5) Remove empty spacer <p>/<div> (the "empty rows") AND divider-only paragraphs —
+    //    the author typed long dashes (⸻ / ---) as manual dividers ("stripes"); the
+    //    section dividers (h2 top border) replace them, so drop them.
     root.querySelectorAll('p, div').forEach(function (b) {
-      if (!b.textContent.replace(/ /g, '').trim() && !b.querySelector('img,iframe,video')) {
-        b.parentNode.removeChild(b);
-      }
+      if (b.querySelector('img,iframe,video')) return;
+      var t = b.textContent.replace(/[\s\u00a0]/g, '');
+      var dividerOnly = t && /^[\u2e3b\u2e3a\u2014\u2013\u2015\u2012_=*\u00b7\u2022\u2219\u30fb~-]+$/.test(t) && (/[\u2e3b\u2e3a\u2014\u2013\u2015\u2012]/.test(t) || t.length >= 3);
+      if (!t || dividerOnly) b.parentNode.removeChild(b);
     });
 
     // 6) Drop empty list items.
