@@ -113,7 +113,8 @@
             .page-hero {
                 background: #fff;
                 text-align: left;
-                overflow-x: clip; /* contain the sunburst rays; no horizontal scroll */
+                overflow: clip; /* header clips its content (the sunburst rays) */
+                padding: 146px 0 60px; /* no side padding: the inner aligns to the page edge */
             }
 
             /* ============ FILTER TABS ============ */
@@ -415,7 +416,7 @@
                 align-items: center;
                 justify-content: center;
                 gap: 80px;
-                max-width: 1480px;
+                max-width: 1560px;
                 width: 100%;
                 margin: 0 auto;
                 padding: 0 40px;
@@ -758,13 +759,20 @@
                     padding: 60px 32px;
                 }
 
-                /* Hero stacks: text above the Dog-of-the-day card */
+                /* Hero stacks: card ABOVE the (now centered) text */
                 .page-hero-inner {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 40px;
+                    flex-direction: column-reverse;
+                    align-items: center;
+                    gap: 32px;
+                    text-align: center;
                 }
-                .hero-text { width: 100%; max-width: 560px; }
+                .hero-text {
+                    width: 100%;
+                    max-width: 560px;
+                    align-items: center;
+                    text-align: center;
+                }
+                .hero-text h1 { text-align: center; }
                 .hero-dotd { width: 100%; align-self: auto; }
             }
 
