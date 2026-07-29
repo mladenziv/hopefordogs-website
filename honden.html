@@ -1460,7 +1460,9 @@
                 try {
                     // Load dogs and photos from Supabase
                     const [dogs, primaryPhotos] = await Promise.all([
-                        supabaseGet("dogs", "select=*&draft=eq.false&order=sort_order.asc.nullslast,created_at.desc"),
+                        // New dogs (no manual sort_order yet) float to the TOP, newest first;
+                        // manually drag-ordered dogs keep their arrangement below them.
+                        supabaseGet("dogs", "select=*&draft=eq.false&order=sort_order.asc.nullsfirst,created_at.desc"),
                         supabaseGet(
                             "dog_photos",
                             "select=dog_id,photo_url&is_primary=eq.true",
