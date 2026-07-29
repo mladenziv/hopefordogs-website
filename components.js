@@ -1476,7 +1476,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function injectCSS() {
     if (document.getElementById('h4d-lottery-css')) return;
     var css = `
-.h4d-lottery-toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(180%);z-index:1200;width:min(460px,calc(100vw - 32px));background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:20px;box-shadow:0 12px 44px rgba(0,0,0,.18);padding:14px 14px 14px 14px;display:flex;gap:14px;align-items:center;opacity:0;transition:transform .45s cubic-bezier(.16,1,.3,1),opacity .3s;font-family:'Manrope',sans-serif;}
+.h4d-lottery-toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(180%);z-index:1200;width:min(508px,calc(100vw - 24px));background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:20px;box-shadow:0 12px 44px rgba(0,0,0,.18);padding:14px 14px 14px 14px;display:flex;gap:14px;align-items:center;opacity:0;transition:transform .45s cubic-bezier(.16,1,.3,1),opacity .3s;font-family:'Manrope',sans-serif;}
 .h4d-lottery-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 .h4d-lt-media{flex:0 0 auto;width:64px;height:64px;border-radius:14px;overflow:hidden;background:var(--beige,#faf8f4);}
 .h4d-lt-media img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -1484,17 +1484,17 @@ document.addEventListener('DOMContentLoaded', function () {
 .h4d-lt-body{flex:1 1 auto;min-width:0;}
 .h4d-lt-heading{font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;color:var(--dark-1,#1a1a1a);line-height:1.25;margin-bottom:2px;}
 .h4d-lt-text{font-size:13.5px;color:var(--dark-2,#555);line-height:1.4;margin-bottom:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.h4d-lt-btn{flex:0 0 auto;align-self:center;white-space:nowrap;background:var(--brand,#ff5314);color:#fff;border:none;border-radius:999px;font-weight:700;font-size:14px;padding:10px 20px;cursor:pointer;font-family:inherit;}
+.h4d-lt-btn{flex:0 0 auto;align-self:center;white-space:nowrap;background:var(--brand,#ff5314);color:#fff;border:none;border-radius:999px;font-weight:700;font-size:13px;padding:8px 15px;cursor:pointer;font-family:inherit;}
 .h4d-lt-btn:hover{filter:brightness(.95);}
-.h4d-lt-close{position:absolute;top:8px;right:10px;background:transparent;border:none;font-size:16px;color:#aaa;cursor:pointer;line-height:1;padding:4px;}
-.h4d-lt-close:hover{color:#666;}
-@media (max-width:520px){.h4d-lottery-toast{left:12px;right:12px;bottom:12px;transform:translateY(180%);width:auto;padding:12px;gap:11px;}.h4d-lottery-toast.show{transform:translateY(0);}.h4d-lt-btn{padding:9px 15px;font-size:13.5px;}}
+.h4d-lt-dismiss{flex:0 0 auto;align-self:center;width:38px;height:38px;border-radius:999px;background:#fff;border:1.5px solid rgba(0,0,0,.18);color:#777;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.h4d-lt-dismiss:hover{border-color:rgba(0,0,0,.34);color:#444;}
+@media (max-width:520px){.h4d-lottery-toast{left:12px;right:12px;bottom:12px;transform:translateY(180%);width:auto;padding:12px;gap:9px;}.h4d-lottery-toast.show{transform:translateY(0);}.h4d-lt-btn{padding:8px 12px;font-size:12.5px;}.h4d-lt-dismiss{width:34px;height:34px;font-size:13px;}}
 .h4d-lottery-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s;font-family:'Manrope',sans-serif;}
 .h4d-lottery-overlay.open{opacity:1;pointer-events:auto;}
 .h4d-lottery-modal{background:#fff;border-radius:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:28px;position:relative;transform:translateY(16px);transition:transform .25s;}
 .h4d-lottery-overlay.open .h4d-lottery-modal{transform:none;}
 .h4d-lm-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:15px;color:#333;z-index:2;}
-.h4d-lm-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px;padding-right:34px;}
+.h4d-lm-head{display:flex;flex-direction:column;gap:12px;align-items:flex-start;text-align:left;margin-bottom:18px;}
 .h4d-lm-prize{width:76px;height:76px;border-radius:14px;object-fit:cover;flex:0 0 auto;background:var(--beige,#faf8f4);}
 .h4d-lm-prize.is-default{object-fit:contain;padding:10px;}
 .h4d-lm-prizes{margin:2px 0 0;font-size:13.5px;color:var(--dark-2,#555);line-height:1.5;}
@@ -1505,8 +1505,8 @@ document.addEventListener('DOMContentLoaded', function () {
 .h4d-lm-price{font-size:13px;color:var(--brand,#ff5314);font-weight:700;margin:0;}
 .h4d-lm-sub{font-size:13.5px;color:var(--dark-2,#555);margin:0 0 10px;}
 .h4d-lm-grid-wrap{background:var(--beige,#faf8f4);border-radius:16px;padding:14px;margin-bottom:14px;}
-.h4d-lm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:8px;max-height:280px;overflow-y:auto;}
-.h4d-lm-num{aspect-ratio:1;border:1.5px solid rgba(0,0,0,.12);background:#fff;border-radius:10px;font-weight:700;font-size:14px;color:var(--dark-1,#1a1a1a);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;transition:transform .1s,background .12s,border-color .12s,color .12s;}
+.h4d-lm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(35px,1fr));gap:6px;}
+.h4d-lm-num{aspect-ratio:1;border:1.25px solid rgba(0,0,0,.12);background:#fff;border-radius:8px;font-weight:700;font-size:11px;color:var(--dark-1,#1a1a1a);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;transition:transform .1s,background .12s,border-color .12s,color .12s;}
 .h4d-lm-num:hover:not(.taken):not(.selected){border-color:var(--brand,#ff5314);}
 .h4d-lm-num.selected{background:var(--brand,#ff5314);border-color:var(--brand,#ff5314);color:#fff;transform:scale(1.04);}
 .h4d-lm-num.taken{background:rgba(0,0,0,.05);color:#bbb;cursor:not-allowed;text-decoration:line-through;border-color:transparent;}
@@ -1540,13 +1540,13 @@ document.addEventListener('DOMContentLoaded', function () {
     toast.id = 'h4dLotteryToast';
     toast.setAttribute('role', 'dialog');
     toast.innerHTML =
-      '<button class="h4d-lt-close" id="h4dLtClose" aria-label="Sluiten">✕</button>' +
       '<div class="h4d-lt-media" id="h4dLtMedia"><img id="h4dLtImg" alt=""></div>' +
       '<div class="h4d-lt-body">' +
         '<div class="h4d-lt-heading" id="h4dLtHeading"></div>' +
         '<div class="h4d-lt-text" id="h4dLtText"></div>' +
       '</div>' +
-      '<button class="h4d-lt-btn" id="h4dLtBtn" data-i18n="lottery.enter">Doe mee</button>';
+      '<button class="h4d-lt-btn" id="h4dLtBtn" data-i18n="lottery.enter">Doe mee</button>' +
+      '<button class="h4d-lt-dismiss" id="h4dLtDismiss" aria-label="Sluiten">✕</button>';
     document.body.appendChild(toast);
 
     var overlay = document.createElement('div');
@@ -1588,7 +1588,7 @@ document.addEventListener('DOMContentLoaded', function () {
     translateIn(toast);
     translateIn(overlay);
 
-    document.getElementById('h4dLtClose').addEventListener('click', function () { hideToast(true); });
+    document.getElementById('h4dLtDismiss').addEventListener('click', function () { hideToast(true); });
     document.getElementById('h4dLtBtn').addEventListener('click', function () { if (current) window.openLotteryModal(current); });
     document.getElementById('h4dLmClose').addEventListener('click', window.closeLotteryModal);
     overlay.addEventListener('click', function (e) { if (e.target === overlay) window.closeLotteryModal(); });
@@ -1729,11 +1729,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var tot = document.getElementById('h4dLmTotal');
     var submit = document.getElementById('h4dLmSubmit');
     if (selected.length === 0) {
-      sel.textContent = t('lottery.none');
+      sel.innerHTML = '';
       tot.textContent = '';
       submit.disabled = true;
     } else {
-      sel.innerHTML = t('lottery.selected') + ': <b>' + selected.join(', ') + '</b>';
+      sel.innerHTML = '<b>' + selected.join(', ') + '</b>';
       tot.textContent = t('lottery.total') + ': ' + money(selected.length * (current.price_cents || 0)) +
         ' (' + selected.length + ' × ' + money(current.price_cents) + ')';
       submit.disabled = false;
