@@ -320,6 +320,22 @@ var H4D_I18N = {
   'mislukt.bank':       { nl: 'Liever via bankoverschrijving? Op de donatiepagina vindt u onze bankgegevens.', de: 'Lieber per Bank\u00FCberweisung? Auf der Spendenseite finden Sie unsere Bankdaten.', en: 'Prefer a bank transfer? You\u2019ll find our bank details on the donation page.' },
   'mislukt.opnieuw':    { nl: 'Probeer opnieuw', de: 'Erneut versuchen', en: 'Try again' },
   'mislukt.terug':      { nl: 'Terug naar home', de: 'Zur\u00FCck zur Startseite', en: 'Back to home' },
+  // ---- Lottery (cross-page toast + entry modal) ----
+  'lottery.enter':      { nl: 'Doe mee', de: 'Mitmachen', en: 'Enter' },
+  'lottery.pickTitle':  { nl: 'Kies je nummer(s)', de: 'W\u00E4hle deine Nummer(n)', en: 'Pick your number(s)' },
+  'lottery.pickSub':    { nl: 'Tik op de beschikbare nummers die je wilt kopen.', de: 'Tippe auf die verf\u00FCgbaren Nummern, die du kaufen m\u00F6chtest.', en: 'Tap the available numbers you want to buy.' },
+  'lottery.name':       { nl: 'Naam', de: 'Name', en: 'Name' },
+  'lottery.email':      { nl: 'E-mailadres', de: 'E-Mail-Adresse', en: 'Email address' },
+  'lottery.continue':   { nl: 'Doorgaan naar betaling', de: 'Weiter zur Zahlung', en: 'Continue to payment' },
+  'lottery.perNumber':  { nl: 'per nummer', de: 'pro Nummer', en: 'per number' },
+  'lottery.selected':   { nl: 'Geselecteerd', de: 'Ausgew\u00E4hlt', en: 'Selected' },
+  'lottery.none':       { nl: 'Nog geen nummer gekozen', de: 'Noch keine Nummer gew\u00E4hlt', en: 'No number selected yet' },
+  'lottery.total':      { nl: 'Totaal', de: 'Gesamt', en: 'Total' },
+  'lottery.loading':    { nl: 'Nummers laden\u2026', de: 'Nummern werden geladen\u2026', en: 'Loading numbers\u2026' },
+  'lottery.err':        { nl: 'Er ging iets mis. Probeer het opnieuw.', de: 'Etwas ist schiefgelaufen. Bitte versuche es erneut.', en: 'Something went wrong. Please try again.' },
+  'lottery.conflict':   { nl: 'Sommige nummers zijn net vergeven. We hebben je selectie bijgewerkt.', de: 'Einige Nummern wurden gerade vergeben. Deine Auswahl wurde aktualisiert.', en: 'Some numbers were just taken \u2014 your selection was updated.' },
+  'lottery.needSelect': { nl: 'Kies minstens \u00E9\u00E9n nummer.', de: 'W\u00E4hle mindestens eine Nummer.', en: 'Pick at least one number.' },
+  'lottery.terms':      { nl: 'Voorwaarden', de: 'Bedingungen', en: 'Terms & rules' },
 };
 
 function h4dGetLanguage() {
@@ -1417,3 +1433,353 @@ document.addEventListener('DOMContentLoaded', function () {
     apply('maandelijks');
   });
 });
+
+
+// ===== LOTTERY: cross-page announcement toast + entry modal =====
+// Renders a bottom toast on every public page when a lottery is `live`, and a
+// number-picker modal that reserves the chosen number(s) and hands off to Mollie.
+// Availability + reservation happen server-side (/api/lottery/*) so buyer PII in
+// lottery_tickets never reaches the browser. Inert if no live lottery exists.
+(function () {
+  var EXCLUDE = ['bedankt.html', 'betaling-mislukt.html'];
+  function excluded() {
+    return EXCLUDE.indexOf((location.pathname.split('/').pop() || '')) !== -1;
+  }
+  function ready(fn) {
+    if (document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
+  function t(key) {
+    var lang = h4dGetLanguage();
+    return (H4D_I18N[key] && (H4D_I18N[key][lang] || H4D_I18N[key].nl)) || '';
+  }
+  function loc(row, field) {
+    var lang = h4dGetLanguage();
+    return (row && (row[field + '_' + lang] || row[field + '_nl'])) || '';
+  }
+  function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+  function money(cents) { return '€' + (Number(cents || 0) / 100).toFixed(2).replace('.', ','); }
+  function translateIn(root) {
+    var lang = h4dGetLanguage();
+    root.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var k = el.getAttribute('data-i18n');
+      if (H4D_I18N[k] && H4D_I18N[k][lang]) el.textContent = H4D_I18N[k][lang];
+    });
+  }
+
+  var current = null;   // active lottery object
+  var selected = [];    // chosen numbers
+  var taken = {};       // number -> true
+
+  function injectCSS() {
+    if (document.getElementById('h4d-lottery-css')) return;
+    var css = `
+.h4d-lottery-toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(180%);z-index:1200;width:min(460px,calc(100vw - 32px));background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:20px;box-shadow:0 12px 44px rgba(0,0,0,.18);padding:14px 14px 14px 14px;display:flex;gap:14px;align-items:center;opacity:0;transition:transform .45s cubic-bezier(.16,1,.3,1),opacity .3s;font-family:'Manrope',sans-serif;}
+.h4d-lottery-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.h4d-lt-media{flex:0 0 auto;width:72px;height:72px;border-radius:14px;overflow:hidden;background:var(--beige,#faf8f4);}
+.h4d-lt-media img{width:100%;height:100%;object-fit:cover;display:block;}
+.h4d-lt-media.empty{display:none;}
+.h4d-lt-body{flex:1 1 auto;min-width:0;}
+.h4d-lt-heading{font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;color:var(--dark-1,#1a1a1a);line-height:1.25;margin-bottom:2px;}
+.h4d-lt-text{font-size:13.5px;color:var(--dark-2,#555);line-height:1.4;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.h4d-lt-btn{background:var(--brand,#ff5314);color:#fff;border:none;border-radius:999px;font-weight:700;font-size:14px;padding:9px 20px;cursor:pointer;font-family:inherit;}
+.h4d-lt-btn:hover{filter:brightness(.95);}
+.h4d-lt-close{position:absolute;top:8px;right:10px;background:transparent;border:none;font-size:16px;color:#aaa;cursor:pointer;line-height:1;padding:4px;}
+.h4d-lt-close:hover{color:#666;}
+@media (max-width:520px){.h4d-lottery-toast{left:12px;right:12px;bottom:12px;transform:translateY(180%);width:auto;}.h4d-lottery-toast.show{transform:translateY(0);}.h4d-lt-media{width:58px;height:58px;}}
+.h4d-lottery-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s;font-family:'Manrope',sans-serif;}
+.h4d-lottery-overlay.open{opacity:1;pointer-events:auto;}
+.h4d-lottery-modal{background:#fff;border-radius:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:28px;position:relative;transform:translateY(16px);transition:transform .25s;}
+.h4d-lottery-overlay.open .h4d-lottery-modal{transform:none;}
+.h4d-lm-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:15px;color:#333;z-index:2;}
+.h4d-lm-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px;padding-right:34px;}
+.h4d-lm-prize{width:76px;height:76px;border-radius:14px;object-fit:cover;flex:0 0 auto;}
+.h4d-lm-prize.empty{display:none;}
+.h4d-lm-title{font-family:'Nunito',sans-serif;font-weight:800;font-size:20px;color:var(--dark-1,#1a1a1a);margin:0 0 4px;}
+.h4d-lm-desc{font-size:14px;color:var(--dark-2,#555);line-height:1.5;margin:0 0 6px;}
+.h4d-lm-price{font-size:13px;color:var(--brand,#ff5314);font-weight:700;margin:0;}
+.h4d-lm-sub{font-size:13.5px;color:var(--dark-2,#555);margin:0 0 10px;}
+.h4d-lm-grid-wrap{background:var(--beige,#faf8f4);border-radius:16px;padding:14px;margin-bottom:14px;}
+.h4d-lm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:8px;max-height:280px;overflow-y:auto;}
+.h4d-lm-num{aspect-ratio:1;border:1.5px solid rgba(0,0,0,.12);background:#fff;border-radius:10px;font-weight:700;font-size:14px;color:var(--dark-1,#1a1a1a);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;transition:transform .1s,background .12s,border-color .12s,color .12s;}
+.h4d-lm-num:hover:not(.taken):not(.selected){border-color:var(--brand,#ff5314);}
+.h4d-lm-num.selected{background:var(--brand,#ff5314);border-color:var(--brand,#ff5314);color:#fff;transform:scale(1.04);}
+.h4d-lm-num.taken{background:rgba(0,0,0,.05);color:#bbb;cursor:not-allowed;text-decoration:line-through;border-color:transparent;}
+.h4d-lm-msg{padding:26px;text-align:center;color:var(--dark-2,#555);font-size:14px;}
+.h4d-lm-selected{font-size:13.5px;color:var(--dark-2,#555);margin-bottom:14px;min-height:20px;}
+.h4d-lm-selected b{color:var(--dark-1,#1a1a1a);}
+.h4d-lm-fields{display:flex;gap:12px;margin-bottom:14px;}
+.h4d-lm-fields label{flex:1;display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--dark-2,#555);}
+.h4d-lm-fields input{padding:11px 14px;border:1.5px solid rgba(0,0,0,.1);border-radius:12px;font-size:15px;font-family:inherit;outline:none;}
+.h4d-lm-fields input:focus{border-color:var(--brand,#ff5314);}
+.h4d-lm-total{font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;color:var(--dark-1,#1a1a1a);margin-bottom:12px;}
+.h4d-lm-submit{width:100%;background:var(--brand,#ff5314);color:#fff;border:none;border-radius:999px;font-weight:700;font-size:16px;padding:14px;cursor:pointer;font-family:inherit;}
+.h4d-lm-submit:disabled{opacity:.5;cursor:not-allowed;}
+.h4d-lm-error{color:#c0392b;font-size:13.5px;margin:10px 0 0;text-align:center;min-height:18px;}
+.h4d-lm-terms{margin-top:14px;text-align:center;}
+.h4d-lm-terms a{color:var(--dark-2,#555);font-size:12.5px;text-decoration:underline;}
+.h4d-lm-terms.empty{display:none;}
+@media (max-width:520px){.h4d-lottery-overlay{align-items:flex-end;padding:0;}.h4d-lottery-modal{max-width:none;border-radius:24px 24px 0 0;max-height:92vh;transform:translateY(100%);}.h4d-lm-fields{flex-direction:column;}}
+`;
+    var style = document.createElement('style');
+    style.id = 'h4d-lottery-css';
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
+  function injectDOM() {
+    if (document.getElementById('h4dLotteryToast')) return;
+
+    var toast = document.createElement('div');
+    toast.className = 'h4d-lottery-toast';
+    toast.id = 'h4dLotteryToast';
+    toast.setAttribute('role', 'dialog');
+    toast.innerHTML =
+      '<button class="h4d-lt-close" id="h4dLtClose" aria-label="Sluiten">✕</button>' +
+      '<div class="h4d-lt-media empty" id="h4dLtMedia"><img id="h4dLtImg" alt=""></div>' +
+      '<div class="h4d-lt-body">' +
+        '<div class="h4d-lt-heading" id="h4dLtHeading"></div>' +
+        '<div class="h4d-lt-text" id="h4dLtText"></div>' +
+        '<button class="h4d-lt-btn" id="h4dLtBtn" data-i18n="lottery.enter">Doe mee</button>' +
+      '</div>';
+    document.body.appendChild(toast);
+
+    var overlay = document.createElement('div');
+    overlay.className = 'h4d-lottery-overlay';
+    overlay.id = 'h4dLotteryOverlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.innerHTML =
+      '<div class="h4d-lottery-modal" id="h4dLotteryModal">' +
+        '<button class="h4d-lm-close" id="h4dLmClose" aria-label="Sluiten">✕</button>' +
+        '<div class="h4d-lm-head">' +
+          '<img class="h4d-lm-prize empty" id="h4dLmPrize" alt="">' +
+          '<div>' +
+            '<h2 class="h4d-lm-title" id="h4dLmTitle"></h2>' +
+            '<p class="h4d-lm-desc" id="h4dLmDesc"></p>' +
+            '<p class="h4d-lm-price" id="h4dLmPrice"></p>' +
+          '</div>' +
+        '</div>' +
+        '<p class="h4d-lm-sub" data-i18n="lottery.pickSub">Tik op de beschikbare nummers die je wilt kopen.</p>' +
+        '<div class="h4d-lm-grid-wrap"><div class="h4d-lm-grid" id="h4dLmGrid"></div></div>' +
+        '<div class="h4d-lm-selected" id="h4dLmSelected"></div>' +
+        '<form class="h4d-lm-form" id="h4dLmForm">' +
+          '<div class="h4d-lm-fields">' +
+            '<label data-i18n="lottery.name">Naam<input type="text" id="h4dLmName" required></label>' +
+            '<label data-i18n="lottery.email">E-mailadres<input type="email" id="h4dLmEmail" required></label>' +
+          '</div>' +
+          '<div class="h4d-lm-total" id="h4dLmTotal"></div>' +
+          '<button type="submit" class="h4d-lm-submit" id="h4dLmSubmit" data-i18n="lottery.continue">Doorgaan naar betaling</button>' +
+          '<p class="h4d-lm-error" id="h4dLmError"></p>' +
+        '</form>' +
+        '<div class="h4d-lm-terms empty" id="h4dLmTerms"><a id="h4dLmTermsLink" target="_blank" rel="noopener" data-i18n="lottery.terms">Voorwaarden</a></div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    // The <label> wraps its input, so setting textContent via data-i18n would
+    // wipe the input. Move the label text into leading text nodes instead.
+    fixFieldLabels();
+    translateIn(toast);
+    translateIn(overlay);
+
+    document.getElementById('h4dLtClose').addEventListener('click', function () { hideToast(true); });
+    document.getElementById('h4dLtBtn').addEventListener('click', function () { if (current) window.openLotteryModal(current); });
+    document.getElementById('h4dLmClose').addEventListener('click', window.closeLotteryModal);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) window.closeLotteryModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('open')) window.closeLotteryModal(); });
+    document.getElementById('h4dLmForm').addEventListener('submit', submitOrder);
+  }
+
+  // Field labels wrap their input; keep the label text as a leading node so
+  // data-i18n (which we don't put on them) doesn't clobber the input.
+  function fixFieldLabels() {
+    var nameLabel = document.querySelector('#h4dLmForm label[data-i18n="lottery.name"]');
+    var mailLabel = document.querySelector('#h4dLmForm label[data-i18n="lottery.email"]');
+    [ [nameLabel, 'lottery.name'], [mailLabel, 'lottery.email'] ].forEach(function (pair) {
+      var lab = pair[0]; if (!lab) return;
+      lab.removeAttribute('data-i18n');
+      var span = document.createElement('span');
+      span.setAttribute('data-i18n', pair[1]);
+      span.textContent = t(pair[1]);
+      lab.insertBefore(span, lab.firstChild);
+      // strip the original leading text node ("Naam"/"E-mailadres")
+      var input = lab.querySelector('input');
+      lab.childNodes.forEach(function (n) { if (n.nodeType === 3) lab.removeChild(n); });
+      lab.appendChild(input);
+    });
+  }
+
+  function showToast(lottery) {
+    var media = document.getElementById('h4dLtMedia');
+    var img = document.getElementById('h4dLtImg');
+    if (lottery.image_url) { img.src = lottery.image_url; media.classList.remove('empty'); }
+    else { media.classList.add('empty'); }
+    document.getElementById('h4dLtHeading').textContent = loc(lottery, 'title') || 'Loterij';
+    document.getElementById('h4dLtText').textContent = loc(lottery, 'description') || loc(lottery, 'prize') || '';
+    requestAnimationFrame(function () {
+      document.getElementById('h4dLotteryToast').classList.add('show');
+    });
+  }
+
+  function hideToast(persist) {
+    var toast = document.getElementById('h4dLotteryToast');
+    if (toast) toast.classList.remove('show');
+    if (persist && current) {
+      try { sessionStorage.setItem('h4d_lottery_dismissed_' + current.id, '1'); } catch (e) {}
+    }
+  }
+
+  window.openLotteryModal = function (idOrLottery) {
+    injectCSS(); injectDOM();
+    var id = typeof idOrLottery === 'string' ? idOrLottery : (idOrLottery && idOrLottery.id);
+    if (!id) return;
+    var overlay = document.getElementById('h4dLotteryOverlay');
+    var grid = document.getElementById('h4dLmGrid');
+    selected = []; taken = {};
+    grid.innerHTML = '<div class="h4d-lm-msg" data-i18n="lottery.loading">' + esc(t('lottery.loading')) + '</div>';
+    document.getElementById('h4dLmError').textContent = '';
+    document.getElementById('h4dLmSelected').innerHTML = '';
+    document.getElementById('h4dLmTotal').textContent = '';
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    fetch('/api/lottery/status.php?id=' + encodeURIComponent(id))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data || !data.lottery) throw new Error('no lottery');
+        current = data.lottery;
+        (data.taken || []).forEach(function (n) { taken[n] = true; });
+        fillHead(current);
+        renderGrid();
+        updateTotals();
+      })
+      .catch(function () {
+        grid.innerHTML = '<div class="h4d-lm-msg">' + esc(t('lottery.err')) + '</div>';
+      });
+  };
+
+  window.closeLotteryModal = function () {
+    var overlay = document.getElementById('h4dLotteryOverlay');
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  function fillHead(lottery) {
+    var prize = document.getElementById('h4dLmPrize');
+    var psrc = lottery.prize_image_url || lottery.image_url;
+    if (psrc) { prize.src = psrc; prize.classList.remove('empty'); } else { prize.classList.add('empty'); }
+    document.getElementById('h4dLmTitle').textContent = loc(lottery, 'title') || 'Loterij';
+    document.getElementById('h4dLmDesc').textContent = loc(lottery, 'description') || loc(lottery, 'prize') || '';
+    document.getElementById('h4dLmPrice').textContent = money(lottery.price_cents) + ' ' + t('lottery.perNumber');
+    var terms = document.getElementById('h4dLmTerms');
+    var link = document.getElementById('h4dLmTermsLink');
+    if (lottery.terms_url) { link.href = lottery.terms_url; terms.classList.remove('empty'); }
+    else { terms.classList.add('empty'); }
+  }
+
+  function renderGrid() {
+    var grid = document.getElementById('h4dLmGrid');
+    var max = Math.max(0, parseInt(current.max_numbers, 10) || 0);
+    var html = '';
+    for (var n = 1; n <= max; n++) {
+      var cls = 'h4d-lm-num';
+      if (taken[n]) cls += ' taken';
+      else if (selected.indexOf(n) !== -1) cls += ' selected';
+      html += '<button type="button" class="' + cls + '"' + (taken[n] ? ' disabled' : '') + ' data-n="' + n + '">' + n + '</button>';
+    }
+    grid.innerHTML = html;
+    grid.querySelectorAll('.h4d-lm-num:not(.taken)').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var n = parseInt(btn.getAttribute('data-n'), 10);
+        var i = selected.indexOf(n);
+        if (i === -1) { selected.push(n); btn.classList.add('selected'); }
+        else { selected.splice(i, 1); btn.classList.remove('selected'); }
+        updateTotals();
+      });
+    });
+  }
+
+  function updateTotals() {
+    selected.sort(function (a, b) { return a - b; });
+    var sel = document.getElementById('h4dLmSelected');
+    var tot = document.getElementById('h4dLmTotal');
+    var submit = document.getElementById('h4dLmSubmit');
+    if (selected.length === 0) {
+      sel.textContent = t('lottery.none');
+      tot.textContent = '';
+      submit.disabled = true;
+    } else {
+      sel.innerHTML = t('lottery.selected') + ': <b>' + selected.join(', ') + '</b>';
+      tot.textContent = t('lottery.total') + ': ' + money(selected.length * (current.price_cents || 0)) +
+        ' (' + selected.length + ' × ' + money(current.price_cents) + ')';
+      submit.disabled = false;
+    }
+  }
+
+  function submitOrder(e) {
+    e.preventDefault();
+    var name = document.getElementById('h4dLmName').value.trim();
+    var email = document.getElementById('h4dLmEmail').value.trim();
+    var err = document.getElementById('h4dLmError');
+    var submit = document.getElementById('h4dLmSubmit');
+    err.textContent = '';
+    if (selected.length === 0) { err.textContent = t('lottery.needSelect'); return; }
+    submit.disabled = true;
+    var orig = submit.textContent;
+    submit.textContent = '…';
+    fetch('/api/lottery/create-payment.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lottery_id: current.id, numbers: selected, name: name, email: email })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, status: r.status, d: d }; }); })
+      .then(function (res) {
+        if (res.ok && res.d.checkoutUrl) {
+          try { localStorage.setItem('h4d_payment_id', res.d.paymentId); } catch (e2) {}
+          window.location.href = res.d.checkoutUrl;
+          return;
+        }
+        submit.disabled = false; submit.textContent = orig;
+        if (res.status === 409 && res.d.taken) {
+          taken = {}; res.d.taken.forEach(function (n) { taken[n] = true; });
+          selected = selected.filter(function (n) { return !taken[n]; });
+          renderGrid(); updateTotals();
+          err.textContent = t('lottery.conflict');
+        } else {
+          err.textContent = res.d.error || t('lottery.err');
+        }
+      })
+      .catch(function () {
+        submit.disabled = false; submit.textContent = orig;
+        err.textContent = t('lottery.err');
+      });
+  }
+
+  function init() {
+    if (excluded()) return;
+    injectCSS();
+    injectDOM();
+
+    var params = new URLSearchParams(location.search);
+    var qid = params.get('lottery');
+
+    if (typeof supabaseGet === 'function') {
+      supabaseGet('lotteries', 'select=*&status=eq.live&order=start_at.desc.nullslast,created_at.desc&limit=1')
+        .then(function (rows) {
+          var lot = rows && rows[0];
+          if (lot) {
+            current = lot;
+            var dismissed = false;
+            try { dismissed = sessionStorage.getItem('h4d_lottery_dismissed_' + lot.id) === '1'; } catch (e) {}
+            if (!dismissed && !qid) showToast(lot);
+          }
+          if (qid) window.openLotteryModal(qid);
+        })
+        .catch(function () { if (qid) window.openLotteryModal(qid); });
+    } else if (qid) {
+      window.openLotteryModal(qid);
+    }
+  }
+
+  ready(init);
+})();

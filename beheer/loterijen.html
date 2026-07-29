@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loterijen · Beheer — Hope for Dogs</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root { --brand:#ff5314; --ink:#1a1a1a; --muted:#666; --line:rgba(0,0,0,.1); --beige:#faf8f4; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:'Manrope',system-ui,sans-serif; color:var(--ink); background:#f4f2ee; }
+    .wrap { max-width:1000px; margin:0 auto; padding:28px 20px 80px; }
+    .top { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+    h1 { font-family:'Nunito',sans-serif; font-weight:900; font-size:26px; margin:0; }
+    .top-actions { display:flex; gap:10px; align-items:center; }
+    a.back { color:var(--muted); text-decoration:none; font-size:14px; font-weight:600; }
+    a.back:hover { color:var(--ink); }
+    .btn { border:none; border-radius:999px; font-family:inherit; font-weight:700; font-size:14px; padding:10px 18px; cursor:pointer; }
+    .btn-primary { background:var(--brand); color:#fff; }
+    .btn-primary:hover { filter:brightness(.95); }
+    .btn-ghost { background:#fff; color:var(--ink); border:1.5px solid var(--line); }
+    .btn-ghost:hover { border-color:var(--brand); }
+    .btn-sm { padding:7px 12px; font-size:13px; }
+    .btn-danger { background:#fff; color:#c0392b; border:1.5px solid rgba(192,57,43,.3); }
+    .warn { background:#fff5e6; border:1px solid #ffd58a; border-radius:12px; padding:14px 18px; margin-bottom:20px; font-size:14px; color:#7a5200; }
+    .empty { text-align:center; color:var(--muted); padding:60px 20px; }
+    /* list cards */
+    .cards { display:flex; flex-direction:column; gap:14px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px; display:flex; gap:18px; align-items:flex-start; }
+    .card-thumb { width:76px; height:76px; border-radius:12px; object-fit:cover; background:var(--beige); flex:0 0 auto; }
+    .card-thumb.empty { display:flex; align-items:center; justify-content:center; font-size:26px; }
+    .card-main { flex:1 1 auto; min-width:0; }
+    .card-title { font-family:'Nunito',sans-serif; font-weight:800; font-size:18px; margin:0 0 4px; }
+    .card-meta { font-size:13px; color:var(--muted); line-height:1.6; }
+    .card-meta b { color:var(--ink); }
+    .badge { display:inline-block; font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; padding:3px 9px; border-radius:999px; vertical-align:middle; margin-left:6px; }
+    .badge.draft{background:#eee;color:#666;} .badge.scheduled{background:#e6efff;color:#1f5fd0;}
+    .badge.live{background:#e7f7ec;color:#177a3a;} .badge.closed{background:#fdecea;color:#c0392b;} .badge.drawn{background:#f0e9ff;color:#6b3fd0;}
+    .card-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    /* form overlay */
+    .overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:flex-start; justify-content:center; padding:32px 16px; overflow-y:auto; z-index:100; }
+    .overlay.open { display:flex; }
+    .sheet { background:#fff; border-radius:20px; width:100%; max-width:640px; padding:26px; position:relative; }
+    .sheet h2 { font-family:'Nunito',sans-serif; font-weight:800; font-size:20px; margin:0 0 18px; }
+    .close { position:absolute; top:16px; right:16px; width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,.06); border:none; cursor:pointer; font-size:15px; }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .field { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    .field label { font-size:13px; font-weight:700; color:var(--muted); }
+    .field .hint { font-size:12px; color:#999; font-weight:500; }
+    input, textarea, select { font-family:inherit; font-size:15px; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px; outline:none; width:100%; background:#fff; }
+    input:focus, textarea:focus, select:focus { border-color:var(--brand); }
+    textarea { resize:vertical; min-height:64px; }
+    .section-label { font-family:'Nunito',sans-serif; font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:#999; margin:20px 0 10px; }
+    .thumb-row { display:flex; align-items:center; gap:12px; }
+    .thumb-row img { width:56px; height:56px; border-radius:10px; object-fit:cover; background:var(--beige); }
+    .form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:22px; }
+    .msg { font-size:13.5px; margin-top:12px; min-height:18px; }
+    .msg.err { color:#c0392b; } .msg.ok { color:#177a3a; }
+    @media (max-width:560px){ .grid2{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Loterijen</h1>
+        <a class="back" href="./">← Terug naar beheer</a>
+      </div>
+      <div class="top-actions">
+        <button class="btn btn-primary" id="newBtn">+ Nieuwe loterij</button>
+      </div>
+    </div>
+
+    <div id="authWarn" class="warn" style="display:none">
+      Je bent niet ingelogd in het beheerpaneel. Open eerst <a href="./">het beheer</a> en log in, en kom dan hier terug — anders kun je geen loterijen opslaan.
+    </div>
+
+    <div id="list"><div class="empty">Laden…</div></div>
+  </div>
+
+  <!-- Create / edit form -->
+  <div class="overlay" id="overlay">
+    <div class="sheet">
+      <button class="close" id="closeBtn" aria-label="Sluiten">✕</button>
+      <h2 id="formTitle">Nieuwe loterij</h2>
+      <form id="form">
+        <input type="hidden" id="f_id">
+
+        <div class="grid2">
+          <div class="field">
+            <label for="f_status">Status</label>
+            <select id="f_status">
+              <option value="draft">Concept (niet zichtbaar)</option>
+              <option value="scheduled">Ingepland</option>
+              <option value="live">Live (zichtbaar op de site)</option>
+              <option value="closed">Gesloten</option>
+              <option value="drawn">Getrokken</option>
+            </select>
+            <span class="hint">Er kan er maar één tegelijk live staan.</span>
+          </div>
+          <div class="field">
+            <label for="f_sort">Sorteervolgorde</label>
+            <input type="number" id="f_sort" value="0" step="1">
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="f_start">Gaat live op (optioneel)</label>
+            <input type="datetime-local" id="f_start">
+          </div>
+          <div class="field">
+            <label for="f_draw">Trekkingsdatum</label>
+            <input type="datetime-local" id="f_draw">
+          </div>
+        </div>
+
+        <div class="section-label">Teksten (NL verplicht — DE/EN optioneel, vallen anders terug op NL)</div>
+        <div class="field">
+          <label for="f_title_nl">Titel (NL)</label>
+          <input type="text" id="f_title_nl" required placeholder="bijv. Zomerloterij 2026">
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="f_title_de">Titel (DE)</label><input type="text" id="f_title_de"></div>
+          <div class="field"><label for="f_title_en">Titel (EN)</label><input type="text" id="f_title_en"></div>
+        </div>
+        <div class="field">
+          <label for="f_desc_nl">Omschrijving (NL)</label>
+          <textarea id="f_desc_nl" placeholder="Korte uitleg die in de toast en pop-up verschijnt."></textarea>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="f_desc_de">Omschrijving (DE)</label><textarea id="f_desc_de"></textarea></div>
+          <div class="field"><label for="f_desc_en">Omschrijving (EN)</label><textarea id="f_desc_en"></textarea></div>
+        </div>
+        <div class="field">
+          <label for="f_prize_nl">Prijs / hoofdprijs (NL)</label>
+          <input type="text" id="f_prize_nl" placeholder="bijv. Weekendje weg">
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="f_prize_de">Prijs (DE)</label><input type="text" id="f_prize_de"></div>
+          <div class="field"><label for="f_prize_en">Prijs (EN)</label><input type="text" id="f_prize_en"></div>
+        </div>
+
+        <div class="section-label">Loten & prijs</div>
+        <div class="grid2">
+          <div class="field">
+            <label for="f_max">Aantal nummers</label>
+            <input type="number" id="f_max" value="100" min="1" step="1">
+          </div>
+          <div class="field">
+            <label for="f_price">Prijs per nummer (€)</label>
+            <input type="number" id="f_price" value="5.00" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label for="f_winners">Aantal winnaars</label>
+            <input type="number" id="f_winners" value="1" min="1" step="1">
+          </div>
+          <div class="field">
+            <label for="f_terms">Voorwaarden-link (optioneel)</label>
+            <input type="url" id="f_terms" placeholder="https://…">
+          </div>
+        </div>
+
+        <div class="section-label">Afbeeldingen</div>
+        <div class="grid2">
+          <div class="field">
+            <label>Toast-afbeelding</label>
+            <div class="thumb-row">
+              <img id="f_img_prev" alt="">
+              <input type="file" id="f_img_file" accept="image/*">
+            </div>
+            <input type="hidden" id="f_image_url">
+          </div>
+          <div class="field">
+            <label>Prijs-afbeelding (ook Facebook-preview)</label>
+            <div class="thumb-row">
+              <img id="f_prize_prev" alt="">
+              <input type="file" id="f_prize_file" accept="image/*">
+            </div>
+            <input type="hidden" id="f_prize_image_url">
+          </div>
+        </div>
+
+        <div class="section-label">Trekking</div>
+        <div class="field">
+          <label for="f_winning">Winnende nummer(s)</label>
+          <input type="text" id="f_winning" placeholder="bijv. 42, 7  (invullen ná de trekking)">
+          <span class="hint">Zichtbaar op de site zodra de status op “Getrokken” staat.</span>
+        </div>
+
+        <div class="msg" id="formMsg"></div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" id="cancelBtn">Annuleren</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">Opslaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var SB = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
+    var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
+
+    function token() {
+      try {
+        var raw = localStorage.getItem('sb-gdmntnrsgfntcgqmbmtj-auth-token');
+        if (raw) { var p = JSON.parse(raw); if (p && p.access_token) return p.access_token; }
+      } catch (e) {}
+      return null;
+    }
+    function authed() { return !!token(); }
+    function headers(write) {
+      var h = { apikey: ANON, Authorization: 'Bearer ' + (token() || ANON) };
+      if (write) { h['Content-Type'] = 'application/json'; h.Prefer = 'return=representation'; }
+      return h;
+    }
+    async function apiGet(q) {
+      var r = await fetch(SB + '/rest/v1/' + q, { headers: headers(false) });
+      if (!r.ok) throw new Error('GET ' + r.status + ' ' + (await r.text()));
+      return r.json();
+    }
+    async function apiWrite(method, q, body) {
+      var r = await fetch(SB + '/rest/v1/' + q, { method: method, headers: headers(true), body: body ? JSON.stringify(body) : undefined });
+      if (!r.ok) throw new Error(method + ' ' + r.status + ' ' + (await r.text()));
+      var txt = await r.text();
+      return txt ? JSON.parse(txt) : null;
+    }
+    async function uploadImage(file) {
+      var ext = ((file.name || '').split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+      var path = 'lottery/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
+      var r = await fetch(SB + '/storage/v1/object/dog-photos/' + path, {
+        method: 'POST',
+        headers: { apikey: ANON, Authorization: 'Bearer ' + (token() || ANON), 'Content-Type': file.type || 'image/jpeg' },
+        body: file
+      });
+      if (!r.ok) throw new Error('Upload ' + r.status + ' ' + (await r.text()));
+      return SB + '/storage/v1/object/public/dog-photos/' + path;
+    }
+
+    var $ = function (id) { return document.getElementById(id); };
+    function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+    function euros(cents) { return '€' + (Number(cents || 0) / 100).toFixed(2).replace('.', ','); }
+    function fmtDate(iso) { if (!iso) return '—'; try { return new Date(iso).toLocaleString('nl-NL', { dateStyle: 'medium', timeStyle: 'short' }); } catch (e) { return iso; } }
+    // datetime-local <-> ISO
+    function toLocalInput(iso) {
+      if (!iso) return '';
+      var d = new Date(iso); if (isNaN(d)) return '';
+      var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+    function fromLocalInput(v) { if (!v) return null; var d = new Date(v); return isNaN(d) ? null : d.toISOString(); }
+
+    var STATUS_LABEL = { draft: 'Concept', scheduled: 'Ingepland', live: 'Live', closed: 'Gesloten', drawn: 'Getrokken' };
+
+    async function load() {
+      $('authWarn').style.display = authed() ? 'none' : 'block';
+      var list = $('list');
+      try {
+        var rows = await apiGet('lotteries?select=*&order=sort_order.asc,created_at.desc');
+        if (!rows.length) { list.innerHTML = '<div class="empty">Nog geen loterijen. Klik op “+ Nieuwe loterij”.</div>'; return; }
+        // sold counts (paid tickets) per lottery
+        var counts = {};
+        await Promise.all(rows.map(async function (r) {
+          try {
+            var t = await apiGet('lottery_tickets?select=id&lottery_id=eq.' + r.id + '&status=eq.paid');
+            counts[r.id] = t.length;
+          } catch (e) { counts[r.id] = null; }
+        }));
+        list.innerHTML = '<div class="cards">' + rows.map(function (r) { return cardHTML(r, counts[r.id]); }).join('') + '</div>';
+        wireCards(rows);
+      } catch (e) {
+        list.innerHTML = '<div class="empty">Kon loterijen niet laden.<br><small>' + esc(e.message) + '</small><br><br>' +
+          'Draai je de database-migratie al? (db/lottery-schema.sql)</div>';
+      }
+    }
+
+    function cardHTML(r, sold) {
+      var img = r.image_url || r.prize_image_url;
+      var thumb = img ? '<img class="card-thumb" src="' + esc(img) + '" alt="">' : '<div class="card-thumb empty">🎟️</div>';
+      var soldStr = (sold == null ? '?' : sold);
+      var win = (r.winning_numbers && r.winning_numbers.length) ? '<br>Winnend: <b>' + esc(r.winning_numbers.join(', ')) + '</b>' : '';
+      return '<div class="card" data-id="' + r.id + '">' +
+        thumb +
+        '<div class="card-main">' +
+          '<div class="card-title">' + esc(r.title_nl || '(zonder titel)') + '<span class="badge ' + r.status + '">' + (STATUS_LABEL[r.status] || r.status) + '</span></div>' +
+          '<div class="card-meta">' +
+            euros(r.price_cents) + ' per nummer · ' + esc(r.max_numbers) + ' nummers · <b>' + soldStr + '</b> verkocht · ' + esc(r.num_winners) + ' winnaar(s)<br>' +
+            'Trekking: ' + fmtDate(r.draw_date) + win +
+          '</div>' +
+          '<div class="card-actions">' +
+            '<button class="btn btn-ghost btn-sm" data-act="edit">Bewerken</button>' +
+            (r.status === 'live'
+              ? '<button class="btn btn-ghost btn-sm" data-act="close">Sluiten</button>'
+              : '<button class="btn btn-ghost btn-sm" data-act="live">Zet live</button>') +
+            '<button class="btn btn-ghost btn-sm" data-act="share">Deel-link kopiëren</button>' +
+            '<button class="btn btn-danger btn-sm" data-act="del">Verwijderen</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function wireCards(rows) {
+      var byId = {}; rows.forEach(function (r) { byId[r.id] = r; });
+      document.querySelectorAll('.card').forEach(function (card) {
+        var r = byId[card.getAttribute('data-id')];
+        card.querySelectorAll('[data-act]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var act = btn.getAttribute('data-act');
+            if (act === 'edit') openForm(r);
+            else if (act === 'live') setStatus(r, 'live');
+            else if (act === 'close') setStatus(r, 'closed');
+            else if (act === 'share') shareLink(r);
+            else if (act === 'del') removeLottery(r);
+          });
+        });
+      });
+    }
+
+    function shareLink(r) {
+      var url = location.origin + '/api/lottery/share.php?id=' + r.id;
+      navigator.clipboard && navigator.clipboard.writeText(url).then(function () {
+        alert('Deel-link gekopieerd:\n' + url);
+      }, function () { prompt('Kopieer de deel-link:', url); });
+    }
+
+    async function setStatus(r, status) {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      try {
+        if (status === 'live') await ensureSingleLive(r.id);
+        await apiWrite('PATCH', 'lotteries?id=eq.' + r.id, { status: status });
+        load();
+      } catch (e) { alert('Kon status niet wijzigen: ' + e.message); }
+    }
+
+    // Enforce "one live at a time": close any other live lottery.
+    async function ensureSingleLive(exceptId) {
+      var others = await apiGet('lotteries?select=id&status=eq.live' + (exceptId ? '&id=neq.' + exceptId : ''));
+      await Promise.all(others.map(function (o) { return apiWrite('PATCH', 'lotteries?id=eq.' + o.id, { status: 'closed' }); }));
+    }
+
+    async function removeLottery(r) {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      if (!confirm('Loterij “' + (r.title_nl || '') + '” verwijderen? Dit verwijdert ook alle gekochte loten.')) return;
+      try { await apiWrite('DELETE', 'lotteries?id=eq.' + r.id); load(); }
+      catch (e) { alert('Verwijderen mislukt: ' + e.message); }
+    }
+
+    // ---- Form ----
+    function openForm(r) {
+      $('formMsg').textContent = '';
+      $('formTitle').textContent = r ? 'Loterij bewerken' : 'Nieuwe loterij';
+      $('f_id').value = r ? r.id : '';
+      $('f_status').value = r ? r.status : 'draft';
+      $('f_sort').value = r ? (r.sort_order || 0) : 0;
+      $('f_start').value = r ? toLocalInput(r.start_at) : '';
+      $('f_draw').value = r ? toLocalInput(r.draw_date) : '';
+      $('f_title_nl').value = r ? (r.title_nl || '') : '';
+      $('f_title_de').value = r ? (r.title_de || '') : '';
+      $('f_title_en').value = r ? (r.title_en || '') : '';
+      $('f_desc_nl').value = r ? (r.description_nl || '') : '';
+      $('f_desc_de').value = r ? (r.description_de || '') : '';
+      $('f_desc_en').value = r ? (r.description_en || '') : '';
+      $('f_prize_nl').value = r ? (r.prize_nl || '') : '';
+      $('f_prize_de').value = r ? (r.prize_de || '') : '';
+      $('f_prize_en').value = r ? (r.prize_en || '') : '';
+      $('f_max').value = r ? r.max_numbers : 100;
+      $('f_price').value = r ? (r.price_cents / 100).toFixed(2) : '5.00';
+      $('f_winners').value = r ? r.num_winners : 1;
+      $('f_terms').value = r ? (r.terms_url || '') : '';
+      $('f_image_url').value = r ? (r.image_url || '') : '';
+      $('f_prize_image_url').value = r ? (r.prize_image_url || '') : '';
+      setPrev('f_img_prev', r ? r.image_url : '');
+      setPrev('f_prize_prev', r ? r.prize_image_url : '');
+      $('f_img_file').value = ''; $('f_prize_file').value = '';
+      $('f_winning').value = (r && r.winning_numbers && r.winning_numbers.length) ? r.winning_numbers.join(', ') : '';
+      $('overlay').classList.add('open');
+    }
+    function closeForm() { $('overlay').classList.remove('open'); }
+    function setPrev(id, url) { var el = $(id); if (url) { el.src = url; el.style.display = ''; } else { el.removeAttribute('src'); el.style.display = 'none'; } }
+
+    function parseNumbers(str) {
+      return (str || '').split(/[,\s]+/).map(function (s) { return parseInt(s, 10); }).filter(function (n) { return !isNaN(n); });
+    }
+
+    async function save(e) {
+      e.preventDefault();
+      var msg = $('formMsg'); msg.className = 'msg'; msg.textContent = '';
+      if (!authed()) { msg.className = 'msg err'; msg.textContent = 'Je bent niet ingelogd — open het beheer en log in.'; return; }
+      if (!$('f_title_nl').value.trim()) { msg.className = 'msg err'; msg.textContent = 'Titel (NL) is verplicht.'; return; }
+      var saveBtn = $('saveBtn'); saveBtn.disabled = true; var orig = saveBtn.textContent; saveBtn.textContent = 'Opslaan…';
+      try {
+        // upload any newly-chosen images first
+        var imgFile = $('f_img_file').files[0];
+        var prizeFile = $('f_prize_file').files[0];
+        if (imgFile) $('f_image_url').value = await uploadImage(imgFile);
+        if (prizeFile) $('f_prize_image_url').value = await uploadImage(prizeFile);
+
+        var status = $('f_status').value;
+        var winning = parseNumbers($('f_winning').value);
+        var payload = {
+          status: status,
+          sort_order: parseInt($('f_sort').value, 10) || 0,
+          start_at: fromLocalInput($('f_start').value),
+          draw_date: fromLocalInput($('f_draw').value),
+          title_nl: $('f_title_nl').value.trim(),
+          title_de: $('f_title_de').value.trim() || null,
+          title_en: $('f_title_en').value.trim() || null,
+          description_nl: $('f_desc_nl').value.trim() || null,
+          description_de: $('f_desc_de').value.trim() || null,
+          description_en: $('f_desc_en').value.trim() || null,
+          prize_nl: $('f_prize_nl').value.trim() || null,
+          prize_de: $('f_prize_de').value.trim() || null,
+          prize_en: $('f_prize_en').value.trim() || null,
+          max_numbers: parseInt($('f_max').value, 10) || 100,
+          price_cents: Math.round(parseFloat($('f_price').value || '0') * 100),
+          num_winners: parseInt($('f_winners').value, 10) || 1,
+          terms_url: $('f_terms').value.trim() || null,
+          image_url: $('f_image_url').value || null,
+          prize_image_url: $('f_prize_image_url').value || null,
+          winning_numbers: winning.length ? winning : null
+        };
+
+        var id = $('f_id').value;
+        if (status === 'live') await ensureSingleLive(id || null);
+        if (id) await apiWrite('PATCH', 'lotteries?id=eq.' + id, payload);
+        else await apiWrite('POST', 'lotteries', payload);
+
+        closeForm();
+        load();
+      } catch (err) {
+        msg.className = 'msg err'; msg.textContent = 'Opslaan mislukt: ' + err.message;
+      } finally {
+        saveBtn.disabled = false; saveBtn.textContent = orig;
+      }
+    }
+
+    // live image preview on file choose
+    function livePrev(fileId, prevId) {
+      $(fileId).addEventListener('change', function () {
+        var f = this.files[0]; if (!f) return;
+        setPrev(prevId, URL.createObjectURL(f));
+      });
+    }
+
+    // ---- wire ----
+    $('newBtn').addEventListener('click', function () { openForm(null); });
+    $('closeBtn').addEventListener('click', closeForm);
+    $('cancelBtn').addEventListener('click', closeForm);
+    $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay')) closeForm(); });
+    $('form').addEventListener('submit', save);
+    livePrev('f_img_file', 'f_img_prev');
+    livePrev('f_prize_file', 'f_prize_prev');
+    setPrev('f_img_prev', ''); setPrev('f_prize_prev', '');
+
+    load();
+  })();
+  </script>
+</body>
+</html>

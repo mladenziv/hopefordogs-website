@@ -40,7 +40,12 @@ $metadata = isset($payment['metadata']) ? $payment['metadata'] : [];
 echo json_encode([
     'status'    => $payment['status'],
     'frequency' => isset($metadata['frequency']) ? $metadata['frequency'] : 'eenmalig',
-    'email'     => isset($metadata['donor_email']) ? $metadata['donor_email'] : '',
+    'email'     => isset($metadata['donor_email']) ? $metadata['donor_email']
+                 : (isset($metadata['buyer_email']) ? $metadata['buyer_email'] : ''),
+    // Lottery payments carry these; empty for donations.
+    'type'          => isset($metadata['type']) ? $metadata['type'] : '',
+    'numbers'       => isset($metadata['numbers']) ? $metadata['numbers'] : '',
+    'lottery_title' => isset($metadata['lottery_title']) ? $metadata['lottery_title'] : '',
 ]);
 
 // ---- Helper ----

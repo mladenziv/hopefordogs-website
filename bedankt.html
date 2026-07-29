@@ -127,6 +127,7 @@
           </div>
           <h1 class="t-heading-lg" data-i18n="bedankt.hero">Wauw, heel erg bedankt!</h1>
           <p data-i18n="bedankt.sub">Je donatie is goed ontvangen. Hiermee help je ons om honden in nood te redden, de zorg te geven die ze verdienen en een nieuw thuis voor ze te vinden.</p>
+          <p id="lottery-numbers" class="status-note hidden"></p>
           <p id="email-note" class="status-note hidden"></p>
           <p id="pending-note" class="status-note hidden" data-i18n="bedankt.pending">Je betaling wordt nog verwerkt. Je ontvangt een bevestiging zodra deze is voltooid.</p>
           <div class="status-actions">
@@ -140,7 +141,7 @@
 
   <div id="footer-placeholder"></div>
 
-  <script src="components.js?v=20"></script>
+  <script src="components.js?v=23"></script>
   <script>
     (function () {
       var checking  = document.getElementById('state-checking');
@@ -156,6 +157,32 @@
         de: 'Wir haben eine Bestätigung gesendet an ',
         en: 'We’ve sent a confirmation to '
       };
+
+      // Lottery ticket purchases show a different thank-you + the chosen number(s).
+      var LOTTERY_COPY = {
+        heading: { nl: 'Bedankt voor je deelname!', de: 'Danke für deine Teilnahme!', en: 'Thanks for entering!' },
+        sub:     { nl: 'Je deelname is gelukt. We trekken binnenkort de winnende nummers en nemen contact op met de winnaar(s). Bedankt voor je steun!',
+                   de: 'Deine Teilnahme war erfolgreich. Wir ziehen bald die Gewinnzahlen und kontaktieren die Gewinner. Danke für deine Unterstützung!',
+                   en: 'You’re entered. We’ll draw the winning numbers soon and contact the winner(s). Thanks for your support!' },
+        numbers: { nl: 'Jouw nummer(s): ', de: 'Deine Nummer(n): ', en: 'Your number(s): ' }
+      };
+      var isLotteryPayment = false;
+      var lotteryNumbers = '';
+
+      function applyLotteryCopy() {
+        var lang = localStorage.getItem('h4d-lang') || 'nl';
+        var h1 = success.querySelector('h1');
+        var sub = success.querySelector('p[data-i18n="bedankt.sub"]');
+        // Drop data-i18n so a later language switch doesn't restore donation copy.
+        if (h1)  { h1.removeAttribute('data-i18n');  h1.textContent  = LOTTERY_COPY.heading[lang] || LOTTERY_COPY.heading.nl; }
+        if (sub) { sub.removeAttribute('data-i18n'); sub.textContent = LOTTERY_COPY.sub[lang] || LOTTERY_COPY.sub.nl; }
+        document.title = 'Bedankt voor je deelname | Hope for Dogs';
+        if (lotteryNumbers) {
+          var nn = document.getElementById('lottery-numbers');
+          nn.textContent = (LOTTERY_COPY.numbers[lang] || LOTTERY_COPY.numbers.nl) + lotteryNumbers;
+          nn.classList.remove('hidden');
+        }
+      }
 
       function launchConfetti() {
         if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -191,6 +218,7 @@
           emailNote.textContent = (EMAIL_NOTE[lang] || EMAIL_NOTE.nl) + donorEmail + '.';
           emailNote.classList.remove('hidden');
         }
+        if (isLotteryPayment) applyLotteryCopy();
         launchConfetti();
       }
       function goToFailure() {
@@ -205,8 +233,14 @@
       // Preview mode: ?status=paid|pending|failed lets you see each state
       // in the browser without a real payment. Harmless in production.
       var params = new URLSearchParams(window.location.search);
+      isLotteryPayment = params.get('type') === 'lottery';
       var override = params.get('status');
-      if (override) { donorEmail = params.get('email') || ''; handleStatus(override); return; }
+      if (override) {
+        donorEmail = params.get('email') || '';
+        lotteryNumbers = params.get('numbers') || '';
+        handleStatus(override);
+        return;
+      }
 
       var pid = localStorage.getItem('h4d_payment_id');
 
@@ -218,6 +252,8 @@
         .then(function (data) {
           localStorage.removeItem('h4d_payment_id');
           donorEmail = (data && data.email) || '';
+          if (data && data.type === 'lottery') isLotteryPayment = true;
+          lotteryNumbers = (data && data.numbers) || lotteryNumbers;
           handleStatus(data && data.status);
         })
         .catch(function () {
