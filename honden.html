@@ -448,15 +448,18 @@
                 align-items: center;
                 justify-content: center;
                 align-self: stretch;
+                /* Drives the whole card's scale (everything below is em-based).
+                   Keeps the Figma proportions but grows the card on wider screens. */
+                font-size: clamp(18px, 1.15vw, 24px);
             }
 
-            /* ============ DOG OF THE DAY card ============ */
+            /* ============ DOG OF THE DAY card (em-scaled via .hero-dotd font-size) ============ */
             .dotd-rays {
                 position: absolute;
                 left: 50%;
                 top: 50%;
-                width: 900px;
-                height: 900px;
+                width: 50em;
+                height: 50em;
                 transform: translate(-50%, -50%);
                 z-index: 0;
                 pointer-events: none;
@@ -471,13 +474,14 @@
             .dotd-card {
                 position: relative;
                 z-index: 1;
-                width: 329px;
+                font-size: 1em;
+                width: 20.56em;
                 box-sizing: border-box;
                 background: #fff;
                 border: 1px solid rgba(0, 0, 0, 0.06);
-                border-radius: 24px;
+                border-radius: 1.5em;
                 box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.03), 0 2px 3.335px rgba(0, 0, 0, 0.04);
-                padding: 8px 12px 12px;
+                padding: 0.5em 0.75em 0.75em;
                 cursor: pointer;
                 text-align: center;
                 appearance: none;
@@ -487,39 +491,39 @@
             .dotd-card:hover { box-shadow: 0 10px 28px rgba(0, 0, 0, 0.10); transform: translateY(-2px); }
             .dotd-sun {
                 position: absolute;
-                top: -28px;
+                top: -1.75em;
                 left: 50%;
                 transform: translateX(-50%);
-                width: 56px;
-                height: 56px;
+                width: 3.5em;
+                height: 3.5em;
                 z-index: 2;
             }
             .dotd-title {
                 display: block;
                 font-family: "Manrope", sans-serif;
                 font-weight: 700;
-                font-size: 16px;
-                line-height: 24px;
+                font-size: 1em;
+                line-height: 1.5;
                 letter-spacing: 0.05px;
                 color: #181818;
-                padding-top: 28px;
+                padding-top: 1.75em;
             }
             .dotd-sub {
                 display: block;
                 font-family: "Manrope", sans-serif;
                 font-weight: 500;
-                font-size: 15px;
-                line-height: 20px;
+                font-size: 0.9375em;
+                line-height: 1.333;
                 letter-spacing: 0.1px;
                 color: #6e6e6e;
-                padding: 4px 0 20px;
+                padding: 0.267em 0 1.333em;
             }
             .dotd-photo {
                 display: block;
                 position: relative;
                 width: 100%;
                 aspect-ratio: 353.46 / 240;
-                border-radius: 16px;
+                border-radius: 1em;
                 overflow: hidden;
                 background: var(--beige);
             }
@@ -532,15 +536,15 @@
             .dotd-name {
                 position: absolute;
                 left: 50%;
-                bottom: 8px;
+                bottom: 0.2em;
                 transform: translateX(-50%);
                 font-family: "iCiel Pony", "Caveat", cursive;
-                font-size: 41px;
+                font-size: 2.5625em;
                 line-height: 1;
                 color: #ff5314;
                 white-space: nowrap;
-                /* 3px white outline on the OUTSIDE of the glyphs (stroke under fill) */
-                -webkit-text-stroke: 6px #fff;
+                /* white outline on the OUTSIDE of the glyphs (stroke under fill) */
+                -webkit-text-stroke: 0.15em #fff;
                 paint-order: stroke fill;
                 pointer-events: none;
             }
@@ -825,8 +829,9 @@
                     gap: 16px;
                 }
 
-                .dotd-card { width: min(330px, 100%); }
-                .dotd-rays { width: 620px; height: 620px; }
+                .hero-dotd { font-size: 16px; } /* Figma-size internals on mobile */
+                .dotd-card { width: min(20.56em, 100%); }
+                .dotd-rays { width: 36em; height: 36em; }
 
                 .adopted-grid {
                     grid-template-columns: repeat(2, 1fr);
