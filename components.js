@@ -21,6 +21,8 @@ var H4D_I18N = {
   'contact.success.msg':   { nl: 'Bedankt voor je bericht. We nemen zo snel mogelijk contact met je op.', de: 'Danke für deine Nachricht. Wir melden uns so schnell wie möglich.', en: 'Thanks for your message. We’ll get back to you as soon as possible.' },
   'contact.details.title': { nl: 'Direct contact', de: 'Direkter Kontakt', en: 'Direct contact' },
   'contact.details.sub':   { nl: 'Liever mailen of via social media? Je vindt ons hier.', de: 'Lieber per E-Mail oder Social Media? Hier findest du uns.', en: 'Prefer email or social media? You’ll find us here.' },
+  'contact.fb.msg':        { nl: 'Liever snel antwoord? Stuur ons een berichtje op Facebook — daar reageren we meestal sneller.', de: 'Lieber schnell eine Antwort? Schreib uns eine Nachricht auf Facebook — dort antworten wir meist schneller.', en: 'Want a faster reply? Send us a message on Facebook — we usually respond quicker there.' },
+  'contact.fb.button':     { nl: 'Bericht ons op Facebook', de: 'Nachricht auf Facebook', en: 'Message us on Facebook' },
   'nav.doneer':      { nl: 'Doneer nu',   de: 'Jetzt spenden', en: 'Donate now' },
   'nav.doneer.short':{ nl: 'Doneer',     de: 'Spenden',      en: 'Donate' },
   'nav.beheer':      { nl: 'Beheer',      de: 'Verwaltung',   en: 'Admin' },
