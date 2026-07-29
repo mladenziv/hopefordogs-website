@@ -22,7 +22,14 @@ if (!$lottery) {
     jsonOut(['error' => 'Loterij niet gevonden.'], 404);
 }
 
+// Unavailable = sold/reserved tickets + numbers the admin manually blocked.
+$taken = takenNumbers($id);
+$blocked = (isset($lottery['blocked_numbers']) && is_array($lottery['blocked_numbers']))
+    ? array_map('intval', $lottery['blocked_numbers']) : [];
+$taken = array_values(array_unique(array_merge($taken, $blocked)));
+sort($taken);
+
 jsonOut([
     'lottery' => $lottery,
-    'taken'   => takenNumbers($id),
+    'taken'   => $taken,
 ]);

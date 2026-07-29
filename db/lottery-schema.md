@@ -31,6 +31,7 @@ create table if not exists public.lotteries (
   num_winners      int  not null default 1,
   terms_url        text,
   prizes           jsonb,               -- [{ "label": "1e prijs: weekendje weg", "number": 42 }, ...]
+  blocked_numbers  int[],               -- numbers the admin manually disabled (e.g. sold offline)
   winning_numbers  int[]
 );
 
@@ -71,10 +72,11 @@ create policy "lottery_tickets_admin_read" on public.lottery_tickets
   for select to authenticated using (true);
 ```
 
-**Already ran an earlier version?** Just add the prizes column:
+**Already ran an earlier version?** Add the newer columns:
 
 ```sql
 alter table public.lotteries add column if not exists prizes jsonb;
+alter table public.lotteries add column if not exists blocked_numbers int[];
 ```
 
 After running it: open **beheer → 🎟️ Loterijen** (top nav), create a lottery, add one or more prizes

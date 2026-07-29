@@ -68,6 +68,16 @@
     .pt-who { flex:1; min-width:0; }
     .pt-who .e { color:var(--muted); font-size:12.5px; }
     .pt-date { flex:0 0 auto; color:var(--muted); font-size:12.5px; }
+    .pt-legend { display:flex; gap:14px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); margin-bottom:10px; }
+    .pt-legend span { display:inline-flex; align-items:center; gap:6px; }
+    .pt-dot { width:13px; height:13px; border-radius:4px; display:inline-block; }
+    .pt-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(38px,1fr)); gap:6px; max-height:38vh; overflow:auto; padding:2px; }
+    .pt-cell { aspect-ratio:1; border:1.25px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font-weight:700; font-size:11px; display:flex; align-items:center; justify-content:center; }
+    .pt-cell.avail { cursor:pointer; }
+    .pt-cell.avail:hover { border-color:var(--brand); }
+    .pt-cell.sold { background:#fdecea; color:#c0392b; border-color:transparent; }
+    .pt-cell.reserved { background:#fff5e6; color:#b45309; border-color:transparent; }
+    .pt-cell.blocked { background:#e6e6e6; color:#999; text-decoration:line-through; cursor:pointer; }
     .msg { font-size:13.5px; margin-top:12px; min-height:18px; }
     .msg.err { color:#c0392b; } .msg.ok { color:#177a3a; }
     @media (max-width:560px){ .grid2{grid-template-columns:1fr;} }
@@ -197,12 +207,24 @@
     </div>
   </div>
 
-  <!-- Participants (who bought which numbers) -->
+  <!-- Numbers overview: sold / reserved / blocked + who bought which numbers -->
   <div class="overlay" id="pOverlay">
     <div class="sheet">
       <button class="close" id="pClose" aria-label="Sluiten">✕</button>
-      <h2 id="pTitle">Deelnemers</h2>
-      <div id="pSummary" class="hint" style="margin-bottom:12px"></div>
+      <h2 id="pTitle">Nummers</h2>
+      <div id="pSummary" class="hint" style="margin-bottom:10px"></div>
+      <div class="pt-legend">
+        <span><i class="pt-dot" style="background:#fff;border:1.25px solid var(--line)"></i> Beschikbaar</span>
+        <span><i class="pt-dot" style="background:#fdecea"></i> Verkocht</span>
+        <span><i class="pt-dot" style="background:#fff5e6"></i> Gereserveerd</span>
+        <span><i class="pt-dot" style="background:#e6e6e6"></i> Geblokkeerd</span>
+      </div>
+      <div id="pGrid" class="pt-grid"></div>
+      <div class="form-actions" style="justify-content:space-between;align-items:center;margin-top:10px">
+        <span class="hint" id="pBlockHint">Klik op een vrij nummer om het te blokkeren (bijv. al offline verkocht). Klik nogmaals om te deblokkeren.</span>
+        <button type="button" class="btn btn-primary btn-sm" id="pSaveBlocks">Blokkades opslaan</button>
+      </div>
+      <div class="section-label">Verkochte loten</div>
       <div id="pList" class="pt-list"></div>
       <div class="form-actions">
         <button type="button" class="btn btn-ghost" id="pCsv">Download CSV</button>
@@ -311,7 +333,7 @@
           '</div>' +
           '<div class="card-actions">' +
             '<button class="btn btn-ghost btn-sm" data-act="edit">Bewerken</button>' +
-            '<button class="btn btn-ghost btn-sm" data-act="participants">Deelnemers</button>' +
+            '<button class="btn btn-ghost btn-sm" data-act="numbers">Nummers</button>' +
             (r.status === 'live'
               ? '<button class="btn btn-ghost btn-sm" data-act="close">Sluiten</button>'
               : '<button class="btn btn-ghost btn-sm" data-act="live">Zet live</button>') +
@@ -330,7 +352,7 @@
           btn.addEventListener('click', function () {
             var act = btn.getAttribute('data-act');
             if (act === 'edit') openForm(r);
-            else if (act === 'participants') openParticipants(r);
+            else if (act === 'numbers') openNumbers(r);
             else if (act === 'live') setStatus(r, 'live');
             else if (act === 'close') setStatus(r, 'closed');
             else if (act === 'share') shareLink(r);
@@ -347,35 +369,82 @@
       }, function () { prompt('Kopieer de deel-link:', url); });
     }
 
-    // ---- Participants (paid tickets: which number, who, when) ----
-    var pCurrent = null, pRows = [];
-    async function openParticipants(r) {
-      pCurrent = r; pRows = [];
-      $('pTitle').textContent = 'Deelnemers — ' + (r.title_nl || '');
+    // ---- Numbers overview: sold / reserved / blocked, click-to-block, + buyers ----
+    var pCurrent = null, pRows = [], pBlocked = {}, pMax = 0, pSold = {}, pReserved = {};
+    async function openNumbers(r) {
+      pCurrent = r; pRows = []; pSold = {}; pReserved = {};
+      pMax = parseInt(r.max_numbers, 10) || 0;
+      pBlocked = {};
+      (Array.isArray(r.blocked_numbers) ? r.blocked_numbers : []).forEach(function (n) { pBlocked[n] = 1; });
+      $('pTitle').textContent = 'Nummers — ' + (r.title_nl || '');
       $('pSummary').textContent = '';
       $('pList').innerHTML = '<div class="hint">Laden…</div>';
       $('pOverlay').classList.add('open');
+      renderNumberGrid(); // show the grid immediately (blocked + available); sold/reserved fill in after fetch
       try {
         var rows = await apiGet('lottery_tickets?lottery_id=eq.' + r.id +
-          '&status=eq.paid&select=number,buyer_name,buyer_email,created_at&order=number.asc');
-        pRows = rows || [];
-        if (!pRows.length) {
-          $('pSummary').textContent = 'Nog geen betaalde loten.';
-          $('pList').innerHTML = '<div class="empty">Zodra iemand loten koopt, verschijnen ze hier.</div>';
-          return;
-        }
-        var buyers = {}; pRows.forEach(function (t) { if (t.buyer_email) buyers[t.buyer_email.toLowerCase()] = 1; });
-        $('pSummary').innerHTML = '<b>' + pRows.length + '</b> lot(en) verkocht · ' + Object.keys(buyers).length + ' unieke koper(s)';
-        $('pList').innerHTML = pRows.map(function (t) {
-          return '<div class="pt-item">' +
-            '<div class="pt-num">' + esc(t.number) + '</div>' +
-            '<div class="pt-who"><div>' + esc(t.buyer_name || '—') + '</div><div class="e">' + esc(t.buyer_email || '') + '</div></div>' +
-            '<div class="pt-date">' + fmtDate(t.created_at) + '</div>' +
-          '</div>';
-        }).join('');
+          '&status=in.(paid,reserved)&select=number,status,buyer_name,buyer_email,created_at,reserved_until&order=number.asc');
+        var now = Date.now();
+        (rows || []).forEach(function (t) {
+          if (t.status === 'paid') pSold[t.number] = 1;
+          else if (t.status === 'reserved' && t.reserved_until && new Date(t.reserved_until).getTime() > now) pReserved[t.number] = 1;
+        });
+        pRows = (rows || []).filter(function (t) { return t.status === 'paid'; });
+        renderNumberGrid();
+        renderBuyers();
       } catch (e) {
-        $('pSummary').textContent = '';
-        $('pList').innerHTML = '<div class="empty">Kon deelnemers niet laden.<br><small>' + esc(e.message) + '</small></div>';
+        $('pList').innerHTML = '<div class="empty">Kon de kopers niet laden.<br><small>' + esc(e.message) + '</small></div>';
+      }
+    }
+    function renderNumberGrid() {
+      var html = '';
+      for (var n = 1; n <= pMax; n++) {
+        var cls = 'pt-cell';
+        if (pSold[n]) cls += ' sold';
+        else if (pReserved[n]) cls += ' reserved';
+        else if (pBlocked[n]) cls += ' blocked';
+        else cls += ' avail';
+        html += '<div class="' + cls + '" data-n="' + n + '">' + n + '</div>';
+      }
+      var grid = $('pGrid'); grid.innerHTML = html;
+      grid.querySelectorAll('.pt-cell.avail, .pt-cell.blocked').forEach(function (cell) {
+        cell.addEventListener('click', function () {
+          var n = parseInt(cell.getAttribute('data-n'), 10);
+          if (pBlocked[n]) { delete pBlocked[n]; cell.className = 'pt-cell avail'; }
+          else { pBlocked[n] = 1; cell.className = 'pt-cell blocked'; }
+          updateNumbersSummary();
+        });
+      });
+      updateNumbersSummary();
+    }
+    function updateNumbersSummary() {
+      var sold = Object.keys(pSold).length, res = Object.keys(pReserved).length, blk = Object.keys(pBlocked).length;
+      var avail = Math.max(0, pMax - sold - res - blk);
+      $('pSummary').innerHTML = '<b>' + sold + '</b> verkocht · ' + res + ' gereserveerd · ' + blk + ' geblokkeerd · ' + avail + ' beschikbaar (van ' + pMax + ')';
+    }
+    function renderBuyers() {
+      if (!pRows.length) { $('pList').innerHTML = '<div class="empty">Nog geen betaalde loten.</div>'; return; }
+      $('pList').innerHTML = pRows.map(function (t) {
+        return '<div class="pt-item">' +
+          '<div class="pt-num">' + esc(t.number) + '</div>' +
+          '<div class="pt-who"><div>' + esc(t.buyer_name || '—') + '</div><div class="e">' + esc(t.buyer_email || '') + '</div></div>' +
+          '<div class="pt-date">' + fmtDate(t.created_at) + '</div>' +
+        '</div>';
+      }).join('');
+    }
+    async function saveBlocks() {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      var nums = Object.keys(pBlocked).map(function (n) { return parseInt(n, 10); }).sort(function (a, b) { return a - b; });
+      var btn = $('pSaveBlocks'); btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Opslaan…';
+      try {
+        await apiWrite('PATCH', 'lotteries?id=eq.' + pCurrent.id, { blocked_numbers: nums.length ? nums : null });
+        if (pCurrent) pCurrent.blocked_numbers = nums;
+        btn.textContent = 'Opgeslagen ✓';
+        setTimeout(function () { btn.textContent = orig; btn.disabled = false; }, 1200);
+        load();
+      } catch (e) {
+        btn.disabled = false; btn.textContent = orig;
+        alert('Kon blokkades niet opslaan: ' + e.message);
       }
     }
     function closeParticipants() { $('pOverlay').classList.remove('open'); }
@@ -539,6 +608,7 @@
     $('addPrizeBtn').addEventListener('click', function () { addPrizeRow('', ''); });
     $('pClose').addEventListener('click', closeParticipants);
     $('pCloseBtn').addEventListener('click', closeParticipants);
+    $('pSaveBlocks').addEventListener('click', saveBlocks);
     $('pCsv').addEventListener('click', downloadCsv);
     $('pOverlay').addEventListener('click', function (e) { if (e.target === $('pOverlay')) closeParticipants(); });
     $('closeBtn').addEventListener('click', closeForm);

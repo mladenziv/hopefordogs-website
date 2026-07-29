@@ -68,11 +68,14 @@ sbRequest('DELETE',
         . '&status=eq.reserved&reserved_until=lt.' . rawurlencode(isoUtc(time())),
     null, 'return=minimal');
 
-// Re-check availability after the sweep.
-$taken = takenNumbers($lotteryId);
+// Re-check availability after the sweep. Unavailable = sold/reserved tickets
+// plus any numbers the admin manually blocked.
+$blocked = (isset($lottery['blocked_numbers']) && is_array($lottery['blocked_numbers']))
+    ? array_map('intval', $lottery['blocked_numbers']) : [];
+$taken = array_values(array_unique(array_merge(takenNumbers($lotteryId), $blocked)));
 $conflict = array_values(array_intersect($numbers, $taken));
 if (count($conflict) > 0) {
-    jsonOut(['error' => 'Sommige nummers zijn al vergeven.', 'taken' => $taken, 'conflict' => $conflict], 409);
+    jsonOut(['error' => 'Sommige nummers zijn niet beschikbaar.', 'taken' => $taken, 'conflict' => $conflict], 409);
 }
 
 // Reserve the numbers (15-minute hold). One atomic insert of all rows: if any
