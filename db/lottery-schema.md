@@ -30,6 +30,7 @@ create table if not exists public.lotteries (
   price_cents      int  not null default 500,
   num_winners      int  not null default 1,
   terms_url        text,
+  prizes           jsonb,               -- [{ "label": "1e prijs: weekendje weg", "number": 42 }, ...]
   winning_numbers  int[]
 );
 
@@ -70,5 +71,13 @@ create policy "lottery_tickets_admin_read" on public.lottery_tickets
   for select to authenticated using (true);
 ```
 
-After running it: open **beheer → 🎟️ Loterijen** (bottom-left), create a lottery, and set its status to
-**Live**. The bottom toast then appears across the site.
+**Already ran an earlier version?** Just add the prizes column:
+
+```sql
+alter table public.lotteries add column if not exists prizes jsonb;
+```
+
+After running it: open **beheer → 🎟️ Loterijen** (top nav), create a lottery, add one or more prizes
+(each with its own winning number), and set its status to **Live**. The bottom toast then appears across
+the site.
+

@@ -57,6 +57,11 @@
     .thumb-row { display:flex; align-items:center; gap:12px; }
     .thumb-row img { width:56px; height:56px; border-radius:10px; object-fit:cover; background:var(--beige); }
     .form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:22px; }
+    .prize-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
+    .prize-row .p-label { flex:1; }
+    .prize-row .p-num { width:130px; flex:0 0 auto; }
+    .prize-row .p-del { flex:0 0 auto; width:38px; height:40px; border:1.5px solid var(--line); background:#fff; border-radius:10px; color:#c0392b; font-size:15px; cursor:pointer; }
+    .prize-row .p-del:hover { border-color:#c0392b; }
     .msg { font-size:13.5px; margin-top:12px; min-height:18px; }
     .msg.err { color:#c0392b; } .msg.ok { color:#177a3a; }
     @media (max-width:560px){ .grid2{grid-template-columns:1fr;} }
@@ -135,15 +140,6 @@
           <div class="field"><label for="f_desc_de">Omschrijving (DE)</label><textarea id="f_desc_de"></textarea></div>
           <div class="field"><label for="f_desc_en">Omschrijving (EN)</label><textarea id="f_desc_en"></textarea></div>
         </div>
-        <div class="field">
-          <label for="f_prize_nl">Prijs / hoofdprijs (NL)</label>
-          <input type="text" id="f_prize_nl" placeholder="bijv. Weekendje weg">
-        </div>
-        <div class="grid2">
-          <div class="field"><label for="f_prize_de">Prijs (DE)</label><input type="text" id="f_prize_de"></div>
-          <div class="field"><label for="f_prize_en">Prijs (EN)</label><input type="text" id="f_prize_en"></div>
-        </div>
-
         <div class="section-label">Loten & prijs</div>
         <div class="grid2">
           <div class="field">
@@ -155,18 +151,18 @@
             <input type="number" id="f_price" value="5.00" min="0" step="0.01">
           </div>
         </div>
-        <div class="grid2">
-          <div class="field">
-            <label for="f_winners">Aantal winnaars</label>
-            <input type="number" id="f_winners" value="1" min="1" step="1">
-          </div>
-          <div class="field">
-            <label for="f_terms">Voorwaarden-link (optioneel)</label>
-            <input type="url" id="f_terms" placeholder="https://…">
-          </div>
+        <div class="field">
+          <label for="f_terms">Voorwaarden-link (optioneel)</label>
+          <input type="url" id="f_terms" placeholder="https://…">
         </div>
 
+        <div class="section-label">Prijzen (elk met een eigen winnend nummer)</div>
+        <div id="f_prizes"></div>
+        <button type="button" class="btn btn-ghost btn-sm" id="addPrizeBtn" style="margin-top:2px">+ Prijs toevoegen</button>
+        <span class="hint" style="display:block;margin-top:8px">Voeg een prijs toe per te winnen nummer (bijv. 1e prijs, 2e prijs). Vul het winnende nummer ná de trekking in — het verschijnt op de site zodra de status “Getrokken” is.</span>
+
         <div class="section-label">Afbeeldingen</div>
+        <span class="hint" style="display:block;margin:-4px 0 10px">Leeg laten → standaard afbeelding (het logo).</span>
         <div class="grid2">
           <div class="field">
             <label>Toast-afbeelding</label>
@@ -186,13 +182,6 @@
           </div>
         </div>
 
-        <div class="section-label">Trekking</div>
-        <div class="field">
-          <label for="f_winning">Winnende nummer(s)</label>
-          <input type="text" id="f_winning" placeholder="bijv. 42, 7  (invullen ná de trekking)">
-          <span class="hint">Zichtbaar op de site zodra de status op “Getrokken” staat.</span>
-        </div>
-
         <div class="msg" id="formMsg"></div>
         <div class="form-actions">
           <button type="button" class="btn btn-ghost" id="cancelBtn">Annuleren</button>
@@ -206,6 +195,9 @@
   (function () {
     var SB = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
     var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
+    // Default image (relative to /beheer/) used in previews; the public toast/modal
+    // fall back to lolo.png when a lottery has no image of its own.
+    var ADMIN_DEFAULT_IMG = '../lolo.png';
 
     function token() {
       try {
@@ -284,13 +276,17 @@
       var img = r.image_url || r.prize_image_url;
       var thumb = img ? '<img class="card-thumb" src="' + esc(img) + '" alt="">' : '<div class="card-thumb empty">🎟️</div>';
       var soldStr = (sold == null ? '?' : sold);
-      var win = (r.winning_numbers && r.winning_numbers.length) ? '<br>Winnend: <b>' + esc(r.winning_numbers.join(', ')) + '</b>' : '';
+      var prizes = Array.isArray(r.prizes) ? r.prizes : [];
+      var nWin = prizes.length || r.num_winners || 0;
+      var winStr = prizes.filter(function (p) { return p.number != null && p.number !== ''; })
+        .map(function (p) { return esc(p.label || '?') + ' → ' + esc(p.number); }).join(', ');
+      var win = winStr ? '<br>Winnaars: <b>' + winStr + '</b>' : '';
       return '<div class="card" data-id="' + r.id + '">' +
         thumb +
         '<div class="card-main">' +
           '<div class="card-title">' + esc(r.title_nl || '(zonder titel)') + '<span class="badge ' + r.status + '">' + (STATUS_LABEL[r.status] || r.status) + '</span></div>' +
           '<div class="card-meta">' +
-            euros(r.price_cents) + ' per nummer · ' + esc(r.max_numbers) + ' nummers · <b>' + soldStr + '</b> verkocht · ' + esc(r.num_winners) + ' winnaar(s)<br>' +
+            euros(r.price_cents) + ' per nummer · ' + esc(r.max_numbers) + ' nummers · <b>' + soldStr + '</b> verkocht · ' + esc(nWin) + ' prijs(zen)<br>' +
             'Trekking: ' + fmtDate(r.draw_date) + win +
           '</div>' +
           '<div class="card-actions">' +
@@ -366,20 +362,42 @@
       $('f_desc_nl').value = r ? (r.description_nl || '') : '';
       $('f_desc_de').value = r ? (r.description_de || '') : '';
       $('f_desc_en').value = r ? (r.description_en || '') : '';
-      $('f_prize_nl').value = r ? (r.prize_nl || '') : '';
-      $('f_prize_de').value = r ? (r.prize_de || '') : '';
-      $('f_prize_en').value = r ? (r.prize_en || '') : '';
       $('f_max').value = r ? r.max_numbers : 100;
       $('f_price').value = r ? (r.price_cents / 100).toFixed(2) : '5.00';
-      $('f_winners').value = r ? r.num_winners : 1;
       $('f_terms').value = r ? (r.terms_url || '') : '';
       $('f_image_url').value = r ? (r.image_url || '') : '';
       $('f_prize_image_url').value = r ? (r.prize_image_url || '') : '';
-      setPrev('f_img_prev', r ? r.image_url : '');
-      setPrev('f_prize_prev', r ? r.prize_image_url : '');
+      setPrev('f_img_prev', (r && r.image_url) || ADMIN_DEFAULT_IMG);
+      setPrev('f_prize_prev', (r && r.prize_image_url) || ADMIN_DEFAULT_IMG);
       $('f_img_file').value = ''; $('f_prize_file').value = '';
-      $('f_winning').value = (r && r.winning_numbers && r.winning_numbers.length) ? r.winning_numbers.join(', ') : '';
+      // prizes repeater — one row per prize, each with its own winning number
+      $('f_prizes').innerHTML = '';
+      var pr = (r && Array.isArray(r.prizes)) ? r.prizes : [];
+      if (pr.length) pr.forEach(function (p) { addPrizeRow(p.label, p.number); });
+      else addPrizeRow('', '');
       $('overlay').classList.add('open');
+    }
+
+    function addPrizeRow(label, number) {
+      var wrap = $('f_prizes');
+      var row = document.createElement('div'); row.className = 'prize-row';
+      var l = document.createElement('input'); l.type = 'text'; l.className = 'p-label'; l.placeholder = 'Prijs (bijv. 1e prijs: weekendje weg)'; l.value = label || '';
+      var n = document.createElement('input'); n.type = 'number'; n.className = 'p-num'; n.min = '1'; n.step = '1'; n.placeholder = 'Winnend nr.'; n.value = (number != null && number !== '') ? number : '';
+      var d = document.createElement('button'); d.type = 'button'; d.className = 'p-del'; d.textContent = '✕'; d.title = 'Verwijderen';
+      d.addEventListener('click', function () { row.remove(); });
+      row.appendChild(l); row.appendChild(n); row.appendChild(d);
+      wrap.appendChild(row);
+    }
+    function getPrizes() {
+      var out = [];
+      $('f_prizes').querySelectorAll('.prize-row').forEach(function (row) {
+        var label = row.querySelector('.p-label').value.trim();
+        var raw = row.querySelector('.p-num').value.trim();
+        var num = raw === '' ? null : parseInt(raw, 10);
+        if (label === '' && num == null) return; // skip fully-empty rows
+        out.push({ label: label, number: (num != null && !isNaN(num)) ? num : null });
+      });
+      return out;
     }
     function closeForm() { $('overlay').classList.remove('open'); }
     function setPrev(id, url) { var el = $(id); if (url) { el.src = url; el.style.display = ''; } else { el.removeAttribute('src'); el.style.display = 'none'; } }
@@ -402,7 +420,8 @@
         if (prizeFile) $('f_prize_image_url').value = await uploadImage(prizeFile);
 
         var status = $('f_status').value;
-        var winning = parseNumbers($('f_winning').value);
+        var prizes = getPrizes();
+        var winning = prizes.map(function (p) { return p.number; }).filter(function (n) { return n != null; });
         var payload = {
           status: status,
           sort_order: parseInt($('f_sort').value, 10) || 0,
@@ -414,15 +433,13 @@
           description_nl: $('f_desc_nl').value.trim() || null,
           description_de: $('f_desc_de').value.trim() || null,
           description_en: $('f_desc_en').value.trim() || null,
-          prize_nl: $('f_prize_nl').value.trim() || null,
-          prize_de: $('f_prize_de').value.trim() || null,
-          prize_en: $('f_prize_en').value.trim() || null,
           max_numbers: parseInt($('f_max').value, 10) || 100,
           price_cents: Math.round(parseFloat($('f_price').value || '0') * 100),
-          num_winners: parseInt($('f_winners').value, 10) || 1,
+          num_winners: prizes.length || 1,
           terms_url: $('f_terms').value.trim() || null,
           image_url: $('f_image_url').value || null,
           prize_image_url: $('f_prize_image_url').value || null,
+          prizes: prizes.length ? prizes : null,
           winning_numbers: winning.length ? winning : null
         };
 
@@ -450,6 +467,7 @@
 
     // ---- wire ----
     $('newBtn').addEventListener('click', function () { openForm(null); });
+    $('addPrizeBtn').addEventListener('click', function () { addPrizeRow('', ''); });
     $('closeBtn').addEventListener('click', closeForm);
     $('cancelBtn').addEventListener('click', closeForm);
     $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay')) closeForm(); });

@@ -336,6 +336,7 @@ var H4D_I18N = {
   'lottery.conflict':   { nl: 'Sommige nummers zijn net vergeven. We hebben je selectie bijgewerkt.', de: 'Einige Nummern wurden gerade vergeben. Deine Auswahl wurde aktualisiert.', en: 'Some numbers were just taken \u2014 your selection was updated.' },
   'lottery.needSelect': { nl: 'Kies minstens \u00E9\u00E9n nummer.', de: 'W\u00E4hle mindestens eine Nummer.', en: 'Pick at least one number.' },
   'lottery.terms':      { nl: 'Voorwaarden', de: 'Bedingungen', en: 'Terms & rules' },
+  'lottery.prizes':     { nl: 'Te winnen', de: 'Zu gewinnen', en: 'Prizes' },
 };
 
 function h4dGetLanguage() {
@@ -1467,6 +1468,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  var DEFAULT_IMG = 'lolo.png'; // shown when a lottery has no image of its own
   var current = null;   // active lottery object
   var selected = [];    // chosen numbers
   var taken = {};       // number -> true
@@ -1476,25 +1478,28 @@ document.addEventListener('DOMContentLoaded', function () {
     var css = `
 .h4d-lottery-toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(180%);z-index:1200;width:min(460px,calc(100vw - 32px));background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:20px;box-shadow:0 12px 44px rgba(0,0,0,.18);padding:14px 14px 14px 14px;display:flex;gap:14px;align-items:center;opacity:0;transition:transform .45s cubic-bezier(.16,1,.3,1),opacity .3s;font-family:'Manrope',sans-serif;}
 .h4d-lottery-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
-.h4d-lt-media{flex:0 0 auto;width:72px;height:72px;border-radius:14px;overflow:hidden;background:var(--beige,#faf8f4);}
+.h4d-lt-media{flex:0 0 auto;width:64px;height:64px;border-radius:14px;overflow:hidden;background:var(--beige,#faf8f4);}
 .h4d-lt-media img{width:100%;height:100%;object-fit:cover;display:block;}
-.h4d-lt-media.empty{display:none;}
+.h4d-lt-media.is-default img{object-fit:contain;padding:9px;}
 .h4d-lt-body{flex:1 1 auto;min-width:0;}
 .h4d-lt-heading{font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;color:var(--dark-1,#1a1a1a);line-height:1.25;margin-bottom:2px;}
-.h4d-lt-text{font-size:13.5px;color:var(--dark-2,#555);line-height:1.4;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.h4d-lt-btn{background:var(--brand,#ff5314);color:#fff;border:none;border-radius:999px;font-weight:700;font-size:14px;padding:9px 20px;cursor:pointer;font-family:inherit;}
+.h4d-lt-text{font-size:13.5px;color:var(--dark-2,#555);line-height:1.4;margin-bottom:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.h4d-lt-btn{flex:0 0 auto;align-self:center;white-space:nowrap;background:var(--brand,#ff5314);color:#fff;border:none;border-radius:999px;font-weight:700;font-size:14px;padding:10px 20px;cursor:pointer;font-family:inherit;}
 .h4d-lt-btn:hover{filter:brightness(.95);}
 .h4d-lt-close{position:absolute;top:8px;right:10px;background:transparent;border:none;font-size:16px;color:#aaa;cursor:pointer;line-height:1;padding:4px;}
 .h4d-lt-close:hover{color:#666;}
-@media (max-width:520px){.h4d-lottery-toast{left:12px;right:12px;bottom:12px;transform:translateY(180%);width:auto;}.h4d-lottery-toast.show{transform:translateY(0);}.h4d-lt-media{width:58px;height:58px;}}
+@media (max-width:520px){.h4d-lottery-toast{left:12px;right:12px;bottom:12px;transform:translateY(180%);width:auto;padding:12px;gap:11px;}.h4d-lottery-toast.show{transform:translateY(0);}.h4d-lt-btn{padding:9px 15px;font-size:13.5px;}}
 .h4d-lottery-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s;font-family:'Manrope',sans-serif;}
 .h4d-lottery-overlay.open{opacity:1;pointer-events:auto;}
 .h4d-lottery-modal{background:#fff;border-radius:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:28px;position:relative;transform:translateY(16px);transition:transform .25s;}
 .h4d-lottery-overlay.open .h4d-lottery-modal{transform:none;}
 .h4d-lm-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:15px;color:#333;z-index:2;}
 .h4d-lm-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px;padding-right:34px;}
-.h4d-lm-prize{width:76px;height:76px;border-radius:14px;object-fit:cover;flex:0 0 auto;}
-.h4d-lm-prize.empty{display:none;}
+.h4d-lm-prize{width:76px;height:76px;border-radius:14px;object-fit:cover;flex:0 0 auto;background:var(--beige,#faf8f4);}
+.h4d-lm-prize.is-default{object-fit:contain;padding:10px;}
+.h4d-lm-prizes{margin:2px 0 0;font-size:13.5px;color:var(--dark-2,#555);line-height:1.5;}
+.h4d-lm-prizes b{color:var(--ink,#1a1a1a);}
+.h4d-lm-prizes .win{color:var(--brand,#ff5314);font-weight:700;}
 .h4d-lm-title{font-family:'Nunito',sans-serif;font-weight:800;font-size:20px;color:var(--dark-1,#1a1a1a);margin:0 0 4px;}
 .h4d-lm-desc{font-size:14px;color:var(--dark-2,#555);line-height:1.5;margin:0 0 6px;}
 .h4d-lm-price{font-size:13px;color:var(--brand,#ff5314);font-weight:700;margin:0;}
@@ -1536,12 +1541,12 @@ document.addEventListener('DOMContentLoaded', function () {
     toast.setAttribute('role', 'dialog');
     toast.innerHTML =
       '<button class="h4d-lt-close" id="h4dLtClose" aria-label="Sluiten">✕</button>' +
-      '<div class="h4d-lt-media empty" id="h4dLtMedia"><img id="h4dLtImg" alt=""></div>' +
+      '<div class="h4d-lt-media" id="h4dLtMedia"><img id="h4dLtImg" alt=""></div>' +
       '<div class="h4d-lt-body">' +
         '<div class="h4d-lt-heading" id="h4dLtHeading"></div>' +
         '<div class="h4d-lt-text" id="h4dLtText"></div>' +
-        '<button class="h4d-lt-btn" id="h4dLtBtn" data-i18n="lottery.enter">Doe mee</button>' +
-      '</div>';
+      '</div>' +
+      '<button class="h4d-lt-btn" id="h4dLtBtn" data-i18n="lottery.enter">Doe mee</button>';
     document.body.appendChild(toast);
 
     var overlay = document.createElement('div');
@@ -1558,6 +1563,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '<h2 class="h4d-lm-title" id="h4dLmTitle"></h2>' +
             '<p class="h4d-lm-desc" id="h4dLmDesc"></p>' +
             '<p class="h4d-lm-price" id="h4dLmPrice"></p>' +
+            '<div class="h4d-lm-prizes" id="h4dLmPrizes"></div>' +
           '</div>' +
         '</div>' +
         '<p class="h4d-lm-sub" data-i18n="lottery.pickSub">Tik op de beschikbare nummers die je wilt kopen.</p>' +
@@ -1612,8 +1618,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function showToast(lottery) {
     var media = document.getElementById('h4dLtMedia');
     var img = document.getElementById('h4dLtImg');
-    if (lottery.image_url) { img.src = lottery.image_url; media.classList.remove('empty'); }
-    else { media.classList.add('empty'); }
+    if (lottery.image_url) { img.src = lottery.image_url; media.classList.remove('is-default'); }
+    else { img.src = DEFAULT_IMG; media.classList.add('is-default'); }
     document.getElementById('h4dLtHeading').textContent = loc(lottery, 'title') || 'Loterij';
     document.getElementById('h4dLtText').textContent = loc(lottery, 'description') || loc(lottery, 'prize') || '';
     requestAnimationFrame(function () {
@@ -1667,14 +1673,32 @@ document.addEventListener('DOMContentLoaded', function () {
   function fillHead(lottery) {
     var prize = document.getElementById('h4dLmPrize');
     var psrc = lottery.prize_image_url || lottery.image_url;
-    if (psrc) { prize.src = psrc; prize.classList.remove('empty'); } else { prize.classList.add('empty'); }
+    if (psrc) { prize.src = psrc; prize.classList.remove('is-default'); }
+    else { prize.src = DEFAULT_IMG; prize.classList.add('is-default'); }
+    prize.classList.remove('empty');
     document.getElementById('h4dLmTitle').textContent = loc(lottery, 'title') || 'Loterij';
-    document.getElementById('h4dLmDesc').textContent = loc(lottery, 'description') || loc(lottery, 'prize') || '';
+    document.getElementById('h4dLmDesc').textContent = loc(lottery, 'description') || '';
     document.getElementById('h4dLmPrice').textContent = money(lottery.price_cents) + ' ' + t('lottery.perNumber');
+    renderPrizes(lottery);
     var terms = document.getElementById('h4dLmTerms');
     var link = document.getElementById('h4dLmTermsLink');
     if (lottery.terms_url) { link.href = lottery.terms_url; terms.classList.remove('empty'); }
     else { terms.classList.add('empty'); }
+  }
+
+  function renderPrizes(lottery) {
+    var el = document.getElementById('h4dLmPrizes');
+    var prizes = lottery.prizes;
+    if (!prizes || !prizes.length) { el.innerHTML = ''; el.style.display = 'none'; return; }
+    el.style.display = '';
+    var drawn = lottery.status === 'drawn';
+    var rows = prizes.map(function (p) {
+      var label = esc(p.label || '');
+      if (drawn && p.number != null && p.number !== '')
+        return '<div>🏆 <b>' + label + '</b> — <span class="win">nr. ' + esc(p.number) + '</span></div>';
+      return '<div>🏆 ' + label + '</div>';
+    }).join('');
+    el.innerHTML = '<div style="margin-bottom:4px"><b>' + esc(t('lottery.prizes')) + ':</b></div>' + rows;
   }
 
   function renderGrid() {
