@@ -19,14 +19,20 @@
   <link rel="stylesheet" href="shared.css?v=21">
   <style>
     /* ===== HERO COLLAGE ===== */
+    /* Trim 48px off the space above the image (per breakpoint). */
+    .page-hero { padding-top: 136px; }
     .donate-hero-img {
       display: block;
-      width: 795px;     /* fixed display size on desktop (matches 795x422 aspect) */
-      max-width: 100%;  /* scale down proportionally on narrower screens */
+      width: 795px;      /* fixed display size on desktop (matches 795x422 aspect) */
+      max-width: 100%;   /* scale down proportionally on narrower screens */
       height: auto;
-      margin: 0 auto 8px;
+      margin: 0 auto 32px; /* 24px more space between image and text */
+    }
+    @media (max-width: 1023px) {
+      .page-hero { padding-top: 144px; }
     }
     @media (max-width: 767px) {
+      .page-hero { padding-top: 104px; }
       /* The shared XS rule zeroes the hero padding; restore it so the paragraph
          below the H1 (and the image) aren't edge-to-edge on phones. */
       .page-hero-inner { padding-left: 20px; padding-right: 20px; }
