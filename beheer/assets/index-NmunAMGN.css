@@ -32,7 +32,7 @@
 .h4d-quill .ql-editor ul,.h4d-quill .ql-editor ol{margin:0 0 22px}
 .h4d-quill .ql-editor li{line-height:1.7;padding-bottom:6px}
 .h4d-quill .ql-editor strong{font-weight:700}
-.h4d-quill .ql-editor blockquote{border-left:3px solid rgba(26,26,26,.15);padding:4px 0 4px 22px;margin:28px 0;color:#555;font-family:'Besley',Georgia,serif;font-size:24px;line-height:1.5;font-style:normal}
+.h4d-quill .ql-editor blockquote{border-left:3px solid rgba(26,26,26,.15);padding:4px 0 4px 22px;margin:28px 0;color:#555;font-family:'Besley',Georgia,serif;font-size:24px;line-height:1.5;font-style:italic}
 .h4d-quill .ql-editor a{color:#ff5314;font-weight:600;text-decoration:underline}
 .h4d-quill .ql-editor.ql-blank::before{color:#9aa0a6;font-style:normal}
 /* Rich <-> Markdown toggle */
