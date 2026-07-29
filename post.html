@@ -273,6 +273,16 @@
         }
 
         var post = posts[0];
+
+        // Drafts (no published_at) and scheduled posts (future published_at) are not
+        // publicly viewable. ?preview=1 bypasses this so an admin can review before it goes live.
+        var isPreview = params.get('preview');
+        var isLive = post.published_at && new Date(post.published_at) <= new Date();
+        if (!isLive && !isPreview) {
+          showError();
+          return;
+        }
+
         document.title = post.title + ' — Nieuws | Hope for Dogs';
         var postDesc = post.excerpt ? post.excerpt.substring(0, 140) : post.content ? post.content.substring(0, 140) : 'Lees het laatste nieuws van Hope for Dogs.';
         document.querySelector('meta[name="description"]').setAttribute('content', postDesc);
