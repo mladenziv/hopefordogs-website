@@ -454,12 +454,18 @@
                 position: absolute;
                 left: 50%;
                 top: 50%;
-                width: 820px;
-                aspect-ratio: 1606 / 1318;
+                width: 900px;
+                height: 900px;
                 transform: translate(-50%, -50%);
-                background: url("images/dotd-rays.png") center / contain no-repeat;
                 z-index: 0;
                 pointer-events: none;
+                background: repeating-conic-gradient(
+                    from 0deg at 50% 50%,
+                    rgba(255, 201, 97, 0.26) 0deg 3.2deg,
+                    transparent 3.2deg 8.6deg
+                );
+                -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 4%, rgba(0, 0, 0, 0.55) 28%, transparent 62%);
+                mask-image: radial-gradient(circle at 50% 50%, #000 4%, rgba(0, 0, 0, 0.55) 28%, transparent 62%);
             }
             .dotd-card {
                 position: relative;
@@ -525,14 +531,16 @@
             .dotd-name {
                 position: absolute;
                 left: 50%;
-                bottom: 6px;
+                bottom: 8px;
                 transform: translateX(-50%);
                 font-family: "iCiel Pony", "Caveat", cursive;
                 font-size: 41px;
                 line-height: 1;
                 color: #ff5314;
                 white-space: nowrap;
-                text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+                /* 3px white outline on the OUTSIDE of the glyphs (stroke under fill) */
+                -webkit-text-stroke: 6px #fff;
+                paint-order: stroke fill;
                 pointer-events: none;
             }
 
@@ -810,7 +818,7 @@
                 }
 
                 .dotd-card { width: min(330px, 100%); }
-                .dotd-rays { width: 560px; }
+                .dotd-rays { width: 620px; height: 620px; }
 
                 .adopted-grid {
                     grid-template-columns: repeat(2, 1fr);
