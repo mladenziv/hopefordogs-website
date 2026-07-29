@@ -655,12 +655,14 @@
       .adopt-requirements-inner,
       .adopt-cta-inner { padding: 0 20px; }
       /* Consistent, tighter section spacing on mobile (like the over-ons page) */
-      .adopt-costs { padding: 48px 0; }
-      .adopt-steps { padding: 48px 0; }
-      .adopt-origin { padding: 48px 0; }
-      .adopt-timeline { padding: 48px 0; }
-      .adopt-requirements { padding: 48px 0; }
-      .adopt-cta { padding: 48px 0; }
+      /* Cost section gets 24px more room above + below to stand out. */
+      .adopt-costs { padding: 72px 0; }
+      /* Other sections: trim 12px off the top so the heading sits tighter. */
+      .adopt-steps { padding: 36px 0 48px; }
+      .adopt-origin { padding: 36px 0 48px; }
+      .adopt-timeline { padding: 36px 0 48px; }
+      .adopt-requirements { padding: 36px 0 48px; }
+      .adopt-cta { padding: 36px 0 48px; }
       .origin-grid { grid-template-columns: 1fr; }
       /* Single column on phones so step cards can't overflow (grid items were
          held wider than the viewport by their min-content width). */

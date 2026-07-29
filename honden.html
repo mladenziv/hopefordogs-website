@@ -835,7 +835,7 @@
                     gap: 16px;
                 }
 
-                .hero-dotd { font-size: 16px; } /* Figma-size internals on mobile */
+                .hero-dotd { font-size: 12.8px; } /* mobile: 20% smaller than 16px (whole card is em-scaled) */
                 .dotd-card { width: min(20.56em, 100%); }
                 .dotd-rays { width: 36em; height: 36em; }
 
@@ -2114,15 +2114,19 @@
                     setModalCarousel([]);
                 }
 
-                // Open overlay
-                overlay.classList.add("open");
+                // Open on the next frame so the freshly-injected body is laid out
+                // before the sheet slides up — otherwise the first open on iOS
+                // Safari stutters (it's smooth on re-open once content is warm).
+                requestAnimationFrame(function () { overlay.classList.add("open"); });
                 document.body.style.overflow = "hidden";
 
                 // Update URL for sharing
                 history.replaceState(null, "", "?hond=" + dogId);
 
-                // Fetch full photos in background (upgrade carousel)
-                loadDogModalPhotos(dogId, dog);
+                // Fetch full photos AFTER the open animation, so the network +
+                // image-decode work doesn't compete with the slide-up (that
+                // contention is what made the first open janky and re-opens smooth).
+                setTimeout(function () { loadDogModalPhotos(dogId, dog); }, 380);
             }
 
             async function loadDogModalPhotos(dogId, cachedDog) {
