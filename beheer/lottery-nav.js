@@ -15,7 +15,7 @@
     a.id = 'lottery-nav-link';
     a.href = 'loterijen.html';
     a.className = CLS;
-    a.textContent = '🎟️ Loterijen';
+    a.textContent = 'Acties';
     nav.appendChild(a);
   }
 

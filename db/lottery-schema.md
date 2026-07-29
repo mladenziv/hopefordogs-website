@@ -18,7 +18,9 @@ create table if not exists public.lotteries (
   id               uuid primary key default gen_random_uuid(),
   created_at       timestamptz not null default now(),
   sort_order       int  not null default 0,
+  type             text not null default 'raffle',  -- raffle | fundraiser
   status           text not null default 'draft',  -- draft | scheduled | live | closed | drawn
+  goal_cents       int,                             -- fundraiser target (fundraiser type only)
   start_at         timestamptz,
   draw_date        timestamptz,
   title_nl         text, title_de       text, title_en       text,
@@ -49,13 +51,30 @@ create table if not exists public.lottery_tickets (
   unique (lottery_id, number)   -- makes reservations race-safe
 );
 
-create index if not exists lottery_tickets_lottery_idx on public.lottery_tickets (lottery_id);
-create index if not exists lottery_tickets_status_idx  on public.lottery_tickets (lottery_id, status);
-create index if not exists lotteries_status_idx        on public.lotteries (status);
+-- ---- lottery_donations (fundraiser type) ----------------------------------
+-- Holds donor name/email → NOT public-readable. The public donor wall + progress
+-- are served (sanitized) by /api/lottery/status.php using the service key.
+create table if not exists public.lottery_donations (
+  id                uuid primary key default gen_random_uuid(),
+  created_at        timestamptz not null default now(),
+  lottery_id        uuid not null references public.lotteries(id) on delete cascade,
+  amount_cents      int  not null,
+  donor_name        text,
+  anonymous         boolean not null default false,   -- hide name on the public wall
+  donor_email       text,
+  mollie_payment_id text,
+  status            text not null default 'pending'   -- pending | paid
+);
+
+create index if not exists lottery_tickets_lottery_idx  on public.lottery_tickets (lottery_id);
+create index if not exists lottery_tickets_status_idx   on public.lottery_tickets (lottery_id, status);
+create index if not exists lotteries_status_idx         on public.lotteries (status);
+create index if not exists lottery_donations_lottery_idx on public.lottery_donations (lottery_id, status);
 
 -- ---- Row-Level Security ----------------------------------------------------
-alter table public.lotteries       enable row level security;
-alter table public.lottery_tickets enable row level security;
+alter table public.lotteries        enable row level security;
+alter table public.lottery_tickets  enable row level security;
+alter table public.lottery_donations enable row level security;
 
 -- lotteries: everyone can READ; only a logged-in admin can write.
 drop policy if exists "lotteries_public_read" on public.lotteries;
@@ -70,16 +89,41 @@ create policy "lotteries_admin_write" on public.lotteries
 drop policy if exists "lottery_tickets_admin_read" on public.lottery_tickets;
 create policy "lottery_tickets_admin_read" on public.lottery_tickets
   for select to authenticated using (true);
+
+-- lottery_donations: NO anon access (donor name/email). Admin may read; the
+-- public donor wall/progress come only via /api/lottery/status.php (service key).
+drop policy if exists "lottery_donations_admin_read" on public.lottery_donations;
+create policy "lottery_donations_admin_read" on public.lottery_donations
+  for select to authenticated using (true);
 ```
 
-**Already ran an earlier version?** Add the newer columns:
+**Already ran an earlier version?** Add the newer columns/table:
 
 ```sql
 alter table public.lotteries add column if not exists prizes jsonb;
 alter table public.lotteries add column if not exists blocked_numbers int[];
+alter table public.lotteries add column if not exists type text not null default 'raffle';  -- raffle | fundraiser
+alter table public.lotteries add column if not exists goal_cents int;
+
+create table if not exists public.lottery_donations (
+  id                uuid primary key default gen_random_uuid(),
+  created_at        timestamptz not null default now(),
+  lottery_id        uuid not null references public.lotteries(id) on delete cascade,
+  amount_cents      int  not null,
+  donor_name        text,
+  anonymous         boolean not null default false,
+  donor_email       text,
+  mollie_payment_id text,
+  status            text not null default 'pending'
+);
+create index if not exists lottery_donations_lottery_idx on public.lottery_donations (lottery_id, status);
+alter table public.lottery_donations enable row level security;
+drop policy if exists "lottery_donations_admin_read" on public.lottery_donations;
+create policy "lottery_donations_admin_read" on public.lottery_donations
+  for select to authenticated using (true);
 ```
 
-After running it: open **beheer → 🎟️ Loterijen** (top nav), create a lottery, add one or more prizes
-(each with its own winning number), and set its status to **Live**. The bottom toast then appears across
-the site.
+After running it: open **beheer → Acties** (top nav). Create either a **Loterij** (raffle, with numbers +
+prizes) or an **Inzameling** (fundraiser, with a goal) and set its status to **Live** — the bottom toast
+then appears across the site with the matching flow (number picker or donation).
 

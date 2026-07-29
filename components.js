@@ -337,6 +337,16 @@ var H4D_I18N = {
   'lottery.needSelect': { nl: 'Kies minstens \u00E9\u00E9n nummer.', de: 'W\u00E4hle mindestens eine Nummer.', en: 'Pick at least one number.' },
   'lottery.terms':      { nl: 'Voorwaarden', de: 'Bedingungen', en: 'Terms & rules' },
   'lottery.prizes':     { nl: 'Te winnen', de: 'Zu gewinnen', en: 'Prizes' },
+  // Fundraiser (donation) variant of the toast/modal
+  'lottery.donate':     { nl: 'Doneer', de: 'Spenden', en: 'Donate' },
+  'lottery.donSub':     { nl: 'Kies een bedrag om deze actie te steunen.', de: 'Wähle einen Betrag, um diese Aktion zu unterstützen.', en: 'Choose an amount to support this campaign.' },
+  'lottery.customAmount': { nl: 'Ander bedrag', de: 'Anderer Betrag', en: 'Other amount' },
+  'lottery.anon':       { nl: 'Doneer anoniem', de: 'Anonym spenden', en: 'Donate anonymously' },
+  'lottery.raised':     { nl: 'opgehaald', de: 'gesammelt', en: 'raised' },
+  'lottery.of':         { nl: 'van', de: 'von', en: 'of' },
+  'lottery.recentDon':  { nl: 'Recente donaties', de: 'Aktuelle Spenden', en: 'Recent donations' },
+  'lottery.needAmount': { nl: 'Kies of vul een bedrag in.', de: 'Wähle oder gib einen Betrag ein.', en: 'Choose or enter an amount.' },
+  'lottery.donateNow':  { nl: 'Doneer nu', de: 'Jetzt spenden', en: 'Donate now' },
 };
 
 function h4dGetLanguage() {
@@ -1470,8 +1480,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var DEFAULT_IMG = 'lolo.png'; // shown when a lottery has no image of its own
   var current = null;   // active lottery object
-  var selected = [];    // chosen numbers
-  var taken = {};       // number -> true
+  var selected = [];    // chosen numbers (raffle)
+  var taken = {};       // number -> true (raffle)
+  var mode = 'raffle';  // 'raffle' | 'fundraiser'
+  var donAmount = 0;    // chosen donation amount in euros (fundraiser)
 
   function injectCSS() {
     if (document.getElementById('h4d-lottery-css')) return;
@@ -1524,6 +1536,25 @@ document.addEventListener('DOMContentLoaded', function () {
 .h4d-lm-terms{margin-top:14px;text-align:center;}
 .h4d-lm-terms a{color:var(--dark-2,#555);font-size:12.5px;text-decoration:underline;}
 .h4d-lm-terms.empty{display:none;}
+.h4d-lm-progress{margin:0 0 16px;}
+.h4d-lm-progress .bar{height:12px;border-radius:999px;background:rgba(0,0,0,.08);overflow:hidden;margin-bottom:8px;}
+.h4d-lm-progress .fill{height:100%;background:var(--brand,#ff5314);border-radius:999px;transition:width .4s;}
+.h4d-lm-progress .lbl{font-size:14px;color:var(--dark-2,#555);}
+.h4d-lm-progress .lbl b{font-family:'Nunito',sans-serif;font-weight:800;color:var(--dark-1,#1a1a1a);}
+.h4d-lm-amounts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.h4d-lm-amt{padding:11px 18px;border:2px solid rgba(0,0,0,.1);background:#fff;border-radius:999px;font-weight:700;font-size:15px;color:var(--dark-1,#1a1a1a);cursor:pointer;font-family:inherit;}
+.h4d-lm-amt:hover{border-color:var(--brand,#ff5314);}
+.h4d-lm-amt.selected{background:var(--brand,#ff5314);border-color:var(--brand,#ff5314);color:#fff;}
+.h4d-lm-amt-custom{position:relative;display:inline-flex;align-items:center;}
+.h4d-lm-amt-custom span{position:absolute;left:16px;font-weight:700;color:var(--dark-2,#555);pointer-events:none;}
+.h4d-lm-amt-custom input{width:130px;padding:11px 16px 11px 30px;border:2px solid rgba(0,0,0,.1);border-radius:999px;font-weight:700;font-size:15px;font-family:inherit;outline:none;}
+.h4d-lm-amt-custom input:focus{border-color:var(--brand,#ff5314);}
+.h4d-lm-anon{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--dark-2,#555);margin-bottom:14px;cursor:pointer;}
+.h4d-lm-anon input{width:17px;height:17px;accent-color:var(--brand,#ff5314);}
+.h4d-lm-donors{margin-top:16px;}
+.h4d-lm-donors h4{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:#999;margin:0 0 8px;}
+.h4d-lm-donors .row{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.h4d-lm-donors .row .amt{font-weight:700;color:var(--brand,#ff5314);}
 @media (max-width:520px){.h4d-lottery-overlay{align-items:flex-end;padding:0;}.h4d-lottery-modal{max-width:none;border-radius:24px 24px 0 0;max-height:92vh;transform:translateY(100%);}.h4d-lm-fields{flex-direction:column;}}
 `;
     var style = document.createElement('style');
@@ -1566,18 +1597,27 @@ document.addEventListener('DOMContentLoaded', function () {
             '<div class="h4d-lm-prizes" id="h4dLmPrizes"></div>' +
           '</div>' +
         '</div>' +
-        '<p class="h4d-lm-sub" data-i18n="lottery.pickSub">Tik op de beschikbare nummers die je wilt kopen.</p>' +
-        '<div class="h4d-lm-grid-wrap"><div class="h4d-lm-grid" id="h4dLmGrid"></div></div>' +
-        '<div class="h4d-lm-selected" id="h4dLmSelected"></div>' +
+        '<div id="h4dLmRaffle">' +
+          '<p class="h4d-lm-sub" data-i18n="lottery.pickSub">Tik op de beschikbare nummers die je wilt kopen.</p>' +
+          '<div class="h4d-lm-grid-wrap"><div class="h4d-lm-grid" id="h4dLmGrid"></div></div>' +
+          '<div class="h4d-lm-selected" id="h4dLmSelected"></div>' +
+        '</div>' +
+        '<div id="h4dLmFund" style="display:none">' +
+          '<div class="h4d-lm-progress" id="h4dLmProgress"></div>' +
+          '<p class="h4d-lm-sub" data-i18n="lottery.donSub">Kies een bedrag om deze actie te steunen.</p>' +
+          '<div class="h4d-lm-amounts" id="h4dLmAmounts"></div>' +
+        '</div>' +
         '<form class="h4d-lm-form" id="h4dLmForm">' +
           '<div class="h4d-lm-fields">' +
-            '<label data-i18n="lottery.name">Naam<input type="text" id="h4dLmName" required></label>' +
-            '<label data-i18n="lottery.email">E-mailadres<input type="email" id="h4dLmEmail" required></label>' +
+            '<label data-i18n="lottery.name">Naam<input type="text" id="h4dLmName"></label>' +
+            '<label data-i18n="lottery.email">E-mailadres<input type="email" id="h4dLmEmail"></label>' +
           '</div>' +
+          '<label class="h4d-lm-anon" id="h4dLmAnonWrap" style="display:none"><input type="checkbox" id="h4dLmAnon"><span data-i18n="lottery.anon">Doneer anoniem</span></label>' +
           '<div class="h4d-lm-total" id="h4dLmTotal"></div>' +
           '<button type="submit" class="h4d-lm-submit" id="h4dLmSubmit" data-i18n="lottery.continue">Doorgaan naar betaling</button>' +
           '<p class="h4d-lm-error" id="h4dLmError"></p>' +
         '</form>' +
+        '<div class="h4d-lm-donors" id="h4dLmDonors"></div>' +
         '<div class="h4d-lm-terms empty" id="h4dLmTerms"><a id="h4dLmTermsLink" target="_blank" rel="noopener" data-i18n="lottery.terms">Voorwaarden</a></div>' +
       '</div>';
     document.body.appendChild(overlay);
@@ -1620,6 +1660,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var img = document.getElementById('h4dLtImg');
     if (lottery.image_url) { img.src = lottery.image_url; media.classList.remove('is-default'); }
     else { img.src = DEFAULT_IMG; media.classList.add('is-default'); }
+    var isFund = lottery.type === 'fundraiser';
+    var btn = document.getElementById('h4dLtBtn');
+    btn.setAttribute('data-i18n', isFund ? 'lottery.donate' : 'lottery.enter');
+    btn.textContent = t(isFund ? 'lottery.donate' : 'lottery.enter');
     document.getElementById('h4dLtHeading').textContent = loc(lottery, 'title') || 'Loterij';
     document.getElementById('h4dLtText').textContent = loc(lottery, 'description') || loc(lottery, 'prize') || '';
     requestAnimationFrame(function () {
@@ -1641,7 +1685,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!id) return;
     var overlay = document.getElementById('h4dLotteryOverlay');
     var grid = document.getElementById('h4dLmGrid');
-    selected = []; taken = {};
+    selected = []; taken = {}; donAmount = 0;
     grid.innerHTML = '<div class="h4d-lm-msg" data-i18n="lottery.loading">' + esc(t('lottery.loading')) + '</div>';
     document.getElementById('h4dLmError').textContent = '';
     document.getElementById('h4dLmSelected').innerHTML = '';
@@ -1654,15 +1698,100 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(function (data) {
         if (!data || !data.lottery) throw new Error('no lottery');
         current = data.lottery;
-        (data.taken || []).forEach(function (n) { taken[n] = true; });
+        mode = current.type === 'fundraiser' ? 'fundraiser' : 'raffle';
+        applyMode();
         fillHead(current);
-        renderGrid();
-        updateTotals();
+        if (mode === 'fundraiser') {
+          renderProgress(data);
+          renderAmounts();
+          renderDonors(data.donors || []);
+          updateDonateTotals();
+        } else {
+          (data.taken || []).forEach(function (n) { taken[n] = true; });
+          renderGrid();
+          updateTotals();
+        }
       })
       .catch(function () {
         grid.innerHTML = '<div class="h4d-lm-msg">' + esc(t('lottery.err')) + '</div>';
       });
   };
+
+  // Toggle raffle vs fundraiser sections + submit label + required fields.
+  function applyMode() {
+    var isFund = mode === 'fundraiser';
+    document.getElementById('h4dLmRaffle').style.display = isFund ? 'none' : '';
+    document.getElementById('h4dLmFund').style.display = isFund ? '' : 'none';
+    document.getElementById('h4dLmAnonWrap').style.display = isFund ? 'flex' : 'none';
+    document.getElementById('h4dLmDonors').style.display = isFund ? '' : 'none';
+    var name = document.getElementById('h4dLmName');
+    var email = document.getElementById('h4dLmEmail');
+    // Raffle needs name + email; a fundraiser donation can be anonymous.
+    if (isFund) { name.removeAttribute('required'); email.removeAttribute('required'); }
+    else { name.setAttribute('required', 'required'); email.setAttribute('required', 'required'); }
+    var submit = document.getElementById('h4dLmSubmit');
+    submit.setAttribute('data-i18n', isFund ? 'lottery.donateNow' : 'lottery.continue');
+    submit.textContent = t(isFund ? 'lottery.donateNow' : 'lottery.continue');
+  }
+
+  function renderProgress(data) {
+    var el = document.getElementById('h4dLmProgress');
+    var goal = data.goal_cents ? parseInt(data.goal_cents, 10) : (current.goal_cents ? parseInt(current.goal_cents, 10) : 0);
+    var raised = data.raised_cents ? parseInt(data.raised_cents, 10) : 0;
+    if (!goal) {
+      el.innerHTML = '<div class="lbl"><b>' + money(raised) + '</b> ' + esc(t('lottery.raised')) + '</div>';
+      return;
+    }
+    var pct = Math.max(0, Math.min(100, Math.round(raised / goal * 100)));
+    el.innerHTML = '<div class="bar"><div class="fill" style="width:' + pct + '%"></div></div>' +
+      '<div class="lbl"><b>' + money(raised) + '</b> ' + esc(t('lottery.of')) + ' ' + money(goal) + ' ' + esc(t('lottery.raised')) + '</div>';
+  }
+
+  function renderAmounts() {
+    var el = document.getElementById('h4dLmAmounts');
+    var presets = [10, 25, 50, 100, 200];
+    el.innerHTML = presets.map(function (a) {
+      return '<button type="button" class="h4d-lm-amt" data-amt="' + a + '">€' + a + '</button>';
+    }).join('') +
+      '<span class="h4d-lm-amt-custom"><span>€</span><input type="number" id="h4dLmCustom" min="1" step="1" placeholder="' + esc(t('lottery.customAmount')) + '"></span>';
+    el.querySelectorAll('.h4d-lm-amt').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        el.querySelectorAll('.h4d-lm-amt').forEach(function (b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var cust = document.getElementById('h4dLmCustom'); if (cust) cust.value = '';
+        donAmount = parseFloat(btn.getAttribute('data-amt')) || 0;
+        updateDonateTotals();
+      });
+    });
+    var cust = document.getElementById('h4dLmCustom');
+    cust.addEventListener('input', function () {
+      el.querySelectorAll('.h4d-lm-amt').forEach(function (b) { b.classList.remove('selected'); });
+      donAmount = parseFloat(cust.value) || 0;
+      updateDonateTotals();
+    });
+  }
+
+  function updateDonateTotals() {
+    var tot = document.getElementById('h4dLmTotal');
+    var submit = document.getElementById('h4dLmSubmit');
+    if (donAmount >= 1) {
+      tot.textContent = t('lottery.total') + ': ' + money(Math.round(donAmount * 100));
+      submit.disabled = false;
+    } else {
+      tot.textContent = '';
+      submit.disabled = true;
+    }
+  }
+
+  function renderDonors(donors) {
+    var el = document.getElementById('h4dLmDonors');
+    if (!donors || !donors.length) { el.innerHTML = ''; el.style.display = 'none'; return; }
+    el.style.display = '';
+    el.innerHTML = '<h4>' + esc(t('lottery.recentDon')) + '</h4>' +
+      donors.slice(0, 8).map(function (d) {
+        return '<div class="row"><span>' + esc(d.name || 'Donateur') + '</span><span class="amt">' + money(d.amount_cents) + '</span></div>';
+      }).join('');
+  }
 
   window.closeLotteryModal = function () {
     var overlay = document.getElementById('h4dLotteryOverlay');
@@ -1678,7 +1807,13 @@ document.addEventListener('DOMContentLoaded', function () {
     prize.classList.remove('empty');
     document.getElementById('h4dLmTitle').textContent = loc(lottery, 'title') || 'Loterij';
     document.getElementById('h4dLmDesc').textContent = loc(lottery, 'description') || '';
-    document.getElementById('h4dLmPrice').textContent = money(lottery.price_cents) + ' ' + t('lottery.perNumber');
+    var priceEl = document.getElementById('h4dLmPrice');
+    if (mode === 'fundraiser') {
+      priceEl.style.display = 'none';
+    } else {
+      priceEl.style.display = '';
+      priceEl.textContent = money(lottery.price_cents) + ' ' + t('lottery.perNumber');
+    }
     renderPrizes(lottery);
     var terms = document.getElementById('h4dLmTerms');
     var link = document.getElementById('h4dLmTermsLink');
@@ -1747,6 +1882,33 @@ document.addEventListener('DOMContentLoaded', function () {
     var err = document.getElementById('h4dLmError');
     var submit = document.getElementById('h4dLmSubmit');
     err.textContent = '';
+
+    // Fundraiser: donate an amount (no numbers; name/email optional, anon allowed).
+    if (mode === 'fundraiser') {
+      if (!(donAmount >= 1)) { err.textContent = t('lottery.needAmount'); return; }
+      var anonymous = document.getElementById('h4dLmAnon').checked;
+      submit.disabled = true;
+      var origF = submit.textContent;
+      submit.textContent = '…';
+      fetch('/api/lottery/donate.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lottery_id: current.id, amount: donAmount, name: name, email: email, anonymous: anonymous })
+      })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (res.ok && res.d.checkoutUrl) {
+            try { localStorage.setItem('h4d_payment_id', res.d.paymentId); } catch (e2) {}
+            window.location.href = res.d.checkoutUrl;
+            return;
+          }
+          submit.disabled = false; submit.textContent = origF;
+          err.textContent = res.d.error || t('lottery.err');
+        })
+        .catch(function () { submit.disabled = false; submit.textContent = origF; err.textContent = t('lottery.err'); });
+      return;
+    }
+
     if (selected.length === 0) { err.textContent = t('lottery.needSelect'); return; }
     submit.disabled = true;
     var orig = submit.textContent;

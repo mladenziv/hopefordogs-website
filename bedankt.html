@@ -141,7 +141,7 @@
 
   <div id="footer-placeholder"></div>
 
-  <script src="components.js?v=26"></script>
+  <script src="components.js?v=27"></script>
   <script>
     (function () {
       var checking  = document.getElementById('state-checking');
@@ -166,18 +166,27 @@
                    en: 'You’re entered. We’ll draw the winning numbers soon and contact the winner(s). Thanks for your support!' },
         numbers: { nl: 'Jouw nummer(s): ', de: 'Deine Nummer(n): ', en: 'Your number(s): ' }
       };
-      var isLotteryPayment = false;
+      // Fundraiser donations show a donation thank-you (no numbers).
+      var FUNDRAISER_COPY = {
+        heading: { nl: 'Bedankt voor je donatie!', de: 'Danke für deine Spende!', en: 'Thank you for your donation!' },
+        sub:     { nl: 'Je donatie is gelukt. Dankzij jou kunnen we deze hond(en) blijven helpen. Van harte bedankt voor je steun!',
+                   de: 'Deine Spende war erfolgreich. Dank dir können wir diesen Hunden weiter helfen. Herzlichen Dank für deine Unterstützung!',
+                   en: 'Your donation went through. Thanks to you we can keep helping these dogs. Thank you so much for your support!' }
+      };
+      var isLotteryPayment = false;   // true for either campaign type (lottery/fundraiser)
+      var campaignType = '';
       var lotteryNumbers = '';
 
       function applyLotteryCopy() {
         var lang = localStorage.getItem('h4d-lang') || 'nl';
+        var COPY = campaignType === 'fundraiser' ? FUNDRAISER_COPY : LOTTERY_COPY;
         var h1 = success.querySelector('h1');
         var sub = success.querySelector('p[data-i18n="bedankt.sub"]');
         // Drop data-i18n so a later language switch doesn't restore donation copy.
-        if (h1)  { h1.removeAttribute('data-i18n');  h1.textContent  = LOTTERY_COPY.heading[lang] || LOTTERY_COPY.heading.nl; }
-        if (sub) { sub.removeAttribute('data-i18n'); sub.textContent = LOTTERY_COPY.sub[lang] || LOTTERY_COPY.sub.nl; }
-        document.title = 'Bedankt voor je deelname | Hope for Dogs';
-        if (lotteryNumbers) {
+        if (h1)  { h1.removeAttribute('data-i18n');  h1.textContent  = COPY.heading[lang] || COPY.heading.nl; }
+        if (sub) { sub.removeAttribute('data-i18n'); sub.textContent = COPY.sub[lang] || COPY.sub.nl; }
+        document.title = (campaignType === 'fundraiser' ? 'Bedankt voor je donatie' : 'Bedankt voor je deelname') + ' | Hope for Dogs';
+        if (campaignType !== 'fundraiser' && lotteryNumbers) {
           var nn = document.getElementById('lottery-numbers');
           nn.textContent = (LOTTERY_COPY.numbers[lang] || LOTTERY_COPY.numbers.nl) + lotteryNumbers;
           nn.classList.remove('hidden');
@@ -233,7 +242,8 @@
       // Preview mode: ?status=paid|pending|failed lets you see each state
       // in the browser without a real payment. Harmless in production.
       var params = new URLSearchParams(window.location.search);
-      isLotteryPayment = params.get('type') === 'lottery';
+      campaignType = params.get('type') || '';
+      isLotteryPayment = (campaignType === 'lottery' || campaignType === 'fundraiser');
       var override = params.get('status');
       if (override) {
         donorEmail = params.get('email') || '';
@@ -252,7 +262,7 @@
         .then(function (data) {
           localStorage.removeItem('h4d_payment_id');
           donorEmail = (data && data.email) || '';
-          if (data && data.type === 'lottery') isLotteryPayment = true;
+          if (data && (data.type === 'lottery' || data.type === 'fundraiser')) { isLotteryPayment = true; campaignType = data.type; }
           lotteryNumbers = (data && data.numbers) || lotteryNumbers;
           handleStatus(data && data.status);
         })

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Loterijen · Beheer — Hope for Dogs</title>
+  <title>Acties · Beheer — Hope for Dogs</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +12,16 @@
     :root { --brand:#ff5314; --ink:#1a1a1a; --muted:#666; --line:rgba(0,0,0,.1); --beige:#faf8f4; }
     * { box-sizing:border-box; }
     body { margin:0; font-family:'Manrope',system-ui,sans-serif; color:var(--ink); background:#f4f2ee; }
+    /* Top nav — mirrors the beheer app header so this page matches the others */
+    .bnav { position:sticky; top:0; z-index:60; background:rgba(255,255,255,.92); backdrop-filter:blur(8px); border-bottom:1px solid rgba(0,0,0,.08); }
+    .bnav-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:16px; height:64px; padding:0 20px; }
+    .bnav-logo { flex-shrink:0; display:flex; align-items:center; }
+    .bnav-logo img { height:38px; width:auto; }
+    .bnav-links { display:flex; align-items:center; gap:2px; flex-wrap:wrap; }
+    .bnav-links a { padding:8px 12px; font-size:14px; font-weight:600; border-radius:999px; color:rgba(26,26,26,.7); text-decoration:none; white-space:nowrap; }
+    .bnav-links a:hover { color:var(--ink); background:rgba(0,0,0,.05); }
+    .bnav-links a.active { color:var(--brand); background:rgba(255,83,20,.1); }
+    @media (max-width:860px){ .bnav-links { display:none; } }
     .wrap { max-width:1000px; margin:0 auto; padding:28px 20px 80px; }
     .top { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
     h1 { font-family:'Nunito',sans-serif; font-weight:900; font-size:26px; margin:0; }
@@ -64,7 +74,7 @@
     .prize-row .p-del:hover { border-color:#c0392b; }
     .pt-list { max-height:52vh; overflow:auto; margin-bottom:6px; }
     .pt-item { display:flex; gap:12px; align-items:baseline; padding:9px 2px; border-bottom:1px solid var(--line); font-size:14px; }
-    .pt-num { flex:0 0 54px; font-weight:800; color:var(--brand); }
+    .pt-num { flex:0 0 auto; min-width:56px; font-weight:800; color:var(--brand); }
     .pt-who { flex:1; min-width:0; }
     .pt-who .e { color:var(--muted); font-size:12.5px; }
     .pt-date { flex:0 0 auto; color:var(--muted); font-size:12.5px; }
@@ -84,19 +94,33 @@
   </style>
 </head>
 <body>
+  <header class="bnav">
+    <div class="bnav-inner">
+      <a class="bnav-logo" href="../index.html"><img src="../logo.png" alt="Hope for Dogs"></a>
+      <nav class="bnav-links">
+        <a href="index.html#/">Home</a>
+        <a href="index.html#/adoptants">Adoptanten</a>
+        <a href="index.html#/social">Social Media</a>
+        <a href="index.html#/nieuws">Nieuws</a>
+        <a href="index.html#/ervaringen">Ervaringen</a>
+        <a href="index.html#/website-content?tab=faq">FAQ</a>
+        <a href="loterijen.html" class="active">Acties</a>
+      </nav>
+    </div>
+  </header>
   <div class="wrap">
     <div class="top">
       <div>
-        <h1>Loterijen</h1>
-        <a class="back" href="./">← Terug naar beheer</a>
+        <h1>Acties</h1>
+        <a class="back" href="index.html#/">← Terug naar beheer</a>
       </div>
       <div class="top-actions">
-        <button class="btn btn-primary" id="newBtn">+ Nieuwe loterij</button>
+        <button class="btn btn-primary" id="newBtn">+ Nieuwe actie</button>
       </div>
     </div>
 
     <div id="authWarn" class="warn" style="display:none">
-      Je bent niet ingelogd in het beheerpaneel. Open eerst <a href="./">het beheer</a> en log in, en kom dan hier terug — anders kun je geen loterijen opslaan.
+      Je bent niet ingelogd in het beheerpaneel. Open eerst <a href="index.html#/">het beheer</a> en log in, en kom dan hier terug — anders kun je niets opslaan.
     </div>
 
     <div id="list"><div class="empty">Laden…</div></div>
@@ -109,6 +133,14 @@
       <h2 id="formTitle">Nieuwe loterij</h2>
       <form id="form">
         <input type="hidden" id="f_id">
+
+        <div class="field">
+          <label for="f_type">Type</label>
+          <select id="f_type">
+            <option value="raffle">Loterij — nummers kopen + prijzen</option>
+            <option value="fundraiser">Inzameling — doneren voor een doel</option>
+          </select>
+        </div>
 
         <div class="grid2">
           <div class="field">
@@ -133,7 +165,7 @@
             <label for="f_start">Gaat live op (optioneel)</label>
             <input type="datetime-local" id="f_start">
           </div>
-          <div class="field">
+          <div class="field raffle-only">
             <label for="f_draw">Trekkingsdatum</label>
             <input type="datetime-local" id="f_draw">
           </div>
@@ -156,8 +188,8 @@
           <div class="field"><label for="f_desc_de">Omschrijving (DE)</label><textarea id="f_desc_de"></textarea></div>
           <div class="field"><label for="f_desc_en">Omschrijving (EN)</label><textarea id="f_desc_en"></textarea></div>
         </div>
-        <div class="section-label">Loten & prijs</div>
-        <div class="grid2">
+        <div class="section-label raffle-only">Loten & prijs</div>
+        <div class="grid2 raffle-only">
           <div class="field">
             <label for="f_max">Aantal nummers</label>
             <input type="number" id="f_max" value="100" min="1" step="1">
@@ -167,15 +199,25 @@
             <input type="number" id="f_price" value="5.00" min="0" step="0.01">
           </div>
         </div>
+
+        <div class="section-label fundraiser-only" style="display:none">Doel</div>
+        <div class="field fundraiser-only" style="display:none">
+          <label for="f_goal">Doelbedrag (€, optioneel)</label>
+          <input type="number" id="f_goal" min="0" step="1" placeholder="bijv. 500">
+          <span class="hint">Wordt in de pop-up getoond als voortgangsbalk. Leeg laten = geen doel tonen.</span>
+        </div>
+
         <div class="field">
           <label for="f_terms">Voorwaarden-link (optioneel)</label>
           <input type="url" id="f_terms" placeholder="https://…">
         </div>
 
-        <div class="section-label">Prijzen (elk met een eigen winnend nummer)</div>
-        <div id="f_prizes"></div>
-        <button type="button" class="btn btn-ghost btn-sm" id="addPrizeBtn" style="margin-top:2px">+ Prijs toevoegen</button>
-        <span class="hint" style="display:block;margin-top:8px">Voeg een prijs toe per te winnen nummer (bijv. 1e prijs, 2e prijs). Vul het winnende nummer ná de trekking in — het verschijnt op de site zodra de status “Getrokken” is.</span>
+        <div class="raffle-only">
+          <div class="section-label">Prijzen (elk met een eigen winnend nummer)</div>
+          <div id="f_prizes"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="addPrizeBtn" style="margin-top:2px">+ Prijs toevoegen</button>
+          <span class="hint" style="display:block;margin-top:8px">Voeg een prijs toe per te winnen nummer (bijv. 1e prijs, 2e prijs). Vul het winnende nummer ná de trekking in — het verschijnt op de site zodra de status “Getrokken” is.</span>
+        </div>
 
         <div class="section-label">Afbeeldingen</div>
         <span class="hint" style="display:block;margin:-4px 0 10px">Leeg laten → standaard afbeelding (het logo).</span>
@@ -213,18 +255,20 @@
       <button class="close" id="pClose" aria-label="Sluiten">✕</button>
       <h2 id="pTitle">Nummers</h2>
       <div id="pSummary" class="hint" style="margin-bottom:10px"></div>
-      <div class="pt-legend">
-        <span><i class="pt-dot" style="background:#fff;border:1.25px solid var(--line)"></i> Beschikbaar</span>
-        <span><i class="pt-dot" style="background:#fdecea"></i> Verkocht</span>
-        <span><i class="pt-dot" style="background:#fff5e6"></i> Gereserveerd</span>
-        <span><i class="pt-dot" style="background:#e6e6e6"></i> Geblokkeerd</span>
+      <div id="pRaffleTools">
+        <div class="pt-legend">
+          <span><i class="pt-dot" style="background:#fff;border:1.25px solid var(--line)"></i> Beschikbaar</span>
+          <span><i class="pt-dot" style="background:#fdecea"></i> Verkocht</span>
+          <span><i class="pt-dot" style="background:#fff5e6"></i> Gereserveerd</span>
+          <span><i class="pt-dot" style="background:#e6e6e6"></i> Geblokkeerd</span>
+        </div>
+        <div id="pGrid" class="pt-grid"></div>
+        <div class="form-actions" style="justify-content:space-between;align-items:center;margin-top:10px">
+          <span class="hint" id="pBlockHint">Klik op een vrij nummer om het te blokkeren (bijv. al offline verkocht). Klik nogmaals om te deblokkeren.</span>
+          <button type="button" class="btn btn-primary btn-sm" id="pSaveBlocks">Blokkades opslaan</button>
+        </div>
       </div>
-      <div id="pGrid" class="pt-grid"></div>
-      <div class="form-actions" style="justify-content:space-between;align-items:center;margin-top:10px">
-        <span class="hint" id="pBlockHint">Klik op een vrij nummer om het te blokkeren (bijv. al offline verkocht). Klik nogmaals om te deblokkeren.</span>
-        <button type="button" class="btn btn-primary btn-sm" id="pSaveBlocks">Blokkades opslaan</button>
-      </div>
-      <div class="section-label">Verkochte loten</div>
+      <div class="section-label" id="pListLabel">Verkochte loten</div>
       <div id="pList" class="pt-list"></div>
       <div class="form-actions">
         <button type="button" class="btn btn-ghost" id="pCsv">Download CSV</button>
@@ -297,43 +341,59 @@
       var list = $('list');
       try {
         var rows = await apiGet('lotteries?select=*&order=sort_order.asc,created_at.desc');
-        if (!rows.length) { list.innerHTML = '<div class="empty">Nog geen loterijen. Klik op “+ Nieuwe loterij”.</div>'; return; }
-        // sold counts (paid tickets) per lottery
-        var counts = {};
+        if (!rows.length) { list.innerHTML = '<div class="empty">Nog geen acties. Klik op “+ Nieuwe actie”.</div>'; return; }
+        // per-type stats: raffle → paid tickets sold; fundraiser → amount raised + count
+        var stats = {};
         await Promise.all(rows.map(async function (r) {
           try {
-            var t = await apiGet('lottery_tickets?select=id&lottery_id=eq.' + r.id + '&status=eq.paid');
-            counts[r.id] = t.length;
-          } catch (e) { counts[r.id] = null; }
+            if (r.type === 'fundraiser') {
+              var d = await apiGet('lottery_donations?select=amount_cents&lottery_id=eq.' + r.id + '&status=eq.paid');
+              stats[r.id] = { raised: d.reduce(function (s, x) { return s + (x.amount_cents || 0); }, 0), count: d.length };
+            } else {
+              var t = await apiGet('lottery_tickets?select=id&lottery_id=eq.' + r.id + '&status=eq.paid');
+              stats[r.id] = { sold: t.length };
+            }
+          } catch (e) { stats[r.id] = null; }
         }));
-        list.innerHTML = '<div class="cards">' + rows.map(function (r) { return cardHTML(r, counts[r.id]); }).join('') + '</div>';
+        list.innerHTML = '<div class="cards">' + rows.map(function (r) { return cardHTML(r, stats[r.id]); }).join('') + '</div>';
         wireCards(rows);
       } catch (e) {
-        list.innerHTML = '<div class="empty">Kon loterijen niet laden.<br><small>' + esc(e.message) + '</small><br><br>' +
-          'Draai je de database-migratie al? (db/lottery-schema.sql)</div>';
+        list.innerHTML = '<div class="empty">Kon acties niet laden.<br><small>' + esc(e.message) + '</small><br><br>' +
+          'Draai je de database-migratie al? (db/lottery-schema.md)</div>';
       }
     }
 
-    function cardHTML(r, sold) {
+    function cardHTML(r, st) {
+      var isFund = r.type === 'fundraiser';
       var img = r.image_url || r.prize_image_url;
-      var thumb = img ? '<img class="card-thumb" src="' + esc(img) + '" alt="">' : '<div class="card-thumb empty">🎟️</div>';
-      var soldStr = (sold == null ? '?' : sold);
-      var prizes = Array.isArray(r.prizes) ? r.prizes : [];
-      var nWin = prizes.length || r.num_winners || 0;
-      var winStr = prizes.filter(function (p) { return p.number != null && p.number !== ''; })
-        .map(function (p) { return esc(p.label || '?') + ' → ' + esc(p.number); }).join(', ');
-      var win = winStr ? '<br>Winnaars: <b>' + winStr + '</b>' : '';
+      var thumb = img ? '<img class="card-thumb" src="' + esc(img) + '" alt="">' : '<div class="card-thumb empty">' + (isFund ? '🧡' : '🎟️') + '</div>';
+      var meta;
+      if (isFund) {
+        var raised = st && st.raised != null ? st.raised : 0;
+        var cnt = st && st.count != null ? st.count : 0;
+        meta = 'Inzameling · <b>' + euros(raised) + '</b>' + (r.goal_cents ? ' van ' + euros(r.goal_cents) : '') +
+          ' opgehaald · <b>' + cnt + '</b> donatie(s)';
+      } else {
+        var soldStr = (st && st.sold != null ? st.sold : '?');
+        var prizes = Array.isArray(r.prizes) ? r.prizes : [];
+        var nWin = prizes.length || r.num_winners || 0;
+        var winStr = prizes.filter(function (p) { return p.number != null && p.number !== ''; })
+          .map(function (p) { return esc(p.label || '?') + ' → ' + esc(p.number); }).join(', ');
+        var win = winStr ? '<br>Winnaars: <b>' + winStr + '</b>' : '';
+        meta = 'Loterij · ' + euros(r.price_cents) + ' per nummer · ' + esc(r.max_numbers) + ' nummers · <b>' + soldStr + '</b> verkocht · ' + esc(nWin) + ' prijs(zen)<br>' +
+          'Trekking: ' + fmtDate(r.draw_date) + win;
+      }
+      var overviewBtn = isFund
+        ? '<button class="btn btn-ghost btn-sm" data-act="donations">Donaties</button>'
+        : '<button class="btn btn-ghost btn-sm" data-act="numbers">Nummers</button>';
       return '<div class="card" data-id="' + r.id + '">' +
         thumb +
         '<div class="card-main">' +
           '<div class="card-title">' + esc(r.title_nl || '(zonder titel)') + '<span class="badge ' + r.status + '">' + (STATUS_LABEL[r.status] || r.status) + '</span></div>' +
-          '<div class="card-meta">' +
-            euros(r.price_cents) + ' per nummer · ' + esc(r.max_numbers) + ' nummers · <b>' + soldStr + '</b> verkocht · ' + esc(nWin) + ' prijs(zen)<br>' +
-            'Trekking: ' + fmtDate(r.draw_date) + win +
-          '</div>' +
+          '<div class="card-meta">' + meta + '</div>' +
           '<div class="card-actions">' +
             '<button class="btn btn-ghost btn-sm" data-act="edit">Bewerken</button>' +
-            '<button class="btn btn-ghost btn-sm" data-act="numbers">Nummers</button>' +
+            overviewBtn +
             (r.status === 'live'
               ? '<button class="btn btn-ghost btn-sm" data-act="close">Sluiten</button>'
               : '<button class="btn btn-ghost btn-sm" data-act="live">Zet live</button>') +
@@ -353,6 +413,7 @@
             var act = btn.getAttribute('data-act');
             if (act === 'edit') openForm(r);
             else if (act === 'numbers') openNumbers(r);
+            else if (act === 'donations') openDonations(r);
             else if (act === 'live') setStatus(r, 'live');
             else if (act === 'close') setStatus(r, 'closed');
             else if (act === 'share') shareLink(r);
@@ -389,12 +450,14 @@
     }
 
     // ---- Numbers overview: sold / reserved / blocked, click-to-block, + buyers ----
-    var pCurrent = null, pRows = [], pBlocked = {}, pMax = 0, pSold = {}, pReserved = {};
+    var pCurrent = null, pRows = [], pBlocked = {}, pMax = 0, pSold = {}, pReserved = {}, pMode = 'numbers';
     async function openNumbers(r) {
-      pCurrent = r; pRows = []; pSold = {}; pReserved = {};
+      pCurrent = r; pRows = []; pSold = {}; pReserved = {}; pMode = 'numbers';
       pMax = parseInt(r.max_numbers, 10) || 0;
       pBlocked = {};
       (Array.isArray(r.blocked_numbers) ? r.blocked_numbers : []).forEach(function (n) { pBlocked[n] = 1; });
+      $('pRaffleTools').style.display = '';
+      $('pListLabel').textContent = 'Verkochte loten';
       $('pTitle').textContent = 'Nummers — ' + (r.title_nl || '');
       $('pSummary').textContent = '';
       $('pList').innerHTML = '<div class="hint">Laden…</div>';
@@ -451,6 +514,39 @@
         '</div>';
       }).join('');
     }
+    // ---- Donations overview (fundraiser) ----
+    async function openDonations(r) {
+      pCurrent = r; pRows = []; pMode = 'donations';
+      $('pRaffleTools').style.display = 'none';
+      $('pListLabel').textContent = 'Donaties';
+      $('pTitle').textContent = 'Donaties — ' + (r.title_nl || '');
+      $('pSummary').textContent = '';
+      $('pList').innerHTML = '<div class="hint">Laden…</div>';
+      $('pOverlay').classList.add('open');
+      try {
+        var rows = await apiGet('lottery_donations?lottery_id=eq.' + r.id +
+          '&status=eq.paid&select=amount_cents,donor_name,donor_email,anonymous,created_at&order=created_at.desc');
+        pRows = rows || [];
+        var total = pRows.reduce(function (s, x) { return s + (x.amount_cents || 0); }, 0);
+        $('pSummary').innerHTML = '<b>' + euros(total) + '</b> opgehaald · ' + pRows.length + ' donatie(s)';
+        if (!pRows.length) { $('pList').innerHTML = '<div class="empty">Nog geen donaties.</div>'; return; }
+        renderDonationList(pRows);
+      } catch (e) {
+        $('pSummary').textContent = '';
+        $('pList').innerHTML = '<div class="empty">Kon donaties niet laden.<br><small>' + esc(e.message) + '</small></div>';
+      }
+    }
+    function renderDonationList(rows) {
+      $('pList').innerHTML = rows.map(function (d) {
+        var nm = esc(d.donor_name || '—') + (d.anonymous ? ' <span class="e">(anoniem)</span>' : '');
+        return '<div class="pt-item">' +
+          '<div class="pt-num">' + euros(d.amount_cents) + '</div>' +
+          '<div class="pt-who"><div>' + nm + '</div><div class="e">' + esc(d.donor_email || '') + '</div></div>' +
+          '<div class="pt-date">' + fmtDate(d.created_at) + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
     async function saveBlocks() {
       if (!authed()) { alert('Log eerst in via het beheer.'); return; }
       var nums = Object.keys(pBlocked).map(function (n) { return parseInt(n, 10); }).sort(function (a, b) { return a - b; });
@@ -470,14 +566,23 @@
     function csvCell(v) { v = (v == null ? '' : String(v)); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
     function downloadCsv() {
       if (!pRows.length) return;
-      var lines = [['nummer', 'naam', 'email', 'datum']].concat(pRows.map(function (t) {
-        return [t.number, csvCell(t.buyer_name), csvCell(t.buyer_email), csvCell(t.created_at)];
-      }));
+      var lines, prefix;
+      if (pMode === 'donations') {
+        lines = [['bedrag_eur', 'naam', 'email', 'anoniem', 'datum']].concat(pRows.map(function (d) {
+          return [(d.amount_cents / 100).toFixed(2), csvCell(d.donor_name), csvCell(d.donor_email), d.anonymous ? 'ja' : 'nee', csvCell(d.created_at)];
+        }));
+        prefix = 'donaties';
+      } else {
+        lines = [['nummer', 'naam', 'email', 'datum']].concat(pRows.map(function (t) {
+          return [t.number, csvCell(t.buyer_name), csvCell(t.buyer_email), csvCell(t.created_at)];
+        }));
+        prefix = 'loten';
+      }
       var csv = lines.map(function (row) { return row.join(','); }).join('\n');
       var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
       var a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'loterij-' + ((pCurrent && pCurrent.title_nl ? pCurrent.title_nl : 'deelnemers').replace(/[^a-z0-9]+/gi, '-').toLowerCase()) + '.csv';
+      a.download = prefix + '-' + ((pCurrent && pCurrent.title_nl ? pCurrent.title_nl : 'export').replace(/[^a-z0-9]+/gi, '-').toLowerCase()) + '.csv';
       document.body.appendChild(a); a.click();
       setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
     }
@@ -505,10 +610,18 @@
     }
 
     // ---- Form ----
+    function toggleType() {
+      var isFund = $('f_type').value === 'fundraiser';
+      document.querySelectorAll('.raffle-only').forEach(function (el) { el.style.display = isFund ? 'none' : ''; });
+      document.querySelectorAll('.fundraiser-only').forEach(function (el) { el.style.display = isFund ? '' : 'none'; });
+    }
+
     function openForm(r) {
       $('formMsg').textContent = '';
-      $('formTitle').textContent = r ? 'Loterij bewerken' : 'Nieuwe loterij';
+      $('formTitle').textContent = r ? 'Actie bewerken' : 'Nieuwe actie';
       $('f_id').value = r ? r.id : '';
+      $('f_type').value = r ? (r.type || 'raffle') : 'raffle';
+      $('f_goal').value = (r && r.goal_cents) ? (r.goal_cents / 100) : '';
       $('f_status').value = r ? r.status : 'draft';
       $('f_sort').value = r ? (r.sort_order || 0) : 0;
       $('f_start').value = r ? toLocalInput(r.start_at) : '';
@@ -532,6 +645,7 @@
       var pr = (r && Array.isArray(r.prizes)) ? r.prizes : [];
       if (pr.length) pr.forEach(function (p) { addPrizeRow(p.label, p.number); });
       else addPrizeRow('', '');
+      toggleType();
       $('overlay').classList.add('open');
     }
 
@@ -577,9 +691,13 @@
         if (prizeFile) $('f_prize_image_url').value = await uploadImage(prizeFile);
 
         var status = $('f_status').value;
+        var type = $('f_type').value === 'fundraiser' ? 'fundraiser' : 'raffle';
+        var goalRaw = parseFloat($('f_goal').value);
         var prizes = getPrizes();
         var winning = prizes.map(function (p) { return p.number; }).filter(function (n) { return n != null; });
         var payload = {
+          type: type,
+          goal_cents: (type === 'fundraiser' && goalRaw > 0) ? Math.round(goalRaw * 100) : null,
           status: status,
           sort_order: parseInt($('f_sort').value, 10) || 0,
           start_at: fromLocalInput($('f_start').value),
@@ -624,6 +742,7 @@
 
     // ---- wire ----
     $('newBtn').addEventListener('click', function () { openForm(null); });
+    $('f_type').addEventListener('change', toggleType);
     $('addPrizeBtn').addEventListener('click', function () { addPrizeRow('', ''); });
     $('pClose').addEventListener('click', closeParticipants);
     $('pCloseBtn').addEventListener('click', closeParticipants);
