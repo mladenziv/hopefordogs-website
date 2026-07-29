@@ -18,6 +18,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="shared.css?v=21">
   <style>
+    /* ===== HERO COLLAGE ===== */
+    .donate-hero-img {
+      display: block;
+      width: 100%;
+      max-width: 660px;
+      height: auto;
+      margin: 0 0 8px;
+    }
+    @media (max-width: 767px) {
+      .donate-hero-img { max-width: 460px; }
+    }
+
     /* ===== DONATION FORM SECTION ===== */
     .donate-form-section {
       width: 100%;
@@ -630,6 +642,9 @@
   <!-- PAGE HERO -->
   <section class="page-hero">
     <div class="page-hero-inner">
+      <img class="donate-hero-img" src="images/doneer-hero.webp" width="1600" height="850"
+           alt="Collage van geredde honden — bij aankomst en na hun herstel"
+           loading="eager" decoding="async" fetchpriority="high">
       <h1 class="t-heading-lg" data-i18n="doneer.hero">Help onze honden</h1>
       <p data-i18n="doneer.hero.sub" style="max-width: 720px;">Onze vrijwilligers doen alles met veel liefde. Daarnaast betalen ze ook alles uit eigen zak; voer, onderhoud en de dierenarts kosten. Dit gaat allemaal door en loopt qua kosten behoorlijk op. We zijn dus volledig afhankelijk van de goedheid van andere mensen. Draagt u onze hondjes ook een warm hart toe?</p>
     </div>
