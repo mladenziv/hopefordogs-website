@@ -764,10 +764,14 @@
                 }
 
                 /* Hero stacks: card ABOVE the (now centered) text */
+                .page-hero {
+                    padding-top: 194px; /* +48 above the card */
+                    padding-bottom: 36px; /* -24 between heading and tab bar */
+                }
                 .page-hero-inner {
                     flex-direction: column-reverse;
                     align-items: center;
-                    gap: 32px;
+                    gap: 56px; /* +24 between the card and the heading */
                     text-align: center;
                 }
                 .hero-text {
@@ -801,6 +805,7 @@
 
                 .page-hero-inner {
                     padding: 0 20px;
+                    gap: 52px; /* +20 between the card and the heading */
                 }
                 .filter-inner {
                     padding: 0;
@@ -812,7 +817,8 @@
                 }
 
                 .page-hero {
-                    padding-bottom: 0;
+                    padding-top: 186px; /* +40 above the card */
+                    padding-bottom: 20px; /* +20 between heading and tab bar */
                 }
 
                 .filter-section {
