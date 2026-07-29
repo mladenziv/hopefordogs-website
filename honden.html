@@ -109,6 +109,11 @@
                 display: block;
             }
 
+            /* Plain white header on this page (drop the shared beige gradient) */
+            .page-hero {
+                background: #fff;
+            }
+
             /* ============ FILTER TABS ============ */
             .filter-section {
                 padding: 48px 0 0;
@@ -318,6 +323,90 @@
                 border-color: transparent #c2410c transparent transparent;
             }
 
+            /* ============ ON-CARD PHOTO GALLERY (hover arrows) ============ */
+            .dog-card-media { position: relative; }
+            .dog-card-media .dog-card-img { display: block; }
+            .dog-card-nav {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 34px;
+                height: 34px;
+                border: none;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.9);
+                color: var(--dark-1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.2s ease, background 0.2s ease;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+                z-index: 3;
+            }
+            .dog-card-nav svg { width: 20px; height: 20px; }
+            .dog-card-nav.prev { left: 10px; }
+            .dog-card-nav.next { right: 10px; }
+            .dog-card-nav:hover { background: #fff; }
+            /* Reveal arrows only on hover-capable devices, once a >1-photo gallery is loaded */
+            @media (hover: hover) {
+                .dog-card:hover .dog-card-media.has-gallery .dog-card-nav {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+            }
+
+            /* ============ HONDEN VAN DE DAG (featured) ============ */
+            .dotd-section { background: #fff; padding: 8px 0; }
+            .dotd-inner {
+                max-width: 1560px;
+                margin: 0 auto;
+                padding: 0 40px;
+            }
+            .dotd-title {
+                font-family: "Nunito", sans-serif;
+                font-size: 24px;
+                font-weight: 800;
+                color: var(--dark-1);
+                margin: 0 0 20px;
+            }
+            .dotd-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 32px;
+            }
+            .dotd-card { display: block; cursor: pointer; min-width: 0; }
+            .dotd-card.big { grid-column: 1 / 3; grid-row: 1 / 3; }
+            .dotd-card.small { aspect-ratio: 4 / 3; }
+            .dotd-card .dog-card-inner {
+                position: relative;
+                height: 100%;
+                width: 100%;
+                border: none;
+                border-radius: 20px;
+                overflow: hidden;
+                display: block;
+            }
+            .dotd-card .dog-card-media { height: 100%; width: 100%; }
+            .dotd-card .dog-card-img { height: 100%; width: 100%; object-fit: cover; }
+            .dotd-overlay {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                padding: 22px 24px;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.35) 55%, transparent);
+                z-index: 2;
+                pointer-events: none;
+            }
+            .dotd-overlay .dog-card-name { color: #fff; margin-bottom: 4px; }
+            .dotd-overlay .dog-card-desc { color: rgba(255, 255, 255, 0.92); }
+            .dotd-card.big .dotd-overlay { padding: 28px 30px; }
+            .dotd-card.big .dotd-overlay .dog-card-name { font-size: 32px; }
+            .dotd-card.big .dotd-overlay .dog-card-desc { font-size: 15px; -webkit-line-clamp: 3; }
+
             /* ============ ADOPTED SECTION ============ */
             .adopted-section {
                 background: var(--beige);
@@ -496,6 +585,15 @@
                 .adopted-grid {
                     grid-template-columns: repeat(3, 1fr);
                 }
+
+                .dotd-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+                .dotd-card.big {
+                    grid-column: 1 / 3;
+                    grid-row: auto;
+                    aspect-ratio: 16 / 9;
+                }
             }
 
             /* --- SM: 768–1023px --- */
@@ -569,7 +667,7 @@
                 }
 
                 .filter-section {
-                    background: #fcf9f5;
+                    background: #fff;
                     padding: 28px 20px 32px;
                 }
 
@@ -581,6 +679,20 @@
                     grid-template-columns: 1fr;
                     gap: 16px;
                 }
+
+                .dotd-grid {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+                .dotd-card.big {
+                    grid-column: auto;
+                    grid-row: auto;
+                    aspect-ratio: 4 / 3;
+                }
+                .dotd-card.small {
+                    aspect-ratio: 16 / 9;
+                }
+                .dotd-title { font-size: 20px; }
 
                 .adopted-grid {
                     grid-template-columns: repeat(2, 1fr);
@@ -1183,6 +1295,14 @@
                 </div>
             </section>
 
+            <!-- ============ HONDEN VAN DE DAG ============ -->
+            <section class="dotd-section" id="dotdSection" style="display: none;">
+                <div class="dotd-inner">
+                    <h2 class="dotd-title" data-i18n="honden.dotd.title">Honden van de dag</h2>
+                    <div class="dotd-grid" id="dotdGrid"></div>
+                </div>
+            </section>
+
             <!-- ============ DOG CARDS GRID ============ -->
             <section class="dogs-section">
                 <div class="dogs-inner">
@@ -1445,10 +1565,10 @@
             </div>
         </div>
 
-        <script src="components.js?v=20"></script>
+        <script src="components.js?v=21"></script>
         <!-- ============ SUPABASE ============ -->
         <script src="supabase-config.js"></script>
-        <script src="dog-card.js"></script>
+        <script src="dog-card.js?v=2"></script>
 
         <!-- ============ JAVASCRIPT ============ -->
         <script>
@@ -1517,6 +1637,7 @@
                     );
 
                     renderDogs();
+                    renderDotd();
                     // Defer the large adopted section to a later frame so the
                     // available dogs paint and become tappable immediately.
                     requestAnimationFrame(renderAdopted);
@@ -1566,9 +1687,58 @@
 
                 grid.innerHTML = filtered
                     .map(function (dog, index) {
-                        return dogCardHTML(dog, { modal: true, index: index });
+                        return dogCardHTML(dog, { modal: true, gallery: true, index: index });
                     })
                     .join("");
+            }
+
+            // Deterministic per-day PRNG so every visitor sees the same featured
+            // dogs on a given day; the pick rotates at local midnight.
+            function mulberry32(a) {
+                return function () {
+                    a |= 0; a = (a + 0x6d2b79f5) | 0;
+                    var t = Math.imul(a ^ (a >>> 15), 1 | a);
+                    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                };
+            }
+            function dailySeed() {
+                var d = new Date();
+                var str = "" + d.getFullYear() + (d.getMonth() + 1) + d.getDate();
+                var h = 2166136261;
+                for (var i = 0; i < str.length; i++) {
+                    h ^= str.charCodeAt(i);
+                    h = Math.imul(h, 16777619);
+                }
+                return h >>> 0;
+            }
+            function renderDotd() {
+                var section = document.getElementById("dotdSection");
+                var grid = document.getElementById("dotdGrid");
+                if (!section || !grid) return;
+                if (!allDogs || allDogs.length === 0) {
+                    section.style.display = "none";
+                    return;
+                }
+                var pool = allDogs.slice();
+                var rnd = mulberry32(dailySeed());
+                for (var i = pool.length - 1; i > 0; i--) {
+                    var j = Math.floor(rnd() * (i + 1));
+                    var tmp = pool[i];
+                    pool[i] = pool[j];
+                    pool[j] = tmp;
+                }
+                var pick = pool.slice(0, Math.min(3, pool.length));
+                grid.innerHTML = pick
+                    .map(function (dog, i) {
+                        return dogCardHTML(dog, {
+                            overlay: true,
+                            gallery: true,
+                            featured: i === 0 ? "big" : "small",
+                        });
+                    })
+                    .join("");
+                section.style.display = "";
             }
 
             function renderAdopted() {
