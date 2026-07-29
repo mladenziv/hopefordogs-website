@@ -21,6 +21,8 @@
     /* ===== HERO COLLAGE ===== */
     /* Trim 48px off the space above the image (per breakpoint). */
     .page-hero { padding-top: 136px; }
+    /* 12px more space between the H1 and the paragraph (8 → 20). */
+    .page-hero h1 { margin-bottom: 20px; }
     .donate-hero-img {
       display: block;
       width: 795px;      /* fixed display size on desktop (matches 795x422 aspect) */
@@ -734,37 +736,6 @@
 
   <!-- HOW YOU CAN HELP (accordion, rendered by help-section.js) -->
   <section class="faq" id="help-placeholder"></section>
-
-  <!-- BANK TRANSFER SECTION -->
-  <section class="bank-section">
-    <div class="bank-inner">
-      <h2 data-i18n="doneer.bank">Liever via bankoverschrijving?</h2>
-      <p data-i18n="doneer.bank.sub">Je kunt ook direct een donatie overmaken naar onze bankrekening. Elke bijdrage, groot of klein, wordt enorm gewaardeerd.</p>
-      <div class="bank-details">
-        <div class="bank-row">
-          <span class="bank-row-label">IBAN</span>
-          <span class="bank-row-value">NL00 BANK 0000 0000 00</span>
-        </div>
-        <div class="bank-row">
-          <span class="bank-row-label">T.n.v.</span>
-          <span class="bank-row-value">Hopefor Dogs</span>
-        </div>
-        <div class="bank-row">
-          <span class="bank-row-label" data-i18n="doneer.omschrijving">Omschrijving</span>
-          <span class="bank-row-value" data-i18n="doneer.donatie">Donatie</span>
-        </div>
-      </div>
-      <p class="bank-note" data-i18n="doneer.vermeld">Vermeld 'Donatie' bij de omschrijving zodat wij jouw bijdrage correct kunnen verwerken.</p>
-    </div>
-  </section>
-
-  <section style="width:100%;background:#faf8f4;display:flex;justify-content:center;padding:64px 0;">
-    <div style="max-width:740px;padding:0 40px;text-align:center;">
-      <p style="font-size:17px;font-weight:600;color:var(--dark-1);margin-bottom:8px;">Liever direct een hond een thuis geven?</p>
-      <p style="font-size:15px;font-weight:500;color:var(--dark-2);margin-bottom:20px;">Bekijk onze beschikbare honden en ontdek wie bij jou past.</p>
-      <a href="honden.html" class="btn-primary">Bekijk onze honden</a>
-    </div>
-  </section>
 
   </main>
   <div id="footer-placeholder"></div>
