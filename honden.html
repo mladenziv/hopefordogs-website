@@ -358,6 +358,44 @@
                 }
             }
 
+            /* Inline video controls — placed clear of the left/right gallery arrows */
+            .dog-card-vplay,
+            .dog-card-vmute {
+                display: none;
+                position: absolute;
+                border: none;
+                cursor: pointer;
+                color: #fff;
+                background: rgba(0, 0, 0, 0.55);
+                align-items: center;
+                justify-content: center;
+                z-index: 4;
+                transition: background 0.2s ease;
+            }
+            .dog-card-media.is-video .dog-card-vplay,
+            .dog-card-media.is-video .dog-card-vmute {
+                display: flex;
+            }
+            .dog-card-vplay {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 54px;
+                height: 54px;
+                border-radius: 50%;
+            }
+            .dog-card-vplay svg { width: 26px; height: 26px; }
+            .dog-card-vmute {
+                top: 10px;
+                right: 10px;
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+            }
+            .dog-card-vmute svg { width: 18px; height: 18px; }
+            .dog-card-vplay:hover,
+            .dog-card-vmute:hover { background: rgba(0, 0, 0, 0.75); }
+
             /* ============ HONDEN VAN DE DAG (featured) ============ */
             .dotd-section { background: #fff; padding: 8px 0; }
             .dotd-inner {
@@ -375,11 +413,13 @@
             .dotd-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 32px;
+                /* Definite row height: small = 1 row, big = 2 rows + gap. Fixed
+                   height keeps object-fit steady so cycling photos never resizes. */
+                grid-auto-rows: 200px;
+                gap: 24px;
             }
             .dotd-card { display: block; cursor: pointer; min-width: 0; }
             .dotd-card.big { grid-column: 1 / 3; grid-row: 1 / 3; }
-            .dotd-card.small { aspect-ratio: 4 / 3; }
             .dotd-card .dog-card-inner {
                 position: relative;
                 height: 100%;
@@ -588,11 +628,11 @@
 
                 .dotd-grid {
                     grid-template-columns: repeat(2, 1fr);
+                    grid-auto-rows: 220px;
                 }
                 .dotd-card.big {
                     grid-column: 1 / 3;
                     grid-row: auto;
-                    aspect-ratio: 16 / 9;
                 }
             }
 
@@ -682,15 +722,12 @@
 
                 .dotd-grid {
                     grid-template-columns: 1fr;
-                    gap: 16px;
+                    grid-auto-rows: 200px;
+                    gap: 12px;
                 }
                 .dotd-card.big {
                     grid-column: auto;
                     grid-row: auto;
-                    aspect-ratio: 4 / 3;
-                }
-                .dotd-card.small {
-                    aspect-ratio: 16 / 9;
                 }
                 .dotd-title { font-size: 20px; }
 
@@ -1264,6 +1301,14 @@
                 </div>
             </section>
 
+            <!-- ============ HONDEN VAN DE DAG ============ -->
+            <section class="dotd-section" id="dotdSection" style="display: none;">
+                <div class="dotd-inner">
+                    <h2 class="dotd-title" data-i18n="honden.dotd.title">Honden van de dag</h2>
+                    <div class="dotd-grid" id="dotdGrid"></div>
+                </div>
+            </section>
+
             <!-- ============ FILTER TABS ============ -->
             <section class="filter-section">
                 <div class="filter-inner">
@@ -1292,14 +1337,6 @@
                             Gemeente asiel
                         </button>
                     </div>
-                </div>
-            </section>
-
-            <!-- ============ HONDEN VAN DE DAG ============ -->
-            <section class="dotd-section" id="dotdSection" style="display: none;">
-                <div class="dotd-inner">
-                    <h2 class="dotd-title" data-i18n="honden.dotd.title">Honden van de dag</h2>
-                    <div class="dotd-grid" id="dotdGrid"></div>
                 </div>
             </section>
 
@@ -1568,7 +1605,7 @@
         <script src="components.js?v=21"></script>
         <!-- ============ SUPABASE ============ -->
         <script src="supabase-config.js"></script>
-        <script src="dog-card.js?v=2"></script>
+        <script src="dog-card.js?v=3"></script>
 
         <!-- ============ JAVASCRIPT ============ -->
         <script>

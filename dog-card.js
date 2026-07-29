@@ -3,12 +3,14 @@
  * Usage:
  *   dogCardHTML(dog, { modal: true })                       → opens modal on click
  *   dogCardHTML(dog, { modal: true, index: 3 })             → with animation delay
- *   dogCardHTML(dog, { modal: true, gallery: true })        → hover arrows cycle the dog's photos
+ *   dogCardHTML(dog, { modal: true, gallery: true })        → hover arrows cycle the dog's media
  *   dogCardHTML(dog, { overlay: true, featured: 'big'|'small', gallery: true })
  *                                                           → featured card: name/desc over the image
  *
  * `gallery` and `overlay`/`featured` are opt-in, so callers that don't pass them
- * (e.g. the homepage carousel) get exactly the original markup.
+ * (e.g. the homepage carousel) get the original markup for image media.
+ * Media that is a video (.mp4/.webm/.mov) renders as an inline muted <video>;
+ * gallery cards add play/pause + mute controls positioned clear of the arrows.
  */
 function escapeHTML(str) {
   var d = document.createElement('div');
@@ -16,10 +18,28 @@ function escapeHTML(str) {
   return d.innerHTML;
 }
 
+function isDogVideo(url) {
+  return /\.(mp4|webm|mov)(\?|#|$)/i.test(url || '');
+}
+
 var DOG_NAV_SVG = {
   prev: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 };
+var DOG_VID_SVG = {
+  play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor"/></svg>',
+  muted: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M15 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  sound: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+};
+
+// One media element (image or first-frame video) for a URL.
+function dogMediaEl(url, name) {
+  if (isDogVideo(url)) {
+    return '<video class="dog-card-img dog-card-video" src="' + escapeHTML(url) + '#t=0.1" muted playsinline preload="metadata"></video>';
+  }
+  return '<img src="' + escapeHTML(url) + '" alt="' + escapeHTML(name) + '" class="dog-card-img" loading="lazy" decoding="async" draggable="false">';
+}
 
 function dogCardHTML(dog, opts) {
   opts = opts || {};
@@ -42,20 +62,20 @@ function dogCardHTML(dog, opts) {
   var safeName = escapeHTML(dog.naam);
   var safeDesc = escapeHTML(desc);
   var safeStatus = escapeHTML(dog.status);
-  var safeImg = escapeHTML(img);
   var safeId = escapeHTML(dog.id);
+  var mediaEl = dogMediaEl(img, dog.naam);
 
-  var imgTag = '<img src="' + safeImg + '" alt="' + safeName + '" class="dog-card-img" loading="lazy" decoding="async" draggable="false">';
-
-  // On-card photo gallery (opt-in): wrap the image so hover arrows can cycle photos.
-  // Without `gallery`, the markup is identical to the original (homepage unaffected).
-  var media = imgTag;
+  // On-card gallery (opt-in): wrap media so hover arrows can cycle photos/videos.
+  // Without `gallery` the markup is the bare media element (homepage unaffected).
+  var media = mediaEl;
   if (opts.gallery) {
     media =
-      '<div class="dog-card-media" data-dog-id="' + safeId + '">' +
-        imgTag +
+      '<div class="dog-card-media' + (isDogVideo(img) ? ' is-video' : '') + '" data-dog-id="' + safeId + '">' +
+        mediaEl +
         '<button type="button" class="dog-card-nav prev" aria-label="Vorige foto">' + DOG_NAV_SVG.prev + '</button>' +
         '<button type="button" class="dog-card-nav next" aria-label="Volgende foto">' + DOG_NAV_SVG.next + '</button>' +
+        '<button type="button" class="dog-card-vplay" aria-label="Afspelen / pauzeren">' + DOG_VID_SVG.play + '</button>' +
+        '<button type="button" class="dog-card-vmute" aria-label="Geluid aan / uit">' + DOG_VID_SVG.muted + '</button>' +
       '</div>';
   }
 
@@ -91,16 +111,16 @@ function dogCardHTML(dog, opts) {
   return '<div class="' + cls + '" data-status="' + safeStatus + '" data-dog-id="' + safeId + '"' + animDelay + ' onclick="openDogModal(\'' + dog.id + '\')">' + inner + '</div>';
 }
 
-/* ---- On-card photo gallery behavior (delegated; only where `.dog-card-media` exists) ----
- * Lazy-loads a dog's photos on first hover (cached), reveals arrows if >1 photo, and cycles the
- * image on arrow click without opening the modal. Guarded so it's inert where supabaseGet is
- * absent (e.g. pages that render cards without `gallery`). */
+/* ---- On-card gallery + inline video behavior (delegated; acts only on `.dog-card-media`) ----
+ * Lazy-loads a dog's media on first hover (cached), reveals arrows if >1 item, cycles the media on
+ * arrow click, and gives videos play/pause + mute controls — all without opening the modal. Guarded
+ * so it's inert where supabaseGet is absent. */
 (function () {
   if (window.__dogGalleryInit) return;
   window.__dogGalleryInit = true;
   window.__dogGallery = window.__dogGallery || {};
 
-  function loadPhotos(id) {
+  function loadMedia(id) {
     if (window.__dogGallery[id]) return Promise.resolve(window.__dogGallery[id]);
     if (typeof window.supabaseGet !== 'function') return Promise.resolve(null);
     return window.supabaseGet(
@@ -113,15 +133,46 @@ function dogCardHTML(dog, opts) {
     }).catch(function () { return null; });
   }
 
-  // Lazy-load on first hover; reveal arrows only when there's more than one photo.
   document.addEventListener('pointerover', function (e) {
     var media = e.target.closest && e.target.closest('.dog-card-media[data-dog-id]');
     if (!media || media.__galleryReady) return;
     media.__galleryReady = true;
-    loadPhotos(media.getAttribute('data-dog-id')).then(function (urls) {
+    loadMedia(media.getAttribute('data-dog-id')).then(function (urls) {
       if (urls && urls.length > 1) media.classList.add('has-gallery');
     });
   });
+
+  function setVplay(media, playing) {
+    var b = media.querySelector('.dog-card-vplay');
+    if (b) b.innerHTML = playing ? DOG_VID_SVG.pause : DOG_VID_SVG.play;
+    media.classList.toggle('is-playing', !!playing);
+  }
+  function setVmute(media, muted) {
+    var b = media.querySelector('.dog-card-vmute');
+    if (b) b.innerHTML = muted ? DOG_VID_SVG.muted : DOG_VID_SVG.sound;
+  }
+
+  // Swap the current media element to `url` (image or video), keeping a definite size.
+  function setMedia(media, url, name) {
+    var old = media.querySelector('.dog-card-img');
+    var el;
+    if (isDogVideo(url)) {
+      el = document.createElement('video');
+      el.className = 'dog-card-img dog-card-video';
+      el.src = url + '#t=0.1';
+      el.muted = true; el.playsInline = true; el.preload = 'metadata';
+      media.classList.add('is-video');
+      setVplay(media, false);
+      setVmute(media, true);
+    } else {
+      el = document.createElement('img');
+      el.className = 'dog-card-img';
+      el.src = url; el.loading = 'lazy'; el.decoding = 'async'; el.draggable = false;
+      el.alt = name || '';
+      media.classList.remove('is-video', 'is-playing');
+    }
+    if (old) old.replaceWith(el); else media.insertBefore(el, media.firstChild);
+  }
 
   function step(media, dir) {
     var urls = window.__dogGallery[media.getAttribute('data-dog-id')];
@@ -130,18 +181,39 @@ function dogCardHTML(dog, opts) {
     if (idx < 0) idx = urls.length - 1;
     if (idx >= urls.length) idx = 0;
     media.__idx = idx;
-    var img = media.querySelector('.dog-card-img');
-    if (img) img.src = urls[idx];
-    var pre = new Image(); pre.src = urls[(idx + 1) % urls.length]; // preload neighbour
+    setMedia(media, urls[idx]);
+    var nx = urls[(idx + 1) % urls.length];
+    if (!isDogVideo(nx)) { var pre = new Image(); pre.src = nx; } // preload next image
   }
 
-  // Capture phase: stop the click before it reaches the card's inline onclick (modal).
+  // Capture phase: intercept control clicks before the card's inline onclick (modal).
   document.addEventListener('click', function (e) {
-    var btn = e.target.closest && e.target.closest('.dog-card-nav');
-    if (!btn) return;
-    e.stopPropagation();
-    e.preventDefault();
-    var media = btn.closest('.dog-card-media');
-    if (media) step(media, btn.classList.contains('prev') ? -1 : 1);
+    var t = e.target;
+    var nav = t.closest && t.closest('.dog-card-nav');
+    if (nav) {
+      e.stopPropagation(); e.preventDefault();
+      var m = nav.closest('.dog-card-media');
+      if (m) step(m, nav.classList.contains('prev') ? -1 : 1);
+      return;
+    }
+    var play = t.closest && t.closest('.dog-card-vplay');
+    if (play) {
+      e.stopPropagation(); e.preventDefault();
+      var mp = play.closest('.dog-card-media');
+      var v = mp && mp.querySelector('video.dog-card-img');
+      if (v) {
+        if (v.paused) { v.play().catch(function () {}); setVplay(mp, true); }
+        else { v.pause(); setVplay(mp, false); }
+      }
+      return;
+    }
+    var mute = t.closest && t.closest('.dog-card-vmute');
+    if (mute) {
+      e.stopPropagation(); e.preventDefault();
+      var mm = mute.closest('.dog-card-media');
+      var vm = mm && mm.querySelector('video.dog-card-img');
+      if (vm) { vm.muted = !vm.muted; setVmute(mm, vm.muted); }
+      return;
+    }
   }, true);
 })();
