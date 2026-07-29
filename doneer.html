@@ -21,13 +21,15 @@
     /* ===== HERO COLLAGE ===== */
     .donate-hero-img {
       display: block;
-      width: 100%;
-      max-width: 660px;
+      width: auto;      /* desktop: natural size, not shrunk to a fixed cap */
+      max-width: 100%;  /* only scale down if it would overflow the hero */
       height: auto;
-      margin: 0 0 8px;
+      margin: 0 auto 8px;
     }
     @media (max-width: 767px) {
-      .donate-hero-img { max-width: 460px; }
+      /* The shared XS rule zeroes the hero padding; restore it so the paragraph
+         below the H1 (and the image) aren't edge-to-edge on phones. */
+      .page-hero-inner { padding-left: 20px; padding-right: 20px; }
     }
 
     /* ===== DONATION FORM SECTION ===== */
