@@ -62,6 +62,12 @@
     .prize-row .p-num { width:130px; flex:0 0 auto; }
     .prize-row .p-del { flex:0 0 auto; width:38px; height:40px; border:1.5px solid var(--line); background:#fff; border-radius:10px; color:#c0392b; font-size:15px; cursor:pointer; }
     .prize-row .p-del:hover { border-color:#c0392b; }
+    .pt-list { max-height:52vh; overflow:auto; margin-bottom:6px; }
+    .pt-item { display:flex; gap:12px; align-items:baseline; padding:9px 2px; border-bottom:1px solid var(--line); font-size:14px; }
+    .pt-num { flex:0 0 54px; font-weight:800; color:var(--brand); }
+    .pt-who { flex:1; min-width:0; }
+    .pt-who .e { color:var(--muted); font-size:12.5px; }
+    .pt-date { flex:0 0 auto; color:var(--muted); font-size:12.5px; }
     .msg { font-size:13.5px; margin-top:12px; min-height:18px; }
     .msg.err { color:#c0392b; } .msg.ok { color:#177a3a; }
     @media (max-width:560px){ .grid2{grid-template-columns:1fr;} }
@@ -191,6 +197,20 @@
     </div>
   </div>
 
+  <!-- Participants (who bought which numbers) -->
+  <div class="overlay" id="pOverlay">
+    <div class="sheet">
+      <button class="close" id="pClose" aria-label="Sluiten">✕</button>
+      <h2 id="pTitle">Deelnemers</h2>
+      <div id="pSummary" class="hint" style="margin-bottom:12px"></div>
+      <div id="pList" class="pt-list"></div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" id="pCsv">Download CSV</button>
+        <button type="button" class="btn btn-primary" id="pCloseBtn">Sluiten</button>
+      </div>
+    </div>
+  </div>
+
   <script>
   (function () {
     var SB = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
@@ -291,6 +311,7 @@
           '</div>' +
           '<div class="card-actions">' +
             '<button class="btn btn-ghost btn-sm" data-act="edit">Bewerken</button>' +
+            '<button class="btn btn-ghost btn-sm" data-act="participants">Deelnemers</button>' +
             (r.status === 'live'
               ? '<button class="btn btn-ghost btn-sm" data-act="close">Sluiten</button>'
               : '<button class="btn btn-ghost btn-sm" data-act="live">Zet live</button>') +
@@ -309,6 +330,7 @@
           btn.addEventListener('click', function () {
             var act = btn.getAttribute('data-act');
             if (act === 'edit') openForm(r);
+            else if (act === 'participants') openParticipants(r);
             else if (act === 'live') setStatus(r, 'live');
             else if (act === 'close') setStatus(r, 'closed');
             else if (act === 'share') shareLink(r);
@@ -323,6 +345,53 @@
       navigator.clipboard && navigator.clipboard.writeText(url).then(function () {
         alert('Deel-link gekopieerd:\n' + url);
       }, function () { prompt('Kopieer de deel-link:', url); });
+    }
+
+    // ---- Participants (paid tickets: which number, who, when) ----
+    var pCurrent = null, pRows = [];
+    async function openParticipants(r) {
+      pCurrent = r; pRows = [];
+      $('pTitle').textContent = 'Deelnemers — ' + (r.title_nl || '');
+      $('pSummary').textContent = '';
+      $('pList').innerHTML = '<div class="hint">Laden…</div>';
+      $('pOverlay').classList.add('open');
+      try {
+        var rows = await apiGet('lottery_tickets?lottery_id=eq.' + r.id +
+          '&status=eq.paid&select=number,buyer_name,buyer_email,created_at&order=number.asc');
+        pRows = rows || [];
+        if (!pRows.length) {
+          $('pSummary').textContent = 'Nog geen betaalde loten.';
+          $('pList').innerHTML = '<div class="empty">Zodra iemand loten koopt, verschijnen ze hier.</div>';
+          return;
+        }
+        var buyers = {}; pRows.forEach(function (t) { if (t.buyer_email) buyers[t.buyer_email.toLowerCase()] = 1; });
+        $('pSummary').innerHTML = '<b>' + pRows.length + '</b> lot(en) verkocht · ' + Object.keys(buyers).length + ' unieke koper(s)';
+        $('pList').innerHTML = pRows.map(function (t) {
+          return '<div class="pt-item">' +
+            '<div class="pt-num">' + esc(t.number) + '</div>' +
+            '<div class="pt-who"><div>' + esc(t.buyer_name || '—') + '</div><div class="e">' + esc(t.buyer_email || '') + '</div></div>' +
+            '<div class="pt-date">' + fmtDate(t.created_at) + '</div>' +
+          '</div>';
+        }).join('');
+      } catch (e) {
+        $('pSummary').textContent = '';
+        $('pList').innerHTML = '<div class="empty">Kon deelnemers niet laden.<br><small>' + esc(e.message) + '</small></div>';
+      }
+    }
+    function closeParticipants() { $('pOverlay').classList.remove('open'); }
+    function csvCell(v) { v = (v == null ? '' : String(v)); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+    function downloadCsv() {
+      if (!pRows.length) return;
+      var lines = [['nummer', 'naam', 'email', 'datum']].concat(pRows.map(function (t) {
+        return [t.number, csvCell(t.buyer_name), csvCell(t.buyer_email), csvCell(t.created_at)];
+      }));
+      var csv = lines.map(function (row) { return row.join(','); }).join('\n');
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'loterij-' + ((pCurrent && pCurrent.title_nl ? pCurrent.title_nl : 'deelnemers').replace(/[^a-z0-9]+/gi, '-').toLowerCase()) + '.csv';
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
     }
 
     async function setStatus(r, status) {
@@ -468,6 +537,10 @@
     // ---- wire ----
     $('newBtn').addEventListener('click', function () { openForm(null); });
     $('addPrizeBtn').addEventListener('click', function () { addPrizeRow('', ''); });
+    $('pClose').addEventListener('click', closeParticipants);
+    $('pCloseBtn').addEventListener('click', closeParticipants);
+    $('pCsv').addEventListener('click', downloadCsv);
+    $('pOverlay').addEventListener('click', function (e) { if (e.target === $('pOverlay')) closeParticipants(); });
     $('closeBtn').addEventListener('click', closeForm);
     $('cancelBtn').addEventListener('click', closeForm);
     $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay')) closeForm(); });
