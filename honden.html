@@ -112,6 +112,8 @@
             /* Plain white header on this page (drop the shared beige gradient) */
             .page-hero {
                 background: #fff;
+                text-align: left;
+                overflow-x: clip; /* contain the sunburst rays; no horizontal scroll */
             }
 
             /* ============ FILTER TABS ============ */
@@ -396,56 +398,143 @@
             .dog-card-vplay:hover,
             .dog-card-vmute:hover { background: rgba(0, 0, 0, 0.75); }
 
-            /* ============ HONDEN VAN DE DAG (featured) ============ */
-            .dotd-section { background: #fff; padding: 8px 0; }
-            .dotd-inner {
-                max-width: 1560px;
+            /* ============ iCiel Pony (dog-of-the-day name) ============ */
+            @font-face {
+                font-family: "iCiel Pony";
+                src: url("fonts/Pony.woff2") format("woff2"),
+                     url("fonts/Pony.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            /* ============ HERO: two columns (text left, Dog of the day right) ============ */
+            .page-hero-inner {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 80px;
+                max-width: 1480px;
+                width: 100%;
                 margin: 0 auto;
                 padding: 0 40px;
+                text-align: left;
             }
-            .dotd-title {
-                font-family: "Nunito", sans-serif;
-                font-size: 24px;
-                font-weight: 800;
-                color: var(--dark-1);
-                margin: 0 0 20px;
+            .hero-text {
+                flex: 0 0 auto;
+                width: 455px;
+                max-width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 19px;
+                align-items: flex-start;
             }
-            .dotd-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                /* Definite row height: small = 1 row, big = 2 rows + gap. Fixed
-                   height keeps object-fit steady so cycling photos never resizes. */
-                grid-auto-rows: 200px;
-                gap: 24px;
+            .hero-text h1 { text-align: left; margin: 0; }
+            .hero-text p {
+                font-family: "Manrope", sans-serif;
+                font-size: 18px;
+                font-weight: 500;
+                line-height: 32px;
+                color: #424242;
+                margin: 0;
             }
-            .dotd-card { display: block; cursor: pointer; min-width: 0; }
-            .dotd-card.big { grid-column: 1 / 3; grid-row: 1 / 3; }
-            .dotd-card .dog-card-inner {
+            .hero-dotd {
+                flex: 1 1 0;
+                min-width: 0;
                 position: relative;
-                height: 100%;
-                width: 100%;
-                border: none;
-                border-radius: 20px;
-                overflow: hidden;
-                display: block;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                align-self: stretch;
             }
-            .dotd-card .dog-card-media { height: 100%; width: 100%; }
-            .dotd-card .dog-card-img { height: 100%; width: 100%; object-fit: cover; }
-            .dotd-overlay {
+
+            /* ============ DOG OF THE DAY card ============ */
+            .dotd-rays {
                 position: absolute;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                padding: 22px 24px;
-                background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.35) 55%, transparent);
-                z-index: 2;
+                left: 50%;
+                top: 50%;
+                width: 820px;
+                aspect-ratio: 1606 / 1318;
+                transform: translate(-50%, -50%);
+                background: url("images/dotd-rays.png") center / contain no-repeat;
+                z-index: 0;
                 pointer-events: none;
             }
-            .dotd-overlay .dog-card-name { color: #fff; margin-bottom: 4px; }
-            .dotd-overlay .dog-card-desc { color: rgba(255, 255, 255, 0.92); }
-            .dotd-card.big .dotd-overlay { padding: 28px 30px; }
-            .dotd-card.big .dotd-overlay .dog-card-name { font-size: 32px; }
-            .dotd-card.big .dotd-overlay .dog-card-desc { font-size: 15px; -webkit-line-clamp: 3; }
+            .dotd-card {
+                position: relative;
+                z-index: 1;
+                width: 329px;
+                box-sizing: border-box;
+                background: #fff;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+                border-radius: 24px;
+                box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.03), 0 2px 3.335px rgba(0, 0, 0, 0.04);
+                padding: 8px 12px 12px;
+                cursor: pointer;
+                text-align: center;
+                appearance: none;
+                -webkit-appearance: none;
+                transition: box-shadow 0.2s ease, transform 0.2s ease;
+            }
+            .dotd-card:hover { box-shadow: 0 10px 28px rgba(0, 0, 0, 0.10); transform: translateY(-2px); }
+            .dotd-sun {
+                position: absolute;
+                top: -28px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 56px;
+                height: 56px;
+                z-index: 2;
+            }
+            .dotd-title {
+                display: block;
+                font-family: "Manrope", sans-serif;
+                font-weight: 700;
+                font-size: 16px;
+                line-height: 24px;
+                letter-spacing: 0.05px;
+                color: #181818;
+                padding-top: 28px;
+            }
+            .dotd-sub {
+                display: block;
+                font-family: "Manrope", sans-serif;
+                font-weight: 500;
+                font-size: 15px;
+                line-height: 20px;
+                letter-spacing: 0.1px;
+                color: #6e6e6e;
+                padding: 4px 0 20px;
+            }
+            .dotd-photo {
+                display: block;
+                position: relative;
+                width: 100%;
+                aspect-ratio: 353.46 / 240;
+                border-radius: 16px;
+                overflow: hidden;
+                background: var(--beige);
+            }
+            .dotd-photo img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+            .dotd-name {
+                position: absolute;
+                left: 50%;
+                bottom: 6px;
+                transform: translateX(-50%);
+                font-family: "iCiel Pony", "Caveat", cursive;
+                font-size: 41px;
+                line-height: 1;
+                color: #ff5314;
+                white-space: nowrap;
+                text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+                pointer-events: none;
+            }
 
             /* ============ ADOPTED SECTION ============ */
             .adopted-section {
@@ -625,15 +714,6 @@
                 .adopted-grid {
                     grid-template-columns: repeat(3, 1fr);
                 }
-
-                .dotd-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                    grid-auto-rows: 220px;
-                }
-                .dotd-card.big {
-                    grid-column: 1 / 3;
-                    grid-row: auto;
-                }
             }
 
             /* --- SM: 768–1023px --- */
@@ -669,6 +749,15 @@
                 .cta-box {
                     padding: 60px 32px;
                 }
+
+                /* Hero stacks: text above the Dog-of-the-day card */
+                .page-hero-inner {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 40px;
+                }
+                .hero-text { width: 100%; max-width: 560px; }
+                .hero-dotd { width: 100%; align-self: auto; }
             }
 
             /* --- XS: 0–767px --- */
@@ -691,7 +780,7 @@
                 }
 
                 .page-hero-inner {
-                    padding: 0 40px;
+                    padding: 0 20px;
                 }
                 .filter-inner {
                     padding: 0;
@@ -720,16 +809,8 @@
                     gap: 16px;
                 }
 
-                .dotd-grid {
-                    grid-template-columns: 1fr;
-                    grid-auto-rows: 200px;
-                    gap: 12px;
-                }
-                .dotd-card.big {
-                    grid-column: auto;
-                    grid-row: auto;
-                }
-                .dotd-title { font-size: 20px; }
+                .dotd-card { width: min(330px, 100%); }
+                .dotd-rays { width: 560px; }
 
                 .adopted-grid {
                     grid-template-columns: repeat(2, 1fr);
@@ -1293,19 +1374,26 @@
             <!-- ============ PAGE HERO ============ -->
             <section class="page-hero">
                 <div class="page-hero-inner">
-                    <h1 class="t-heading-lg" data-i18n="honden.hero">Opzoek naar een huisje</h1>
-                    <p data-i18n="honden.hero.sub">
-                        Hier zie je alle honden die momenteel bij ons in of
-                        rondom het asiel verblijven.
-                    </p>
-                </div>
-            </section>
-
-            <!-- ============ HONDEN VAN DE DAG ============ -->
-            <section class="dotd-section" id="dotdSection" style="display: none;">
-                <div class="dotd-inner">
-                    <h2 class="dotd-title" data-i18n="honden.dotd.title">Honden van de dag</h2>
-                    <div class="dotd-grid" id="dotdGrid"></div>
+                    <div class="hero-text">
+                        <h1 class="t-heading-lg" data-i18n="honden.hero">Opzoek naar een huisje</h1>
+                        <p data-i18n="honden.hero.sub">
+                            Hier zie je alle honden die momenteel bij ons in of
+                            rondom het asiel verblijven.
+                        </p>
+                    </div>
+                    <!-- Dog of the day (single, randomized daily) -->
+                    <div class="hero-dotd" id="dotdWrap" style="display: none;">
+                        <span class="dotd-rays" aria-hidden="true"></span>
+                        <button type="button" class="dotd-card" id="dotdCard" aria-label="Hond van de dag">
+                            <img class="dotd-sun" src="images/dotd-sun.svg" alt="" aria-hidden="true">
+                            <span class="dotd-title" data-i18n="honden.dotd.title">Dog of the day</span>
+                            <span class="dotd-sub" data-i18n="honden.dotd.sub">Elke dag staat een ander hondje in het zonnetje.</span>
+                            <span class="dotd-photo">
+                                <img id="dotdPhoto" src="" alt="">
+                                <span class="dotd-name" id="dotdName"></span>
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </section>
 
@@ -1602,7 +1690,7 @@
             </div>
         </div>
 
-        <script src="components.js?v=21"></script>
+        <script src="components.js?v=22"></script>
         <!-- ============ SUPABASE ============ -->
         <script src="supabase-config.js"></script>
         <script src="dog-card.js?v=3"></script>
@@ -1749,33 +1837,29 @@
                 }
                 return h >>> 0;
             }
+            // Dog of the day: one available dog, chosen deterministically per
+            // local day (same for every visitor that day; rotates at midnight).
             function renderDotd() {
-                var section = document.getElementById("dotdSection");
-                var grid = document.getElementById("dotdGrid");
-                if (!section || !grid) return;
+                var wrap = document.getElementById("dotdWrap");
+                if (!wrap) return;
                 if (!allDogs || allDogs.length === 0) {
-                    section.style.display = "none";
+                    wrap.style.display = "none";
                     return;
                 }
-                var pool = allDogs.slice();
                 var rnd = mulberry32(dailySeed());
-                for (var i = pool.length - 1; i > 0; i--) {
-                    var j = Math.floor(rnd() * (i + 1));
-                    var tmp = pool[i];
-                    pool[i] = pool[j];
-                    pool[j] = tmp;
-                }
-                var pick = pool.slice(0, Math.min(3, pool.length));
-                grid.innerHTML = pick
-                    .map(function (dog, i) {
-                        return dogCardHTML(dog, {
-                            overlay: true,
-                            gallery: true,
-                            featured: i === 0 ? "big" : "small",
-                        });
-                    })
-                    .join("");
-                section.style.display = "";
+                var dog = allDogs[Math.floor(rnd() * allDogs.length)];
+                var photo =
+                    dog.photo ||
+                    (dog.photos && dog.photos[0] && dog.photos[0].photo_url) ||
+                    "images/placeholder-dog.svg";
+                var pimg = document.getElementById("dotdPhoto");
+                pimg.src = photo;
+                pimg.alt = dog.naam || "";
+                document.getElementById("dotdName").textContent = dog.naam || "";
+                document.getElementById("dotdCard").onclick = function () {
+                    openDogModal(dog.id);
+                };
+                wrap.style.display = "";
             }
 
             function renderAdopted() {

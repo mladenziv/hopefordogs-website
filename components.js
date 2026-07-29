@@ -112,7 +112,8 @@ var H4D_I18N = {
 
   // --- Other page hero headings ---
   'honden.hero':     { nl: 'Lieverds op zoek naar een huisje', de: 'Lieblinge auf der Suche nach einem Zuhause', en: 'Sweethearts looking for a home' },
-  'honden.dotd.title': { nl: 'Honden van de dag', de: 'Hunde des Tages', en: 'Dogs of the day' },
+  'honden.dotd.title': { nl: 'Dog of the day', de: 'Dog of the day', en: 'Dog of the day' },
+  'honden.dotd.sub': { nl: 'Elke dag staat een ander hondje in het zonnetje.', de: 'Jeden Tag steht ein anderer Hund im Rampenlicht.', en: 'Every day a different dog gets its moment in the sun.' },
   'honden.adopted':  { nl: 'Whoohoo, wij zijn geadopteerd!', de: 'Juhu, wir sind adoptiert!', en: 'Woohoo, we\u2019ve been adopted!' },
   'honden.filter.alle':      { nl: 'Alle honden',     de: 'Alle Hunde',       en: 'All dogs' },
   'honden.filter.alle.short':      { nl: 'Alle',            de: 'Alle',             en: 'All' },
