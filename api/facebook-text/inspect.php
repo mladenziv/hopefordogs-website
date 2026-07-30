@@ -32,7 +32,7 @@ function ins_fetch($u) {
     return array($code, $html ?: '');
 }
 
-// Count distinct post-photo file-ids in a haystack (all CDN buckets), plus login-wall signal.
+// Distinct post-photo file-ids in a haystack (all CDN buckets), plus login-wall signal.
 function ins_photos($html) {
     $norm = preg_replace('#\\\\+/#', '/', $html);
     preg_match_all('#https://[^"\s<]*/t39\.\d+-6/(\d+_\d+_\d+_n)\.[a-z0-9]+[^"\s<]*#i', $norm, $m);
@@ -42,7 +42,8 @@ function ins_photos($html) {
     return array(
         'http_len' => strlen($html),
         'distinct_photos' => count($byfid),
-        'sample' => array_slice(array_values($byfid), 0, 3),
+        'file_ids' => array_keys($byfid),
+        'sample' => array_slice(array_values($byfid), 0, 2),
         'looks_login_walled' => (strlen($html) < 8000) || (strpos($lower, 'log in to facebook') !== false) || (strpos($lower, 'you must log in') !== false),
     );
 }
