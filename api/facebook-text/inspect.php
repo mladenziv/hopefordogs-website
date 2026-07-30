@@ -61,6 +61,19 @@ function ins_report($html) {
     $pos = strpos($html, 'all_subattachments');
     if ($pos !== false) { $snip2 = substr($html, $pos, 400); }
 
+    // PROPOSED extraction: every post-photo CDN url in the (slash-normalized) HTML,
+    // deduped by file-id. This is what the real fix will use.
+    $norm = str_replace('\\/', '/', $html);
+    preg_match_all('#https://[^"\s<]*t39\.30808-6/(\d+_\d+_\d+_n)\.[a-z0-9]+[^"\s<]*#i', $norm, $pm);
+    $proposedByFid = array();
+    foreach ($pm[0] as $k => $u) {
+        $u = html_entity_decode($u, ENT_QUOTES, 'UTF-8');
+        $fid = $pm[1][$k];
+        if (!isset($proposedByFid[$fid])) $proposedByFid[$fid] = $u;
+    }
+    $subCount = null;
+    if (preg_match('/all_subattachments"\s*:\s*\{\s*"count"\s*:\s*(\d+)/', $html, $scm)) $subCount = (int)$scm[1];
+
     return array(
         'len' => strlen($html),
         'counts' => $counts,
@@ -70,6 +83,9 @@ function ins_report($html) {
         'fbids_sample' => array_slice($fbids, 0, 30),
         'snippet_image_uri' => $snip,
         'snippet_all_subattachments' => $snip2,
+        'PROPOSED_photo_count' => count($proposedByFid),
+        'PROPOSED_sample' => array_slice(array_values($proposedByFid), 0, 3),
+        'all_subattachments_count' => $subCount,
     );
 }
 

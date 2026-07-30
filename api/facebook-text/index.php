@@ -454,6 +454,22 @@ while (($uriPos = strpos($imgHtml, $uriNeedle, $uriPos)) !== false) {
     }
 }
 
+// Comprehensive scan: modern FB inlines ALL photos of a multi-photo post in the
+// initial HTML (the "all_subattachments" nodes point at these t39.30808-6 CDN URLs).
+// Grab every one directly, deduped by file-id, keeping the highest-res variant.
+// This is what actually gets all N photos — the photo-page traversal below is a
+// no-op on current markup (sibling photos are no longer on the photo pages).
+$normImgHtml = str_replace('\\/', '/', $imgHtml);
+if (preg_match_all('#https://[^"\s<]*t39\.30808-6/(\d+_\d+_\d+_n)\.[a-z0-9]+[^"\s<]*#i', $normImgHtml, $cdnMatches)) {
+    foreach ($cdnMatches[0] as $ci => $cUrl) {
+        $cUrl = html_entity_decode($cUrl, ENT_QUOTES, 'UTF-8');
+        $cFid = $cdnMatches[1][$ci];
+        if (!isset($photosByFile[$cFid]) || fbSizeScore($cUrl) > fbSizeScore($photosByFile[$cFid])) {
+            $photosByFile[$cFid] = $cUrl;
+        }
+    }
+}
+
 // Filter existing og:image results to only post photos
 $filteredImages = [];
 foreach ($images as $img) {
@@ -719,6 +735,17 @@ if ($isVideoPost) {
     }
 }
 $videos = array_slice($videos, 0, 3);
+// A multi-photo (or single-photo) post must never surface a video scraped from its
+// COMMENT stream. Only keep videos when the post itself is a video (URL type or
+// og:video); if we found real post photos and this isn't a video URL, drop them.
+$urlIsVideoType = strpos($originalUrl, '/reel/') !== false
+    || strpos($originalUrl, '/watch/') !== false
+    || strpos($originalUrl, '/videos/') !== false
+    || strpos($originalUrl, '/share/v/') !== false
+    || strpos($originalUrl, '/share/r/') !== false;
+if (!empty($photosByFile) && !$urlIsVideoType) {
+    $videos = [];
+}
 
 // Try to get full untruncated text from JSON using strpos (no regex, no crash risk)
 $needle = '"message":{"text":"';
