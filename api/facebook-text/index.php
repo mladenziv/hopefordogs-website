@@ -753,4 +753,12 @@ if (!empty($_debugPhotoFetches)) {
     $result['_debug_initial_fbids'] = array_keys($photoFbids);
     $result['_debug_total_fbids_found'] = count($allFoundFbids);
 }
+// Always-on counts so we can see WHERE photos are lost (set page vs traversal vs download).
+$result['_debug_counts'] = array(
+    'set_link_found'   => !empty($setFileIds),      // did the post HTML contain set=pcb.<id>?
+    'set_fileids'      => count($setFileIds),         // photos the set page listed (0 = set page blocked/empty)
+    'fbids_found'      => count($allFoundFbids),      // total photo IDs discovered
+    'images_urls'      => count($images),             // photo URLs after bounding
+    'image_data'       => count($imageData),          // photos actually downloaded & returned
+);
 echo json_encode($result);
