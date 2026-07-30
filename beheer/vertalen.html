@@ -97,22 +97,54 @@
       stories: { fields: [ ['description', false], ['full_story', false] ] }
     };
 
-    function token() {
-      try { var raw = localStorage.getItem('sb-gdmntnrsgfntcgqmbmtj-auth-token'); if (raw) { var p = JSON.parse(raw); if (p && p.access_token) return p.access_token; } } catch (e) {}
+    var AUTH_KEY = 'sb-gdmntnrsgfntcgqmbmtj-auth-token';
+    function authObj() {
+      try { var raw = localStorage.getItem(AUTH_KEY); if (raw) return JSON.parse(raw); } catch (e) {}
       return null;
+    }
+    function token() { var o = authObj(); return o && o.access_token ? o.access_token : null; }
+    // The beheer app auto-refreshes the JWT, but this standalone page doesn't run
+    // the Supabase client — so renew the ~1h access token ourselves from the stored
+    // refresh_token (a long backfill can outlive one token).
+    var _refreshing = null;
+    function refreshToken() {
+      if (_refreshing) return _refreshing;
+      _refreshing = (async function () {
+        var o = authObj();
+        if (!o || !o.refresh_token) return null;
+        try {
+          var r = await fetch(SB + '/auth/v1/token?grant_type=refresh_token', {
+            method: 'POST',
+            headers: { apikey: ANON, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: o.refresh_token })
+          });
+          if (!r.ok) return null;
+          var d = await r.json();
+          if (!d || !d.access_token) return null;
+          localStorage.setItem(AUTH_KEY, JSON.stringify(Object.assign({}, o, d)));
+          return d.access_token;
+        } catch (e) { return null; }
+        finally { _refreshing = null; }
+      })();
+      return _refreshing;
     }
     function headers(write) {
       var h = { apikey: ANON, Authorization: 'Bearer ' + (token() || ANON) };
       if (write) { h['Content-Type'] = 'application/json'; h.Prefer = 'return=minimal'; }
       return h;
     }
+    var AUTH_STOP = false;   // session fully expired (refresh failed) -> stop, ask to re-login
     async function apiGet(q) {
       var r = await fetch(SB + '/rest/v1/' + q, { headers: headers(false) });
+      if (r.status === 401) { if (await refreshToken()) r = await fetch(SB + '/rest/v1/' + q, { headers: headers(false) }); }
+      if (r.status === 401) { AUTH_STOP = true; throw new Error('Sessie verlopen — ga naar Beheer, log opnieuw in en open Vertalen opnieuw.'); }
       if (!r.ok) throw new Error('GET ' + r.status + ' ' + (await r.text()));
       return r.json();
     }
     async function apiPatch(q, body) {
       var r = await fetch(SB + '/rest/v1/' + q, { method: 'PATCH', headers: headers(true), body: JSON.stringify(body) });
+      if (r.status === 401) { if (await refreshToken()) r = await fetch(SB + '/rest/v1/' + q, { method: 'PATCH', headers: headers(true), body: JSON.stringify(body) }); }
+      if (r.status === 401) { AUTH_STOP = true; throw new Error('Sessie verlopen — ga naar Beheer, log opnieuw in en open Vertalen opnieuw.'); }
       if (!r.ok) throw new Error('PATCH ' + r.status + ' ' + (await r.text()));
     }
 
@@ -225,7 +257,8 @@
 
       for (var i = 0; i < rows.length; i++) {
         if (QUOTA_HIT) { log('Gestopt: dagelijkse vertaallimiet bereikt. Probeer het morgen opnieuw.', 'warn'); break; }
-        if (RATE_STOP) { log('Gepauzeerd: MyMemory limiteert het tempo (429). Wacht een minuut en klik opnieuw — al vertaalde rijen worden overgeslagen.', 'warn'); break; }
+        if (RATE_STOP) { log('Gepauzeerd: de vertaaldienst limiteert het tempo. Wacht een minuut en klik opnieuw — al vertaalde rijen worden overgeslagen.', 'warn'); break; }
+        if (AUTH_STOP) break;
         var row = rows[i];
         var label = row.naam || row.title || row.dog_name || row.id;
         var patch = {};
@@ -251,7 +284,7 @@
         } catch (e) {
           failed++;
           log('  ✗ ' + label + '  ' + e.message, 'err');
-          if (QUOTA_HIT || RATE_STOP) break;
+          if (QUOTA_HIT || RATE_STOP || AUTH_STOP) break;
         }
       }
       statusEl.textContent = 'klaar — ' + updated + ' bijgewerkt, ' + skipped + ' overgeslagen' + (failed ? ', ' + failed + ' mislukt' : '');
@@ -299,7 +332,7 @@
       document.getElementById('allStatus').textContent = 'bezig…';
       var totals = { updated: 0, skipped: 0, failed: 0 };
       for (var t of ['dogs', 'posts', 'stories']) {
-        if (QUOTA_HIT) break;
+        if (QUOTA_HIT || RATE_STOP || AUTH_STOP) break;
         log('— ' + t + ' —');
         var r = await runTable(t);
         totals.updated += r.updated; totals.skipped += r.skipped; totals.failed += r.failed;
