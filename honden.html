@@ -126,17 +126,90 @@
                 max-width: 1560px;
                 margin: 0 auto;
                 padding: 0 40px;
-                display: flex;
-                justify-content: center;
+                display: grid;
+                grid-template-columns: 1fr auto 1fr;
+                align-items: center;
+                gap: 12px;
             }
 
             .filter-tabs {
+                grid-column: 2;
                 display: flex;
                 gap: 8px;
                 background: var(--beige);
                 padding: 6px;
                 border-radius: 100px;
             }
+
+            /* Right-aligned controls: gender toggle + search icon, in line with the tabs */
+            .filter-right {
+                grid-column: 3;
+                justify-self: end;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .gender-toggle {
+                display: flex;
+                gap: 4px;
+                background: var(--beige);
+                padding: 5px;
+                border-radius: 100px;
+            }
+            .gender-btn {
+                padding: 8px 16px;
+                border: none;
+                background: transparent;
+                border-radius: 100px;
+                font-family: "Manrope", sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--dark-2);
+                cursor: pointer;
+                transition: all 0.25s ease;
+                white-space: nowrap;
+            }
+            .gender-btn:hover { color: var(--dark-1); }
+            .gender-btn.active {
+                background: var(--brand);
+                color: var(--white);
+                box-shadow: 0 2px 8px rgba(255, 83, 20, 0.25);
+            }
+            .search-toggle {
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                border: none;
+                background: var(--beige);
+                color: var(--dark-2);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.25s ease;
+                flex-shrink: 0;
+            }
+            .search-toggle:hover { color: var(--dark-1); }
+            .search-toggle.active { background: var(--brand); color: var(--white); }
+            .search-toggle svg { width: 20px; height: 20px; }
+            .search-row {
+                max-width: 1560px;
+                margin: 16px auto 0;
+                padding: 0 40px;
+            }
+            .search-inner { max-width: 380px; margin-left: auto; }
+            .dog-search-input {
+                width: 100%;
+                padding: 13px 20px;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 100px;
+                font-family: "Manrope", sans-serif;
+                font-size: 15px;
+                font-weight: 500;
+                outline: none;
+                background: #fff;
+            }
+            .dog-search-input:focus { border-color: var(--brand); }
 
             .filter-tab {
                 padding: 12px 28px;
@@ -809,7 +882,14 @@
                 }
                 .filter-inner {
                     padding: 0;
+                    grid-template-columns: 1fr;
+                    justify-items: center;
+                    gap: 14px;
                 }
+                .filter-tabs { grid-column: 1; }
+                .filter-right { grid-column: 1; justify-self: center; }
+                .search-row { padding: 0; }
+                .search-inner { max-width: 100%; margin: 0; }
                 .dogs-inner,
                 .adopted-inner,
                 .cta-inner {
@@ -1453,6 +1533,20 @@
                             Gemeente asiel
                         </button>
                     </div>
+                    <div class="filter-right">
+                        <div class="gender-toggle" role="group" aria-label="Geslacht">
+                            <button type="button" class="gender-btn" data-gender="reu" data-i18n="honden.gender.reu">Reu</button>
+                            <button type="button" class="gender-btn" data-gender="teefje" data-i18n="honden.gender.teef">Teef</button>
+                        </div>
+                        <button type="button" class="search-toggle" id="searchToggle" aria-label="Zoeken">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="20.5" y1="20.5" x2="16.4" y2="16.4"></line></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="search-row" id="searchRow" style="display: none">
+                    <div class="search-inner">
+                        <input type="text" id="dogSearch" class="dog-search-input" placeholder="Zoek op naam of ras..." data-i18n-ph="honden.search.placeholder" autocomplete="off">
+                    </div>
                 </div>
             </section>
 
@@ -1723,7 +1817,7 @@
             </div>
         </div>
 
-        <script src="components.js?v=29"></script>
+        <script src="components.js?v=30"></script>
         <!-- ============ SUPABASE ============ -->
         <script src="supabase-config.js"></script>
         <script src="dog-card.js?v=4"></script>
@@ -1733,6 +1827,8 @@
             let allDogs = [];
             let adoptedDogs = [];
             let activeFilter = "alle";
+            let activeGender = null; // null | "reu" | "teefje"
+            let searchQuery = "";
 
             async function loadDogs() {
                 try {
@@ -1832,10 +1928,23 @@
                 const blurb = document.getElementById("filterBlurb");
                 blurb.style.display =
                     activeFilter === "gemeente_asiel" ? "block" : "none";
-                const filtered =
+                let filtered =
                     activeFilter === "alle"
                         ? allDogs
                         : allDogs.filter((d) => d.locatie === activeFilter);
+                if (activeGender) {
+                    filtered = filtered.filter((d) => d.geslacht === activeGender);
+                }
+                if (searchQuery) {
+                    const qq = searchQuery.toLowerCase().trim();
+                    if (qq) {
+                        filtered = filtered.filter(
+                            (d) =>
+                                (d.naam || "").toLowerCase().includes(qq) ||
+                                (d.ras || "").toLowerCase().includes(qq),
+                        );
+                    }
+                }
 
                 if (filtered.length === 0) {
                     grid.innerHTML =
@@ -1948,6 +2057,45 @@
                     renderDogs();
                 });
             });
+
+            // Gender toggle (Reu / Teef) — click the active one again to clear (show all)
+            const genderBtns = document.querySelectorAll(".gender-btn");
+            genderBtns.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const g = btn.getAttribute("data-gender");
+                    activeGender = activeGender === g ? null : g;
+                    genderBtns.forEach((b) =>
+                        b.classList.toggle(
+                            "active",
+                            b.getAttribute("data-gender") === activeGender,
+                        ),
+                    );
+                    renderDogs();
+                });
+            });
+
+            // Search: icon toggles an input row; typing filters by name/breed
+            const searchToggle = document.getElementById("searchToggle");
+            const searchRow = document.getElementById("searchRow");
+            const dogSearch = document.getElementById("dogSearch");
+            if (searchToggle && searchRow && dogSearch) {
+                searchToggle.addEventListener("click", () => {
+                    const open = searchRow.style.display === "none";
+                    searchRow.style.display = open ? "block" : "none";
+                    searchToggle.classList.toggle("active", open);
+                    if (open) {
+                        setTimeout(() => dogSearch.focus(), 30);
+                    } else {
+                        dogSearch.value = "";
+                        searchQuery = "";
+                        renderDogs();
+                    }
+                });
+                dogSearch.addEventListener("input", () => {
+                    searchQuery = dogSearch.value;
+                    renderDogs();
+                });
+            }
 
             // Responsive short labels for filter tabs at XS
             (function () {
