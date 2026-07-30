@@ -82,6 +82,38 @@
     }
 
     var dragging = null, clone = null, placeholder = null, offX = 0, offY = 0;
+    var lastX = 0, lastY = 0, scrollRAF = null, scrollVel = 0;
+
+    // Reposition the placeholder based on the item currently under (x,y).
+    function positionPlaceholder(x, y) {
+      if (!dragging || !placeholder) return;
+      var all = getItems();
+      var isHoriz = getComputedStyle(container).display === 'flex';
+      for (var i = 0; i < all.length; i++) {
+        var it = all[i];
+        if (it === dragging) continue;
+        var r = it.getBoundingClientRect();
+        if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
+          var mid = isHoriz ? (r.left + r.width / 2) : (r.top + r.height / 2);
+          var before = isHoriz ? (x < mid) : (y < mid);
+          if (placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
+          if (before) it.parentNode.insertBefore(placeholder, it);
+          else if (it.nextSibling) it.parentNode.insertBefore(placeholder, it.nextSibling);
+          else it.parentNode.appendChild(placeholder);
+          break;
+        }
+      }
+    }
+
+    // While dragging near the top/bottom edge of the viewport, scroll the page.
+    function autoScrollTick() {
+      if (!dragging) { scrollRAF = null; return; }
+      if (scrollVel !== 0) {
+        window.scrollBy(0, scrollVel);
+        positionPlaceholder(lastX, lastY);
+      }
+      scrollRAF = requestAnimationFrame(autoScrollTick);
+    }
 
     function beginDrag(el, cx, cy) {
       if (dragging) return;
@@ -117,40 +149,27 @@
 
     function onMove(e) {
       if (!dragging || !clone) return;
+      lastX = e.clientX; lastY = e.clientY;
       clone.style.left = (e.clientX - offX) + 'px';
       clone.style.top = (e.clientY - offY) + 'px';
 
-      // Find which item we're over
-      var all = getItems();
-      var isHoriz = getComputedStyle(container).display === 'flex';
+      positionPlaceholder(e.clientX, e.clientY);
 
-      for (var i = 0; i < all.length; i++) {
-        var it = all[i];
-        if (it === dragging) continue;
-        var r = it.getBoundingClientRect();
-        if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
-          var mid = isHoriz ? (r.left + r.width / 2) : (r.top + r.height / 2);
-          var before = isHoriz ? (e.clientX < mid) : (e.clientY < mid);
-
-          // Remove placeholder from old position
-          if (placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
-
-          if (before) {
-            it.parentNode.insertBefore(placeholder, it);
-          } else if (it.nextSibling) {
-            it.parentNode.insertBefore(placeholder, it.nextSibling);
-          } else {
-            it.parentNode.appendChild(placeholder);
-          }
-          break;
-        }
-      }
+      // Auto-scroll the page when the pointer nears the top/bottom edge.
+      var vh = window.innerHeight, edge = 90, maxV = 22;
+      if (e.clientY < edge) scrollVel = -Math.ceil(maxV * (edge - e.clientY) / edge);
+      else if (e.clientY > vh - edge) scrollVel = Math.ceil(maxV * (e.clientY - (vh - edge)) / edge);
+      else scrollVel = 0;
+      if (scrollVel !== 0 && !scrollRAF) scrollRAF = requestAnimationFrame(autoScrollTick);
     }
 
     function onUp() {
       document.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerup', onUp);
       document.removeEventListener('pointercancel', onUp);
+
+      scrollVel = 0;
+      if (scrollRAF) { cancelAnimationFrame(scrollRAF); scrollRAF = null; }
 
       if (!dragging) return;
 
