@@ -10,13 +10,22 @@
   function inject() {
     var nav = document.querySelector('header nav');
     if (!nav) return;
-    if (nav.querySelector('#lottery-nav-link')) return;
-    var a = document.createElement('a');
-    a.id = 'lottery-nav-link';
-    a.href = 'loterijen.html';
-    a.className = CLS;
-    a.textContent = 'Acties';
-    nav.appendChild(a);
+    if (!nav.querySelector('#lottery-nav-link')) {
+      var a = document.createElement('a');
+      a.id = 'lottery-nav-link';
+      a.href = 'loterijen.html';
+      a.className = CLS;
+      a.textContent = 'Acties';
+      nav.appendChild(a);
+    }
+    if (!nav.querySelector('#translate-nav-link')) {
+      var t = document.createElement('a');
+      t.id = 'translate-nav-link';
+      t.href = 'vertalen.html';
+      t.className = CLS;
+      t.textContent = 'Vertalen';
+      nav.appendChild(t);
+    }
   }
 
   function start() {

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Vertalen — Beheer | Hope for Dogs</title>
+  <style>
+    :root { --brand:#ff5314; --ink:#1a1a1a; --muted:#6b6b6b; --line:#e6e6e6; --ok:#137a3f; --warn:#b45309; --err:#b42318; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:'Manrope',system-ui,-apple-system,sans-serif; color:var(--ink); background:#f7f7f8; line-height:1.5; }
+    header { background:#fff; border-bottom:1px solid var(--line); padding:16px 24px; display:flex; align-items:center; gap:16px; }
+    header h1 { font-size:18px; margin:0; font-weight:800; }
+    header a { margin-left:auto; color:var(--brand); font-weight:700; text-decoration:none; font-size:14px; }
+    main { max-width:820px; margin:0 auto; padding:24px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin-bottom:18px; }
+    .card h2 { font-size:16px; margin:0 0 6px; }
+    .card p { margin:0 0 14px; color:var(--muted); font-size:14px; }
+    .intro { font-size:14px; color:var(--muted); margin-bottom:20px; }
+    .intro code { background:#eee; padding:2px 6px; border-radius:6px; font-size:13px; }
+    button { font-family:inherit; font-weight:700; font-size:14px; border:none; border-radius:999px; padding:11px 20px; cursor:pointer; }
+    .btn-primary { background:var(--brand); color:#fff; }
+    .btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+    .btn-all { background:var(--ink); color:#fff; }
+    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .status { font-size:13px; color:var(--muted); }
+    .log { margin-top:16px; background:#0f1115; color:#cfe8d4; font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace; border-radius:12px; padding:14px 16px; max-height:340px; overflow:auto; white-space:pre-wrap; word-break:break-word; }
+    .log .warn { color:#facc15; }
+    .log .err { color:#fca5a5; }
+    .log .ok { color:#86efac; }
+    .badge { display:inline-block; font-size:12px; font-weight:700; padding:3px 9px; border-radius:999px; background:#eef; color:#334; }
+    .auth-warn { background:#fff5ed; border:1px solid #ffd9bf; color:#8a3b12; padding:14px 16px; border-radius:12px; margin-bottom:20px; font-size:14px; }
+    label.opt { display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); margin-top:8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Vertalen (backfill)</h1>
+    <a href="index.html">← Terug naar beheer</a>
+  </header>
+  <main>
+    <p class="intro">
+      Dit gereedschap vult de Duitse en Engelse vertalingen aan voor bestaande
+      honden, blogberichten en ervaringen (machinevertaling via MyMemory).
+      Het slaat rijen over die al vertaald zijn, dus je kunt het veilig opnieuw
+      draaien. <strong>Draai eerst</strong> de SQL uit <code>db/translation-schema.md</code>
+      in Supabase — anders bestaan de vertaalkolommen nog niet.
+    </p>
+
+    <div id="authWarn" class="auth-warn" style="display:none;">
+      Je bent niet ingelogd in het beheer. Open eerst
+      <a href="index.html">beheer</a>, log in, en kom dan hier terug.
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <button id="btnAll" class="btn-all">Alles vertalen</button>
+        <span class="status" id="allStatus"></span>
+      </div>
+      <label class="opt"><input type="checkbox" id="optForce"> Bestaande vertalingen overschrijven (opnieuw vertalen)</label>
+    </div>
+
+    <div class="card" data-table="dogs">
+      <h2>Honden <span class="badge" id="dogsCount">—</span></h2>
+      <p>Velden: beschrijving, ras, leeftijd</p>
+      <div class="row"><button class="btn-primary" data-run="dogs">Vertaal honden</button><span class="status" data-status="dogs"></span></div>
+    </div>
+
+    <div class="card" data-table="posts">
+      <h2>Blogberichten <span class="badge" id="postsCount">—</span></h2>
+      <p>Velden: titel, samenvatting, inhoud (HTML — tags blijven behouden)</p>
+      <div class="row"><button class="btn-primary" data-run="posts">Vertaal blog</button><span class="status" data-status="posts"></span></div>
+    </div>
+
+    <div class="card" data-table="stories">
+      <h2>Ervaringen <span class="badge" id="storiesCount">—</span></h2>
+      <p>Velden: omschrijving, volledig verhaal</p>
+      <div class="row"><button class="btn-primary" data-run="stories">Vertaal ervaringen</button><span class="status" data-status="stories"></span></div>
+    </div>
+
+    <div class="log" id="log">Klaar om te starten…</div>
+  </main>
+
+  <script>
+  (function () {
+    var SB = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
+    var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
+    // MyMemory optional email raises the free daily word limit (param name is literally "de").
+    var MM_EMAIL = 'info@hopefordogseurope.com';
+    var THROTTLE_MS = 1100;   // be gentle with the free API
+    var MAX_Q = 450;          // MyMemory anon query length limit (chars)
+
+    // Which fields each table translates, and whether the field is HTML.
+    var TABLES = {
+      dogs:    { fields: [ ['beschrijving', false], ['ras', false], ['leeftijd', false] ] },
+      posts:   { fields: [ ['title', false], ['excerpt', false], ['content', true] ] },
+      stories: { fields: [ ['description', false], ['full_story', false] ] }
+    };
+
+    function token() {
+      try { var raw = localStorage.getItem('sb-gdmntnrsgfntcgqmbmtj-auth-token'); if (raw) { var p = JSON.parse(raw); if (p && p.access_token) return p.access_token; } } catch (e) {}
+      return null;
+    }
+    function headers(write) {
+      var h = { apikey: ANON, Authorization: 'Bearer ' + (token() || ANON) };
+      if (write) { h['Content-Type'] = 'application/json'; h.Prefer = 'return=minimal'; }
+      return h;
+    }
+    async function apiGet(q) {
+      var r = await fetch(SB + '/rest/v1/' + q, { headers: headers(false) });
+      if (!r.ok) throw new Error('GET ' + r.status + ' ' + (await r.text()));
+      return r.json();
+    }
+    async function apiPatch(q, body) {
+      var r = await fetch(SB + '/rest/v1/' + q, { method: 'PATCH', headers: headers(true), body: JSON.stringify(body) });
+      if (!r.ok) throw new Error('PATCH ' + r.status + ' ' + (await r.text()));
+    }
+
+    var $ = function (s) { return document.querySelector(s); };
+    var logEl = document.getElementById('log');
+    function log(msg, cls) {
+      var line = document.createElement('div');
+      if (cls) line.className = cls;
+      line.textContent = msg;
+      logEl.appendChild(line);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+    // ---- MyMemory ----
+    var QUOTA_HIT = false;
+    async function mmGet(text, to) {
+      var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) +
+                '&langpair=nl|' + to + '&de=' + encodeURIComponent(MM_EMAIL);
+      var r = await fetch(url);
+      if (!r.ok) throw new Error('MyMemory HTTP ' + r.status);
+      var j = await r.json();
+      var t = j && j.responseData && j.responseData.translatedText;
+      if (t == null) throw new Error('No translation returned');
+      if (/MYMEMORY WARNING|YOU USED ALL AVAILABLE FREE|QUERY LENGTH LIMIT/i.test(t)) {
+        QUOTA_HIT = true;
+        throw new Error('MyMemory quota/limit: ' + t.slice(0, 120));
+      }
+      return t;
+    }
+    // Split a long string into <=max-char chunks at word boundaries (keeps spacing).
+    function chunk(s, max) {
+      var out = [], i = 0;
+      while (i < s.length) {
+        if (s.length - i <= max) { out.push(s.slice(i)); break; }
+        var end = i + max, sp = s.lastIndexOf(' ', end);
+        if (sp <= i) sp = end;
+        out.push(s.slice(i, sp));
+        i = sp;
+      }
+      return out;
+    }
+    async function translateText(text, to) {
+      text = String(text == null ? '' : text);
+      if (!text.trim()) return text;
+      var parts = chunk(text, MAX_Q), out = [];
+      for (var k = 0; k < parts.length; k++) {
+        var core = parts[k];
+        if (!core.trim()) { out.push(core); continue; }
+        var lead = core.match(/^\s*/)[0], trail = core.match(/\s*$/)[0];
+        var tr = await mmGet(core.trim(), to);
+        out.push(lead + tr + trail);
+        await sleep(THROTTLE_MS);
+      }
+      return out.join('');
+    }
+    // Translate the text nodes of an HTML string, leaving tags intact.
+    async function translateHtml(html, to) {
+      var doc = new DOMParser().parseFromString(String(html || ''), 'text/html');
+      var walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null);
+      var nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+      for (var i = 0; i < nodes.length; i++) {
+        var n = nodes[i], txt = n.nodeValue;
+        if (!txt || !txt.trim()) continue;
+        var lead = txt.match(/^\s*/)[0], trail = txt.match(/\s*$/)[0];
+        n.nodeValue = lead + (await translateText(txt.trim(), to)) + trail;
+      }
+      return doc.body.innerHTML;
+    }
+
+    // ---- Backfill one table ----
+    function need(row, field, force) {
+      var base = row[field];
+      if (!base || !String(base).trim()) return false;   // nothing to translate
+      if (force) return true;
+      return !row[field + '_de'] || !row[field + '_en']; // missing a translation
+    }
+
+    async function runTable(table) {
+      var cfg = TABLES[table];
+      var statusEl = $('[data-status="' + table + '"]');
+      statusEl.textContent = 'bezig…';
+      var rows;
+      try {
+        rows = await apiGet(table + '?select=*&order=created_at.asc');
+      } catch (e) {
+        log('[' + table + '] kon rijen niet laden: ' + e.message, 'err');
+        statusEl.textContent = 'fout';
+        return { updated: 0, skipped: 0, failed: 1 };
+      }
+      log('[' + table + '] ' + rows.length + ' rijen gevonden.');
+      var updated = 0, skipped = 0, failed = 0;
+      var force = document.getElementById('optForce').checked;
+
+      for (var i = 0; i < rows.length; i++) {
+        if (QUOTA_HIT) { log('Gestopt: dagelijkse vertaallimiet bereikt. Probeer het morgen opnieuw.', 'warn'); break; }
+        var row = rows[i];
+        var label = row.naam || row.title || row.dog_name || row.id;
+        var patch = {};
+        try {
+          for (var f = 0; f < cfg.fields.length; f++) {
+            var field = cfg.fields[f][0], isHtml = cfg.fields[f][1];
+            if (!need(row, field, force)) continue;
+            var base = String(row[field]);
+            for (var li = 0; li < 2; li++) {
+              var to = li === 0 ? 'de' : 'en';
+              if (!force && row[field + '_' + to]) continue; // that language already done
+              patch[field + '_' + to] = isHtml ? await translateHtml(base, to) : await translateText(base, to);
+            }
+          }
+          if (Object.keys(patch).length) {
+            await apiPatch(table + '?id=eq.' + encodeURIComponent(row.id), patch);
+            updated++;
+            log('  ✓ ' + label + '  (' + Object.keys(patch).join(', ') + ')', 'ok');
+          } else {
+            skipped++;
+            log('  – ' + label + '  (al vertaald)');
+          }
+        } catch (e) {
+          failed++;
+          log('  ✗ ' + label + '  ' + e.message, 'err');
+          if (QUOTA_HIT) break;
+        }
+      }
+      statusEl.textContent = 'klaar — ' + updated + ' bijgewerkt, ' + skipped + ' overgeslagen' + (failed ? ', ' + failed + ' mislukt' : '');
+      return { updated: updated, skipped: skipped, failed: failed };
+    }
+
+    // ---- Counts (how many rows still need work) ----
+    async function refreshCount(table) {
+      try {
+        var rows = await apiGet(table + '?select=*');
+        var force = document.getElementById('optForce') && document.getElementById('optForce').checked;
+        var cfg = TABLES[table];
+        var pending = rows.filter(function (row) {
+          return cfg.fields.some(function (ff) { return need(row, ff[0], force); });
+        }).length;
+        var el = document.getElementById(table + 'Count');
+        if (el) el.textContent = pending + ' / ' + rows.length + ' te doen';
+      } catch (e) {
+        var el2 = document.getElementById(table + 'Count');
+        if (el2) el2.textContent = '?';
+      }
+    }
+    function refreshAllCounts() { Object.keys(TABLES).forEach(refreshCount); }
+
+    function setBusy(b) {
+      document.querySelectorAll('button').forEach(function (btn) { btn.disabled = b; });
+    }
+
+    // ---- Wire up ----
+    if (!token()) { document.getElementById('authWarn').style.display = 'block'; }
+
+    document.querySelectorAll('[data-run]').forEach(function (btn) {
+      btn.addEventListener('click', async function () {
+        setBusy(true);
+        var table = btn.getAttribute('data-run');
+        log('— ' + table + ' —');
+        await runTable(table);
+        await refreshCount(table);
+        setBusy(false);
+      });
+    });
+
+    document.getElementById('btnAll').addEventListener('click', async function () {
+      setBusy(true);
+      document.getElementById('allStatus').textContent = 'bezig…';
+      var totals = { updated: 0, skipped: 0, failed: 0 };
+      for (var t of ['dogs', 'posts', 'stories']) {
+        if (QUOTA_HIT) break;
+        log('— ' + t + ' —');
+        var r = await runTable(t);
+        totals.updated += r.updated; totals.skipped += r.skipped; totals.failed += r.failed;
+        await refreshCount(t);
+      }
+      document.getElementById('allStatus').textContent = 'klaar — ' + totals.updated + ' bijgewerkt, ' + totals.skipped + ' overgeslagen' + (totals.failed ? ', ' + totals.failed + ' mislukt' : '');
+      log('Klaar. ' + totals.updated + ' bijgewerkt, ' + totals.skipped + ' overgeslagen, ' + totals.failed + ' mislukt.', 'ok');
+      setBusy(false);
+    });
+
+    refreshAllCounts();
+  })();
+  </script>
+</body>
+</html>
