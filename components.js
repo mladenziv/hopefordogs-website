@@ -347,10 +347,94 @@ var H4D_I18N = {
   'lottery.recentDon':  { nl: 'Recente donaties', de: 'Aktuelle Spenden', en: 'Recent donations' },
   'lottery.needAmount': { nl: 'Kies of vul een bedrag in.', de: 'Wähle oder gib einen Betrag ein.', en: 'Choose or enter an amount.' },
   'lottery.donateNow':  { nl: 'Doneer nu', de: 'Jetzt spenden', en: 'Donate now' },
+
+  // --- Dog cards (tags / size / gallery controls) ---
+  'dogcard.tag.puppy':      { nl: 'Puppy',      de: 'Welpe',       en: 'Puppy' },
+  'dogcard.tag.senior':     { nl: 'Senior',     de: 'Senior',      en: 'Senior' },
+  'dogcard.tag.langzitter': { nl: 'Langzitter', de: 'Langzeithund', en: 'Long-stay' },
+  'dogcard.size.klein':     { nl: 'Klein',      de: 'Klein',       en: 'Small' },
+  'dogcard.size.middel':    { nl: 'Middel',     de: 'Mittel',      en: 'Medium' },
+  'dogcard.size.groot':     { nl: 'Groot',      de: 'Groß',        en: 'Large' },
+  'dogcard.aria.prev':      { nl: 'Vorige foto', de: 'Vorheriges Foto', en: 'Previous photo' },
+  'dogcard.aria.next':      { nl: 'Volgende foto', de: 'Nächstes Foto', en: 'Next photo' },
+  'dogcard.aria.playpause': { nl: 'Afspelen / pauzeren', de: 'Abspielen / Pausieren', en: 'Play / pause' },
+  'dogcard.aria.mute':      { nl: 'Geluid aan / uit', de: 'Ton an / aus', en: 'Sound on / off' },
+
+  // --- Dog listing states ---
+  'dogs.loading':  { nl: 'Laden…', de: 'Wird geladen…', en: 'Loading…' },
+  'dogs.empty':    { nl: 'Geen honden gevonden in deze categorie.', de: 'Keine Hunde in dieser Kategorie gefunden.', en: 'No dogs found in this category.' },
+  'dogs.error':    { nl: 'Er is een fout opgetreden bij het laden van de honden.', de: 'Beim Laden der Hunde ist ein Fehler aufgetreten.', en: 'Something went wrong while loading the dogs.' },
+  'dog.notfound':  { nl: 'Hond niet gevonden.', de: 'Hund nicht gefunden.', en: 'Dog not found.' },
+  'dogs.none':     { nl: 'Nog geen honden beschikbaar.', de: 'Noch keine Hunde verfügbar.', en: 'No dogs available yet.' },
+
+  // --- Dog detail meta labels (modal + hond.html) ---
+  'dog.meta.geslacht':   { nl: 'Geslacht', de: 'Geschlecht', en: 'Sex' },
+  'dog.meta.leeftijd':   { nl: 'Leeftijd', de: 'Alter', en: 'Age' },
+  'dog.meta.ras':        { nl: 'Ras', de: 'Rasse', en: 'Breed' },
+  'dog.meta.grootte':    { nl: 'Grootte', de: 'Größe', en: 'Size' },
+  'dog.meta.gesteriliseerd': { nl: 'Gesteriliseerd', de: 'Kastriert', en: 'Neutered' },
+  'dog.meta.ja':         { nl: 'Ja', de: 'Ja', en: 'Yes' },
+  'dog.meta.nee':        { nl: 'Nee', de: 'Nein', en: 'No' },
+  'dog.meta.man':        { nl: 'Reu', de: 'Rüde', en: 'Male' },
+  'dog.meta.vrouw':      { nl: 'Teef', de: 'Hündin', en: 'Female' },
+  'dog.meta.gewicht':    { nl: 'Gewicht', de: 'Gewicht', en: 'Weight' },
+  'dog.stuurBericht':    { nl: 'Stuur een bericht', de: 'Nachricht senden', en: 'Send a message' },
+  'dog.chatFacebook':    { nl: 'Chat op Facebook', de: 'Chatte auf Facebook', en: 'Chat on Facebook' },
+  'dog.adoptieHint':     { nl: 'Benieuwd hoe het adoptieproces werkt? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">Bekijk de stappen en kosten</a>', de: 'Neugierig, wie der Adoptionsprozess abläuft? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">Sieh dir die Schritte und Kosten an</a>', en: 'Curious how the adoption process works? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">See the steps and costs</a>' },
+  // Dog status labels
+  'dog.status.opzoek':      { nl: 'Opzoek', de: 'Sucht ein Zuhause', en: 'Looking for a home' },
+  'dog.status.in_gesprek':  { nl: 'Gereserveerd', de: 'Reserviert', en: 'Reserved' },
+  'dog.status.geadopteerd': { nl: 'Geadopteerd', de: 'Adoptiert', en: 'Adopted' },
+  // Dog compatibility / test badges
+  'dog.compat.kind.yes':   { nl: 'Kindvriendelijk', de: 'Kinderlieb', en: 'Good with children' },
+  'dog.compat.kind.no':    { nl: 'Niet kindvriendelijk', de: 'Nicht kinderlieb', en: 'Not good with children' },
+  'dog.compat.kat.yes':    { nl: 'Katvriendelijk', de: 'Katzenverträglich', en: 'Good with cats' },
+  'dog.compat.kat.no':     { nl: 'Niet katvriendelijk', de: 'Nicht katzenverträglich', en: 'Not good with cats' },
+  'dog.compat.hond.yes':   { nl: 'Hondvriendelijk', de: 'Hundeverträglich', en: 'Good with dogs' },
+  'dog.compat.hond.no':    { nl: 'Niet hondvriendelijk', de: 'Nicht hundeverträglich', en: 'Not good with dogs' },
+  'dog.compat.zindelijk':  { nl: 'Zindelijk', de: 'Stubenrein', en: 'House-trained' },
+  'dog.compat.tuin':       { nl: 'Tuin nodig', de: 'Garten nötig', en: 'Needs a garden' },
+  'dog.test.4d':           { nl: '4D Test', de: '4D-Test', en: '4D test' },
+  'dog.test.giardia':      { nl: 'Giardia Test', de: 'Giardien-Test', en: 'Giardia test' },
+
+  // --- Dog inquiry (contact) modal ---
+  'dog.inquiry.titlePre':   { nl: 'Interesse in ', de: 'Interesse an ', en: 'Interested in ' },
+  'dog.inquiry.titlePost':  { nl: '?', de: '?', en: '?' },
+  'dog.inquiry.intro':      { nl: 'Vul het formulier in en wij nemen zo snel mogelijk contact met je op.', de: 'Fülle das Formular aus und wir melden uns so schnell wie möglich bei dir.', en: 'Fill in the form and we’ll get back to you as soon as possible.' },
+  'dog.inquiry.naam':       { nl: 'Naam *', de: 'Name *', en: 'Name *' },
+  'dog.inquiry.naam.ph':    { nl: 'Je volledige naam', de: 'Dein vollständiger Name', en: 'Your full name' },
+  'dog.inquiry.email':      { nl: 'E-mail *', de: 'E-Mail *', en: 'Email *' },
+  'dog.inquiry.email.ph':   { nl: 'je@email.nl', de: 'du@email.de', en: 'you@email.com' },
+  'dog.inquiry.telefoon':   { nl: 'Telefoonnummer', de: 'Telefonnummer', en: 'Phone number' },
+  'dog.inquiry.telefoon.ph':{ nl: '06-12345678', de: '0151 23456789', en: '06-12345678' },
+  'dog.inquiry.bericht':    { nl: 'Bericht *', de: 'Nachricht *', en: 'Message *' },
+  'dog.inquiry.bericht.ph': { nl: 'Vertel ons waarom je geïnteresseerd bent in deze hond...', de: 'Erzähl uns, warum du dich für diesen Hund interessierst...', en: 'Tell us why you’re interested in this dog...' },
+  'dog.inquiry.verstuur':   { nl: 'Verstuur bericht', de: 'Nachricht senden', en: 'Send message' },
+  'dog.inquiry.verzenden':  { nl: 'Verzenden…', de: 'Wird gesendet…', en: 'Sending…' },
+  'dog.inquiry.succesTitle':{ nl: 'Bericht verstuurd!', de: 'Nachricht gesendet!', en: 'Message sent!' },
+  'dog.inquiry.succesMsg':  { nl: 'Bedankt voor je interesse. We nemen zo snel mogelijk contact met je op.', de: 'Danke für dein Interesse. Wir melden uns so schnell wie möglich bei dir.', en: 'Thanks for your interest. We’ll get back to you as soon as possible.' },
+  'dog.inquiry.error':      { nl: 'Er is iets misgegaan. Probeer het later opnieuw.', de: 'Etwas ist schiefgelaufen. Bitte versuche es später erneut.', en: 'Something went wrong. Please try again later.' },
 };
 
 function h4dGetLanguage() {
   return localStorage.getItem('h4d-lang') || 'nl';
+}
+
+// Translate a static UI key for JS-rendered strings. Falls back to Dutch, then the key itself.
+function h4dT(key) {
+  var lang = h4dGetLanguage();
+  var e = H4D_I18N[key];
+  if (!e) return key;
+  return e[lang] || e.nl || key;
+}
+
+// Pick a Supabase row's field in the current language, falling back to the Dutch base field
+// (e.g. h4dField(dog, 'beschrijving') → dog.beschrijving_en || dog.beschrijving). Never blank.
+function h4dField(row, field) {
+  if (!row) return '';
+  var lang = h4dGetLanguage();
+  if (lang === 'nl') return row[field];
+  return row[field + '_' + lang] || row[field];
 }
 
 // Rounded flag icons for the language selector (clipped to a circle via CSS)
@@ -375,6 +459,13 @@ function h4dSetLanguage(lang) {
       el.innerHTML = H4D_I18N[key][lang];
     }
   });
+  // Update placeholders (inputs/textareas) via data-i18n-ph
+  document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
+    var key = el.getAttribute('data-i18n-ph');
+    if (H4D_I18N[key] && H4D_I18N[key][lang]) {
+      el.setAttribute('placeholder', H4D_I18N[key][lang]);
+    }
+  });
   // Update the nav lang button flag
   var langFlag = document.getElementById('navLangFlag');
   if (langFlag && H4D_FLAGS[lang]) {
@@ -395,6 +486,8 @@ function h4dSetLanguage(lang) {
   // Refresh dynamic dog cards if renderDogs exists (honden.html)
   if (typeof renderDogs === 'function') renderDogs();
   if (typeof renderAdopted === 'function') renderAdopted();
+  // Generic per-page re-render hook (homepage carousel, news list, experiences, etc.)
+  if (typeof window.h4dRerender === 'function') { try { window.h4dRerender(lang); } catch (e) {} }
   // Persist
   localStorage.setItem('h4d-lang', lang);
 }

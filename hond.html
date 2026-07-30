@@ -513,13 +513,13 @@
         <div class="dog-meta" id="dogMeta"></div>
         <p class="dog-description" id="dogDescription"></p>
         <div class="dog-cta" id="dogCta">
-          <button class="btn-primary" id="contactBtn">Stuur een bericht</button>
+          <button class="btn-primary" id="contactBtn" data-i18n="dog.stuurBericht">Stuur een bericht</button>
           <a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener" class="btn-facebook">
             <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            Chat op Facebook
+            <span data-i18n="dog.chatFacebook">Chat op Facebook</span>
           </a>
         </div>
-        <p style="font-size:15px;font-weight:500;color:var(--dark-2);margin-top:8px;">Benieuwd hoe het adoptieproces werkt? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">Bekijk de stappen en kosten</a></p>
+        <p style="font-size:15px;font-weight:500;color:var(--dark-2);margin-top:8px;" data-i18n-html="dog.adoptieHint">Benieuwd hoe het adoptieproces werkt? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">Bekijk de stappen en kosten</a></p>
       </div>
     </div>
   </section>
@@ -534,39 +534,39 @@
       <button class="modal-close" id="modalClose">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
       </button>
-      <h2>Interesse in <span id="contactDogName"></span>?</h2>
-      <p>Vul het formulier in en wij nemen zo snel mogelijk contact met je op.</p>
+      <h2><span data-i18n="dog.inquiry.titlePre">Interesse in </span><span id="contactDogName"></span><span data-i18n="dog.inquiry.titlePost">?</span></h2>
+      <p data-i18n="dog.inquiry.intro">Vul het formulier in en wij nemen zo snel mogelijk contact met je op.</p>
 
       <form class="contact-form" id="contactForm">
         <div class="form-row">
           <div class="form-group">
-            <label for="contactNaam">Naam *</label>
-            <input type="text" id="contactNaam" required placeholder="Je volledige naam">
+            <label for="contactNaam" data-i18n="dog.inquiry.naam">Naam *</label>
+            <input type="text" id="contactNaam" required placeholder="Je volledige naam" data-i18n-ph="dog.inquiry.naam.ph">
           </div>
           <div class="form-group">
-            <label for="contactEmail">E-mail *</label>
-            <input type="email" id="contactEmail" required placeholder="je@email.nl">
+            <label for="contactEmail" data-i18n="dog.inquiry.email">E-mail *</label>
+            <input type="email" id="contactEmail" required placeholder="je@email.nl" data-i18n-ph="dog.inquiry.email.ph">
           </div>
         </div>
         <div class="form-group">
-          <label for="contactTelefoon">Telefoonnummer</label>
-          <input type="tel" id="contactTelefoon" placeholder="06-12345678">
+          <label for="contactTelefoon" data-i18n="dog.inquiry.telefoon">Telefoonnummer</label>
+          <input type="tel" id="contactTelefoon" placeholder="06-12345678" data-i18n-ph="dog.inquiry.telefoon.ph">
         </div>
         <div class="form-group">
-          <label for="contactBericht">Bericht *</label>
-          <textarea id="contactBericht" required placeholder="Vertel ons waarom je ge&#239;nteresseerd bent in deze hond..."></textarea>
+          <label for="contactBericht" data-i18n="dog.inquiry.bericht">Bericht *</label>
+          <textarea id="contactBericht" required placeholder="Vertel ons waarom je ge&#239;nteresseerd bent in deze hond..." data-i18n-ph="dog.inquiry.bericht.ph"></textarea>
         </div>
-        <button type="submit" class="btn-primary" id="contactSubmitBtn">Verstuur bericht</button>
+        <button type="submit" class="btn-primary" id="contactSubmitBtn" data-i18n="dog.inquiry.verstuur">Verstuur bericht</button>
       </form>
 
       <div class="form-success" id="contactSuccess">
-        <h3>Bericht verstuurd!</h3>
-        <p>Bedankt voor je interesse. We nemen zo snel mogelijk contact met je op.</p>
+        <h3 data-i18n="dog.inquiry.succesTitle">Bericht verstuurd!</h3>
+        <p data-i18n="dog.inquiry.succesMsg">Bedankt voor je interesse. We nemen zo snel mogelijk contact met je op.</p>
       </div>
     </div>
   </div>
 
-  <script src="components.js?v=28"></script>
+  <script src="components.js?v=29"></script>
 
   <!-- ============ SUPABASE ============ -->
   <script src="supabase-config.js"></script>
@@ -607,10 +607,14 @@
         }
 
         const dog = dogs[0];
+        // Language-aware content (falls back to Dutch when a translation is missing).
+        const beschrijving = h4dField(dog, 'beschrijving');
+        const leeftijd = h4dField(dog, 'leeftijd');
+        const ras = h4dField(dog, 'ras');
         document.title = `${dog.naam} — Adoptiehond | Hope for Dogs`;
-        document.querySelector('meta[name="description"]').setAttribute('content', `Maak kennis met ${dog.naam}. ${dog.beschrijving ? dog.beschrijving.substring(0, 120) : 'Gered van de straat en klaar voor een nieuw thuis.'}`);
+        document.querySelector('meta[name="description"]').setAttribute('content', `Maak kennis met ${dog.naam}. ${beschrijving ? beschrijving.substring(0, 120) : 'Gered van de straat en klaar voor een nieuw thuis.'}`);
         document.querySelector('meta[property="og:title"]').setAttribute('content', `${dog.naam} — Adoptiehond | Hope for Dogs`);
-        document.querySelector('meta[property="og:description"]').setAttribute('content', `Maak kennis met ${dog.naam}. ${dog.beschrijving ? dog.beschrijving.substring(0, 120) : 'Gered van de straat en klaar voor een nieuw thuis.'}`);
+        document.querySelector('meta[property="og:description"]').setAttribute('content', `Maak kennis met ${dog.naam}. ${beschrijving ? beschrijving.substring(0, 120) : 'Gered van de straat en klaar voor een nieuw thuis.'}`);
         if (dog.photos && dog.photos.length > 0) {
           document.querySelector('meta[property="og:image"]').setAttribute('content', dog.photos[0].photo_url);
         }
@@ -634,54 +638,54 @@
         document.head.appendChild(bcSchema);
 
         const badge = document.getElementById('dogStatusBadge');
-        badge.textContent = statusLabels[dog.status] || dog.status;
+        badge.textContent = H4D_I18N['dog.status.' + dog.status] ? h4dT('dog.status.' + dog.status) : (statusLabels[dog.status] || dog.status);
         badge.className = 'dog-status-badge status-' + dog.status;
 
         // Build meta items
         var metaHtml = '';
-        var gender = dog.geslacht === 'reu' ? 'Reu' : dog.geslacht === 'teefje' ? 'Teef' : null;
+        var gender = dog.geslacht === 'reu' ? h4dT('dog.meta.man') : dog.geslacht === 'teefje' ? h4dT('dog.meta.vrouw') : null;
         if (gender) {
-          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Geslacht</span><span class="dog-meta-value">' + gender + '</span></div>';
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">' + h4dT('dog.meta.geslacht') + '</span><span class="dog-meta-value">' + gender + '</span></div>';
         }
-        if (dog.leeftijd) {
-          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Leeftijd</span><span class="dog-meta-value">' + dog.leeftijd + '</span></div>';
+        if (leeftijd) {
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">' + h4dT('dog.meta.leeftijd') + '</span><span class="dog-meta-value">' + leeftijd + '</span></div>';
         }
-        if (dog.ras) {
-          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Ras</span><span class="dog-meta-value">' + dog.ras + '</span></div>';
+        if (ras) {
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">' + h4dT('dog.meta.ras') + '</span><span class="dog-meta-value">' + ras + '</span></div>';
         }
         if (dog.gesteriliseerd !== null && dog.gesteriliseerd !== undefined) {
-          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Gesteriliseerd</span><span class="dog-meta-value">' + (dog.gesteriliseerd ? 'Ja' : 'Nee') + '</span></div>';
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">' + h4dT('dog.meta.gesteriliseerd') + '</span><span class="dog-meta-value">' + (dog.gesteriliseerd ? h4dT('dog.meta.ja') : h4dT('dog.meta.nee')) + '</span></div>';
         }
         document.getElementById('dogMeta').innerHTML = metaHtml;
 
         // Extra attributes (size, compatibility) — renders when fields exist in DB
         var attrsHtml = '';
         if (dog.grootte) {
-          var sizeLabel = dog.grootte === 'klein' ? 'Klein' : dog.grootte === 'middel' ? 'Middel' : dog.grootte === 'groot' ? 'Groot' : dog.grootte;
-          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Grootte</span><span class="dog-meta-value">' + sizeLabel + '</span></div>';
+          var sizeLabel = dog.grootte === 'klein' ? h4dT('dogcard.size.klein') : dog.grootte === 'middel' ? h4dT('dogcard.size.middel') : dog.grootte === 'groot' ? h4dT('dogcard.size.groot') : dog.grootte;
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">' + h4dT('dog.meta.grootte') + '</span><span class="dog-meta-value">' + sizeLabel + '</span></div>';
         }
         if (dog.gewicht) {
-          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">Gewicht</span><span class="dog-meta-value">' + dog.gewicht + '</span></div>';
+          metaHtml += '<div class="dog-meta-item"><span class="dog-meta-label">' + h4dT('dog.meta.gewicht') + '</span><span class="dog-meta-value">' + dog.gewicht + '</span></div>';
         }
 
         // Compatibility badges
         var compatHtml = '';
-        if (dog.kindvriendelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; Kindvriendelijk</span>';
-        if (dog.kindvriendelijk === false) compatHtml += '<span class="dog-test-badge test-fail">&#10007; Niet kindvriendelijk</span>';
-        if (dog.katvriendelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; Katvriendelijk</span>';
-        if (dog.katvriendelijk === false) compatHtml += '<span class="dog-test-badge test-fail">&#10007; Niet katvriendelijk</span>';
-        if (dog.hondvriendelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; Hondvriendelijk</span>';
-        if (dog.hondvriendelijk === false) compatHtml += '<span class="dog-test-badge test-fail">&#10007; Niet hondvriendelijk</span>';
-        if (dog.zindelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; Zindelijk</span>';
-        if (dog.tuin_nodig === true) compatHtml += '<span class="dog-test-badge test-unknown">Tuin nodig</span>';
+        if (dog.kindvriendelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; ' + h4dT('dog.compat.kind.yes') + '</span>';
+        if (dog.kindvriendelijk === false) compatHtml += '<span class="dog-test-badge test-fail">&#10007; ' + h4dT('dog.compat.kind.no') + '</span>';
+        if (dog.katvriendelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; ' + h4dT('dog.compat.kat.yes') + '</span>';
+        if (dog.katvriendelijk === false) compatHtml += '<span class="dog-test-badge test-fail">&#10007; ' + h4dT('dog.compat.kat.no') + '</span>';
+        if (dog.hondvriendelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; ' + h4dT('dog.compat.hond.yes') + '</span>';
+        if (dog.hondvriendelijk === false) compatHtml += '<span class="dog-test-badge test-fail">&#10007; ' + h4dT('dog.compat.hond.no') + '</span>';
+        if (dog.zindelijk === true) compatHtml += '<span class="dog-test-badge test-pass">&#10003; ' + h4dT('dog.compat.zindelijk') + '</span>';
+        if (dog.tuin_nodig === true) compatHtml += '<span class="dog-test-badge test-unknown">' + h4dT('dog.compat.tuin') + '</span>';
 
         // Tests (only show if positive)
         var testsHtml = '';
         if (dog.test_4d === true) {
-          testsHtml += '<span class="dog-test-badge test-pass">&#10003; 4D Test</span>';
+          testsHtml += '<span class="dog-test-badge test-pass">&#10003; ' + h4dT('dog.test.4d') + '</span>';
         }
         if (dog.test_giardia === true) {
-          testsHtml += '<span class="dog-test-badge test-pass">&#10003; Giardia Test</span>';
+          testsHtml += '<span class="dog-test-badge test-pass">&#10003; ' + h4dT('dog.test.giardia') + '</span>';
         }
         var allBadges = compatHtml + testsHtml;
         if (allBadges) {
@@ -689,7 +693,7 @@
         }
 
         // Description
-        document.getElementById('dogDescription').textContent = dog.beschrijving || '';
+        document.getElementById('dogDescription').textContent = beschrijving || '';
 
         // Contact section
         if (dog.status === 'geadopteerd') {
@@ -866,7 +870,7 @@
         e.preventDefault();
         var btn = document.getElementById('contactSubmitBtn');
         btn.disabled = true;
-        btn.textContent = 'Verzenden...';
+        btn.textContent = h4dT('dog.inquiry.verzenden');
 
         try {
           var body = {
@@ -896,9 +900,9 @@
           document.getElementById('contactSuccess').style.display = 'block';
         } catch (err) {
           console.error('Contact form error:', err);
-          alert('Er is iets misgegaan. Probeer het opnieuw.');
+          alert(h4dT('dog.inquiry.error'));
           btn.disabled = false;
-          btn.textContent = 'Verstuur bericht';
+          btn.textContent = h4dT('dog.inquiry.verstuur');
         }
       });
     }

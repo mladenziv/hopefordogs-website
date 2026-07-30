@@ -229,14 +229,14 @@
   <div id="footer-placeholder"></div>
 
   <script src="supabase-config.js"></script>
-  <script src="components.js?v=28"></script>
+  <script src="components.js?v=29"></script>
   <script>
     document.getElementById('contactPageForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       var btn = document.getElementById('cfSubmit');
       btn.disabled = true;
       var original = btn.textContent;
-      btn.textContent = 'Verzenden...';
+      btn.textContent = h4dT('dog.inquiry.verzenden');
       try {
         var res = await fetch('/api/contact/', {
           method: 'POST',
@@ -254,12 +254,12 @@
           document.getElementById('contactPageForm').style.display = 'none';
           document.getElementById('cfSuccess').style.display = 'block';
         } else {
-          alert(data.error || 'Er is iets misgegaan. Probeer het opnieuw.');
+          alert(data.error || h4dT('dog.inquiry.error'));
           btn.disabled = false;
           btn.textContent = original;
         }
       } catch (err) {
-        alert('Er is iets misgegaan. Probeer het opnieuw.');
+        alert(h4dT('dog.inquiry.error'));
         btn.disabled = false;
         btn.textContent = original;
       }

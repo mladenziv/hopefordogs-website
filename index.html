@@ -2790,7 +2790,7 @@
         <div class="dog-modal-carousel-dots" id="dogModalDots"></div>
       </div>
       <div class="dog-modal-body" id="dogModalBody">
-        <div class="dog-modal-loading"><div class="mini-spinner"></div> Laden...</div>
+        <div class="dog-modal-loading"><div class="mini-spinner"></div> <span data-i18n="dogs.loading">Laden&hellip;</span></div>
       </div>
     </div>
   </div>
@@ -2801,39 +2801,39 @@
       <button class="contact-modal-close" id="contactModalClose">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
       </button>
-      <h2>Interesse in <span id="contactDogName"></span>?</h2>
-      <p>Vul het formulier in en wij nemen zo snel mogelijk contact met je op.</p>
+      <h2><span data-i18n="dog.inquiry.titlePre">Interesse in </span><span id="contactDogName"></span><span data-i18n="dog.inquiry.titlePost">?</span></h2>
+      <p data-i18n="dog.inquiry.intro">Vul het formulier in en wij nemen zo snel mogelijk contact met je op.</p>
       <form class="contact-form" id="contactForm">
         <div class="form-row">
           <div class="form-group">
-            <label for="contactNaam">Naam *</label>
-            <input type="text" id="contactNaam" required placeholder="Je volledige naam">
+            <label for="contactNaam" data-i18n="dog.inquiry.naam">Naam *</label>
+            <input type="text" id="contactNaam" required placeholder="Je volledige naam" data-i18n-ph="dog.inquiry.naam.ph">
           </div>
           <div class="form-group">
-            <label for="contactEmail">E-mail *</label>
-            <input type="email" id="contactEmail" required placeholder="je@email.nl">
+            <label for="contactEmail" data-i18n="dog.inquiry.email">E-mail *</label>
+            <input type="email" id="contactEmail" required placeholder="je@email.nl" data-i18n-ph="dog.inquiry.email.ph">
           </div>
         </div>
         <div class="form-group">
-          <label for="contactTelefoon">Telefoonnummer</label>
-          <input type="tel" id="contactTelefoon" placeholder="06-12345678">
+          <label for="contactTelefoon" data-i18n="dog.inquiry.telefoon">Telefoonnummer</label>
+          <input type="tel" id="contactTelefoon" placeholder="06-12345678" data-i18n-ph="dog.inquiry.telefoon.ph">
         </div>
         <div class="form-group">
-          <label for="contactBericht">Bericht *</label>
-          <textarea id="contactBericht" required placeholder="Vertel ons waarom je ge&iuml;nteresseerd bent in deze hond..."></textarea>
+          <label for="contactBericht" data-i18n="dog.inquiry.bericht">Bericht *</label>
+          <textarea id="contactBericht" required placeholder="Vertel ons waarom je ge&iuml;nteresseerd bent in deze hond..." data-i18n-ph="dog.inquiry.bericht.ph"></textarea>
         </div>
-        <button type="submit" class="btn-primary" id="contactSubmitBtn">Verstuur bericht</button>
+        <button type="submit" class="btn-primary" id="contactSubmitBtn" data-i18n="dog.inquiry.verstuur">Verstuur bericht</button>
       </form>
       <div class="form-success" id="contactSuccess">
-        <h3>Bericht verstuurd!</h3>
-        <p>Bedankt voor je interesse. We nemen zo snel mogelijk contact met je op.</p>
+        <h3 data-i18n="dog.inquiry.succesTitle">Bericht verstuurd!</h3>
+        <p data-i18n="dog.inquiry.succesMsg">Bedankt voor je interesse. We nemen zo snel mogelijk contact met je op.</p>
       </div>
     </div>
   </div>
 
-  <script src="components.js?v=28"></script>
+  <script src="components.js?v=29"></script>
   <script src="supabase-config.js"></script>
-  <script src="dog-card.js?v=3"></script>
+  <script src="dog-card.js?v=4"></script>
 
   <script>
     // Remove will-change from polaroids after animation completes
@@ -2913,7 +2913,7 @@
         }));
 
         if (dogs.length === 0) {
-          track.innerHTML = '<div style="padding:40px;color:#545454;">Nog geen honden beschikbaar.</div>';
+          track.innerHTML = '<div style="padding:40px;color:#545454;">' + h4dT('dogs.none') + '</div>';
           return;
         }
 
@@ -2927,6 +2927,13 @@
         console.error('Error loading carousel dogs:', err);
       }
     }
+
+    // Re-render the carousel cards in the new language when the visitor switches language.
+    window.h4dRerender = function () {
+      if (!track || !window._carouselDogs || !window._carouselDogs.length) return;
+      var html = window._carouselDogs.map(function (d) { return dogCardHTML(d, { modal: true }); }).join('');
+      track.innerHTML = html + html;
+    };
 
     function initDragToScroll() {
       let isDown = false, startX = 0, scrollStart = 0, manualMode = false, didDrag = false;
@@ -3444,26 +3451,29 @@
     }
 
     function buildDogModalBody(dog) {
-      var gender = dog.geslacht === 'reu' ? 'Reu' : dog.geslacht === 'teefje' ? 'Teef' : null;
+      var leeftijd = h4dField(dog, 'leeftijd');
+      var ras = h4dField(dog, 'ras');
+      var beschrijving = h4dField(dog, 'beschrijving');
+      var gender = dog.geslacht === 'reu' ? h4dT('dog.meta.man') : dog.geslacht === 'teefje' ? h4dT('dog.meta.vrouw') : null;
       var metaHtml = '';
-      if (gender) metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Geslacht</span><span class="dog-modal-meta-value">' + gender + '</span></div>';
-      if (dog.leeftijd) metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Leeftijd</span><span class="dog-modal-meta-value">' + dog.leeftijd + '</span></div>';
-      if (dog.ras) metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Ras</span><span class="dog-modal-meta-value">' + dog.ras + '</span></div>';
+      if (gender) metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">' + h4dT('dog.meta.geslacht') + '</span><span class="dog-modal-meta-value">' + gender + '</span></div>';
+      if (leeftijd) metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">' + h4dT('dog.meta.leeftijd') + '</span><span class="dog-modal-meta-value">' + leeftijd + '</span></div>';
+      if (ras) metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">' + h4dT('dog.meta.ras') + '</span><span class="dog-modal-meta-value">' + ras + '</span></div>';
       if (dog.gesteriliseerd !== null && dog.gesteriliseerd !== undefined) {
-        metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">Gesteriliseerd</span><span class="dog-modal-meta-value">' + (dog.gesteriliseerd ? 'Ja' : 'Nee') + '</span></div>';
+        metaHtml += '<div class="dog-modal-meta-item"><span class="dog-modal-meta-label">' + h4dT('dog.meta.gesteriliseerd') + '</span><span class="dog-modal-meta-value">' + (dog.gesteriliseerd ? h4dT('dog.meta.ja') : h4dT('dog.meta.nee')) + '</span></div>';
       }
       var statusLabel = statusLabels[dog.status] || dog.status;
       var ctaHtml = '';
       if (dog.status !== 'geadopteerd') {
         ctaHtml = '<div class="dog-modal-cta">' +
-          '<button class="btn-primary" onclick="openContactModal(\'' + dog.id + '\', \'' + (dog.naam || '').replace(/\'/g, "\\'") + '\')">Stuur een bericht</button>' +
+          '<button class="btn-primary" onclick="openContactModal(\'' + dog.id + '\', \'' + (dog.naam || '').replace(/\'/g, "\\'") + '\')">' + h4dT('dog.stuurBericht') + '</button>' +
           '<a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener" class="btn-facebook-outline">' +
             '<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' +
             'Facebook</a></div>';
       }
       return '<div class="dog-modal-name">' + dog.naam + '</div>' +
         (metaHtml ? '<div class="dog-modal-meta">' + metaHtml + '</div>' : '') +
-        (dog.beschrijving ? '<div class="dog-modal-desc">' + dog.beschrijving + '</div>' : '') +
+        (beschrijving ? '<div class="dog-modal-desc">' + beschrijving + '</div>' : '') +
         ctaHtml;
     }
 
@@ -3503,7 +3513,7 @@
         var cachedPhoto = dog.photo || (dog.photos && dog.photos.length > 0 ? dog.photos[0].photo_url : null);
         setModalCarousel(cachedPhoto ? [cachedPhoto] : []);
       } else {
-        body.innerHTML = '<div class="dog-modal-loading"><div class="mini-spinner"></div> Laden...</div>';
+        body.innerHTML = '<div class="dog-modal-loading"><div class="mini-spinner"></div> ' + h4dT('dogs.loading') + '</div>';
         setModalCarousel([]);
       }
 
@@ -3523,7 +3533,7 @@
         if (!dog) {
           var dogArr = await supabaseGet('dogs', 'select=*&id=eq.' + dogId + '&draft=eq.false');
           dog = dogArr && dogArr[0];
-          if (!dog) { body.innerHTML = '<p style="padding:40px;text-align:center;color:var(--dark-2);">Hond niet gevonden.</p>'; return; }
+          if (!dog) { body.innerHTML = '<p style="padding:40px;text-align:center;color:var(--dark-2);">' + h4dT('dog.notfound') + '</p>'; return; }
           body.innerHTML = buildDogModalBody(dog);
         }
 
@@ -3649,7 +3659,7 @@
       document.getElementById('contactForm').style.display = '';
       document.getElementById('contactSuccess').style.display = 'none';
       document.getElementById('contactSubmitBtn').disabled = false;
-      document.getElementById('contactSubmitBtn').textContent = 'Verstuur bericht';
+      document.getElementById('contactSubmitBtn').textContent = h4dT('dog.inquiry.verstuur');
 
       // At XS, stack the contact sheet on top of the dog sheet (don't dismiss it)
       var dogOverlay = document.getElementById('dogModalOverlay');
@@ -3703,7 +3713,7 @@
       e.preventDefault();
       var btn = document.getElementById('contactSubmitBtn');
       btn.disabled = true;
-      btn.textContent = 'Verzenden...';
+      btn.textContent = h4dT('dog.inquiry.verzenden');
 
       try {
         var body = {
@@ -3733,9 +3743,9 @@
         document.getElementById('contactSuccess').style.display = 'block';
       } catch (err) {
         console.error('Contact form error:', err);
-        alert('Er is iets misgegaan. Probeer het opnieuw.');
+        alert(h4dT('dog.inquiry.error'));
         btn.disabled = false;
-        btn.textContent = 'Verstuur bericht';
+        btn.textContent = h4dT('dog.inquiry.verstuur');
       }
     });
 

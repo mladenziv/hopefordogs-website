@@ -43,17 +43,22 @@ function dogMediaEl(url, name) {
 
 function dogCardHTML(dog, opts) {
   opts = opts || {};
+  // Language-aware helpers (components.js loads first; guard just in case).
+  var T = (typeof h4dT === 'function') ? h4dT : function (k) { return k; };
+  var F = (typeof h4dField === 'function') ? h4dField : function (r, f) { return r[f]; };
   var img = dog.photo || (dog.photos && dog.photos.length > 0 ? dog.photos[0].photo_url : null) || 'images/placeholder-dog.svg';
-  var breed = dog.ras || '';
-  var sizeStr = dog.grootte === 'klein' ? 'Klein' : dog.grootte === 'middel' ? 'Middel' : dog.grootte === 'groot' ? 'Groot' : '';
-  var desc = (dog.beschrijving && !dog.beschrijving.startsWith('http'))
-    ? dog.beschrijving
-    : [breed, dog.leeftijd, sizeStr].filter(Boolean).join(', ');
+  var breed = F(dog, 'ras') || '';
+  var leeftijd = F(dog, 'leeftijd') || '';
+  var sizeStr = dog.grootte === 'klein' ? T('dogcard.size.klein') : dog.grootte === 'middel' ? T('dogcard.size.middel') : dog.grootte === 'groot' ? T('dogcard.size.groot') : '';
+  var beschr = F(dog, 'beschrijving');
+  var desc = (beschr && !beschr.startsWith('http'))
+    ? beschr
+    : [breed, leeftijd, sizeStr].filter(Boolean).join(', ');
 
   // Badge ribbon
   var dogTags = dog.tags || [];
   var tagType = dogTags.includes('puppy') ? 'puppy' : dogTags.includes('senior') ? 'senior' : dogTags.includes('langzitter') ? 'langzitter' : '';
-  var tagLabel = tagType === 'puppy' ? 'Puppy' : tagType === 'senior' ? 'Senior' : tagType === 'langzitter' ? 'Langzitter' : '';
+  var tagLabel = tagType === 'puppy' ? T('dogcard.tag.puppy') : tagType === 'senior' ? T('dogcard.tag.senior') : tagType === 'langzitter' ? T('dogcard.tag.langzitter') : '';
   var badge = '';
   if (tagType) {
     badge = '<div class="dog-card-badge ' + tagType + '"><span class="dog-card-badge-label">' + tagLabel + '</span><span class="dog-card-badge-tail"></span></div>';
@@ -72,10 +77,10 @@ function dogCardHTML(dog, opts) {
     media =
       '<div class="dog-card-media' + (isDogVideo(img) ? ' is-video' : '') + '" data-dog-id="' + safeId + '">' +
         mediaEl +
-        '<button type="button" class="dog-card-nav prev" aria-label="Vorige foto">' + DOG_NAV_SVG.prev + '</button>' +
-        '<button type="button" class="dog-card-nav next" aria-label="Volgende foto">' + DOG_NAV_SVG.next + '</button>' +
-        '<button type="button" class="dog-card-vplay" aria-label="Afspelen / pauzeren">' + DOG_VID_SVG.play + '</button>' +
-        '<button type="button" class="dog-card-vmute" aria-label="Geluid aan / uit">' + DOG_VID_SVG.muted + '</button>' +
+        '<button type="button" class="dog-card-nav prev" aria-label="' + escapeHTML(T('dogcard.aria.prev')) + '">' + DOG_NAV_SVG.prev + '</button>' +
+        '<button type="button" class="dog-card-nav next" aria-label="' + escapeHTML(T('dogcard.aria.next')) + '">' + DOG_NAV_SVG.next + '</button>' +
+        '<button type="button" class="dog-card-vplay" aria-label="' + escapeHTML(T('dogcard.aria.playpause')) + '">' + DOG_VID_SVG.play + '</button>' +
+        '<button type="button" class="dog-card-vmute" aria-label="' + escapeHTML(T('dogcard.aria.mute')) + '">' + DOG_VID_SVG.muted + '</button>' +
       '</div>';
   }
 
