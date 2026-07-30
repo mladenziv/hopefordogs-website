@@ -449,8 +449,8 @@
                 justify-content: center;
                 align-self: stretch;
                 /* Drives the whole card's scale (everything below is em-based).
-                   Keeps the Figma proportions but grows the card on wider screens. */
-                font-size: clamp(18px, 1.15vw, 24px);
+                   Fixed size (matches the ~1270px-wide look) so it doesn't grow on wider screens. */
+                font-size: 18px;
             }
 
             /* ============ DOG OF THE DAY card (em-scaled via .hero-dotd font-size) ============ */
@@ -1166,6 +1166,7 @@
                 line-height: 1.7;
                 color: var(--dark-2);
                 margin-bottom: 24px;
+                white-space: pre-line; /* preserve paragraph breaks from the description */
             }
             .dog-modal-cta {
                 display: flex;
