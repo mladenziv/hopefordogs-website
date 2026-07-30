@@ -38,11 +38,16 @@ function ins_photos($html) {
     preg_match_all('#https://[^"\s<]*/t39\.\d+-6/(\d+_\d+_\d+_n)\.[a-z0-9]+[^"\s<]*#i', $norm, $m);
     $byfid = array();
     foreach ($m[0] as $k => $u) { $byfid[$m[1][$k]] = html_entity_decode($u, ENT_QUOTES, 'UTF-8'); }
+    // Photo-permalink fbids (photo.php?fbid= / photo/?fbid=) — the per-photo identity
+    // used to tie a photo to a specific post.
+    preg_match_all('#photo(?:\.php)?/?\?fbid=(\d{12,})#i', $norm, $fm);
+    $photoFbids = array_values(array_unique($fm[1]));
     $lower = strtolower($html);
     return array(
         'http_len' => strlen($html),
         'distinct_photos' => count($byfid),
         'file_ids' => array_keys($byfid),
+        'photo_fbids' => $photoFbids,
         'sample' => array_slice(array_values($byfid), 0, 2),
         'looks_login_walled' => (strlen($html) < 8000) || (strpos($lower, 'log in to facebook') !== false) || (strpos($lower, 'you must log in') !== false),
     );
