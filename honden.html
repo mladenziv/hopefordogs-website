@@ -146,38 +146,59 @@
                 grid-column: 3;
                 justify-self: end;
                 display: flex;
-                align-items: center;
+                align-items: stretch; /* controls match the tab-row height */
                 gap: 8px;
+            }
+            /* Location dropdown — shown on tablet/mobile in place of the pill tabs */
+            .filter-select {
+                display: none;
+                align-self: stretch;
+                max-width: 62vw;
+                padding: 0 44px 0 20px;
+                border: none;
+                border-radius: 100px;
+                background-color: var(--beige);
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23545454' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 16px center;
+                font-family: "Manrope", sans-serif;
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--dark-1);
+                cursor: pointer;
+                -webkit-appearance: none;
+                appearance: none;
             }
             .gender-toggle {
                 display: flex;
+                align-items: center;
                 gap: 4px;
                 background: var(--beige);
-                padding: 5px;
+                padding: 6px;
                 border-radius: 100px;
             }
             .gender-btn {
-                padding: 8px 16px;
+                padding: 12px 18px;
                 border: none;
                 background: transparent;
                 border-radius: 100px;
                 font-family: "Manrope", sans-serif;
-                font-size: 14px;
+                font-size: 15px;
                 font-weight: 600;
                 color: var(--dark-2);
                 cursor: pointer;
                 transition: all 0.25s ease;
                 white-space: nowrap;
             }
-            .gender-btn:hover { color: var(--dark-1); }
+            .gender-btn:hover { color: var(--dark-1); background: rgba(0, 0, 0, 0.04); }
             .gender-btn.active {
                 background: var(--brand);
                 color: var(--white);
                 box-shadow: 0 2px 8px rgba(255, 83, 20, 0.25);
             }
             .search-toggle {
-                width: 46px;
-                height: 46px;
+                align-self: stretch; /* height matches the tab row */
+                width: 58px;
                 border-radius: 50%;
                 border: none;
                 background: var(--beige);
@@ -189,7 +210,7 @@
                 transition: all 0.25s ease;
                 flex-shrink: 0;
             }
-            .search-toggle:hover { color: var(--dark-1); }
+            .search-toggle:hover { color: var(--dark-1); background: rgba(0, 0, 0, 0.06); }
             .search-toggle.active { background: var(--brand); color: var(--white); }
             .search-toggle svg { width: 20px; height: 20px; }
             .search-row {
@@ -487,7 +508,9 @@
                 display: flex;
                 flex-direction: row;
                 align-items: center;
-                justify-content: center;
+                /* flex-start (not center) so the heading stays left-anchored even before
+                   the dog-of-the-day card loads — avoids the text jumping left on load. */
+                justify-content: flex-start;
                 gap: 80px;
                 max-width: 1560px;
                 width: 100%;
@@ -824,13 +847,18 @@
                     font-size: 24px;
                 }
 
-                .filter-tabs {
-                    width: 100%;
+                /* Tablet/mobile: the location pill tabs become a dropdown, freeing
+                   room for the gender toggle + search icon on the right. */
+                .filter-inner {
+                    display: flex;
+                    grid-template-columns: none;
+                    justify-content: space-between;
+                    align-items: stretch;
+                    gap: 10px;
                 }
-                .filter-tab {
-                    flex: 1;
-                    text-align: center;
-                }
+                .filter-tabs { display: none; }
+                .filter-select { display: block; }
+                .filter-right { grid-column: auto; justify-self: auto; flex-shrink: 0; }
 
                 .cta-box {
                     padding: 60px 32px;
@@ -844,6 +872,7 @@
                 .page-hero-inner {
                     flex-direction: column-reverse;
                     align-items: center;
+                    justify-content: center;
                     gap: 56px; /* +24 between the card and the heading */
                     text-align: center;
                 }
@@ -882,12 +911,12 @@
                 }
                 .filter-inner {
                     padding: 0;
-                    grid-template-columns: 1fr;
-                    justify-items: center;
-                    gap: 14px;
+                    gap: 8px;
                 }
-                .filter-tabs { grid-column: 1; }
-                .filter-right { grid-column: 1; justify-self: center; }
+                /* Dropdown fills the row; compact controls on the right so all fit */
+                .filter-select { max-width: none; flex: 1 1 auto; min-width: 0; }
+                .gender-btn { padding: 11px 13px; }
+                .search-toggle { width: 50px; }
                 .search-row { padding: 0; }
                 .search-inner { max-width: 100%; margin: 0; }
                 .dogs-inner,
@@ -1533,6 +1562,11 @@
                             Gemeente asiel
                         </button>
                     </div>
+                    <select class="filter-select" id="filterSelect" aria-label="Filter honden">
+                        <option value="alle" data-i18n="honden.filter.alle">Alle honden</option>
+                        <option value="in_asiel" data-i18n="honden.filter.onsasiel">Ons asiel</option>
+                        <option value="gemeente_asiel" data-i18n="honden.filter.gemeente">Gemeente asiel</option>
+                    </select>
                     <div class="filter-right">
                         <div class="gender-toggle" role="group" aria-label="Geslacht">
                             <button type="button" class="gender-btn" data-gender="reu" data-i18n="honden.gender.reu">Reu</button>
@@ -2049,14 +2083,29 @@
 
             // Filter tabs interaction
             const filterTabs = document.querySelectorAll(".filter-tab");
+            const filterSelect = document.getElementById("filterSelect");
+            // Shared setter keeps the pill tabs (desktop) and the dropdown (tablet/mobile) in sync
+            function setActiveFilter(val) {
+                activeFilter = val;
+                filterTabs.forEach((t) =>
+                    t.classList.toggle(
+                        "active",
+                        t.getAttribute("data-filter") === val,
+                    ),
+                );
+                if (filterSelect && filterSelect.value !== val) filterSelect.value = val;
+                renderDogs();
+            }
             filterTabs.forEach((tab) => {
-                tab.addEventListener("click", () => {
-                    filterTabs.forEach((t) => t.classList.remove("active"));
-                    tab.classList.add("active");
-                    activeFilter = tab.getAttribute("data-filter");
-                    renderDogs();
-                });
+                tab.addEventListener("click", () =>
+                    setActiveFilter(tab.getAttribute("data-filter")),
+                );
             });
+            if (filterSelect) {
+                filterSelect.addEventListener("change", () =>
+                    setActiveFilter(filterSelect.value),
+                );
+            }
 
             // Gender toggle (Reu / Teef) — click the active one again to clear (show all)
             const genderBtns = document.querySelectorAll(".gender-btn");
