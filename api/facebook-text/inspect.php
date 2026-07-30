@@ -64,7 +64,7 @@ function ins_report($html) {
     // PROPOSED extraction: normalize ALL backslash-escaped slashes (\/ , \\/ , \\\/),
     // then grab every post-photo CDN url, deduped by file-id.
     $norm = preg_replace('#\\\\+/#', '/', $html);
-    preg_match_all('#https://[^"\s<\\\\]*t39\.30808-6/(\d+_\d+_\d+_n)\.[a-z0-9]+[^"\s<\\\\]*#i', $norm, $pm);
+    preg_match_all('#https://[^"\s<]*/t39\.\d+-6/(\d+_\d+_\d+_n)\.[a-z0-9]+[^"\s<]*#i', $norm, $pm);
     $proposedByFid = array();
     foreach ($pm[0] as $k => $u) {
         $u = html_entity_decode($u, ENT_QUOTES, 'UTF-8');
@@ -79,7 +79,7 @@ function ins_report($html) {
     $sp = strpos($norm, 'all_subattachments');
     if ($sp !== false) {
         $subBlock = substr($norm, $sp, 16000);
-        preg_match_all('#https://[^"\s<\\\\]*t39\.30808-6/(\d+_\d+_\d+_n)\.#i', $subBlock, $sbm);
+        preg_match_all('#https://[^"\s<]*/t39\.\d+-6/(\d+_\d+_\d+_n)\.#i', $subBlock, $sbm);
         $subBlockPhotoUrls = count($sbm[0]);
         $subBlockFileIds = count(array_unique($sbm[1]));
     }

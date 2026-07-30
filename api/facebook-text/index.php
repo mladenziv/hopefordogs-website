@@ -459,8 +459,8 @@ while (($uriPos = strpos($imgHtml, $uriNeedle, $uriPos)) !== false) {
 // Grab every one directly, deduped by file-id, keeping the highest-res variant.
 // This is what actually gets all N photos — the photo-page traversal below is a
 // no-op on current markup (sibling photos are no longer on the photo pages).
-$normImgHtml = str_replace('\\/', '/', $imgHtml);
-if (preg_match_all('#https://[^"\s<]*t39\.30808-6/(\d+_\d+_\d+_n)\.[a-z0-9]+[^"\s<]*#i', $normImgHtml, $cdnMatches)) {
+$normImgHtml = preg_replace('#\\\\+/#', '/', $imgHtml);
+if (preg_match_all('#https://[^"\s<]*/t39\.\d+-6/(\d+_\d+_\d+_n)\.[a-z0-9]+[^"\s<]*#i', $normImgHtml, $cdnMatches)) {
     foreach ($cdnMatches[0] as $ci => $cUrl) {
         $cUrl = html_entity_decode($cUrl, ENT_QUOTES, 'UTF-8');
         $cFid = $cdnMatches[1][$ci];
