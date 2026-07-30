@@ -61,10 +61,10 @@ function ins_report($html) {
     $pos = strpos($html, 'all_subattachments');
     if ($pos !== false) { $snip2 = substr($html, $pos, 400); }
 
-    // PROPOSED extraction: every post-photo CDN url in the (slash-normalized) HTML,
-    // deduped by file-id. This is what the real fix will use.
-    $norm = str_replace('\\/', '/', $html);
-    preg_match_all('#https://[^"\s<]*t39\.30808-6/(\d+_\d+_\d+_n)\.[a-z0-9]+[^"\s<]*#i', $norm, $pm);
+    // PROPOSED extraction: normalize ALL backslash-escaped slashes (\/ , \\/ , \\\/),
+    // then grab every post-photo CDN url, deduped by file-id.
+    $norm = preg_replace('#\\\\+/#', '/', $html);
+    preg_match_all('#https://[^"\s<\\\\]*t39\.30808-6/(\d+_\d+_\d+_n)\.[a-z0-9]+[^"\s<\\\\]*#i', $norm, $pm);
     $proposedByFid = array();
     foreach ($pm[0] as $k => $u) {
         $u = html_entity_decode($u, ENT_QUOTES, 'UTF-8');
@@ -73,6 +73,16 @@ function ins_report($html) {
     }
     $subCount = null;
     if (preg_match('/all_subattachments"\s*:\s*\{\s*"count"\s*:\s*(\d+)/', $html, $scm)) $subCount = (int)$scm[1];
+
+    // Dump the all_subattachments block (normalized) + how many photo URLs live inside it.
+    $subBlock = null; $subBlockPhotoUrls = null; $subBlockFileIds = null;
+    $sp = strpos($norm, 'all_subattachments');
+    if ($sp !== false) {
+        $subBlock = substr($norm, $sp, 16000);
+        preg_match_all('#https://[^"\s<\\\\]*t39\.30808-6/(\d+_\d+_\d+_n)\.#i', $subBlock, $sbm);
+        $subBlockPhotoUrls = count($sbm[0]);
+        $subBlockFileIds = count(array_unique($sbm[1]));
+    }
 
     return array(
         'len' => strlen($html),
@@ -86,6 +96,9 @@ function ins_report($html) {
         'PROPOSED_photo_count' => count($proposedByFid),
         'PROPOSED_sample' => array_slice(array_values($proposedByFid), 0, 3),
         'all_subattachments_count' => $subCount,
+        'subblock_photo_urls' => $subBlockPhotoUrls,
+        'subblock_file_ids' => $subBlockFileIds,
+        'subblock_dump' => $subBlock,
     );
 }
 
