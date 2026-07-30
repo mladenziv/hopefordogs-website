@@ -655,14 +655,17 @@
       .adopt-requirements-inner,
       .adopt-cta-inner { padding: 0 20px; }
       /* Consistent, tighter section spacing on mobile (like the over-ons page) */
-      /* Cost section gets 24px more room above + below to stand out. */
-      .adopt-costs { padding: 72px 0; }
+      .adopt-costs { padding: 48px 0; }
       /* Other sections: trim 12px off the top so the heading sits tighter. */
       .adopt-steps { padding: 36px 0 48px; }
       .adopt-origin { padding: 36px 0 48px; }
       .adopt-timeline { padding: 36px 0 48px; }
       .adopt-requirements { padding: 36px 0 48px; }
       .adopt-cta { padding: 36px 0 48px; }
+      /* +12px of breathing room above & below the "+" between the two cost items. */
+      .costs-plus { padding: 16px 0; }
+      /* Steps: the gap below the intro was larger than the space above it. */
+      .adopt-steps-header { margin-bottom: 28px; }
       .origin-grid { grid-template-columns: 1fr; }
       /* Single column on phones so step cards can't overflow (grid items were
          held wider than the viewport by their min-content width). */
@@ -885,7 +888,7 @@
 
   </main>
   <div id="footer-placeholder"></div>
-  <script src="components.js?v=27"></script>
+  <script src="components.js?v=28"></script>
   <script src="supabase-config.js"></script>
 </body>
 </html>

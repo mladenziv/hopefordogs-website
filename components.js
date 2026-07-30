@@ -598,20 +598,26 @@ document.addEventListener('DOMContentLoaded', function () {
     var nav = document.querySelector('.nav');
     if (nav) {
       var navScrolled = false;
+      var lastNavY = window.scrollY;
       function updateNavScroll() {
         // Don't update nav scroll state while a Vaul sheet is open —
         // the wrapper becomes position:fixed which drops scrollY to 0
         if (document.body.classList.contains('vaul-sheet-open')) return;
-        var shouldScroll = window.scrollY > 10;
-        if (shouldScroll !== navScrolled) {
-          navScrolled = shouldScroll;
-          if (shouldScroll) {
-            nav.classList.add('nav-scrolled');
-            closeDropdown();
-          } else {
-            nav.classList.remove('nav-scrolled');
-          }
+        var y = window.scrollY;
+        var delta = y - lastNavY;
+        // Collapse when scrolling down; expand again when scrolling up (or near
+        // the top) — so you don't have to reach the very top to get the nav back.
+        var collapse;
+        if (y <= 10) collapse = false;
+        else if (delta < -6) collapse = false;  // scrolled up → expand
+        else if (delta > 6) collapse = true;     // scrolled down → collapse
+        else collapse = navScrolled;             // tiny move → keep current state
+        if (collapse !== navScrolled) {
+          navScrolled = collapse;
+          if (collapse) { nav.classList.add('nav-scrolled'); closeDropdown(); }
+          else { nav.classList.remove('nav-scrolled'); }
         }
+        lastNavY = y;
       }
       window.addEventListener('scroll', updateNavScroll, { passive: true });
       // Check initial scroll position (e.g. page reload while scrolled)
@@ -1500,7 +1506,7 @@ document.addEventListener('DOMContentLoaded', function () {
 .h4d-lt-btn:hover{filter:brightness(.95);}
 .h4d-lt-dismiss{flex:0 0 auto;align-self:center;width:38px;height:38px;border-radius:999px;background:#fff;border:1.5px solid rgba(0,0,0,.18);color:#777;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;font-family:inherit;}
 .h4d-lt-dismiss:hover{border-color:rgba(0,0,0,.34);color:#444;}
-@media (max-width:520px){.h4d-lottery-toast{left:12px;right:12px;bottom:12px;transform:translateY(180%);width:auto;padding:12px;gap:9px;}.h4d-lottery-toast.show{transform:translateY(0);}.h4d-lt-btn{padding:8px 12px;font-size:12.5px;}.h4d-lt-dismiss{width:34px;height:34px;font-size:13px;}}
+@media (max-width:520px){.h4d-lottery-toast{left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateY(220%);width:auto;padding:12px;gap:9px;}.h4d-lottery-toast.show{transform:translateY(0);}.h4d-lt-btn{padding:9px 13px;font-size:12.5px;}.h4d-lt-dismiss{width:40px;height:40px;font-size:14px;-webkit-tap-highlight-color:rgba(0,0,0,.1);}}
 .h4d-lottery-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s;font-family:'Manrope',sans-serif;}
 .h4d-lottery-overlay.open{opacity:1;pointer-events:auto;}
 .h4d-lottery-modal{background:#fff;border-radius:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:28px;position:relative;transform:translateY(16px);transition:transform .25s;}
@@ -1555,7 +1561,7 @@ document.addEventListener('DOMContentLoaded', function () {
 .h4d-lm-donors h4{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:#999;margin:0 0 8px;}
 .h4d-lm-donors .row{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.06);}
 .h4d-lm-donors .row .amt{font-weight:700;color:var(--brand,#ff5314);}
-@media (max-width:520px){.h4d-lottery-overlay{align-items:flex-end;padding:0;}.h4d-lottery-modal{max-width:none;border-radius:24px 24px 0 0;max-height:92vh;transform:translateY(100%);}.h4d-lm-fields{flex-direction:column;}}
+@media (max-width:520px){.h4d-lottery-overlay{align-items:flex-end;padding:0;}.h4d-lottery-modal{max-width:none;border-radius:24px 24px 0 0;max-height:88vh;max-height:88dvh;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));transform:translateY(100%);}.h4d-lm-fields{flex-direction:column;}.h4d-lm-close{width:40px;height:40px;-webkit-tap-highlight-color:rgba(0,0,0,.1);}}
 `;
     var style = document.createElement('style');
     style.id = 'h4d-lottery-css';
