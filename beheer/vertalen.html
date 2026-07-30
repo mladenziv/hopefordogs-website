@@ -87,7 +87,7 @@
     var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
     // MyMemory optional email raises the free daily word limit (param name is literally "de").
     var MM_EMAIL = 'info@hopefordogseurope.com';
-    var THROTTLE_MS = 1100;   // be gentle with the free API
+    var THROTTLE_MS = 1600;   // be gentle with the free API (avoid 429 rate limits)
     var MAX_Q = 450;          // MyMemory anon query length limit (chars)
 
     // Which fields each table translates, and whether the field is HTML.
@@ -128,20 +128,39 @@
     function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
     // ---- MyMemory ----
-    var QUOTA_HIT = false;
+    var QUOTA_HIT = false;   // daily word limit reached -> stop for today
+    var RATE_STOP = false;   // rate-limited (429) even after backoff -> pause the run
     async function mmGet(text, to) {
       var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) +
                 '&langpair=nl|' + to + '&de=' + encodeURIComponent(MM_EMAIL);
-      var r = await fetch(url);
-      if (!r.ok) throw new Error('MyMemory HTTP ' + r.status);
-      var j = await r.json();
-      var t = j && j.responseData && j.responseData.translatedText;
-      if (t == null) throw new Error('No translation returned');
-      if (/MYMEMORY WARNING|YOU USED ALL AVAILABLE FREE|QUERY LENGTH LIMIT/i.test(t)) {
-        QUOTA_HIT = true;
-        throw new Error('MyMemory quota/limit: ' + t.slice(0, 120));
+      var attempt = 0;
+      while (true) {
+        var r = null;
+        try { r = await fetch(url); } catch (e) { r = null; }
+        // Success
+        if (r && r.ok) {
+          var j = await r.json();
+          var t = j && j.responseData && j.responseData.translatedText;
+          if (t == null) throw new Error('Geen vertaling ontvangen');
+          if (/MYMEMORY WARNING|YOU USED ALL AVAILABLE FREE/i.test(t)) {
+            QUOTA_HIT = true;
+            throw new Error('Dagelijkse vertaallimiet bereikt. Probeer het morgen opnieuw.');
+          }
+          if (/QUERY LENGTH LIMIT/i.test(t)) throw new Error('Tekstfragment te lang voor MyMemory');
+          return t;
+        }
+        // Rate limited (429), server error (5xx), or network hiccup -> back off and retry
+        var status = r ? r.status : 0;
+        if (status === 429 || status >= 500 || status === 0) {
+          attempt++;
+          if (attempt > 5) { RATE_STOP = true; throw new Error('MyMemory blijft rate-limiten (429). Even pauzeren en later opnieuw starten.'); }
+          var wait = Math.min(60000, 3000 * Math.pow(2, attempt - 1)); // 3s, 6s, 12s, 24s, 48s
+          log('  … MyMemory ' + (status || 'netwerk') + ' — ' + Math.round(wait / 1000) + 's wachten en opnieuw proberen (poging ' + attempt + '/5)', 'warn');
+          await sleep(wait);
+          continue;
+        }
+        throw new Error('MyMemory HTTP ' + status);
       }
-      return t;
     }
     // Split a long string into <=max-char chunks at word boundaries (keeps spacing).
     function chunk(s, max) {
@@ -209,6 +228,7 @@
 
       for (var i = 0; i < rows.length; i++) {
         if (QUOTA_HIT) { log('Gestopt: dagelijkse vertaallimiet bereikt. Probeer het morgen opnieuw.', 'warn'); break; }
+        if (RATE_STOP) { log('Gepauzeerd: MyMemory limiteert het tempo (429). Wacht een minuut en klik opnieuw — al vertaalde rijen worden overgeslagen.', 'warn'); break; }
         var row = rows[i];
         var label = row.naam || row.title || row.dog_name || row.id;
         var patch = {};
@@ -234,7 +254,7 @@
         } catch (e) {
           failed++;
           log('  ✗ ' + label + '  ' + e.message, 'err');
-          if (QUOTA_HIT) break;
+          if (QUOTA_HIT || RATE_STOP) break;
         }
       }
       statusEl.textContent = 'klaar — ' + updated + ' bijgewerkt, ' + skipped + ' overgeslagen' + (failed ? ', ' + failed + ' mislukt' : '');
