@@ -302,33 +302,42 @@
         // (lte on the timestamp excludes both NULL drafts and future/scheduled rows.)
         var nowIso = encodeURIComponent(new Date().toISOString());
         var posts = await supabaseGet('posts', 'select=*&published_at=lte.' + nowIso + '&order=published_at.desc');
-
-        if (!posts || posts.length === 0) {
-          timeline.innerHTML = '<div class="empty-state"><p>Er zijn nog geen nieuwsberichten geplaatst.</p></div>';
-          return;
-        }
-
-        timeline.innerHTML = posts.map(function(post) {
-          var img = post.photo_url || '';
-          var date = formatDate(post.published_at || post.created_at);
-          var excerpt = post.excerpt || '';
-
-          return '<a href="post.html?id=' + post.id + '" class="blog-post">' +
-            '<div class="blog-dot"></div>' +
-            (img ? '<img src="' + img + '" alt="' + escapeHtml(post.title).replace(/"/g, '&quot;') + '" class="blog-post-img" loading="lazy">' : '') +
-            '<div class="blog-post-content">' +
-              '<div class="blog-post-date t-body-sm">' + date + '</div>' +
-              '<div class="blog-post-title t-heading-sm">' + escapeHtml(post.title) + '</div>' +
-              '<div class="blog-post-excerpt t-body-sm">' + escapeHtml(excerpt) + '</div>' +
-              '<span class="blog-post-link">Lees meer <svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>' +
-            '</div>' +
-          '</a>';
-        }).join('');
+        window._posts = posts;
+        renderPosts();
       } catch (err) {
         console.error('Error loading posts:', err);
-        timeline.innerHTML = '<div class="empty-state"><p>Er is een fout opgetreden bij het laden.</p></div>';
+        timeline.innerHTML = '<div class="empty-state"><p>' + h4dT('blog.error') + '</p></div>';
       }
     }
+
+    function renderPosts() {
+      var timeline = document.getElementById('blogTimeline');
+      var posts = window._posts;
+      if (!posts || posts.length === 0) {
+        timeline.innerHTML = '<div class="empty-state"><p>' + h4dT('blog.empty') + '</p></div>';
+        return;
+      }
+      timeline.innerHTML = posts.map(function(post) {
+        var img = post.photo_url || '';
+        var date = formatDate(post.published_at || post.created_at);
+        var title = h4dField(post, 'title') || '';
+        var excerpt = h4dField(post, 'excerpt') || '';
+
+        return '<a href="post.html?id=' + post.id + '" class="blog-post">' +
+          '<div class="blog-dot"></div>' +
+          (img ? '<img src="' + img + '" alt="' + escapeHtml(title).replace(/"/g, '&quot;') + '" class="blog-post-img" loading="lazy">' : '') +
+          '<div class="blog-post-content">' +
+            '<div class="blog-post-date t-body-sm">' + date + '</div>' +
+            '<div class="blog-post-title t-heading-sm">' + escapeHtml(title) + '</div>' +
+            '<div class="blog-post-excerpt t-body-sm">' + escapeHtml(excerpt) + '</div>' +
+            '<span class="blog-post-link">' + h4dT('blog.readmore') + ' <svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>' +
+          '</div>' +
+        '</a>';
+      }).join('');
+    }
+
+    // Re-render in the new language when the visitor switches language.
+    window.h4dRerender = renderPosts;
 
     loadPosts();
   </script>

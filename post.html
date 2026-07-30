@@ -206,14 +206,14 @@
   <!-- Loading -->
   <div class="loading-screen" id="loadingScreen">
     <div class="spinner"></div>
-    <span style="color:var(--dark-2);font-size:15px;">Laden...</span>
+    <span style="color:var(--dark-2);font-size:15px;" data-i18n="dogs.loading">Laden&hellip;</span>
   </div>
 
   <!-- Error -->
   <div class="error-screen" id="errorScreen" style="display:none;">
-    <h2>Bericht niet gevonden</h2>
-    <p>Dit nieuwsbericht bestaat niet of is verwijderd.</p>
-    <a href="nieuws.html" class="btn-primary">Terug naar nieuws</a>
+    <h2 data-i18n="blog.notfoundTitle">Bericht niet gevonden</h2>
+    <p data-i18n="blog.notfound">Dit nieuwsbericht bestaat niet of is verwijderd.</p>
+    <a href="nieuws.html" class="btn-primary" data-i18n="blog.back">Terug naar nieuws</a>
   </div>
 
   <!-- Post Detail -->
@@ -283,18 +283,23 @@
           return;
         }
 
-        document.title = post.title + ' — Nieuws | Hope for Dogs';
-        var postDesc = post.excerpt ? post.excerpt.substring(0, 140) : post.content ? post.content.substring(0, 140) : 'Lees het laatste nieuws van Hope for Dogs.';
+        // Language-aware content (falls back to Dutch when a translation is missing).
+        var title = h4dField(post, 'title') || '';
+        var excerpt = h4dField(post, 'excerpt') || '';
+        var content = h4dField(post, 'content') || '';
+
+        document.title = title + ' — Nieuws | Hope for Dogs';
+        var postDesc = excerpt ? excerpt.substring(0, 140) : content ? content.substring(0, 140) : 'Lees het laatste nieuws van Hope for Dogs.';
         document.querySelector('meta[name="description"]').setAttribute('content', postDesc);
-        document.querySelector('meta[property="og:title"]').setAttribute('content', post.title + ' — Nieuws | Hope for Dogs');
+        document.querySelector('meta[property="og:title"]').setAttribute('content', title + ' — Nieuws | Hope for Dogs');
         document.querySelector('meta[property="og:description"]').setAttribute('content', postDesc);
         if (post.photo_url) {
           document.querySelector('meta[property="og:image"]').setAttribute('content', post.photo_url);
         }
 
         document.getElementById('postDate').textContent = formatDate(post.published_at || post.created_at);
-        document.getElementById('postTitle').textContent = post.title;
-        document.getElementById('breadcrumbName').textContent = post.title;
+        document.getElementById('postTitle').textContent = title;
+        document.getElementById('breadcrumbName').textContent = title;
 
         // JSON-LD: BreadcrumbList schema
         var bcSchema = document.createElement('script');
@@ -305,12 +310,12 @@
           "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.hopefordogseurope.com/"},
             {"@type": "ListItem", "position": 2, "name": "Nieuws", "item": "https://www.hopefordogseurope.com/nieuws.html"},
-            {"@type": "ListItem", "position": 3, "name": post.title}
+            {"@type": "ListItem", "position": 3, "name": title}
           ]
         });
         document.head.appendChild(bcSchema);
         var contentEl = document.getElementById('postContent');
-        var rawContent = post.content || post.excerpt || '';
+        var rawContent = content || excerpt || '';
         var isHTML = /<[a-z][\s\S]*>/i.test(rawContent);
         if (isHTML) {
           contentEl.innerHTML = rawContent;
@@ -323,7 +328,7 @@
         if (post.photo_url) {
           var img = document.getElementById('postImg');
           img.src = post.photo_url;
-          img.alt = post.title;
+          img.alt = title;
           img.style.display = 'block';
         }
 
@@ -336,12 +341,12 @@
         articleSchema.textContent = JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Article",
-          "headline": post.title,
+          "headline": title,
           "datePublished": post.published_at || post.created_at,
           "image": post.photo_url || '',
           "author": {"@type": "Organization", "name": "Hope for Dogs"},
           "publisher": {"@type": "Organization", "name": "Hope for Dogs", "logo": {"@type": "ImageObject", "url": "https://www.hopefordogseurope.com/logo.png"}},
-          "description": post.excerpt || (post.content ? post.content.substring(0, 160) : '')
+          "description": excerpt || (content ? content.substring(0, 160) : '')
         });
         document.head.appendChild(articleSchema);
 

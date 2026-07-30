@@ -242,14 +242,14 @@
   <!-- Loading -->
   <div class="loading-screen" id="loadingScreen">
     <div class="spinner"></div>
-    <span style="color:var(--dark-2);font-size:15px;">Laden...</span>
+    <span style="color:var(--dark-2);font-size:15px;" data-i18n="dogs.loading">Laden&hellip;</span>
   </div>
 
   <!-- Error -->
   <div class="error-screen" id="errorScreen" style="display:none;">
-    <h2>Verhaal niet gevonden</h2>
-    <p>Dit verhaal bestaat niet of is verwijderd.</p>
-    <a href="ervaringen.html" class="btn-primary">Bekijk alle ervaringen</a>
+    <h2 data-i18n="exp.notfoundTitle">Verhaal niet gevonden</h2>
+    <p data-i18n="exp.notfound">Dit verhaal bestaat niet of is verwijderd.</p>
+    <a href="ervaringen.html" class="btn-primary" data-i18n="exp.back">Bekijk alle ervaringen</a>
   </div>
 
   <!-- Story Detail -->
@@ -434,8 +434,11 @@
         }
 
         var story = stories[0];
+        // Language-aware content (falls back to Dutch when a translation is missing).
+        var description = h4dField(story, 'description') || '';
+        var fullStory = h4dField(story, 'full_story') || '';
         document.title = story.dog_name + ' — Adoptieverhaal | Hope for Dogs';
-        var storyDesc = story.description ? story.description.substring(0, 140) : 'Lees het adoptieverhaal van ' + story.dog_name;
+        var storyDesc = description ? description.substring(0, 140) : 'Lees het adoptieverhaal van ' + story.dog_name;
         document.querySelector('meta[name="description"]').setAttribute('content', storyDesc);
         document.querySelector('meta[property="og:title"]').setAttribute('content', story.dog_name + ' — Adoptieverhaal | Hope for Dogs');
         document.querySelector('meta[property="og:description"]').setAttribute('content', storyDesc);
@@ -459,8 +462,8 @@
           ]
         });
         document.head.appendChild(bcSchema);
-        document.getElementById('storyAdopter').textContent = story.adopter_name ? 'Geadopteerd door ' + story.adopter_name : '';
-        document.getElementById('storyText').textContent = story.full_story || story.description || '';
+        document.getElementById('storyAdopter').textContent = story.adopter_name ? h4dT('exp.adoptedBy') + ' ' + story.adopter_name : '';
+        document.getElementById('storyText').textContent = fullStory || description || '';
 
         // Load photos
         var photos = [];
@@ -497,7 +500,7 @@
           "image": images.length > 0 ? images[0] : '',
           "author": {"@type": "Organization", "name": "Hope for Dogs"},
           "publisher": {"@type": "Organization", "name": "Hope for Dogs", "logo": {"@type": "ImageObject", "url": "https://www.hopefordogseurope.com/logo.png"}},
-          "description": story.description || ''
+          "description": description || ''
         });
         document.head.appendChild(storySchema);
 

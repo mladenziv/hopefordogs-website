@@ -307,34 +307,42 @@
           '<div class="sk-line" style="width:90%"></div></div></div>';
       }).join('');
       try {
-        // Only the columns the card needs (smaller payload than select=*)
-        var stories = await supabaseGet('stories', 'select=id,photo_url,dog_name,adopter_name,description,sort_order,created_at&order=sort_order.asc.nullslast,created_at.desc');
-
-        if (!stories || stories.length === 0) {
-          grid.innerHTML = '<div class="empty-state"><p>Er zijn nog geen ervaringen gedeeld.</p></div>';
-          return;
-        }
-
-        grid.innerHTML = stories.map(function(story, i) {
-          var raw = story.photo_url || 'images/placeholder-dog.svg';
-          var desc = story.description || '';
-          var adopter = story.adopter_name || '';
-          // First 3 load eagerly (above the fold); the rest lazy + async decode
-          var loadAttr = i < 3 ? 'eager' : 'lazy';
-          return '<a href="ervaring.html?id=' + story.id + '" class="testimonial-card" style="animation-delay:' + (i * 0.05) + 's">' +
-            '<img src="' + raw + '" alt="' + escapeAttr(story.dog_name) + '" class="testimonial-card-img" loading="' + loadAttr + '" decoding="async">' +
-            '<div class="testimonial-card-body">' +
-              '<div class="testimonial-card-name t-heading-sm">' + escapeHtml(story.dog_name) + '</div>' +
-              (adopter ? '<div class="testimonial-card-adopter">' + escapeHtml(adopter) + '</div>' : '') +
-              '<div class="testimonial-card-desc t-body-sm">' + escapeHtml(desc) + '</div>' +
-            '</div>' +
-          '</a>';
-        }).join('');
+        // Only the columns the card needs (smaller payload than select=*), incl. translations
+        var stories = await supabaseGet('stories', 'select=id,photo_url,dog_name,adopter_name,description,description_de,description_en,sort_order,created_at&order=sort_order.asc.nullslast,created_at.desc');
+        window._stories = stories;
+        renderStories();
       } catch (err) {
         console.error('Error loading stories:', err);
-        grid.innerHTML = '<div class="empty-state"><p>Er is een fout opgetreden bij het laden.</p></div>';
+        grid.innerHTML = '<div class="empty-state"><p>' + h4dT('exp.error') + '</p></div>';
       }
     }
+
+    function renderStories() {
+      var grid = document.getElementById('storiesGrid');
+      var stories = window._stories;
+      if (!stories || stories.length === 0) {
+        grid.innerHTML = '<div class="empty-state"><p>' + h4dT('exp.empty') + '</p></div>';
+        return;
+      }
+      grid.innerHTML = stories.map(function(story, i) {
+        var raw = story.photo_url || 'images/placeholder-dog.svg';
+        var desc = h4dField(story, 'description') || '';
+        var adopter = story.adopter_name || '';
+        // First 3 load eagerly (above the fold); the rest lazy + async decode
+        var loadAttr = i < 3 ? 'eager' : 'lazy';
+        return '<a href="ervaring.html?id=' + story.id + '" class="testimonial-card" style="animation-delay:' + (i * 0.05) + 's">' +
+          '<img src="' + raw + '" alt="' + escapeAttr(story.dog_name) + '" class="testimonial-card-img" loading="' + loadAttr + '" decoding="async">' +
+          '<div class="testimonial-card-body">' +
+            '<div class="testimonial-card-name t-heading-sm">' + escapeHtml(story.dog_name) + '</div>' +
+            (adopter ? '<div class="testimonial-card-adopter">' + escapeHtml(adopter) + '</div>' : '') +
+            '<div class="testimonial-card-desc t-body-sm">' + escapeHtml(desc) + '</div>' +
+          '</div>' +
+        '</a>';
+      }).join('');
+    }
+
+    // Re-render in the new language when the visitor switches language.
+    window.h4dRerender = renderStories;
 
     function escapeHtml(str) {
       var div = document.createElement('div');

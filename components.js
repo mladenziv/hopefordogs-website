@@ -367,6 +367,23 @@ var H4D_I18N = {
   'dog.notfound':  { nl: 'Hond niet gevonden.', de: 'Hund nicht gefunden.', en: 'Dog not found.' },
   'dogs.none':     { nl: 'Nog geen honden beschikbaar.', de: 'Noch keine Hunde verfügbar.', en: 'No dogs available yet.' },
 
+  // --- Blog / news ---
+  'blog.readmore': { nl: 'Lees meer', de: 'Weiterlesen', en: 'Read more' },
+  'blog.empty':    { nl: 'Er zijn nog geen nieuwsberichten geplaatst.', de: 'Es wurden noch keine Neuigkeiten veröffentlicht.', en: 'No news posts yet.' },
+  'blog.error':    { nl: 'Er is een fout opgetreden bij het laden.', de: 'Beim Laden ist ein Fehler aufgetreten.', en: 'Something went wrong while loading.' },
+  'blog.back':     { nl: 'Terug naar nieuws', de: 'Zurück zu den Neuigkeiten', en: 'Back to news' },
+  'blog.notfoundTitle': { nl: 'Bericht niet gevonden', de: 'Beitrag nicht gefunden', en: 'Post not found' },
+  'blog.notfound': { nl: 'Dit nieuwsbericht bestaat niet of is verwijderd.', de: 'Dieser Beitrag existiert nicht oder wurde entfernt.', en: 'This post doesn’t exist or has been removed.' },
+
+  // --- Experiences (stories) ---
+  'exp.readmore':  { nl: 'Lees het verhaal', de: 'Geschichte lesen', en: 'Read the story' },
+  'exp.empty':     { nl: 'Er zijn nog geen ervaringen gedeeld.', de: 'Es wurden noch keine Erfahrungen geteilt.', en: 'No experiences shared yet.' },
+  'exp.error':     { nl: 'Er is een fout opgetreden bij het laden.', de: 'Beim Laden ist ein Fehler aufgetreten.', en: 'Something went wrong while loading.' },
+  'exp.back':      { nl: 'Bekijk alle ervaringen', de: 'Alle Erfahrungen ansehen', en: 'View all experiences' },
+  'exp.notfoundTitle': { nl: 'Verhaal niet gevonden', de: 'Geschichte nicht gefunden', en: 'Story not found' },
+  'exp.notfound':  { nl: 'Dit verhaal bestaat niet of is verwijderd.', de: 'Diese Geschichte existiert nicht oder wurde entfernt.', en: 'This story doesn’t exist or has been removed.' },
+  'exp.adoptedBy': { nl: 'Geadopteerd door', de: 'Adoptiert von', en: 'Adopted by' },
+
   // --- Dog detail meta labels (modal + hond.html) ---
   'dog.meta.geslacht':   { nl: 'Geslacht', de: 'Geschlecht', en: 'Sex' },
   'dog.meta.leeftijd':   { nl: 'Leeftijd', de: 'Alter', en: 'Age' },
