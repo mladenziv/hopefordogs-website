@@ -2166,7 +2166,7 @@
                         var key = isXS ? shortKey : fullKey;
                         var t = H4D_I18N[key];
                         if (!t) return;
-                        var lang = localStorage.getItem("h4d-lang") || "nl";
+                        var lang = h4dGetLanguage();
                         tab.textContent = t[lang] || t.nl;
                     });
                 }

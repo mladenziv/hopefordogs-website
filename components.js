@@ -155,7 +155,7 @@ var H4D_I18N = {
   'honden.cta.contact':  { nl: 'Neem contact op',  de: 'Kontaktiere uns',   en: 'Get in touch' },
 
   'overons.hero':    { nl: 'Een klein team. Een grote missie.', de: 'Ein kleines Team. Eine große Mission.', en: 'A small team. A big mission.' },
-  'adoptie.hero':    { nl: 'Geef een hond<br>een tweede kans', de: 'Gib einem Hund<br>eine zweite Chance', en: 'Give a dog<br>a second chance' },
+  'adoptie.hero':    { nl: 'Waar hoop een thuis vindt', de: 'Wo Hoffnung ein Zuhause findet', en: 'Where hope finds a home' },
   'ervaringen.hero': { nl: 'Van straat naar warm nestje', de: 'Von der Stra\u00DFe ins warme Nest', en: 'From street to loving home' },
   'nieuws.hero':     { nl: 'Actueel', de: 'Aktuell', en: 'News' },
   'doneer.hero':     { nl: 'Help onze honden', de: 'Hilf unseren Hunden', en: 'Help our dogs' },
@@ -250,7 +250,7 @@ var H4D_I18N = {
   'overons.cta.btn2': { nl: 'Bekijk onze honden', de: 'Unsere Hunde ansehen', en: 'View our dogs' },
 
   // --- Adoptie page ---
-  'adoptie.hero.sub':  { nl: 'Elke hond in ons asiel is gered, medisch behandeld en klaar voor een nieuw begin. Het adoptieproces is zorgvuldig opgezet om de beste match te vinden \u2014 voor de hond \u00E9n voor jou.', de: 'Jeder Hund in unserem Tierheim wurde gerettet, medizinisch versorgt und ist bereit f\u00FCr einen Neuanfang. Der Adoptionsprozess ist sorgf\u00E4ltig aufgebaut, um die beste \u00DCbereinstimmung zu finden \u2014 f\u00FCr den Hund und f\u00FCr Sie.', en: 'Every dog in our shelter has been rescued, medically treated, and is ready for a new beginning. The adoption process is carefully designed to find the best match \u2014 for the dog and for you.' },
+  'adoptie.hero.sub':  { nl: 'Hun start was niet eerlijk, maar hun toekomst kan dat w\u00E9l zijn.', de: 'Ihr Anfang war nicht fair, aber ihre Zukunft kann es sein.', en: 'Their start wasn\u2019t fair, but their future can be.' },
   'adoptie.bekijk':    { nl: 'Onze honden', de: 'Unsere Hunde', en: 'Our dogs' },
   'adoptie.waarom':    { nl: 'Waarom adopteren via Hart voor Hond?', de: 'Warum \u00FCber Hope for Dogs adoptieren?', en: 'Why adopt through Hope for Dogs?' },
   'adoptie.waarom.sub':{ nl: 'Wij redden honden van de straat in Bosni\u00EB en Servi\u00EB, geven ze medische zorg en zoeken een warm thuis. Een adoptie via ons is geen impulsaankoop \u2014 het is een bewuste keuze die een leven redt en plek vrijmaakt voor de volgende hond in nood.', de: 'Wir retten Hunde von der Stra\u00DFe in Bosnien und Serbien, geben ihnen medizinische Versorgung und suchen ein warmes Zuhause. Eine Adoption \u00FCber uns ist kein Impulskauf \u2014 es ist eine bewusste Entscheidung, die ein Leben rettet und Platz f\u00FCr den n\u00E4chsten Hund in Not schafft.', en: 'We rescue dogs from the streets in Bosnia and Serbia, give them medical care, and find them a warm home. Adopting through us is not an impulse buy \u2014 it is a conscious choice that saves a life and makes room for the next dog in need.' },
@@ -462,8 +462,7 @@ var H4D_I18N = {
 
 function h4dGetLanguage() {
   var m = location.pathname.match(/^\/(en|de)(\/|$)/);
-  if (m) return m[1];
-  return localStorage.getItem('h4d-lang') || 'nl';
+  return m ? m[1] : 'nl';
 }
 
 // Translate a static UI key for JS-rendered strings. Falls back to Dutch, then the key itself.
