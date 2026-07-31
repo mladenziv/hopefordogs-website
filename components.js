@@ -155,7 +155,7 @@ var H4D_I18N = {
   'honden.cta.contact':  { nl: 'Neem contact op',  de: 'Kontaktiere uns',   en: 'Get in touch' },
 
   'overons.hero':    { nl: 'Een klein team. Een grote missie.', de: 'Ein kleines Team. Eine große Mission.', en: 'A small team. A big mission.' },
-  'adoptie.hero':    { nl: 'Waar hoop een thuis vindt', de: 'Wo Hoffnung ein Zuhause findet', en: 'Where hope finds a home' },
+  'adoptie.hero':    { nl: 'Adopteer een buitenlandse hond en geef hoop een thuis', de: 'Adoptiere einen Hund aus dem Ausland und schenke Hoffnung ein Zuhause', en: 'Adopt a dog from abroad and give hope a home' },
   'ervaringen.hero': { nl: 'Van straat naar warm nestje', de: 'Von der Stra\u00DFe ins warme Nest', en: 'From street to loving home' },
   'nieuws.hero':     { nl: 'Actueel', de: 'Aktuell', en: 'News' },
   'doneer.hero':     { nl: 'Help onze honden', de: 'Hilf unseren Hunden', en: 'Help our dogs' },
@@ -541,8 +541,8 @@ var H4D_PAGE_SEO = {
     desc: { nl: 'Leer meer over Hope for Dogs, een non-profit die straathonden redt in Bosnië en Servië. Ons team van vrijwilligers zet zich dag en nacht in voor een beter leven.', de: 'Erfahre mehr über Hope for Dogs, eine gemeinnützige Organisation, die Streunerhunde in Bosnien und Serbien rettet. Unser Team aus Freiwilligen setzt sich Tag und Nacht für ein besseres Leben ein.', en: 'Learn more about Hope for Dogs, a non-profit rescuing stray dogs in Bosnia and Serbia. Our team of volunteers works day and night for a better life.' }
   },
   'adoptie': {
-    title: { nl: 'Hond Adopteren — Procedure, Kosten & Stappen | Hope for Dogs', de: 'Hund Adoptieren — Ablauf, Kosten & Schritte | Hope for Dogs', en: 'Adopt a Dog — Process, Costs & Steps | Hope for Dogs' },
-    desc: { nl: 'Ontdek hoe je een hond adopteert via Hope for Dogs. Adoptievergoeding €230 + transport €200. Stap voor stap begeleiden we je door het hele proces.', de: 'Erfahre, wie du über Hope for Dogs einen Hund adoptierst. Adoptionsgebühr 230 € + Transport 200 €. Wir begleiten dich Schritt für Schritt durch den gesamten Prozess.', en: 'Find out how to adopt a dog through Hope for Dogs. Adoption fee €230 + transport €200. We guide you step by step through the whole process.' }
+    title: { nl: 'Buitenlandse Hond Adopteren uit Bosnië & Servië | Hope for Dogs', de: 'Hund aus dem Ausland adoptieren — aus Bosnien & Serbien | Hope for Dogs', en: 'Adopt a Dog from Abroad — from Bosnia & Serbia | Hope for Dogs' },
+    desc: { nl: 'Een buitenlandse straathond uit Bosnië of Servië adopteren? Ontdek het proces, de kosten (€230 + €200 transport) en hoe wij alles regelen. Bekijk onze honden.', de: 'Einen Straßenhund aus dem Ausland (Bosnien/Serbien) adoptieren? Ablauf, Kosten (230 € + 200 € Transport) und wie wir alles organisieren. Entdecke unsere Hunde.', en: 'Adopt a foreign street dog from Bosnia or Serbia? Discover the process, the costs (€230 + €200 transport) and how we arrange everything. Browse our dogs.' }
   },
   'ervaringen': {
     title: { nl: 'Adoptieverhalen — Ervaringen van Adoptanten | Hope for Dogs', de: 'Adoptionsgeschichten — Erfahrungen von Adoptanten | Hope for Dogs', en: 'Adoption Stories — Experiences from Adopters | Hope for Dogs' },
