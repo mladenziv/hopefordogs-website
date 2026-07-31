@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteBase /
+
+# Stale Google sitelink pointing to a page that never existed on this site
+RewriteRule ^hondenblog2/?$ /nieuws.html [R=301,L,NC]
+
+# Extension-less requests (e.g. /honden, /contact) for a page that exists as .html
+# -> redirect there instead of 404. Skips API/admin/asset paths.
+RewriteCond %{REQUEST_URI} !^/(api|beheer|db|scripts|backups|images|fonts)/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+RewriteRule ^([^/]+)/?$ /$1.html [R=301,L]
