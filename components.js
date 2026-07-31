@@ -1,3 +1,27 @@
+// ===== ANALYTICS (Umami, cookieless — no cookie banner needed) =====
+// Loaded once here so it covers every public page that includes components.js.
+// Not present on the beheer admin bundle, so staff visits don't pollute stats.
+(function () {
+  if (window.__h4dUmamiLoaded) return;
+  window.__h4dUmamiLoaded = true;
+  var s = document.createElement('script');
+  s.defer = true;
+  s.src = 'https://cloud.umami.is/script.js';
+  s.setAttribute('data-website-id', '641dd53e-e827-4797-85fb-4878a2640b56');
+  (document.head || document.documentElement).appendChild(s);
+})();
+
+// h4dTrack(name[, data]) — fire a Umami custom event if the tracker is loaded.
+// Safe no-op when analytics is blocked or still loading.
+function h4dTrack(name, data) {
+  try {
+    if (window.umami && typeof window.umami.track === 'function') {
+      data ? window.umami.track(name, data) : window.umami.track(name);
+    }
+  } catch (e) {}
+}
+window.h4dTrack = h4dTrack;
+
 // ===== TRANSLATION SYSTEM =====
 var H4D_I18N = {
   // --- Nav ---

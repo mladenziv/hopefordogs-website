@@ -141,7 +141,7 @@
 
   <div id="footer-placeholder"></div>
 
-  <script src="components.js?v=30"></script>
+  <script src="components.js?v=31"></script>
   <script>
     (function () {
       var checking  = document.getElementById('state-checking');
@@ -264,7 +264,11 @@
           donorEmail = (data && data.email) || '';
           if (data && (data.type === 'lottery' || data.type === 'fundraiser')) { isLotteryPayment = true; campaignType = data.type; }
           lotteryNumbers = (data && data.numbers) || lotteryNumbers;
-          handleStatus(data && data.status);
+          var st = data && data.status;
+          if (st === 'paid' || st === 'authorized') {
+            window.h4dTrack && window.h4dTrack('payment-complete', { type: campaignType || 'donation' });
+          }
+          handleStatus(st);
         })
         .catch(function () {
           // Network/API hiccup — don't punish the donor; show thank-you.

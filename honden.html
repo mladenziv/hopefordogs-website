@@ -1852,7 +1852,7 @@
             </div>
         </div>
 
-        <script src="components.js?v=30"></script>
+        <script src="components.js?v=31"></script>
         <!-- ============ SUPABASE ============ -->
         <script src="supabase-config.js"></script>
         <script src="dog-card.js?v=4"></script>
@@ -2680,6 +2680,7 @@
                         document.getElementById(
                             "contactSuccess",
                         ).style.display = "block";
+                        window.h4dTrack && window.h4dTrack("contact-submit", { source: "dog-modal" });
                     } catch (err) {
                         console.error("Contact form error:", err);
                         alert(t("dog.inquiry.error"));

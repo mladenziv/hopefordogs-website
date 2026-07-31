@@ -229,7 +229,7 @@
   <div id="footer-placeholder"></div>
 
   <script src="supabase-config.js"></script>
-  <script src="components.js?v=30"></script>
+  <script src="components.js?v=31"></script>
   <script>
     document.getElementById('contactPageForm').addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -253,6 +253,7 @@
         if (res.ok && data.success) {
           document.getElementById('contactPageForm').style.display = 'none';
           document.getElementById('cfSuccess').style.display = 'block';
+          window.h4dTrack && window.h4dTrack('contact-submit', { source: 'contact-page' });
         } else {
           alert(data.error || h4dT('dog.inquiry.error'));
           btn.disabled = false;

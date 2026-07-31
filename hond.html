@@ -567,7 +567,7 @@
     </div>
   </div>
 
-  <script src="components.js?v=30"></script>
+  <script src="components.js?v=31"></script>
 
   <!-- ============ SUPABASE ============ -->
   <script src="supabase-config.js"></script>
@@ -897,6 +897,7 @@
 
           form.style.display = 'none';
           document.getElementById('contactSuccess').style.display = 'block';
+          window.h4dTrack && window.h4dTrack('contact-submit', { source: 'dog-page' });
         } catch (err) {
           console.error('Contact form error:', err);
           alert(h4dT('dog.inquiry.error'));
