@@ -49,7 +49,9 @@ function ssr_get($path) {
     ]);
     $res = curl_exec($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    // No curl_close(): it's a no-op since PHP 8.0 and deprecated in 8.5 (the handle
+    // is freed automatically). Calling it would emit a Deprecated warning that could
+    // leak into the served HTML on a PHP 8.5+ host with display_errors on.
     if ($code < 200 || $code >= 300) return null;
     $j = json_decode($res, true);
     return is_array($j) ? $j : null;

@@ -27,6 +27,8 @@ RewriteRule ^sitemap-dogs\.xml$ sitemap-dogs.xml.php [L]
 # injects real per-dog tags/content and falls back to the raw hond.html template
 # on any failure (Supabase down/slow, missing id) -> worst case = today's behaviour.
 RewriteRule ^hond\.html$ hond.php [L]
+RewriteRule ^post\.html$ post.php [L]
+RewriteRule ^honden\.html$ honden.php [L]
 
 # Extension-less requests (e.g. /honden, /contact) for a page that exists as .html
 # -> redirect there instead of 404. Skips API/admin/asset paths.
