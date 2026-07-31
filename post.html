@@ -197,6 +197,27 @@
       .post-content blockquote { font-size: 20px; }
       .post-section { padding: 144px 20px 60px; }
     }
+
+    /* The "Lees ook" stories and the help CTA both break out wider than the text
+       column (which is max-width 800px) so they line up and have room on one row. */
+    #relatedPosts, .post-cta {
+      width: min(92vw, 920px);
+      margin-left: 50%;
+      transform: translateX(-50%);
+      box-sizing: border-box;
+    }
+    .post-cta {
+      margin-top: 48px;
+      padding: 32px;
+      background: #faf8f4;
+      border-radius: 16px;
+      text-align: center;
+    }
+    .post-cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: nowrap; }
+    @media (max-width: 640px) {
+      #relatedPosts, .post-cta { width: 100%; margin-left: 0; transform: none; }
+      .post-cta-actions { flex-wrap: wrap; }
+    }
   </style>
 </head>
 <body>
@@ -232,10 +253,16 @@
     <img class="post-hero-img" id="postImg" src="" alt="" style="display:none;">
     <div class="post-content" id="postContent"></div>
 
-    <div style="margin-top:48px;padding:32px;background:#faf8f4;border-radius:16px;text-align:center;">
+    <div id="relatedPosts" style="display:none;margin-top:56px;">
+      <h2 class="t-heading-md" style="margin-bottom:20px;" data-i18n="blog.related">Lees ook</h2>
+      <div id="relatedPostsGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;"></div>
+    </div>
+
+    <div class="post-cta">
       <p style="font-size:17px;font-weight:600;color:var(--dark-1);margin-bottom:16px;">Wil jij ook helpen?</p>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <a href="honden.html" class="btn-primary">Bekijk onze honden</a>
+      <div class="post-cta-actions">
+        <a href="honden.html" class="btn-secondary">Bekijk onze honden</a>
+        <a href="adoptie.html" class="btn-secondary">Hond adopteren</a>
         <a href="doneer.html" class="btn-secondary">Steun met een donatie</a>
       </div>
     </div>
@@ -358,10 +385,34 @@
           document.head.appendChild(articleSchema);
         }
 
+        loadRelatedPosts(postId);
+
       } catch (err) {
         console.error('Error loading post:', err);
         showError();
       }
+    }
+
+    // Sibling internal links: show up to 3 other recent published posts. Non-critical
+    // (wrapped so a failure never breaks the post). Funnels authority between posts.
+    async function loadRelatedPosts(currentId) {
+      try {
+        var nowIso = new Date().toISOString();
+        var posts = await supabaseGet('posts', 'select=id,title,title_de,title_en,photo_url,published_at&published_at=lte.' + encodeURIComponent(nowIso) + '&order=published_at.desc&limit=5');
+        if (!posts) return;
+        var others = posts.filter(function (p) { return p.id !== currentId; }).slice(0, 4);
+        if (!others.length) return;
+        document.getElementById('relatedPostsGrid').innerHTML = others.map(function (p) {
+          var t = h4dField(p, 'title') || 'Bericht';
+          var safe = t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+          var img = p.photo_url
+            ? '<img src="' + p.photo_url + '" alt="' + safe + '" loading="lazy" width="400" height="225" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;display:block;">'
+            : '';
+          return '<a href="post.html?id=' + p.id + '" style="text-decoration:none;color:inherit;display:block;">' + img +
+                 '<span style="display:block;margin-top:10px;font-weight:600;font-size:16px;color:var(--dark-1);line-height:1.35;">' + safe + '</span></a>';
+        }).join('');
+        document.getElementById('relatedPosts').style.display = 'block';
+      } catch (e) { /* related posts are non-critical */ }
     }
 
     function showError() {

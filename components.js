@@ -399,6 +399,7 @@ var H4D_I18N = {
   'blog.empty':    { nl: 'Er zijn nog geen nieuwsberichten geplaatst.', de: 'Es wurden noch keine Neuigkeiten veröffentlicht.', en: 'No news posts yet.' },
   'blog.error':    { nl: 'Er is een fout opgetreden bij het laden.', de: 'Beim Laden ist ein Fehler aufgetreten.', en: 'Something went wrong while loading.' },
   'blog.back':     { nl: 'Terug naar nieuws', de: 'Zurück zu den Neuigkeiten', en: 'Back to news' },
+  'blog.related':  { nl: 'Lees ook', de: 'Auch interessant', en: 'Read next' },
   'blog.notfoundTitle': { nl: 'Bericht niet gevonden', de: 'Beitrag nicht gefunden', en: 'Post not found' },
   'blog.notfound': { nl: 'Dit nieuwsbericht bestaat niet of is verwijderd.', de: 'Dieser Beitrag existiert nicht oder wurde entfernt.', en: 'This post doesn’t exist or has been removed.' },
 
