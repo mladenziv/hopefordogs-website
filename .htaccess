@@ -9,6 +9,10 @@ RewriteRule ^ https://www.hopefordogseurope.com%{REQUEST_URI} [R=301,L]
 # Stale Google sitelink pointing to a page that never existed on this site
 RewriteRule ^hondenblog2/?$ /nieuws.html [R=301,L,NC]
 
+# Blog posts sitemap: serve the PHP script at a clean .xml URL (internal rewrite,
+# not a redirect) since Search Console's sitemap field rejects .xml.php addresses.
+RewriteRule ^sitemap-posts\.xml$ sitemap-posts.xml.php [L]
+
 # Extension-less requests (e.g. /honden, /contact) for a page that exists as .html
 # -> redirect there instead of 404. Skips API/admin/asset paths.
 RewriteCond %{REQUEST_URI} !^/(api|beheer|db|scripts|backups|images|fonts)/

@@ -7,4 +7,4 @@ Disallow: /node_modules/
 Disallow: /migration/
 
 Sitemap: https://www.hopefordogseurope.com/sitemap.xml
-Sitemap: https://www.hopefordogseurope.com/sitemap-posts.xml.php
+Sitemap: https://www.hopefordogseurope.com/sitemap-posts.xml
