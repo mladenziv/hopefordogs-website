@@ -530,7 +530,7 @@ var H4D_SITE_ORIGIN = 'https://www.hopefordogseurope.com';
 var H4D_PAGE_SEO = {
   'index': {
     title: { nl: 'Hope for Dogs — Adopteer een Straathond uit Bosnië en Servië', de: 'Hope for Dogs — Adoptiere einen Streunerhund aus Bosnien und Serbien', en: 'Hope for Dogs — Adopt a Stray Dog from Bosnia & Serbia' },
-    desc: { nl: 'Hope for Dogs redt straathonden in Bosnië en Servië en vindt hen een liefdevol thuis in Nederland en Belgie. Bekijk beschikbare honden of steun ons werk.', de: 'Hope for Dogs rettet Streunerhunde in Bosnien und Serbien und findet ihnen ein liebevolles Zuhause in den Niederlanden und Belgien. Entdecke verfügbare Hunde oder unterstütze unsere Arbeit.', en: 'Hope for Dogs rescues stray dogs in Bosnia and Serbia and finds them loving homes in the Netherlands and Belgium. Browse available dogs or support our work.' }
+    desc: { nl: 'Hope for Dogs redt straathonden in Bosnië en Servië en vindt hen een liefdevol thuis in Nederland, België, Duitsland en Oostenrijk. Bekijk onze honden.', de: 'Hope for Dogs rettet Streunerhunde in Bosnien und Serbien und vermittelt sie in die Niederlande, Belgien, Deutschland und Österreich. Entdecke unsere Hunde.', en: 'Hope for Dogs rescues stray dogs in Bosnia and Serbia and finds them loving homes in the Netherlands, Belgium, Germany and Austria. Browse our dogs.' }
   },
   'honden': {
     title: { nl: 'Adoptiehonden — Beschikbare Honden | Hope for Dogs', de: 'Adoptionshunde — Verfügbare Hunde | Hope for Dogs', en: 'Adoptable Dogs — Available Dogs | Hope for Dogs' },
@@ -546,7 +546,7 @@ var H4D_PAGE_SEO = {
   },
   'ervaringen': {
     title: { nl: 'Adoptieverhalen — Ervaringen van Adoptanten | Hope for Dogs', de: 'Adoptionsgeschichten — Erfahrungen von Adoptanten | Hope for Dogs', en: 'Adoption Stories — Experiences from Adopters | Hope for Dogs' },
-    desc: { nl: 'Lees de mooiste adoptieverhalen van Hope for Dogs. Van straathond tot huisdier — ontdek hoe onze honden hun thuis hebben gevonden in Nederland en Belgie.', de: 'Lies die schönsten Adoptionsgeschichten von Hope for Dogs. Vom Streunerhund zum Haustier — entdecke, wie unsere Hunde ihr Zuhause in den Niederlanden und Belgien gefunden haben.', en: 'Read the most heartwarming adoption stories from Hope for Dogs. From stray to beloved pet — discover how our dogs found their homes in the Netherlands and Belgium.' }
+    desc: { nl: 'Lees de mooiste adoptieverhalen van Hope for Dogs. Onze honden vonden hun thuis in Nederland, België, Duitsland en Oostenrijk.', de: 'Lies die schönsten Adoptionsgeschichten von Hope for Dogs. Unsere Hunde fanden ihr Zuhause in den Niederlanden, Belgien, Deutschland und Österreich.', en: 'Read the most heartwarming adoption stories from Hope for Dogs. Our dogs found their homes in the Netherlands, Belgium, Germany and Austria.' }
   },
   'nieuws': {
     title: { nl: 'Nieuws — Updates uit het Asiel | Hope for Dogs', de: 'Neuigkeiten — Updates aus dem Tierheim | Hope for Dogs', en: 'News — Updates from the Shelter | Hope for Dogs' },
@@ -1175,7 +1175,7 @@ document.addEventListener('DOMContentLoaded', function () {
     "alternateName": "Hope for Dogs Europe",
     "url": "https://www.hopefordogseurope.com",
     "logo": "https://www.hopefordogseurope.com/logo.png",
-    "description": "Non-profit organisatie die straathonden redt in Bosnie en Servie en hen een liefdevol thuis vindt in Nederland en Belgie.",
+    "description": "Non-profit organisatie die straathonden redt in Bosnië en Servië en hen een liefdevol thuis vindt in Nederland, België, Duitsland en Oostenrijk.",
     "email": "info@hopefordogseurope.com",
     "sameAs": [
       "https://www.facebook.com/hopefordogseurope",
@@ -1183,7 +1183,9 @@ document.addEventListener('DOMContentLoaded', function () {
     ],
     "areaServed": [
       {"@type": "Country", "name": "Netherlands"},
-      {"@type": "Country", "name": "Belgium"}
+      {"@type": "Country", "name": "Belgium"},
+      {"@type": "Country", "name": "Germany"},
+      {"@type": "Country", "name": "Austria"}
     ],
     "knowsAbout": ["dog adoption", "animal rescue", "stray dogs", "Bosnia and Herzegovina", "Serbia"]
   });
