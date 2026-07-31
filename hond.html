@@ -876,25 +876,23 @@
         try {
           var body = {
             dog_id: dogId,
+            hond: (document.getElementById('contactDogName').textContent || '').trim(),
             naam: document.getElementById('contactNaam').value.trim(),
             email: document.getElementById('contactEmail').value.trim(),
             telefoon: document.getElementById('contactTelefoon').value.trim() || null,
             bericht: document.getElementById('contactBericht').value.trim()
           };
 
-          var res = await fetch(SUPABASE_URL + '/rest/v1/contact_messages', {
+          // Route through the PHP endpoint so it's saved AND emails the team
+          var res = await fetch('/api/contact/', {
             method: 'POST',
-            headers: {
-              'apikey': SUPABASE_ANON_KEY,
-              'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-              'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
           });
 
-          if (!res.ok) {
-            var errBody = await res.text();
-            throw new Error('HTTP ' + res.status + ': ' + errBody);
+          var data = await res.json();
+          if (!res.ok || !data.success) {
+            throw new Error((data && data.error) || ('HTTP ' + res.status));
           }
 
           form.style.display = 'none';
