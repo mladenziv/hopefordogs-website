@@ -1,6 +1,11 @@
 RewriteEngine On
 RewriteBase /
 
+# Force the canonical host: https + www (matches <link rel="canonical"> on every page)
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^ https://www.hopefordogseurope.com%{REQUEST_URI} [R=301,L]
+
 # Stale Google sitelink pointing to a page that never existed on this site
 RewriteRule ^hondenblog2/?$ /nieuws.html [R=301,L,NC]
 
