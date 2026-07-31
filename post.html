@@ -290,9 +290,12 @@
 
         document.title = title + ' — Nieuws | Hope for Dogs';
         var postDesc = excerpt ? excerpt.substring(0, 140) : content ? content.substring(0, 140) : 'Lees het laatste nieuws van Hope for Dogs.';
+        var postUrl = 'https://www.hopefordogseurope.com/post.html?id=' + encodeURIComponent(postId);
         document.querySelector('meta[name="description"]').setAttribute('content', postDesc);
+        document.querySelector('link[rel="canonical"]').setAttribute('href', postUrl);
         document.querySelector('meta[property="og:title"]').setAttribute('content', title + ' — Nieuws | Hope for Dogs');
         document.querySelector('meta[property="og:description"]').setAttribute('content', postDesc);
+        document.querySelector('meta[property="og:url"]').setAttribute('content', postUrl);
         if (post.photo_url) {
           document.querySelector('meta[property="og:image"]').setAttribute('content', post.photo_url);
         }
