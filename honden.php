@@ -64,6 +64,7 @@ try {
             }
         }
         $hondPath = ($lang === 'nl') ? '/hond.html' : '/' . $lang . '/hond.html';
+        $altSuffix = ['nl' => 'adoptiehond uit Bosnië & Servië', 'de' => 'Adoptionshund aus Bosnien & Serbien', 'en' => 'adoptable dog from Bosnia & Serbia'][$lang] ?? 'adoptiehond uit Bosnië & Servië';
         $cards = '';
         $items = [];
         $pos = 0;
@@ -74,7 +75,7 @@ try {
             $href = $hondPath . '?id=' . rawurlencode($did);
             $img = $photoBy[$did] ?? '/images/placeholder-dog.svg';
             $cards .= '<a class="dog-card" href="' . ssr_h($href) . '">'
-                . '<img class="dog-card-img" src="' . ssr_h($img) . '" alt="' . ssr_h($naam) . '" loading="lazy" width="400" height="300">'
+                . '<img class="dog-card-img" src="' . ssr_h($img) . '" alt="' . ssr_h($naam . ' — ' . $altSuffix) . '" loading="lazy" width="400" height="300">'
                 . '<span class="dog-card-name">' . ssr_h($naam) . '</span></a>';
             $pos++;
             $items[] = ['@type' => 'ListItem', 'position' => $pos,

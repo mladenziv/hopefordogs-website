@@ -84,12 +84,14 @@ try {
     }
 
     // --- hreflang mesh + BreadcrumbList JSON-LD before </head> ---
+    $bcHome = ['nl' => 'Home', 'de' => 'Startseite', 'en' => 'Home'][$lang] ?? 'Home';
+    $bcCat = ['nl' => 'Honden', 'de' => 'Hunde', 'en' => 'Dogs'][$lang] ?? 'Honden';
     $ld = [
         '@context' => 'https://schema.org',
         '@type' => 'BreadcrumbList',
         'itemListElement' => [
-            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => SSR_ORIGIN . '/'],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Honden', 'item' => SSR_ORIGIN . '/honden.html'],
+            ['@type' => 'ListItem', 'position' => 1, 'name' => $bcHome, 'item' => SSR_ORIGIN . ($lang === 'nl' ? '/' : '/' . $lang . '/')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => $bcCat, 'item' => ssr_url('honden.html', $lang)],
             ['@type' => 'ListItem', 'position' => 3, 'name' => $naam],
         ],
     ];

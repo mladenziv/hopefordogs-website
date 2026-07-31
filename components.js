@@ -382,6 +382,7 @@ var H4D_I18N = {
   'dogcard.size.klein':     { nl: 'Klein',      de: 'Klein',       en: 'Small' },
   'dogcard.size.middel':    { nl: 'Middel',     de: 'Mittel',      en: 'Medium' },
   'dogcard.size.groot':     { nl: 'Groot',      de: 'Groß',        en: 'Large' },
+  'dogcard.alt':            { nl: 'adoptiehond uit Bosnië & Servië', de: 'Adoptionshund aus Bosnien & Serbien', en: 'adoptable dog from Bosnia & Serbia' },
   'dogcard.aria.prev':      { nl: 'Vorige foto', de: 'Vorheriges Foto', en: 'Previous photo' },
   'dogcard.aria.next':      { nl: 'Volgende foto', de: 'Nächstes Foto', en: 'Next photo' },
   'dogcard.aria.playpause': { nl: 'Afspelen / pauzeren', de: 'Abspielen / Pausieren', en: 'Play / pause' },

@@ -374,7 +374,7 @@
           articleSchema.type = 'application/ld+json';
           articleSchema.textContent = JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Article",
+            "@type": "BlogPosting",
             "headline": title,
             "datePublished": post.published_at || post.created_at,
             "image": post.photo_url || '',

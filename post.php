@@ -71,12 +71,14 @@ try {
     }
 
     // --- hreflang + BreadcrumbList + Article JSON-LD before </head> ---
+    $bcHome = ['nl' => 'Home', 'de' => 'Startseite', 'en' => 'Home'][$lang] ?? 'Home';
+    $bcCat = ['nl' => 'Nieuws', 'de' => 'Neuigkeiten', 'en' => 'News'][$lang] ?? 'Nieuws';
     $bc = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => [
-        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => SSR_ORIGIN . '/'],
-        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Nieuws', 'item' => SSR_ORIGIN . '/nieuws.html'],
+        ['@type' => 'ListItem', 'position' => 1, 'name' => $bcHome, 'item' => SSR_ORIGIN . ($lang === 'nl' ? '/' : '/' . $lang . '/')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => $bcCat, 'item' => ssr_url('nieuws.html', $lang)],
         ['@type' => 'ListItem', 'position' => 3, 'name' => $title],
     ]];
-    $article = ['@context' => 'https://schema.org', '@type' => 'Article', 'headline' => $title,
+    $article = ['@context' => 'https://schema.org', '@type' => 'BlogPosting', 'headline' => $title,
         'datePublished' => $pub ?: ($post['created_at'] ?? ''), 'image' => $photo ?: '',
         'author' => ['@type' => 'Organization', 'name' => 'Hope for Dogs'],
         'publisher' => ['@type' => 'Organization', 'name' => 'Hope for Dogs',
