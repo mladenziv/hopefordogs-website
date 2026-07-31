@@ -609,6 +609,14 @@
         }
 
         const dog = dogs[0];
+        // Adopted dogs are noindex,follow (kept live, but out of the index). The server
+        // prerender already sets this; this covers the case where it fell back to the shell.
+        if (dog.status === 'geadopteerd' && !document.querySelector('meta[name="robots"]')) {
+          var rb = document.createElement('meta');
+          rb.name = 'robots';
+          rb.content = 'noindex,follow';
+          document.head.appendChild(rb);
+        }
         // Language-aware content (falls back to Dutch when a translation is missing).
         const beschrijving = h4dField(dog, 'beschrijving');
         const leeftijd = h4dField(dog, 'leeftijd');

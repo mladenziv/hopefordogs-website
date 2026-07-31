@@ -23,6 +23,10 @@ try {
     $naam = trim((string) ($dog['naam'] ?? ''));
     if ($naam === '') ssr_passthru($tpl); // nothing meaningful to render
 
+    // Adopted dogs stay live (their URLs are shared) but are noindex,follow so the
+    // 334-and-growing "found a home" pages don't bloat the index (LISTING-ARCHITECTURE).
+    $adopted = ((string) ($dog['status'] ?? '')) === 'geadopteerd';
+
     $beschrijving = (string) ssr_field($dog, 'beschrijving', $lang);
     $descShort = $beschrijving !== ''
         ? mb_substr($beschrijving, 0, 120)
@@ -89,7 +93,8 @@ try {
             ['@type' => 'ListItem', 'position' => 3, 'name' => $naam],
         ],
     ];
-    $headInsert = ssr_hreflang('hond.html', $query)
+    $headInsert = ($adopted ? '  <meta name="robots" content="noindex,follow">' . "\n" : '')
+        . ssr_hreflang('hond.html', $query)
         . '  <script type="application/ld+json" id="ssr-ld-breadcrumb">'
         . json_encode($ld, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
         . '</script>' . "\n";
