@@ -483,86 +483,6 @@
       color: #6b6b6b;
     }
 
-    /* ===== ORIGIN (adopting from Serbia & Bosnia) ===== */
-    .adopt-origin {
-      width: 100%;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 72px 0;
-    }
-
-    .adopt-origin-inner {
-      width: 100%;
-      max-width: 1560px;
-      padding: 0 40px;
-    }
-
-    .adopt-origin-header {
-      max-width: 720px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .adopt-origin-intro {
-      max-width: 720px;
-      margin: 20px 0 48px;
-      font-size: 15px;
-      font-weight: 500;
-      line-height: 26px;
-      color: #424242;
-    }
-
-    .origin-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-    }
-
-    .origin-card {
-      background: #fff;
-      border: 1px solid rgba(0, 0, 0, 0.12);
-      border-radius: 20px;
-      padding: 28px 26px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .origin-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--yellow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .origin-icon svg {
-      width: 22px;
-      height: 22px;
-      fill: var(--gold);
-    }
-
-    .origin-card-title {
-      font-family: 'Nunito', sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      line-height: normal;
-      color: var(--dark-1);
-    }
-
-    .origin-card-desc {
-      font-size: 15px;
-      font-weight: 500;
-      line-height: 24px;
-      color: #424242;
-    }
-
     /* FAQ styles now in shared.css via component */
 
     /* ===== CTA ===== */
@@ -620,7 +540,6 @@
       .adopt-hero-inner { padding: 192px 0 56px; gap: 48px; }
       /* collage-7, collage-8 stay visible at SM */
       .steps-grid { grid-template-columns: repeat(2, 1fr); }
-      .origin-grid { grid-template-columns: repeat(2, 1fr); }
       .adopt-timeline-inner { flex-direction: column; gap: 40px; }
       .adopt-requirements-inner { flex-direction: column; gap: 40px; }
       .costs-grid { flex-direction: column; gap: 0; }
@@ -651,7 +570,6 @@
       }
       .adopt-costs-inner,
       .adopt-steps-inner,
-      .adopt-origin-inner,
       .adopt-timeline-inner,
       .adopt-requirements-inner,
       .adopt-cta-inner { padding: 0 20px; }
@@ -659,7 +577,6 @@
       .adopt-costs { padding: 48px 0; }
       /* Other sections: trim 12px off the top so the heading sits tighter. */
       .adopt-steps { padding: 36px 0 48px; }
-      .adopt-origin { padding: 36px 0 48px; }
       .adopt-timeline { padding: 36px 0 48px; }
       .adopt-requirements { padding: 36px 0 48px; }
       .adopt-cta { padding: 36px 0 48px; }
@@ -667,7 +584,6 @@
       .costs-plus { padding: 16px 0; }
       /* Steps: the gap below the intro was larger than the space above it. */
       .adopt-steps-header { margin-bottom: 28px; }
-      .origin-grid { grid-template-columns: 1fr; }
       /* Single column on phones so step cards can't overflow (grid items were
          held wider than the viewport by their min-content width). */
       .steps-grid { grid-template-columns: 1fr; }
