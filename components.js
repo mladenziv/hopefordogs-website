@@ -1189,6 +1189,7 @@ document.addEventListener('DOMContentLoaded', function () {
     "email": "info@hopefordogseurope.com",
     "sameAs": [
       "https://www.facebook.com/hopefordogseurope",
+      "https://www.instagram.com/hopefordogseurope",
       "https://www.tiktok.com/@hope_for_dogs_europe"
     ],
     "areaServed": [
