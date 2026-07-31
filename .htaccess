@@ -18,6 +18,9 @@ RewriteRule ^(en|de)/([a-z-]+)\.html$ /$2.html [L]
 # not a redirect) since Search Console's sitemap field rejects .xml.php addresses.
 RewriteRule ^sitemap-posts\.xml$ sitemap-posts.xml.php [L]
 
+# Dog listings sitemap: same clean-.xml pattern for the dynamic hond.html?id=... pages.
+RewriteRule ^sitemap-dogs\.xml$ sitemap-dogs.xml.php [L]
+
 # Extension-less requests (e.g. /honden, /contact) for a page that exists as .html
 # -> redirect there instead of 404. Skips API/admin/asset paths.
 RewriteCond %{REQUEST_URI} !^/(api|beheer|db|scripts|backups|images|fonts)/
