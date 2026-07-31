@@ -324,7 +324,7 @@
         var title = h4dField(post, 'title') || '';
         var excerpt = h4dField(post, 'excerpt') || '';
 
-        return '<a href="' + h4dUrl('post.html') + '?id=' + post.id + '" class="blog-post">' +
+        return '<a href="' + h4dDetailUrl('nieuws', 'post.html', post) + '" class="blog-post">' +
           '<div class="blog-dot"></div>' +
           (img ? '<img src="' + img + '" alt="' + escapeHtml(title).replace(/"/g, '&quot;') + '" class="blog-post-img" loading="lazy">' : '') +
           '<div class="blog-post-content">' +

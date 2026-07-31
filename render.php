@@ -72,3 +72,19 @@ function ssr_hreflang($bare, $query = '') {
     $out .= '  <link rel="alternate" hreflang="x-default" href="' . ssr_h(ssr_url($bare, 'nl', $query)) . '">' . "\n";
     return $out;
 }
+
+// Path-based siblings of ssr_url/ssr_hreflang for slug URLs (no .html, own base
+// segment). ssr_url_path('hond/bella-ec3d1a95', 'de') -> .../de/hond/bella-ec3d1a95
+function ssr_url_path($path, $lang, $query = '') {
+    $prefix = ($lang === 'nl') ? '/' : '/' . $lang . '/';
+    return SSR_ORIGIN . $prefix . ltrim($path, '/') . $query;
+}
+
+function ssr_hreflang_path($path, $query = '') {
+    $out = '';
+    foreach (['nl', 'de', 'en'] as $l) {
+        $out .= '  <link rel="alternate" hreflang="' . $l . '" href="' . ssr_h(ssr_url_path($path, $l, $query)) . '">' . "\n";
+    }
+    $out .= '  <link rel="alternate" hreflang="x-default" href="' . ssr_h(ssr_url_path($path, 'nl', $query)) . '">' . "\n";
+    return $out;
+}

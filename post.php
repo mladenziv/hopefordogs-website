@@ -7,9 +7,8 @@
 require __DIR__ . '/render.php';
 
 $tpl = __DIR__ . '/post.html';
+$slug = isset($_GET['slug']) ? (string) $_GET['slug'] : '';
 $id = isset($_GET['id']) ? (string) $_GET['id'] : '';
-
-if ($id === '' || !preg_match('/^[A-Za-z0-9_-]{8,64}$/', $id)) ssr_passthru($tpl);
 
 // Dutch date format, matching the template's client-side formatDate().
 function ssr_post_date($s) {
@@ -23,7 +22,14 @@ function ssr_post_date($s) {
 try {
     $lang = ssr_lang();
 
-    $posts = ssr_get('/rest/v1/posts?select=*&id=eq.' . rawurlencode($id));
+    // Resolve by slug (/nieuws/<slug>) or by legacy ?id=.
+    if ($slug !== '' && preg_match('/^[A-Za-z0-9-]{1,80}$/', $slug)) {
+        $posts = ssr_get('/rest/v1/posts?select=*&slug=eq.' . rawurlencode($slug));
+    } elseif ($id !== '' && preg_match('/^[A-Za-z0-9_-]{8,64}$/', $id)) {
+        $posts = ssr_get('/rest/v1/posts?select=*&id=eq.' . rawurlencode($id));
+    } else {
+        ssr_passthru($tpl);
+    }
     if ($posts === null || count($posts) === 0) ssr_passthru($tpl);
     $post = $posts[0];
 
@@ -32,6 +38,14 @@ try {
     $pub = $post['published_at'] ?? null;
     $isLive = $pub && strtotime($pub) !== false && strtotime($pub) <= time();
     if (!$isLive) ssr_passthru($tpl);
+
+    // Consolidate a legacy ?id= URL onto the slug — AFTER the publish gate so a
+    // draft/scheduled post never 301s to a public URL.
+    $postSlug = trim((string) ($post['slug'] ?? ''));
+    if ($slug === '' && $postSlug !== '') {
+        header('Location: ' . ssr_url_path('nieuws/' . rawurlencode($postSlug), $lang), true, 301);
+        exit;
+    }
 
     $title = trim((string) ssr_field($post, 'title', $lang));
     if ($title === '') ssr_passthru($tpl);
@@ -42,9 +56,15 @@ try {
     $base = $excerpt !== '' ? $excerpt : $content;
     $descShort = $base !== '' ? mb_substr(trim(strip_tags($base)), 0, 140) : 'Lees het laatste nieuws van Hope for Dogs.';
 
-    $query = '?id=' . rawurlencode($id);
     $fullTitle = $title . ' — Nieuws | Hope for Dogs';
-    $canonical = ssr_url('post.html', $lang, $query);
+    if ($postSlug !== '') {
+        $canonical = ssr_url_path('nieuws/' . $postSlug, $lang);
+        $hreflangMesh = ssr_hreflang_path('nieuws/' . $postSlug);
+    } else {
+        $q = '?id=' . rawurlencode((string) ($post['id'] ?? $id));
+        $canonical = ssr_url('post.html', $lang, $q);
+        $hreflangMesh = ssr_hreflang('post.html', $q);
+    }
     $dateStr = ssr_post_date($pub ?: ($post['created_at'] ?? null));
 
     $html = file_get_contents($tpl);
@@ -84,7 +104,7 @@ try {
         'publisher' => ['@type' => 'Organization', 'name' => 'Hope for Dogs',
             'logo' => ['@type' => 'ImageObject', 'url' => SSR_ORIGIN . '/logo.png']],
         'description' => $excerpt !== '' ? $excerpt : mb_substr(trim(strip_tags($content)), 0, 160)];
-    $headInsert = ssr_hreflang('post.html', $query)
+    $headInsert = $hreflangMesh
         . '  <script type="application/ld+json" id="ssr-ld-breadcrumb">' . json_encode($bc, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n"
         . '  <script type="application/ld+json" id="ssr-ld-article">' . json_encode($article, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
     $html = str_replace('</head>', $headInsert . '</head>', $html);

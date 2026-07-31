@@ -497,6 +497,14 @@ function h4dUrl(path) {
   return h4dUrlFor(path, h4dGetLanguage());
 }
 
+// Detail-page URL: prefer the slug (/hond/<slug>, /nieuws/<slug>), fall back to
+// the legacy ?id= form when a row has no slug yet. base e.g. 'hond'/'nieuws';
+// htmlFallback e.g. 'hond.html'/'post.html'.
+function h4dDetailUrl(base, htmlFallback, row) {
+  if (row && row.slug) return h4dUrlFor(base + '/' + row.slug, h4dGetLanguage());
+  return h4dUrl(htmlFallback) + '?id=' + row.id;
+}
+
 // Strip a leading /en/ or /de/ segment from a pathname, returning the bare (Dutch) path.
 function h4dStripLangPrefix(pathname) {
   return pathname.replace(/^\/(en|de)(\/|$)/, '/');

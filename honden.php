@@ -52,7 +52,7 @@ try {
     $headInsert = ssr_hreflang('honden.html');
 
     // --- Available dogs for the grid + ItemList (best-effort; skip on fetch failure) ---
-    $dogs = ssr_get('/rest/v1/dogs?select=id,naam&draft=eq.false&status=neq.geadopteerd&order=sort_order.asc.nullsfirst,created_at.desc&limit=200');
+    $dogs = ssr_get('/rest/v1/dogs?select=id,naam,slug&draft=eq.false&status=neq.geadopteerd&order=sort_order.asc.nullsfirst,created_at.desc&limit=200');
     if ($dogs !== null && count($dogs) > 0) {
         $primary = ssr_get('/rest/v1/dog_photos?select=dog_id,photo_url&is_primary=eq.true');
         $photoBy = [];
@@ -72,7 +72,10 @@ try {
             $did = $dog['id'] ?? '';
             $naam = trim((string) ($dog['naam'] ?? ''));
             if ($did === '' || $naam === '') continue;
-            $href = $hondPath . '?id=' . rawurlencode($did);
+            $s = trim((string) ($dog['slug'] ?? ''));
+            $href = ($s !== '')
+                ? (($lang === 'nl' ? '/hond/' : '/' . $lang . '/hond/') . rawurlencode($s))
+                : ($hondPath . '?id=' . rawurlencode($did));
             $img = $photoBy[$did] ?? '/images/placeholder-dog.svg';
             $cards .= '<a class="dog-card" href="' . ssr_h($href) . '">'
                 . '<img class="dog-card-img" src="' . ssr_h($img) . '" alt="' . ssr_h($naam . ' — ' . $altSuffix) . '" loading="lazy" width="400" height="300">'

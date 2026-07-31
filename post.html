@@ -398,7 +398,7 @@
     async function loadRelatedPosts(currentId) {
       try {
         var nowIso = new Date().toISOString();
-        var posts = await supabaseGet('posts', 'select=id,title,title_de,title_en,photo_url,published_at&published_at=lte.' + encodeURIComponent(nowIso) + '&order=published_at.desc&limit=5');
+        var posts = await supabaseGet('posts', 'select=id,slug,title,title_de,title_en,photo_url,published_at&published_at=lte.' + encodeURIComponent(nowIso) + '&order=published_at.desc&limit=5');
         if (!posts) return;
         var others = posts.filter(function (p) { return p.id !== currentId; }).slice(0, 4);
         if (!others.length) return;
@@ -408,7 +408,7 @@
           var img = p.photo_url
             ? '<img src="' + p.photo_url + '" alt="' + safe + '" loading="lazy" width="400" height="225" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;display:block;">'
             : '';
-          return '<a href="post.html?id=' + p.id + '" style="text-decoration:none;color:inherit;display:block;">' + img +
+          return '<a href="' + h4dDetailUrl('nieuws', 'post.html', p) + '" style="text-decoration:none;color:inherit;display:block;">' + img +
                  '<span style="display:block;margin-top:10px;font-weight:600;font-size:16px;color:var(--dark-1);line-height:1.35;">' + safe + '</span></a>';
         }).join('');
         document.getElementById('relatedPosts').style.display = 'block';

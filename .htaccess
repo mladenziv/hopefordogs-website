@@ -14,6 +14,15 @@ RewriteRule ^hondenblog2/?$ /nieuws.html [R=301,L,NC]
 RewriteRule ^(en|de)/?$ /index.html [L]
 RewriteRule ^(en|de)/([a-z-]+)\.html$ /$2.html [L]
 
+# Slug detail pages: /hond/<slug> and /nieuws/<slug> (optional /en /de prefix).
+# Internal rewrite to the PHP wrapper (URL bar unchanged). Two path segments, so
+# these can't collide with the single-segment extension-less rule below. REQUEST_URI
+# keeps the /de/ prefix, so ssr_lang() detects the language with no extra param.
+# The wrapper resolves the slug (or 301s a legacy ?id= onto it) and falls back to
+# the raw template on any failure.
+RewriteRule ^(?:(en|de)/)?hond/([A-Za-z0-9-]+)/?$   hond.php?slug=$2 [L,QSA]
+RewriteRule ^(?:(en|de)/)?nieuws/([A-Za-z0-9-]+)/?$ post.php?slug=$2 [L,QSA]
+
 # Blog posts sitemap: serve the PHP script at a clean .xml URL (internal rewrite,
 # not a redirect) since Search Console's sitemap field rejects .xml.php addresses.
 RewriteRule ^sitemap-posts\.xml$ sitemap-posts.xml.php [L]

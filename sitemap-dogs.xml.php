@@ -10,7 +10,7 @@ $SUPABASE_URL = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
 $SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
 
 // Available dogs only: not a draft, not adopted (opzoek + in_gesprek).
-$path = '/rest/v1/dogs?select=id,updated_at&draft=eq.false&status=neq.geadopteerd&order=updated_at.desc';
+$path = '/rest/v1/dogs?select=id,slug,updated_at&draft=eq.false&status=neq.geadopteerd&order=updated_at.desc';
 
 $ch = curl_init();
 curl_setopt_array($ch, [
@@ -35,7 +35,10 @@ foreach ($dogs as $dog) {
     if (empty($dog['id'])) continue;
     $lastmod = !empty($dog['updated_at']) ? gmdate('Y-m-d', strtotime($dog['updated_at'])) : null;
     foreach ($prefixes as $prefix) {
-        $loc = 'https://www.hopefordogseurope.com/' . $prefix . 'hond.html?id=' . rawurlencode($dog['id']);
+        $s = trim((string) ($dog['slug'] ?? ''));
+        $loc = ($s !== '')
+            ? 'https://www.hopefordogseurope.com/' . $prefix . 'hond/' . rawurlencode($s)
+            : 'https://www.hopefordogseurope.com/' . $prefix . 'hond.html?id=' . rawurlencode($dog['id']);
         echo '  <url>' . "\n";
         echo '    <loc>' . htmlspecialchars($loc, ENT_XML1) . '</loc>' . "\n";
         if ($lastmod) {

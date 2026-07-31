@@ -8,20 +8,33 @@
 require __DIR__ . '/render.php';
 
 $tpl = __DIR__ . '/hond.html';
+$slug = isset($_GET['slug']) ? (string) $_GET['slug'] : '';
 $id = isset($_GET['id']) ? (string) $_GET['id'] : '';
-
-// No / obviously-invalid id -> shell (JS shows its own error screen).
-if ($id === '' || !preg_match('/^[A-Za-z0-9_-]{8,64}$/', $id)) ssr_passthru($tpl);
 
 try {
     $lang = ssr_lang();
 
-    $dogs = ssr_get('/rest/v1/dogs?select=*&id=eq.' . rawurlencode($id) . '&draft=eq.false');
-    if ($dogs === null || count($dogs) === 0) ssr_passthru($tpl); // fetch fail OR not found/draft -> shell
+    // Resolve by slug (/hond/<slug>), or by legacy ?id= which 301s to the slug.
+    if ($slug !== '' && preg_match('/^[A-Za-z0-9-]{1,80}$/', $slug)) {
+        $dogs = ssr_get('/rest/v1/dogs?select=*&slug=eq.' . rawurlencode($slug) . '&draft=eq.false');
+        if ($dogs === null || count($dogs) === 0) ssr_passthru($tpl); // unknown/draft -> shell
+    } elseif ($id !== '' && preg_match('/^[A-Za-z0-9_-]{8,64}$/', $id)) {
+        $dogs = ssr_get('/rest/v1/dogs?select=*&id=eq.' . rawurlencode($id) . '&draft=eq.false');
+        if ($dogs === null || count($dogs) === 0) ssr_passthru($tpl);
+        $s = trim((string) ($dogs[0]['slug'] ?? ''));
+        if ($s !== '') { // consolidate legacy id URL onto the slug
+            header('Location: ' . ssr_url_path('hond/' . rawurlencode($s), $lang), true, 301);
+            exit;
+        }
+    } else {
+        ssr_passthru($tpl); // no/invalid slug and id -> shell
+    }
     $dog = $dogs[0];
 
     $naam = trim((string) ($dog['naam'] ?? ''));
     if ($naam === '') ssr_passthru($tpl); // nothing meaningful to render
+    $dogId = (string) ($dog['id'] ?? '');
+    $dogSlug = trim((string) ($dog['slug'] ?? ''));
 
     // Adopted dogs stay live (their URLs are shared) but are noindex,follow so the
     // 334-and-growing "found a home" pages don't bloat the index (LISTING-ARCHITECTURE).
@@ -33,14 +46,21 @@ try {
         : 'Gered van de straat en klaar voor een nieuw thuis.';
 
     // Primary photo — same ordering the client uses for the carousel.
-    $photos = ssr_get('/rest/v1/dog_photos?select=photo_url&dog_id=eq.' . rawurlencode($id)
+    $photos = ssr_get('/rest/v1/dog_photos?select=photo_url&dog_id=eq.' . rawurlencode($dogId)
         . '&order=sort_order.asc.nullslast,is_primary.desc,created_at.asc');
     $img = ($photos && count($photos) && !empty($photos[0]['photo_url'])) ? $photos[0]['photo_url'] : null;
 
-    $query = '?id=' . rawurlencode($id);
     $title = $naam . ' — Adoptiehond | Hope for Dogs';
     $desc = 'Maak kennis met ' . $naam . '. ' . $descShort;
-    $canonical = ssr_url('hond.html', $lang, $query);
+    // Slug URL when the row has a slug; otherwise the legacy ?id= form.
+    if ($dogSlug !== '') {
+        $canonical = ssr_url_path('hond/' . $dogSlug, $lang);
+        $hreflangMesh = ssr_hreflang_path('hond/' . $dogSlug);
+    } else {
+        $q = '?id=' . rawurlencode($dogId);
+        $canonical = ssr_url('hond.html', $lang, $q);
+        $hreflangMesh = ssr_hreflang('hond.html', $q);
+    }
 
     $html = file_get_contents($tpl);
     if ($html === false) ssr_passthru($tpl);
@@ -96,7 +116,7 @@ try {
         ],
     ];
     $headInsert = ($adopted ? '  <meta name="robots" content="noindex,follow">' . "\n" : '')
-        . ssr_hreflang('hond.html', $query)
+        . $hreflangMesh
         . '  <script type="application/ld+json" id="ssr-ld-breadcrumb">'
         . json_encode($ld, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
         . '</script>' . "\n";

@@ -9,7 +9,7 @@ $SUPABASE_URL = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
 $SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
 
 $nowIso = gmdate('Y-m-d\TH:i:s\Z');
-$path = '/rest/v1/posts?select=id,published_at&published_at=lte.' . rawurlencode($nowIso) . '&order=published_at.desc';
+$path = '/rest/v1/posts?select=id,slug,published_at&published_at=lte.' . rawurlencode($nowIso) . '&order=published_at.desc';
 
 $ch = curl_init();
 curl_setopt_array($ch, [
@@ -34,7 +34,10 @@ foreach ($posts as $post) {
     if (empty($post['id'])) continue;
     $lastmod = !empty($post['published_at']) ? gmdate('Y-m-d', strtotime($post['published_at'])) : null;
     foreach ($prefixes as $prefix) {
-        $loc = 'https://www.hopefordogseurope.com/' . $prefix . 'post.html?id=' . rawurlencode($post['id']);
+        $s = trim((string) ($post['slug'] ?? ''));
+        $loc = ($s !== '')
+            ? 'https://www.hopefordogseurope.com/' . $prefix . 'nieuws/' . rawurlencode($s)
+            : 'https://www.hopefordogseurope.com/' . $prefix . 'post.html?id=' . rawurlencode($post['id']);
         echo '  <url>' . "\n";
         echo '    <loc>' . htmlspecialchars($loc, ENT_XML1) . '</loc>' . "\n";
         if ($lastmod) {

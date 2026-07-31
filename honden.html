@@ -2059,7 +2059,7 @@
                 const adoptedCardHTML = (dog, index) => {
                     const img = getPhoto(dog);
                     return `
-          <a href="${h4dUrl('hond.html')}?id=${dog.id}" class="adopted-card" style="animation-delay: ${index * 0.05}s; text-decoration: none; color: inherit;">
+          <a href="${h4dDetailUrl('hond', 'hond.html', dog)}" class="adopted-card" style="animation-delay: ${index * 0.05}s; text-decoration: none; color: inherit;">
             <span class="adopted-badge">${adoptedLabel}</span>
             <img src="${img}" alt="${dog.naam}" class="adopted-card-img" loading="lazy" decoding="async">
             <div class="adopted-card-body">
