@@ -1,5 +1,8 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/d0sjxpncsiuj/public_html/
+    # STAGING branch deploys to a SEPARATE folder (staging.hopefordogseurope.com),
+    # never the live public_html. Promotion to live happens by merging into main,
+    # whose .cpanel.yml (unchanged) still targets public_html.
+    - export DEPLOYPATH=/home/d0sjxpncsiuj/staging_html/
     - /bin/cp -R * $DEPLOYPATH
