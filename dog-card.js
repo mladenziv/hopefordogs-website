@@ -38,7 +38,7 @@ function dogMediaEl(url, name) {
   if (isDogVideo(url)) {
     return '<video class="dog-card-img dog-card-video" src="' + escapeHTML(url) + '#t=0.1" muted playsinline preload="metadata"></video>';
   }
-  return '<img src="' + escapeHTML(url) + '" alt="' + escapeHTML(name) + '" class="dog-card-img" loading="lazy" decoding="async" draggable="false">';
+  return '<img src="' + escapeHTML(url) + '" alt="' + escapeHTML(name) + '" class="dog-card-img" width="400" height="300" loading="lazy" decoding="async" draggable="false">';
 }
 
 function dogCardHTML(dog, opts) {
