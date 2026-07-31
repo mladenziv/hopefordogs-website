@@ -2,6 +2,7 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Adoptieverhalen — Ervaringen van Adoptanten | Hope for Dogs</title>
   <meta name="description" content="Lees de mooiste adoptieverhalen van Hope for Dogs. Van straathond tot huisdier — ontdek hoe onze honden hun thuis hebben gevonden in Nederland en Belgie.">
@@ -330,7 +331,7 @@
         var adopter = story.adopter_name || '';
         // First 3 load eagerly (above the fold); the rest lazy + async decode
         var loadAttr = i < 3 ? 'eager' : 'lazy';
-        return '<a href="ervaring.html?id=' + story.id + '" class="testimonial-card" style="animation-delay:' + (i * 0.05) + 's">' +
+        return '<a href="' + h4dUrl('ervaring.html') + '?id=' + story.id + '" class="testimonial-card" style="animation-delay:' + (i * 0.05) + 's">' +
           '<img src="' + raw + '" alt="' + escapeAttr(story.dog_name) + '" class="testimonial-card-img" loading="' + loadAttr + '" decoding="async">' +
           '<div class="testimonial-card-body">' +
             '<div class="testimonial-card-name t-heading-sm">' + escapeHtml(story.dog_name) + '</div>' +

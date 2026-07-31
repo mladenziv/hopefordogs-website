@@ -461,6 +461,8 @@ var H4D_I18N = {
 };
 
 function h4dGetLanguage() {
+  var m = location.pathname.match(/^\/(en|de)(\/|$)/);
+  if (m) return m[1];
   return localStorage.getItem('h4d-lang') || 'nl';
 }
 
@@ -479,6 +481,155 @@ function h4dField(row, field) {
   var lang = h4dGetLanguage();
   if (lang === 'nl') return row[field];
   return row[field + '_' + lang] || row[field];
+}
+
+// Prefix a same-site page path for a specific language ('nl' = no prefix).
+function h4dUrlFor(path, lang) {
+  path = String(path).replace(/^\/+/, '');
+  if (!path) path = 'index.html';
+  return lang === 'nl' ? '/' + path : '/' + lang + '/' + path;
+}
+
+// Prefix a same-site page path (e.g. 'honden.html') for the CURRENT language.
+// Used everywhere an internal link is built (nav, footer, cards, static links).
+function h4dUrl(path) {
+  return h4dUrlFor(path, h4dGetLanguage());
+}
+
+// Strip a leading /en/ or /de/ segment from a pathname, returning the bare (Dutch) path.
+function h4dStripLangPrefix(pathname) {
+  return pathname.replace(/^\/(en|de)(\/|$)/, '/');
+}
+
+// Navigate to the sibling URL of the current page in another language, preserving
+// query string (?id=...) and hash. Used by the language switcher.
+function h4dNavigateToLanguage(lang) {
+  var bare = h4dStripLangPrefix(location.pathname).replace(/^\//, '') || 'index.html';
+  window.location.href = h4dUrlFor(bare, lang) + location.search + location.hash;
+}
+
+// Prefix same-site .html links written directly in page markup (breadcrumbs, CTAs,
+// donation buttons) so they stay in the current language. Nav/footer and JS-built
+// card links already carry the right prefix from h4dUrl() at build time, so this
+// only needs to catch the raw <a href="..."> tags scattered across each page.
+function h4dLocalizeStaticLinks() {
+  var lang = h4dGetLanguage();
+  if (lang === 'nl') return;
+  document.querySelectorAll('a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || /^(https?:|mailto:|tel:|#|\/(en|de)\/)/i.test(href)) return;
+    if (!/\.html(\?|#|$)/i.test(href)) return;
+    var path = href.replace(/^\.?\/+/, '');
+    a.setAttribute('href', '/' + lang + '/' + path);
+  });
+}
+
+var H4D_SITE_ORIGIN = 'https://www.hopefordogseurope.com';
+
+// Per-page title/description, one entry per indexable page. Detail pages (hond/post/
+// ervaring) show this as a fallback until their own per-record script overrides it.
+var H4D_PAGE_SEO = {
+  'index': {
+    title: { nl: 'Hope for Dogs — Adopteer een Straathond uit Bosnië en Servië', de: 'Hope for Dogs — Adoptiere einen Streunerhund aus Bosnien und Serbien', en: 'Hope for Dogs — Adopt a Stray Dog from Bosnia & Serbia' },
+    desc: { nl: 'Hope for Dogs redt straathonden in Bosnië en Servië en vindt hen een liefdevol thuis in Nederland en Belgie. Bekijk beschikbare honden of steun ons werk.', de: 'Hope for Dogs rettet Streunerhunde in Bosnien und Serbien und findet ihnen ein liebevolles Zuhause in den Niederlanden und Belgien. Entdecke verfügbare Hunde oder unterstütze unsere Arbeit.', en: 'Hope for Dogs rescues stray dogs in Bosnia and Serbia and finds them loving homes in the Netherlands and Belgium. Browse available dogs or support our work.' }
+  },
+  'honden': {
+    title: { nl: 'Adoptiehonden — Beschikbare Honden | Hope for Dogs', de: 'Adoptionshunde — Verfügbare Hunde | Hope for Dogs', en: 'Adoptable Dogs — Available Dogs | Hope for Dogs' },
+    desc: { nl: 'Bekijk alle beschikbare adoptiehonden van Hope for Dogs. Straathonden uit Bosnië en Servië, medisch behandeld en klaar voor een nieuw thuis.', de: 'Entdecke alle verfügbaren Adoptionshunde von Hope for Dogs. Streunerhunde aus Bosnien und Serbien, medizinisch behandelt und bereit für ein neues Zuhause.', en: 'Browse all adoptable dogs at Hope for Dogs. Stray dogs from Bosnia and Serbia, medically treated and ready for a new home.' }
+  },
+  'over-ons': {
+    title: { nl: 'Over Ons — Ons Verhaal & Missie | Hope for Dogs', de: 'Über Uns — Unsere Geschichte & Mission | Hope for Dogs', en: 'About Us — Our Story & Mission | Hope for Dogs' },
+    desc: { nl: 'Leer meer over Hope for Dogs, een non-profit die straathonden redt in Bosnië en Servië. Ons team van vrijwilligers zet zich dag en nacht in voor een beter leven.', de: 'Erfahre mehr über Hope for Dogs, eine gemeinnützige Organisation, die Streunerhunde in Bosnien und Serbien rettet. Unser Team aus Freiwilligen setzt sich Tag und Nacht für ein besseres Leben ein.', en: 'Learn more about Hope for Dogs, a non-profit rescuing stray dogs in Bosnia and Serbia. Our team of volunteers works day and night for a better life.' }
+  },
+  'adoptie': {
+    title: { nl: 'Hond Adopteren — Procedure, Kosten & Stappen | Hope for Dogs', de: 'Hund Adoptieren — Ablauf, Kosten & Schritte | Hope for Dogs', en: 'Adopt a Dog — Process, Costs & Steps | Hope for Dogs' },
+    desc: { nl: 'Ontdek hoe je een hond adopteert via Hope for Dogs. Adoptievergoeding €230 + transport €200. Stap voor stap begeleiden we je door het hele proces.', de: 'Erfahre, wie du über Hope for Dogs einen Hund adoptierst. Adoptionsgebühr 230 € + Transport 200 €. Wir begleiten dich Schritt für Schritt durch den gesamten Prozess.', en: 'Find out how to adopt a dog through Hope for Dogs. Adoption fee €230 + transport €200. We guide you step by step through the whole process.' }
+  },
+  'ervaringen': {
+    title: { nl: 'Adoptieverhalen — Ervaringen van Adoptanten | Hope for Dogs', de: 'Adoptionsgeschichten — Erfahrungen von Adoptanten | Hope for Dogs', en: 'Adoption Stories — Experiences from Adopters | Hope for Dogs' },
+    desc: { nl: 'Lees de mooiste adoptieverhalen van Hope for Dogs. Van straathond tot huisdier — ontdek hoe onze honden hun thuis hebben gevonden in Nederland en Belgie.', de: 'Lies die schönsten Adoptionsgeschichten von Hope for Dogs. Vom Streunerhund zum Haustier — entdecke, wie unsere Hunde ihr Zuhause in den Niederlanden und Belgien gefunden haben.', en: 'Read the most heartwarming adoption stories from Hope for Dogs. From stray to beloved pet — discover how our dogs found their homes in the Netherlands and Belgium.' }
+  },
+  'nieuws': {
+    title: { nl: 'Nieuws — Updates uit het Asiel | Hope for Dogs', de: 'Neuigkeiten — Updates aus dem Tierheim | Hope for Dogs', en: 'News — Updates from the Shelter | Hope for Dogs' },
+    desc: { nl: 'Blijf op de hoogte van het laatste nieuws van Hope for Dogs. Reddingsverhalen, updates uit het asiel en meer over onze straathonden.', de: 'Bleib auf dem Laufenden mit den neuesten Nachrichten von Hope for Dogs. Rettungsgeschichten, Updates aus dem Tierheim und mehr über unsere Streunerhunde.', en: 'Stay up to date with the latest news from Hope for Dogs. Rescue stories, updates from the shelter, and more about our stray dogs.' }
+  },
+  'contact': {
+    title: { nl: 'Contact | Hope for Dogs', de: 'Kontakt | Hope for Dogs', en: 'Contact | Hope for Dogs' },
+    desc: { nl: 'Neem contact op met Hope for Dogs. Vragen over adoptie, ons werk of hoe je kunt helpen? Stuur ons een bericht.', de: 'Kontaktiere Hope for Dogs. Fragen zur Adoption, unserer Arbeit oder wie du helfen kannst? Schick uns eine Nachricht.', en: 'Get in touch with Hope for Dogs. Questions about adoption, our work, or how you can help? Send us a message.' }
+  },
+  'doneer': {
+    title: { nl: 'Doneer — Help Straathonden in Nood | Hope for Dogs', de: 'Spenden — Hilf Streunerhunden in Not | Hope for Dogs', en: 'Donate — Help Stray Dogs in Need | Hope for Dogs' },
+    desc: { nl: 'Steun Hope for Dogs met een donatie. Elke bijdrage helpt bij voeding, medische zorg en opvang van straathonden in Bosnië en Servië.', de: 'Unterstütze Hope for Dogs mit einer Spende. Jeder Beitrag hilft bei Futter, medizinischer Versorgung und Unterbringung von Streunerhunden in Bosnien und Serbien.', en: 'Support Hope for Dogs with a donation. Every contribution helps with food, medical care, and shelter for stray dogs in Bosnia and Serbia.' }
+  },
+  'hond': {
+    title: { nl: 'Hond | Hope for Dogs', de: 'Hund | Hope for Dogs', en: 'Dog | Hope for Dogs' },
+    desc: { nl: 'Leer meer over deze adoptiehond van Hope for Dogs. Gered van de straat in Bosnië of Servië, medisch behandeld en klaar voor een thuis.', de: 'Erfahre mehr über diesen Adoptionshund von Hope for Dogs. Von der Straße in Bosnien oder Serbien gerettet, medizinisch behandelt und bereit für ein Zuhause.', en: 'Learn more about this adoptable dog from Hope for Dogs. Rescued from the streets of Bosnia or Serbia, medically treated and ready for a home.' }
+  },
+  'post': {
+    title: { nl: 'Nieuws | Hope for Dogs', de: 'Neuigkeiten | Hope for Dogs', en: 'News | Hope for Dogs' },
+    desc: { nl: 'Lees dit nieuwsbericht van Hope for Dogs over onze reddingsacties en het leven in het asiel.', de: 'Lies diesen Beitrag von Hope for Dogs über unsere Rettungsaktionen und das Leben im Tierheim.', en: 'Read this news article from Hope for Dogs about our rescue efforts and life at the shelter.' }
+  },
+  'ervaring': {
+    title: { nl: 'Adoptieverhaal | Hope for Dogs', de: 'Adoptionsgeschichte | Hope for Dogs', en: 'Adoption Story | Hope for Dogs' },
+    desc: { nl: 'Lees dit adoptieverhaal van Hope for Dogs. Ontdek hoe een straathond uit Bosnië of Servië een liefdevol thuis vond.', de: 'Lies diese Adoptionsgeschichte von Hope for Dogs. Erfahre, wie ein Streunerhund aus Bosnien oder Serbien ein liebevolles Zuhause gefunden hat.', en: 'Read this adoption story from Hope for Dogs. Discover how a stray dog from Bosnia or Serbia found a loving home.' }
+  }
+};
+
+// The homepage's canonical form is the bare root ('/', '/en/', '/de/') — matches
+// the site's pre-existing canonical tag, not '/index.html'.
+function h4dCanonicalPath(barePath, lang) {
+  if (barePath === 'index.html' || !barePath) {
+    return lang === 'nl' ? '/' : '/' + lang + '/';
+  }
+  return h4dUrlFor(barePath, lang);
+}
+
+// Sets document.title/meta description/canonical/OG + injects the hreflang mesh (self +
+// both siblings + x-default) for the current page and language. Runs on every page's
+// DOMContentLoaded. Detail pages (hond/post/ervaring) override title/description again
+// once their per-record fetch completes, but canonical/og:url/hreflang — query string
+// included — are already correct here since location.search is available synchronously.
+function h4dInitSEOTags() {
+  var lang = h4dGetLanguage();
+  var bare = h4dStripLangPrefix(location.pathname);
+  var barePath = bare.replace(/^\//, '') || 'index.html';
+  var pageKey = barePath.replace(/\.html$/, '');
+  var seo = H4D_PAGE_SEO[pageKey];
+
+  if (seo) {
+    var title = seo.title[lang] || seo.title.nl;
+    var desc = seo.desc[lang] || seo.desc.nl;
+    document.title = title;
+    var descEl = document.querySelector('meta[name="description"]');
+    if (descEl) descEl.setAttribute('content', desc);
+    var ogTitleEl = document.querySelector('meta[property="og:title"]');
+    if (ogTitleEl) ogTitleEl.setAttribute('content', title);
+    var ogDescEl = document.querySelector('meta[property="og:description"]');
+    if (ogDescEl) ogDescEl.setAttribute('content', desc);
+  }
+
+  var canonicalEl = document.querySelector('link[rel="canonical"]');
+  var selfUrl = H4D_SITE_ORIGIN + h4dCanonicalPath(barePath, lang) + location.search;
+  if (canonicalEl) canonicalEl.setAttribute('href', selfUrl);
+  var ogUrlEl = document.querySelector('meta[property="og:url"]');
+  if (ogUrlEl) ogUrlEl.setAttribute('content', selfUrl);
+
+  // hreflang mesh only makes sense on pages that already carry the standard SEO tags
+  // (the 11 indexable templates) — skip noindex/utility pages like bedankt.html.
+  if (!canonicalEl) return;
+  document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(function (el) { el.remove(); });
+  ['nl', 'de', 'en'].forEach(function (l) {
+    var link = document.createElement('link');
+    link.rel = 'alternate';
+    link.hreflang = l;
+    link.href = H4D_SITE_ORIGIN + h4dCanonicalPath(barePath, l) + location.search;
+    document.head.appendChild(link);
+  });
+  var defaultLink = document.createElement('link');
+  defaultLink.rel = 'alternate';
+  defaultLink.hreflang = 'x-default';
+  defaultLink.href = H4D_SITE_ORIGIN + h4dCanonicalPath(barePath, 'nl') + location.search;
+  document.head.appendChild(defaultLink);
 }
 
 // Rounded flag icons for the language selector (clipped to a circle via CSS)
@@ -545,19 +696,19 @@ document.addEventListener('DOMContentLoaded', function () {
   if (navPlaceholder) {
     navPlaceholder.outerHTML = '<nav class="nav">' +
       '<div class="nav-inner">' +
-        '<a href="index.html" class="nav-logo">' +
+        '<a href="' + h4dUrl('index.html') + '" class="nav-logo">' +
           '<img src="logo.png" alt="Hope for Dogs">' +
         '</a>' +
         '<div class="nav-links-wrap">' +
           '<div class="nav-links-icon"><img src="lolo.png" alt=""></div>' +
           '<div class="nav-links-center">' +
-            '<a href="index.html" data-nav="index" data-i18n="nav.home">Home</a>' +
-            '<a href="honden.html" data-nav="honden" data-i18n="nav.honden">Honden</a>' +
-            '<a href="over-ons.html" data-nav="over-ons" data-i18n="nav.overons">Over ons</a>' +
-            '<a href="adoptie.html" data-nav="adoptie" data-i18n="nav.adoptie">Adoptie</a>' +
-            '<a href="ervaringen.html" data-nav="ervaringen" data-i18n="nav.ervaringen">Ervaringen</a>' +
-            '<a href="nieuws.html" data-nav="nieuws" data-i18n="nav.nieuws">Nieuws</a>' +
-            '<a href="contact.html" data-nav="contact" data-i18n="nav.contact">Contact</a>' +
+            '<a href="' + h4dUrl('index.html') + '" data-nav="index" data-i18n="nav.home">Home</a>' +
+            '<a href="' + h4dUrl('honden.html') + '" data-nav="honden" data-i18n="nav.honden">Honden</a>' +
+            '<a href="' + h4dUrl('over-ons.html') + '" data-nav="over-ons" data-i18n="nav.overons">Over ons</a>' +
+            '<a href="' + h4dUrl('adoptie.html') + '" data-nav="adoptie" data-i18n="nav.adoptie">Adoptie</a>' +
+            '<a href="' + h4dUrl('ervaringen.html') + '" data-nav="ervaringen" data-i18n="nav.ervaringen">Ervaringen</a>' +
+            '<a href="' + h4dUrl('nieuws.html') + '" data-nav="nieuws" data-i18n="nav.nieuws">Nieuws</a>' +
+            '<a href="' + h4dUrl('contact.html') + '" data-nav="contact" data-i18n="nav.contact">Contact</a>' +
           '</div>' +
         '</div>' +
         '<div class="nav-right">' +
@@ -572,8 +723,8 @@ document.addEventListener('DOMContentLoaded', function () {
               '<a href="#" class="nav-lang-option" data-lang="en"><span class="nav-lang-flag">' + H4D_FLAGS.en + '</span>English</a>' +
             '</div>' +
           '</div>' +
-          '<a href="doneer.html" class="nav-btn nav-btn-desktop" data-nav="doneer" data-i18n="nav.doneer">Doneer nu</a>' +
-          '<a href="doneer.html" class="nav-btn nav-btn-mobile" data-nav="doneer" data-i18n="nav.doneer.short">Doneer</a>' +
+          '<a href="' + h4dUrl('doneer.html') + '" class="nav-btn nav-btn-desktop" data-nav="doneer" data-i18n="nav.doneer">Doneer nu</a>' +
+          '<a href="' + h4dUrl('doneer.html') + '" class="nav-btn nav-btn-mobile" data-nav="doneer" data-i18n="nav.doneer.short">Doneer</a>' +
           '<button class="nav-hamburger" id="navHamburger" aria-label="Menu"><span></span><span></span><span></span></button>' +
         '</div>' +
       '</div>' +
@@ -635,9 +786,9 @@ document.addEventListener('DOMContentLoaded', function () {
           e.preventDefault();
           e.stopPropagation();
           var lang = e.target.getAttribute('data-lang');
-          h4dSetLanguage(lang);
           langDropdown.classList.remove('open');
           langBtn.classList.remove('open');
+          h4dNavigateToLanguage(lang);
         }
       });
     }
@@ -658,7 +809,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (hamburger && dropdown && overlay) {
       // Set active language in dropdown
-      var currentLang = localStorage.getItem('h4d-lang') || 'nl';
+      var currentLang = h4dGetLanguage();
       var activeLangEl = dropdown.querySelector('.nav-dropdown-lang-opt[data-lang="' + currentLang + '"]');
       if (activeLangEl) activeLangEl.classList.add('active');
 
@@ -688,10 +839,8 @@ document.addEventListener('DOMContentLoaded', function () {
         opt.addEventListener('click', function (e) {
           e.preventDefault();
           var lang = opt.getAttribute('data-lang');
-          h4dSetLanguage(lang);
-          dropdown.querySelectorAll('.nav-dropdown-lang-opt').forEach(function (o) { o.classList.remove('active'); });
-          opt.classList.add('active');
           closeDropdown();
+          h4dNavigateToLanguage(lang);
         });
       });
     }
@@ -779,13 +928,13 @@ document.addEventListener('DOMContentLoaded', function () {
             '<div class="footer-col">' +
               '<h4 data-i18n="footer.paginas">Pagina\u2019s</h4>' +
               '<ul>' +
-                '<li><a href="index.html" data-i18n="nav.home">Home</a></li>' +
-                '<li><a href="honden.html" data-i18n="nav.honden">Honden</a></li>' +
-                '<li><a href="over-ons.html" data-i18n="nav.overons">Over ons</a></li>' +
-                '<li><a href="nieuws.html" data-i18n="nav.nieuws">Nieuws</a></li>' +
-                '<li><a href="ervaringen.html" data-i18n="nav.ervaringen">Ervaringen</a></li>' +
-                '<li><a href="adoptie.html" data-i18n="nav.adoptie">Adoptie</a></li>' +
-                '<li><a href="doneer.html" data-i18n="footer.doneer">Doneer</a></li>' +
+                '<li><a href="' + h4dUrl('index.html') + '" data-i18n="nav.home">Home</a></li>' +
+                '<li><a href="' + h4dUrl('honden.html') + '" data-i18n="nav.honden">Honden</a></li>' +
+                '<li><a href="' + h4dUrl('over-ons.html') + '" data-i18n="nav.overons">Over ons</a></li>' +
+                '<li><a href="' + h4dUrl('nieuws.html') + '" data-i18n="nav.nieuws">Nieuws</a></li>' +
+                '<li><a href="' + h4dUrl('ervaringen.html') + '" data-i18n="nav.ervaringen">Ervaringen</a></li>' +
+                '<li><a href="' + h4dUrl('adoptie.html') + '" data-i18n="nav.adoptie">Adoptie</a></li>' +
+                '<li><a href="' + h4dUrl('doneer.html') + '" data-i18n="footer.doneer">Doneer</a></li>' +
               '</ul>' +
             '</div>' +
             '<div class="footer-col">' +
@@ -1014,6 +1163,8 @@ document.addEventListener('DOMContentLoaded', function () {
   if (savedLang && savedLang !== 'nl') {
     h4dSetLanguage(savedLang);
   }
+  h4dLocalizeStaticLinks();
+  h4dInitSEOTags();
 
   // ===== JSON-LD: ORGANIZATION SCHEMA =====
   var orgSchema = document.createElement('script');
@@ -1576,10 +1727,10 @@ document.addEventListener('DOMContentLoaded', function () {
       root.querySelectorAll('.cta-cost-item').forEach(function (a) {
         var m = (a.getAttribute('href') || '').match(/bedrag=([^&]+)/);
         var bed = m ? m[1] : '';
-        a.setAttribute('href', 'doneer.html?bedrag=' + bed + '&freq=' + f);
+        a.setAttribute('href', h4dUrl('doneer.html') + '?bedrag=' + bed + '&freq=' + f);
       });
       var cust = root.querySelector('.cta-cost-custom');
-      if (cust) cust.setAttribute('href', 'doneer.html?bedrag=eigen&freq=' + f);
+      if (cust) cust.setAttribute('href', h4dUrl('doneer.html') + '?bedrag=eigen&freq=' + f);
     }
     freq.querySelectorAll('.cta-freq-btn').forEach(function (b) {
       b.addEventListener('click', function () { apply(b.getAttribute('data-freq')); });

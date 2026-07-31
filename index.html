@@ -2,6 +2,7 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hope for Dogs — Adopteer een Straathond uit Bosnië en Servië</title>
   <meta name="description" content="Hope for Dogs redt straathonden in Bosnië en Servië en vindt hen een liefdevol thuis in Nederland en Belgie. Bekijk beschikbare honden of steun ons werk.">
@@ -3524,7 +3525,7 @@
       overlay.classList.add('open');
       document.body.style.overflow = 'hidden';
       pauseCarousel();
-      history.replaceState(null, '', '?hond=' + dogId);
+      history.replaceState(null, '', location.pathname + '?hond=' + dogId);
 
       // Fetch full photos in background
       loadDogModalPhotos(dogId, dog);

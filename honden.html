@@ -2,6 +2,7 @@
 <html lang="nl">
     <head>
         <meta charset="UTF-8" />
+  <base href="/">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Adoptiehonden — Beschikbare Honden | Hope for Dogs</title>
         <meta name="description" content="Bekijk alle beschikbare adoptiehonden van Hope for Dogs. Straathonden uit Bosnië en Servië, medisch behandeld en klaar voor een nieuw thuis.">
@@ -2058,7 +2059,7 @@
                 const adoptedCardHTML = (dog, index) => {
                     const img = getPhoto(dog);
                     return `
-          <a href="hond.html?id=${dog.id}" class="adopted-card" style="animation-delay: ${index * 0.05}s; text-decoration: none; color: inherit;">
+          <a href="${h4dUrl('hond.html')}?id=${dog.id}" class="adopted-card" style="animation-delay: ${index * 0.05}s; text-decoration: none; color: inherit;">
             <span class="adopted-badge">${adoptedLabel}</span>
             <img src="${img}" alt="${dog.naam}" class="adopted-card-img" loading="lazy" decoding="async">
             <div class="adopted-card-body">
@@ -2335,7 +2336,7 @@
                 document.body.style.overflow = "hidden";
 
                 // Update URL for sharing
-                history.replaceState(null, "", "?hond=" + dogId);
+                history.replaceState(null, "", location.pathname + "?hond=" + dogId);
 
                 // Fetch full photos AFTER the open animation, so the network +
                 // image-decode work doesn't compete with the slide-up (that

@@ -2,6 +2,7 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bedankt voor je donatie | Hope for Dogs</title>
   <meta name="robots" content="noindex">
@@ -231,7 +232,7 @@
         launchConfetti();
       }
       function goToFailure() {
-        window.location.replace('betaling-mislukt.html');
+        window.location.replace(h4dUrl('betaling-mislukt.html'));
       }
       function handleStatus(s) {
         if (s === 'paid' || s === 'authorized') showSuccess(false);

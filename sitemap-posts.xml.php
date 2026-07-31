@@ -29,17 +29,20 @@ if (!is_array($posts)) $posts = [];
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+$prefixes = ['', 'en/', 'de/'];
 foreach ($posts as $post) {
     if (empty($post['id'])) continue;
-    $loc = 'https://www.hopefordogseurope.com/post.html?id=' . rawurlencode($post['id']);
-    echo '  <url>' . "\n";
-    echo '    <loc>' . htmlspecialchars($loc, ENT_XML1) . '</loc>' . "\n";
-    if (!empty($post['published_at'])) {
-        $lastmod = gmdate('Y-m-d', strtotime($post['published_at']));
-        echo '    <lastmod>' . $lastmod . '</lastmod>' . "\n";
+    $lastmod = !empty($post['published_at']) ? gmdate('Y-m-d', strtotime($post['published_at'])) : null;
+    foreach ($prefixes as $prefix) {
+        $loc = 'https://www.hopefordogseurope.com/' . $prefix . 'post.html?id=' . rawurlencode($post['id']);
+        echo '  <url>' . "\n";
+        echo '    <loc>' . htmlspecialchars($loc, ENT_XML1) . '</loc>' . "\n";
+        if ($lastmod) {
+            echo '    <lastmod>' . $lastmod . '</lastmod>' . "\n";
+        }
+        echo '    <changefreq>monthly</changefreq>' . "\n";
+        echo '    <priority>0.5</priority>' . "\n";
+        echo '  </url>' . "\n";
     }
-    echo '    <changefreq>monthly</changefreq>' . "\n";
-    echo '    <priority>0.5</priority>' . "\n";
-    echo '  </url>' . "\n";
 }
 echo '</urlset>' . "\n";

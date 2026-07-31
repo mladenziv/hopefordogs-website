@@ -2,6 +2,7 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Adoptieverhaal | Hope for Dogs</title>
   <meta name="description" content="Lees dit adoptieverhaal van Hope for Dogs. Ontdek hoe een straathond uit Bosnië of Servië een liefdevol thuis vond.">
@@ -510,7 +511,7 @@
         }
 
         // Update URL without reload
-        history.replaceState(null, '', 'ervaring.html?id=' + storyId);
+        history.replaceState(null, '', location.pathname + '?id=' + storyId);
 
         // Set up "next story" button
         if (allStoryIds.length === 0) {
