@@ -486,6 +486,86 @@
 
     /* FAQ styles now in shared.css via component */
 
+    /* ===== AVAILABLE DOGS ===== */
+    .adopt-dogs {
+      width: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 72px 0;
+    }
+    .adopt-dogs-inner { width: 100%; max-width: 1560px; padding: 0 40px; }
+    .adopt-dogs-header { max-width: 620px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
+    .adopt-dogs-cta { margin-top: 40px; }
+
+    /* Dog cards — identical to the listing (honden.html) */
+    .dogs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .dog-card { position: relative; transition: transform 0.3s ease; cursor: pointer; touch-action: manipulation; animation: fadeInUp 0.5s ease forwards; opacity: 0; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .dog-card-inner { background: var(--white); border-radius: 20px; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.06); transition: box-shadow 0.3s ease; }
+    @media (hover: hover) {
+      .dog-card:hover { transform: translateY(-4px); }
+      .dog-card:hover .dog-card-inner { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1); }
+    }
+    .dog-card-img { width: 100%; height: 320px; object-fit: cover; }
+    .dog-card-body { padding: 24px; }
+    .dog-card-name { font-family: "Nunito", sans-serif; font-size: 22px; font-weight: 800; line-height: 1.3; color: var(--dark-1); margin-bottom: 4px; }
+    .dog-card-desc { font-family: "Manrope", sans-serif; font-size: 14px; font-weight: 500; line-height: 20px; color: #424242; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .dog-card-badge { position: absolute; top: 12px; left: -4px; display: flex; flex-direction: column; align-items: flex-start; z-index: 2; }
+    .dog-card-badge-label { font-family: "Nunito", sans-serif; font-size: 14px; font-weight: 800; line-height: 20px; padding: 4px 12px; color: #fefefd; border-radius: 8px 8px 8px 0; }
+    .dog-card-badge-tail { width: 0; height: 0; border-style: solid; border-width: 0 4px 4px 0; }
+    .dog-card-badge.puppy .dog-card-badge-label { background: #7c3aed; }
+    .dog-card-badge.puppy .dog-card-badge-tail { border-color: transparent #5b21b6 transparent transparent; }
+    .dog-card-badge.senior .dog-card-badge-label { background: #dc2626; }
+    .dog-card-badge.senior .dog-card-badge-tail { border-color: transparent #991b1b transparent transparent; }
+    .dog-card-badge.langzitter .dog-card-badge-label { background: #ea580c; }
+    .dog-card-badge.langzitter .dog-card-badge-tail { border-color: transparent #c2410c transparent transparent; }
+    .dog-card-media { position: relative; }
+    .dog-card-media .dog-card-img { display: block; }
+    .dog-card-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: none; border-radius: 50%; background: rgba(255, 255, 255, 0.9); color: var(--dark-1); display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.2s ease, background 0.2s ease; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18); z-index: 3; }
+    .dog-card-nav svg { width: 20px; height: 20px; }
+    .dog-card-nav.prev { left: 10px; }
+    .dog-card-nav.next { right: 10px; }
+    .dog-card-nav:hover { background: #fff; }
+    @media (hover: hover) { .dog-card:hover .dog-card-media.has-gallery .dog-card-nav { opacity: 1; pointer-events: auto; } }
+    .dog-card-vplay, .dog-card-vmute { display: none; position: absolute; border: none; cursor: pointer; color: #fff; background: rgba(0, 0, 0, 0.55); align-items: center; justify-content: center; z-index: 4; transition: background 0.2s ease; }
+    .dog-card-media.is-video .dog-card-vplay, .dog-card-media.is-video .dog-card-vmute { display: flex; }
+    .dog-card-vplay { top: 50%; left: 50%; transform: translate(-50%, -50%); width: 54px; height: 54px; border-radius: 50%; }
+    .dog-card-vplay svg { width: 26px; height: 26px; }
+    .dog-card-vmute { top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 50%; }
+    .dog-card-vmute svg { width: 18px; height: 18px; }
+    .dog-card-vplay:hover, .dog-card-vmute:hover { background: rgba(0, 0, 0, 0.75); }
+
+    /* Dog detail modal (clean) */
+    .adopt-modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 24px; }
+    .adopt-modal-overlay.open { display: flex; }
+    .adopt-modal { background: #fff; border-radius: 24px; max-width: 900px; width: 100%; max-height: 88vh; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; position: relative; }
+    .adopt-modal-close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.92); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 3; }
+    .adopt-modal-close svg { width: 20px; height: 20px; }
+    .adopt-modal-media { position: relative; background: var(--beige); }
+    .adopt-modal-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .adopt-modal-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.9); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; }
+    .adopt-modal-arrow svg { width: 20px; height: 20px; }
+    .adopt-modal-arrow.prev { left: 12px; }
+    .adopt-modal-arrow.next { right: 12px; }
+    .adopt-modal-info { padding: 40px 36px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+    .adopt-modal-name { font-family: 'Nunito', sans-serif; font-size: 30px; font-weight: 800; color: var(--dark-1); line-height: 1.2; }
+    .adopt-modal-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+    .adopt-modal-chip { font-size: 13px; font-weight: 600; color: var(--dark-2); background: var(--beige); border-radius: 999px; padding: 6px 14px; }
+    .adopt-modal-desc { font-size: 15px; font-weight: 500; line-height: 1.7; color: #424242; white-space: pre-line; }
+    .adopt-modal-cta { margin-top: 8px; }
+    @media (max-width: 1023px) { .dogs-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 767px) {
+      .adopt-dogs { padding: 36px 0 48px; }
+      .adopt-dogs-inner { padding: 0 20px; }
+      .dogs-grid { grid-template-columns: 1fr; gap: 16px; }
+      .adopt-modal { grid-template-columns: 1fr; max-height: 92vh; overflow-y: auto; }
+      .adopt-modal-media img { aspect-ratio: 4 / 3; }
+      .adopt-modal-info { padding: 24px 22px; }
+      .adopt-modal-name { font-size: 24px; }
+    }
+
     /* ===== CTA ===== */
     .adopt-cta {
       width: 100%;
@@ -790,6 +870,33 @@
   <!-- FAQ -->
   <div id="faq-placeholder"></div>
 
+  <div class="section-divider"></div>
+
+  <!-- AVAILABLE DOGS -->
+  <section class="adopt-dogs">
+    <div class="adopt-dogs-inner">
+      <div class="adopt-dogs-header">
+        <h2 class="t-heading-md" data-i18n="adoptie.dogs">Onze beschikbare adoptiehonden</h2>
+        <p class="t-body" data-i18n="adoptie.dogs.sub">Maak kennis met een paar van onze buitenlandse straathonden uit Bosni&#235; en Servi&#235; die op zoek zijn naar een thuis.</p>
+      </div>
+      <div class="dogs-grid" id="adoptDogsGrid"></div>
+      <div class="adopt-dogs-cta">
+        <a href="honden.html" class="btn-primary" data-i18n="adoptie.dogs.all">Bekijk alle honden</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dog detail modal (opens on card click) -->
+  <div class="adopt-modal-overlay" id="adoptDogModal" aria-hidden="true">
+    <div class="adopt-modal" role="dialog" aria-modal="true">
+      <button class="adopt-modal-close" id="adoptModalClose" aria-label="Sluiten">
+        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+      <div class="adopt-modal-media" id="adoptModalMedia"></div>
+      <div class="adopt-modal-info" id="adoptModalInfo"></div>
+    </div>
+  </div>
+
   <!-- CTA -->
   <section class="adopt-cta">
     <div class="adopt-cta-inner">
@@ -808,5 +915,98 @@
   <div id="footer-placeholder"></div>
   <script src="components.js?v=31"></script>
   <script src="supabase-config.js"></script>
+  <script src="dog-card.js?v=4"></script>
+  <script>
+    // Live block of available dogs on the flagship. Uses the SAME card renderer as
+    // the listing (dogCardHTML) and opens a clean detail modal on click. Hides the
+    // section on empty/error so the page never breaks.
+    (function () {
+      var grid = document.getElementById('adoptDogsGrid');
+      if (!grid || typeof supabaseGet !== 'function' || typeof dogCardHTML !== 'function') return;
+      var dogsById = {};
+      var overlay = document.getElementById('adoptDogModal');
+      var mediaEl = document.getElementById('adoptModalMedia');
+      var infoEl = document.getElementById('adoptModalInfo');
+      var photos = [], idx = 0, currentName = '';
+
+      function hideSection() { var s = document.querySelector('.adopt-dogs'); if (s) s.style.display = 'none'; }
+      function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+      function field(d, f) { return (typeof h4dField === 'function') ? h4dField(d, f) : d[f]; }
+      function T(k) { return (typeof h4dT === 'function') ? h4dT(k) : k; }
+
+      supabaseGet('dogs', 'select=*&draft=eq.false&status=neq.geadopteerd&order=sort_order.asc.nullsfirst,created_at.desc&limit=6')
+        .then(function (dogs) {
+          if (!dogs || !dogs.length) { hideSection(); return; }
+          var ids = dogs.map(function (d) { return d.id; });
+          return supabaseGet('dog_photos', 'select=dog_id,photo_url,is_primary&dog_id=in.(' + ids.join(',') + ')&order=is_primary.desc,sort_order.asc.nullslast,created_at.asc')
+            .then(function (rows) {
+              var map = {};
+              (rows || []).forEach(function (p) { if (!map[p.dog_id]) map[p.dog_id] = p.photo_url; });
+              dogs.forEach(function (d) { d.photo = map[d.id] || null; dogsById[d.id] = d; });
+              grid.innerHTML = dogs.map(function (d, i) { return dogCardHTML(d, { modal: true, gallery: true, index: i }); }).join('');
+            });
+        })
+        .catch(function () { hideSection(); });
+
+      // ---- Modal (opened by dogCardHTML's onclick=openDogModal) ----
+      var ARROW = {
+        prev: '<svg viewBox="0 0 16 16"><path d="M10 3l-5 5 5 5" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        next: '<svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      };
+      function renderMedia() {
+        if (!mediaEl) return;
+        var src = photos[idx] || 'images/placeholder-dog.svg';
+        var nav = photos.length > 1
+          ? '<button class="adopt-modal-arrow prev" aria-label="Vorige">' + ARROW.prev + '</button><button class="adopt-modal-arrow next" aria-label="Volgende">' + ARROW.next + '</button>'
+          : '';
+        mediaEl.innerHTML = '<img src="' + esc(src) + '" alt="' + esc(currentName) + '">' + nav;
+      }
+      function buildInfo(dog) {
+        var chips = [];
+        var leeftijd = field(dog, 'leeftijd'), ras = field(dog, 'ras');
+        var grootte = dog.grootte === 'klein' ? T('dogcard.size.klein') : dog.grootte === 'middel' ? T('dogcard.size.middel') : dog.grootte === 'groot' ? T('dogcard.size.groot') : '';
+        [leeftijd, ras, grootte].forEach(function (v) { if (v) chips.push('<span class="adopt-modal-chip">' + esc(v) + '</span>'); });
+        var desc = field(dog, 'beschrijving') || '';
+        var descHtml = (desc && desc.indexOf('http') !== 0) ? '<div class="adopt-modal-desc">' + esc(desc) + '</div>' : '';
+        var href = (typeof h4dUrl === 'function' ? h4dUrl('contact.html') : 'contact.html') + '?hond=' + encodeURIComponent(dog.naam || '');
+        return '<div class="adopt-modal-name">' + esc(dog.naam) + '</div>' +
+          (chips.length ? '<div class="adopt-modal-meta">' + chips.join('') + '</div>' : '') +
+          descHtml +
+          '<div class="adopt-modal-cta"><a class="btn-primary" href="' + href + '">' + esc(T('adoptie.dogs.cta')) + '</a></div>';
+      }
+      window.openDogModal = function (dogId) {
+        var dog = dogsById[dogId];
+        if (!dog || !overlay) return;
+        currentName = dog.naam || '';
+        infoEl.innerHTML = buildInfo(dog);
+        photos = dog.photo ? [dog.photo] : []; idx = 0; renderMedia();
+        overlay.classList.add('open'); overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        supabaseGet('dog_photos', 'select=photo_url&dog_id=eq.' + dogId + '&order=sort_order.asc.nullslast,is_primary.desc,created_at.asc')
+          .then(function (rows) {
+            var urls = (rows || []).map(function (p) { return p.photo_url; }).filter(function (u) { return u && !/\.(mp4|webm|mov)(\?|#|$)/i.test(u); });
+            if (urls.length) { photos = urls; idx = 0; renderMedia(); }
+          }).catch(function () {});
+      };
+      function closeModal() {
+        if (!overlay) return;
+        overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+      if (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) { closeModal(); return; }
+          var nav = e.target.closest && e.target.closest('.adopt-modal-arrow');
+          if (nav && photos.length > 1) {
+            idx = nav.classList.contains('prev') ? (idx > 0 ? idx - 1 : photos.length - 1) : (idx < photos.length - 1 ? idx + 1 : 0);
+            renderMedia();
+          }
+        });
+        var cb = document.getElementById('adoptModalClose');
+        if (cb) cb.addEventListener('click', closeModal);
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+      }
+    })();
+  </script>
 </body>
 </html>

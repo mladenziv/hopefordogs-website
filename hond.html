@@ -523,7 +523,7 @@
             <span data-i18n="dog.chatFacebook">Chat op Facebook</span>
           </a>
         </div>
-        <p style="font-size:15px;font-weight:500;color:var(--dark-2);margin-top:8px;" data-i18n-html="dog.adoptieHint">Benieuwd hoe het adoptieproces werkt? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">Bekijk de stappen en kosten</a></p>
+        <p style="font-size:15px;font-weight:500;color:var(--dark-2);margin-top:8px;" data-i18n-html="dog.adoptieHint">Wil je een buitenlandse hond adopteren? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">Bekijk het proces en de kosten</a></p>
       </div>
     </div>
   </section>
@@ -595,15 +595,23 @@
 
     async function loadDog() {
       const params = new URLSearchParams(window.location.search);
-      const dogId = params.get('id');
+      let dogId = params.get('id');
 
+      // Slug URLs (/hond/<slug>, /de/hond/<slug>) carry no ?id= — resolve by slug instead.
+      let slug = null;
       if (!dogId) {
+        const m = window.location.pathname.match(/\/hond\/([^\/?#]+)/);
+        if (m) slug = decodeURIComponent(m[1]);
+      }
+
+      if (!dogId && !slug) {
         showError();
         return;
       }
 
       try {
-        const dogs = await supabaseGet('dogs', `select=*&id=eq.${dogId}&draft=eq.false`);
+        const filter = dogId ? `id=eq.${dogId}` : `slug=eq.${encodeURIComponent(slug)}`;
+        const dogs = await supabaseGet('dogs', `select=*&${filter}&draft=eq.false`);
 
         if (!dogs || dogs.length === 0) {
           showError();
@@ -611,6 +619,7 @@
         }
 
         const dog = dogs[0];
+        dogId = dog.id;
         // Adopted dogs are noindex,follow (kept live, but out of the index). The server
         // prerender already sets this; this covers the case where it fell back to the shell.
         if (dog.status === 'geadopteerd' && !document.querySelector('meta[name="robots"]')) {

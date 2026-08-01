@@ -233,6 +233,13 @@
   <script src="supabase-config.js"></script>
   <script src="components.js?v=31"></script>
   <script>
+    // Pre-fill the subject when arriving from a dog card (?hond=<naam>).
+    (function () {
+      var hond = new URLSearchParams(location.search).get('hond');
+      if (!hond) return;
+      var subj = document.getElementById('cfSubject');
+      if (subj && !subj.value) subj.value = ((typeof h4dT === 'function') ? h4dT('contact.interesse') : 'Interesse in') + ' ' + hond;
+    })();
     document.getElementById('contactPageForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       var btn = document.getElementById('cfSubmit');
