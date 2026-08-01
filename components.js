@@ -57,6 +57,7 @@ var H4D_I18N = {
   'footer.helpons':     { nl: 'Help ons',      de: 'Hilf uns',   en: 'Help us' },
   'footer.contact':     { nl: 'Contact',       de: 'Kontakt',    en: 'Contact' },
   'footer.doneer':      { nl: 'Doneer',        de: 'Spenden',    en: 'Donate' },
+  'footer.privacy':     { nl: 'Privacybeleid', de: 'Datenschutz', en: 'Privacy Policy' },
   'footer.adopteer':    { nl: 'Adopteer',      de: 'Adoptieren', en: 'Adopt' },
   'footer.vrijwilliger':{ nl: 'Vrijwilliger worden', de: 'Freiwilliger werden', en: 'Become a volunteer' },
   'footer.copyright':   { nl: '\u00A9 ' + new Date().getFullYear() + ' Hope for Dogs. Alle rechten voorbehouden.', de: '\u00A9 ' + new Date().getFullYear() + ' Hope for Dogs. Alle Rechte vorbehalten.', en: '\u00A9 ' + new Date().getFullYear() + ' Hope for Dogs. All rights reserved.' },
@@ -529,6 +530,10 @@ var H4D_SITE_ORIGIN = 'https://www.hopefordogseurope.com';
 // Per-page title/description, one entry per indexable page. Detail pages (hond/post/
 // ervaring) show this as a fallback until their own per-record script overrides it.
 var H4D_PAGE_SEO = {
+  'privacy': {
+    title: { nl: 'Privacybeleid | Hope for Dogs', de: 'Datenschutz | Hope for Dogs', en: 'Privacy Policy | Hope for Dogs' },
+    desc: { nl: 'Privacyverklaring van Stichting Hope for Dogs Europe: welke persoonsgegevens wij verwerken en welke rechten je hebt volgens de AVG.', de: 'Datenschutzerklärung der Stiftung Hope for Dogs Europe: welche personenbezogenen Daten wir verarbeiten und welche Rechte du gemäß DSGVO hast.', en: 'Privacy policy of Stichting Hope for Dogs Europe: which personal data we process and your rights under the GDPR.' }
+  },
   'index': {
     title: { nl: 'Hope for Dogs — Adopteer een Straathond uit Bosnië en Servië', de: 'Hope for Dogs — Adoptiere einen Streunerhund aus Bosnien und Serbien', en: 'Hope for Dogs — Adopt a Stray Dog from Bosnia & Serbia' },
     desc: { nl: 'Hope for Dogs redt straathonden in Bosnië en Servië en vindt hen een liefdevol thuis in Nederland, België, Duitsland en Oostenrijk. Bekijk onze honden.', de: 'Hope for Dogs rettet Streunerhunde in Bosnien und Serbien und vermittelt sie in die Niederlande, Belgien, Deutschland und Österreich. Entdecke unsere Hunde.', en: 'Hope for Dogs rescues stray dogs in Bosnia and Serbia and finds them loving homes in the Netherlands, Belgium, Germany and Austria. Browse our dogs.' }
@@ -941,14 +946,17 @@ document.addEventListener('DOMContentLoaded', function () {
               '<h4 data-i18n="footer.contact">Contact</h4>' +
               '<ul>' +
                 '<li><a href="mailto:info@hopefordogseurope.com">info@hopefordogseurope.com</a></li>' +
-                '<li><a href="https://www.facebook.com/hopefordogseurope" target="_blank">Facebook</a></li>' +
-                '<li><a href="https://www.tiktok.com/@hope_for_dogs_europe" target="_blank">TikTok</a></li>' +
+                '<li><a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener">Facebook</a></li>' +
+                '<li><a href="https://www.tiktok.com/@hope_for_dogs_europe" target="_blank" rel="noopener">TikTok</a></li>' +
               '</ul>' +
             '</div>' +
           '</div>' +
         '</div>' +
         '<div class="footer-bottom">' +
-          '<span class="footer-copy" data-i18n="footer.copyright">\u00A9 ' + new Date().getFullYear() + ' Hope for Dogs. Alle rechten voorbehouden.</span>' +
+          '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">' +
+            '<a href="' + h4dUrl('privacy.html') + '" data-i18n="footer.privacy" style="color:#000;text-decoration:underline;">Privacybeleid</a>' +
+            '<span class="footer-copy" data-i18n="footer.copyright">\u00A9 ' + new Date().getFullYear() + ' Hope for Dogs. Alle rechten voorbehouden.</span>' +
+          '</div>' +
           '<div class="footer-socials">' +
             '<a href="https://www.facebook.com/hopefordogseurope" target="_blank" rel="noopener noreferrer">' +
               '<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' +
