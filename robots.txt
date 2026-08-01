@@ -9,3 +9,4 @@ Disallow: /migration/
 Sitemap: https://www.hopefordogseurope.com/sitemap.xml
 Sitemap: https://www.hopefordogseurope.com/sitemap-posts.xml
 Sitemap: https://www.hopefordogseurope.com/sitemap-dogs.xml
+Sitemap: https://www.hopefordogseurope.com/sitemap-stories.xml

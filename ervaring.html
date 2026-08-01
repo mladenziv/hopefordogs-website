@@ -447,7 +447,8 @@
         document.getElementById('storyName').textContent = story.dog_name;
         document.getElementById('breadcrumbName').textContent = story.dog_name;
 
-        // JSON-LD: BreadcrumbList schema
+        // JSON-LD: BreadcrumbList schema (skip if the server prerender already injected it)
+        if (!document.getElementById('ssr-ld-breadcrumb')) {
         var existingBcSchema = document.querySelector('script[data-schema="breadcrumb"]');
         if (existingBcSchema) existingBcSchema.remove();
         var bcSchema = document.createElement('script');
@@ -463,6 +464,7 @@
           ]
         });
         document.head.appendChild(bcSchema);
+        }
         document.getElementById('storyAdopter').textContent = story.adopter_name ? h4dT('exp.adoptedBy') + ' ' + story.adopter_name : '';
         document.getElementById('storyText').textContent = fullStory || description || '';
 
@@ -487,7 +489,8 @@
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('storySection').style.display = 'block';
 
-        // JSON-LD: Article schema for adoption story
+        // JSON-LD: Article schema for adoption story (skip if the server prerender already injected it)
+        if (!document.getElementById('ssr-ld-article')) {
         var existingStorySchema = document.querySelector('script[data-schema="story"]');
         if (existingStorySchema) existingStorySchema.remove();
         var storySchema = document.createElement('script');
@@ -504,6 +507,7 @@
           "description": description || ''
         });
         document.head.appendChild(storySchema);
+        }
 
         // Scroll to top on transition
         if (isTransition) {

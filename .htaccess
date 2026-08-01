@@ -30,6 +30,9 @@ RewriteRule ^sitemap-posts\.xml$ sitemap-posts.xml.php [L]
 # Dog listings sitemap: same clean-.xml pattern for the dynamic hond.html?id=... pages.
 RewriteRule ^sitemap-dogs\.xml$ sitemap-dogs.xml.php [L]
 
+# Adoption-stories sitemap: same clean-.xml pattern for the dynamic ervaring.html?id=... pages.
+RewriteRule ^sitemap-stories\.xml$ sitemap-stories.xml.php [L]
+
 # SSR prerender: serve the dog detail page through its PHP wrapper (internal
 # rewrite, URL bar unchanged, same HTML to bots and users). Placed AFTER the
 # /en//de/ collapse above so ?id=... and the language prefix survive. The wrapper
@@ -38,6 +41,10 @@ RewriteRule ^sitemap-dogs\.xml$ sitemap-dogs.xml.php [L]
 RewriteRule ^hond\.html$ hond.php [L]
 RewriteRule ^post\.html$ post.php [L]
 RewriteRule ^honden\.html$ honden.php [L]
+RewriteRule ^ervaring\.html$ ervaring.php [L]
+RewriteRule ^ervaringen\.html$ ervaringen.php [L]
+RewriteRule ^nieuws\.html$ nieuws.php [L]
+RewriteRule ^over-ons\.html$ over-ons.php [L]
 
 # Extension-less requests (e.g. /honden, /contact) for a page that exists as .html
 # -> redirect there instead of 404. Skips API/admin/asset paths.

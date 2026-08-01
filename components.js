@@ -1134,7 +1134,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           };
         });
-        if (faqSchemaItems.length > 0) {
+        // Skip if a server prerender already injected the FAQPage schema (over-ons.php)
+        // — one FAQPage per page.
+        if (faqSchemaItems.length > 0 && !document.getElementById('ssr-ld-faq')) {
           var faqSchema = document.createElement('script');
           faqSchema.type = 'application/ld+json';
           faqSchema.textContent = JSON.stringify({
