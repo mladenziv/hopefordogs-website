@@ -954,7 +954,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '</div>' +
         '<div class="footer-bottom">' +
           '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">' +
-            '<a href="' + h4dUrl('privacy.html') + '" data-i18n="footer.privacy" style="color:#000;text-decoration:underline;">Privacybeleid</a>' +
+            '<a href="' + h4dUrl('privacy.html') + '" data-i18n="footer.privacy" style="color:#000;text-decoration:underline;font-size:13px;">Privacybeleid</a>' +
             '<span class="footer-copy" data-i18n="footer.copyright">\u00A9 ' + new Date().getFullYear() + ' Hope for Dogs. Alle rechten voorbehouden.</span>' +
           '</div>' +
           '<div class="footer-socials">' +
