@@ -632,6 +632,22 @@
                 object-fit: cover;
                 display: block;
             }
+            /* Skeleton shimmer while the photo loads. The card is in the layout from
+               first paint (space reserved via .dotd-photo's aspect-ratio), so the header
+               no longer reflows when the dog-of-the-day fills in. */
+            .hero-dotd.is-loading .dotd-photo {
+                background-image: linear-gradient(100deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 70%);
+                background-size: 200% 100%;
+                background-repeat: no-repeat;
+                animation: dotdShimmer 1.3s ease-in-out infinite;
+            }
+            @keyframes dotdShimmer {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .hero-dotd.is-loading .dotd-photo { animation: none; }
+            }
             .dotd-name {
                 position: absolute;
                 left: 50%;
@@ -1521,14 +1537,13 @@
                         </p>
                     </div>
                     <!-- Dog of the day (single, randomized daily) -->
-                    <div class="hero-dotd" id="dotdWrap" style="display: none;">
+                    <div class="hero-dotd is-loading" id="dotdWrap">
                         <span class="dotd-rays" aria-hidden="true"></span>
                         <button type="button" class="dotd-card" id="dotdCard" aria-label="Hond van de dag">
                             <img class="dotd-sun" src="images/dotd-sun.svg" alt="" aria-hidden="true">
                             <span class="dotd-title" data-i18n="honden.dotd.title">Dog of the day</span>
                             <span class="dotd-sub" data-i18n="honden.dotd.sub">Elke dag staat een ander hondje in het zonnetje.</span>
                             <span class="dotd-photo">
-                                <img id="dotdPhoto" src="" alt="">
                                 <span class="dotd-name" id="dotdName"></span>
                             </span>
                         </button>
@@ -2044,6 +2059,7 @@
                 document.getElementById("dotdCard").onclick = function () {
                     openDogModal(dog.id);
                 };
+                wrap.classList.remove("is-loading");
                 wrap.style.display = "";
             }
 

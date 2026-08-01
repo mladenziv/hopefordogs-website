@@ -77,9 +77,15 @@ try {
                 ? (($lang === 'nl' ? '/hond/' : '/' . $lang . '/hond/') . rawurlencode($s))
                 : ($hondPath . '?id=' . rawurlencode($did));
             $img = $photoBy[$did] ?? '/images/placeholder-dog.svg';
+            // Mirror the client card structure (.dog-card-inner > img + .dog-card-body)
+            // so the prerendered/first-paint cards are fully styled — without the
+            // wrappers the CSS has nothing to attach to and the card renders unframed
+            // with the name in raw flow until the client JS hydrates (FOUC).
             $cards .= '<a class="dog-card" href="' . ssr_h($href) . '">'
+                . '<div class="dog-card-inner">'
                 . '<img class="dog-card-img" src="' . ssr_h($img) . '" alt="' . ssr_h($naam . ' — ' . $altSuffix) . '" loading="lazy" width="400" height="300">'
-                . '<span class="dog-card-name">' . ssr_h($naam) . '</span></a>';
+                . '<div class="dog-card-body"><div class="dog-card-name">' . ssr_h($naam) . '</div></div>'
+                . '</div></a>';
             $pos++;
             $items[] = ['@type' => 'ListItem', 'position' => $pos,
                 'url' => SSR_ORIGIN . $href, 'name' => $naam];
