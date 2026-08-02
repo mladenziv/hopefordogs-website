@@ -2808,6 +2808,10 @@
       <h2><span data-i18n="dog.inquiry.titlePre">Interesse in </span><span id="contactDogName"></span><span data-i18n="dog.inquiry.titlePost">?</span></h2>
       <p data-i18n="dog.inquiry.intro">Vul het formulier in en wij nemen zo snel mogelijk contact met je op.</p>
       <form class="contact-form" id="contactForm">
+        <!-- Honeypot spam trap: invisible to people, filled only by bots (silently dropped server-side). Do not remove. -->
+        <div aria-hidden="true" style="position:absolute!important;left:-9999px!important;top:-9999px!important;width:1px;height:1px;overflow:hidden;">
+          <label>Website<input type="text" name="website" id="contactWebsite" tabindex="-1" autocomplete="off"></label>
+        </div>
         <div class="form-row">
           <div class="form-group">
             <label for="contactNaam" data-i18n="dog.inquiry.naam">Naam *</label>
@@ -3729,7 +3733,8 @@
           naam: document.getElementById('contactNaam').value.trim(),
           email: document.getElementById('contactEmail').value.trim(),
           telefoon: document.getElementById('contactTelefoon').value.trim() || null,
-          bericht: document.getElementById('contactBericht').value.trim()
+          bericht: document.getElementById('contactBericht').value.trim(),
+          website: document.getElementById('contactWebsite').value
         };
 
         // Route through the PHP endpoint so it's saved AND emails the team

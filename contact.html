@@ -161,6 +161,10 @@
         <div class="contact-form-wrap">
           <h2 data-i18n="contact.form.title">Stuur ons een bericht</h2>
           <form id="contactPageForm">
+            <!-- Honeypot spam trap: invisible to people, filled only by bots (silently dropped server-side). Do not remove. -->
+            <div aria-hidden="true" style="position:absolute!important;left:-9999px!important;top:-9999px!important;width:1px;height:1px;overflow:hidden;">
+              <label>Website<input type="text" name="website" id="cfWebsite" tabindex="-1" autocomplete="off"></label>
+            </div>
             <div class="cf-row">
               <div class="cf-field">
                 <label for="cfNaam" data-i18n="contact.naam">Naam</label>
@@ -255,7 +259,8 @@
             email: document.getElementById('cfEmail').value.trim(),
             telefoon: document.getElementById('cfTel').value.trim(),
             onderwerp: document.getElementById('cfSubject').value.trim(),
-            bericht: document.getElementById('cfBericht').value.trim()
+            bericht: document.getElementById('cfBericht').value.trim(),
+            website: document.getElementById('cfWebsite').value
           })
         });
         var data = await res.json();

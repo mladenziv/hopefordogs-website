@@ -1810,6 +1810,10 @@
                     met je op.
                 </p>
                 <form class="contact-form" id="contactForm">
+                    <!-- Honeypot spam trap: invisible to people, filled only by bots (silently dropped server-side). Do not remove. -->
+                    <div aria-hidden="true" style="position:absolute!important;left:-9999px!important;top:-9999px!important;width:1px;height:1px;overflow:hidden;">
+                        <label>Website<input type="text" name="website" id="contactWebsite" tabindex="-1" autocomplete="off"></label>
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="contactNaam" data-i18n="dog.inquiry.naam">Naam *</label>
@@ -2680,6 +2684,9 @@
                             bericht: document
                                 .getElementById("contactBericht")
                                 .value.trim(),
+                            website:
+                                document.getElementById("contactWebsite")
+                                    .value,
                         };
 
                         var res = await fetch("/api/contact/", {

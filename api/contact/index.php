@@ -31,6 +31,15 @@ $telefoon  = isset($input['telefoon']) ? trim($input['telefoon']) : '';
 $onderwerp = isset($input['onderwerp']) ? trim($input['onderwerp']) : '';
 $bericht   = isset($input['bericht']) ? trim($input['bericht']) : '';
 
+// Honeypot spam trap: a hidden form field that real visitors never see or fill.
+// Automated form-spam bots fill every field, so a non-empty value means it's a bot.
+// Silently pretend it succeeded (don't tip off the bot) and skip the save + email.
+$honeypot = isset($input['website']) ? trim($input['website']) : '';
+if ($honeypot !== '') {
+    echo json_encode(['success' => true]);
+    exit;
+}
+
 if ($naam === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || $bericht === '') {
     http_response_code(400);
     echo json_encode(['error' => 'Vul je naam, een geldig e-mailadres en een bericht in.']);
@@ -88,9 +97,14 @@ $body    = "Naam: $naam\nE-mail: $email\nTelefoon: " . ($telefoon !== '' ? $tele
          . ($onderwerp !== '' ? "Onderwerp: $onderwerp\n" : '')
          . "\nBericht:\n$bericht\n";
 $fromEmail = defined('DONATION_FROM_EMAIL') ? DONATION_FROM_EMAIL : 'info@hopefordogseurope.com';
+// Strip CR/LF from the name before it goes into a mail header — prevents email
+// header injection (a bot smuggling extra Bcc:/Cc: recipients via a newline in
+// the name field, turning this notification into a spam relay). $email is already
+// validated by FILTER_VALIDATE_EMAIL above, which rejects newlines.
+$naamHeader = str_replace(["\r", "\n"], ' ', $naam);
 $headers = implode("\r\n", [
     'From: Hope for Dogs <' . $fromEmail . '>',
-    'Reply-To: ' . $naam . ' <' . $email . '>',
+    'Reply-To: ' . $naamHeader . ' <' . $email . '>',
     'Content-Type: text/plain; charset=UTF-8',
 ]);
 @mail($to, $subject, $body, $headers, '-f' . $fromEmail);
