@@ -166,6 +166,34 @@
     .rechead { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
     .rechead .recacts { display:flex; gap:6px; margin-left:auto; flex-wrap:wrap; }
     .reccard .tblwrap { border-color:#ffd9bf; }
+    /* title + actions dropdown */
+    .titlerow { display:flex; align-items:center; gap:12px; }
+    .menu { position:relative; }
+    .addbtn { width:40px; height:40px; border-radius:50%; border:none; background:var(--brand); color:#fff; font-size:26px; line-height:1; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(255,83,20,.3); transition:transform .15s; }
+    .addbtn:hover { filter:brightness(.96); }
+    .addbtn.open { transform:rotate(45deg); }
+    .menu-pop { display:none; position:absolute; top:48px; left:0; z-index:70; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.14); padding:6px; min-width:236px; }
+    .menu-item { display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:none; border:none; border-radius:9px; padding:10px 12px; font-family:inherit; font-size:14.5px; font-weight:600; color:var(--ink); cursor:pointer; }
+    .menu-item span { width:22px; text-align:center; flex:0 0 auto; }
+    .menu-item:hover { background:rgba(255,83,20,.08); color:var(--brand); }
+    /* combined totals card (tap to expand categories + graph) */
+    .statcard { background:#fff; border:1px solid var(--line); border-radius:16px; margin-bottom:16px; overflow:hidden; }
+    .statrow { display:flex; align-items:stretch; cursor:pointer; }
+    .statrow:hover { background:#fcfbf9; }
+    .statcell { flex:1; min-width:0; padding:15px 16px; border-left:1px solid var(--line); }
+    .statcell:first-child { border-left:none; }
+    .statcell .lbl { font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.03em; color:#999; margin-bottom:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .statcell .val { font-family:'Nunito',sans-serif; font-weight:900; font-size:21px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .statcell .sub { font-size:11px; color:var(--muted); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .statchev { flex:0 0 auto; display:flex; align-items:center; padding:0 14px; color:#bbb; font-size:12px; transition:transform .15s; }
+    .statcard.open .statchev { transform:rotate(180deg); }
+    .statdetail { border-top:1px solid var(--line); padding:14px 14px 2px; }
+    .statdetail .cols2, .statdetail > .card { margin-bottom:14px; }
+    @media (max-width:560px){ .statcell{ padding:12px 10px; } .statcell .val{ font-size:16px; } .statcell .lbl{ font-size:10px; } .statchev{ padding:0 8px; } }
+    /* category emoji tile + name/description cell */
+    .tcell { display:flex; align-items:center; gap:10px; }
+    .catemoji { flex:0 0 auto; width:44px; height:44px; border-radius:10px; background:#f4f2ee; display:flex; align-items:center; justify-content:center; font-size:22px; line-height:1; }
+    .tmeta { min-width:0; }
   </style>
 </head>
 <body>
@@ -186,20 +214,20 @@
 
   <div class="wrap">
     <div class="top">
-      <div>
+      <div class="titlerow">
         <h1>Administratie</h1>
-        <a class="back" href="index.html#/">← Terug naar beheer</a>
-      </div>
-      <div class="top-actions">
-        <button class="btn btn-primary" id="newBtn">+ Nieuwe transactie</button>
-        <button class="btn btn-ghost" id="mobBtn">📷 Mobiel scannen</button>
-        <button class="btn btn-ghost" id="rsBtn">Scan bonnen</button>
-        <button class="btn btn-ghost" id="ksBtn">Bankafschrift</button>
-        <button class="btn btn-ghost" id="adoptBtn">Adoptanten</button>
-        <button class="btn btn-ghost" id="transBtn">Transportlijst</button>
-        <button class="btn btn-ghost" id="pdfBtn">Exporteer jaaroverzicht</button>
-        <button class="btn btn-ghost btn-sm" id="sbBtn" title="Maak Servië-inkomsten voor bestaande opnames/overboekingen">Servië bijwerken</button>
-        <button class="btn btn-danger btn-sm" id="wipeBtn" title="Verwijder alle testdata">Testdata wissen</button>
+        <div class="menu">
+          <button class="addbtn" id="addMenuBtn" aria-label="Nieuwe actie" aria-haspopup="true" aria-expanded="false">+</button>
+          <div class="menu-pop" id="addMenu" role="menu">
+            <button class="menu-item" id="newBtn" role="menuitem"><span>➕</span> Nieuwe transactie</button>
+            <button class="menu-item" id="mobBtn" role="menuitem"><span>📷</span> Mobiel scannen</button>
+            <button class="menu-item" id="rsBtn" role="menuitem"><span>🧾</span> Scan bonnen</button>
+            <button class="menu-item" id="ksBtn" role="menuitem"><span>🏦</span> Bankafschrift</button>
+            <button class="menu-item" id="adoptBtn" role="menuitem"><span>👥</span> Adoptanten</button>
+            <button class="menu-item" id="transBtn" role="menuitem"><span>📋</span> Transportlijst</button>
+            <button class="menu-item" id="pdfBtn" role="menuitem"><span>📄</span> Exporteer jaaroverzicht</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -618,7 +646,7 @@
     function escA(s) { return esc(s).replace(/"/g, '&quot;'); }   // attribute-safe (for value="…")
     function euros(cents) { return '€' + (Number(cents || 0) / 100).toFixed(2).replace('.', ','); }
     function rsd(cents) { return 'din ' + Math.round(Number(cents || 0) / 100).toLocaleString('nl-NL'); }
-    function fmtDate(iso) { if (!iso) return '—'; try { return new Date(iso + 'T00:00:00').toLocaleDateString('nl-NL', { day: '2-digit', month: 'short', year: 'numeric' }); } catch (e) { return iso; } }
+    function fmtDate(iso) { if (!iso) return '—'; var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso)); return m ? (m[3] + '/' + m[2] + '/' + m[1]) : iso; }   // 2026-07-28 → 28/07/2026
     // robust number parse: handles "1.234,56" (eu), "1234.56", "12800", "-22,72", "€/din" prefixes
     function num(v) {
       if (v == null) return NaN;
@@ -645,6 +673,9 @@
     var CAT_LABEL = {};
     Object.keys(CATS).forEach(function (rek) { ['in', 'uit'].forEach(function (ri) { CATS[rek][ri].forEach(function (p) { CAT_LABEL[p[0]] = p[1]; }); }); });
     function catLabel(k) { return CAT_LABEL[k] || k || '—'; }
+    // one emoji per category, shown as a 44x44 tile left of the description in the ledger
+    var CAT_EMOJI = { donatie: '💛', adoptie_transport: '🐕', opname: '🏧', overboeking: '🔁', bankkosten: '💳', dierenarts: '🩺', diervoeding: '🦴', dierbenodigdheden: '🧸', bouwmaterialen: '🧱', gemengd: '🛒', overig: '📦' };
+    function catEmoji(k) { return CAT_EMOJI[k] || '📦'; }
 
     var MONTHS = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
 
@@ -653,6 +684,7 @@
     var DOGS = [];      // {id,naam} for the optional dog link
     var ADOPTERS = [];  // saved adopter list (drives adoption vs donation)
     var editing = null; // row being viewed/edited
+    var statsOpen = false; // combined totals card: categories + graph collapsed by default
 
     // ================= load + filter + stats + table =================
     function yearOf(r) { return r.datum ? parseInt(r.datum.slice(0, 4), 10) : null; }
@@ -725,20 +757,27 @@
       var rekLabel = headRek === 'kas_srb' ? 'Kas Servië' : 'Bank NL';
       var saldoNote = headRek === 'bank_nl' ? 'resultaat = baten − lasten' : 'uitgaven in Servië (RSD→EUR)';
 
-      var html = '<div class="statgrid">' +
-        '<div class="stat"><div class="lbl">Totaal in · ' + rekLabel + '</div><div class="val in">' + euros(totIn) + '</div></div>' +
-        '<div class="stat"><div class="lbl">Totaal uit · ' + rekLabel + '</div><div class="val uit">' + euros(totUit) + '</div></div>' +
-        '<div class="stat"><div class="lbl">Saldo</div><div class="val ' + (saldo < 0 ? 'uit' : 'in') + '">' + euros(saldo) + '</div><div class="sub">' + saldoNote + '</div></div>' +
-        '</div>';
-
-      // per-category breakdown + monthly chart
-      html += '<div class="cols2">' + breakdownCard(head) + chartCard(head) + '</div>';
-
-      // Besteding in Servië (kas_srb portion of the filtered set) — proof, not in the result
+      // hidden by default; the categories breakdown + monthly chart (+ Servië proof) live
+      // inside the expandable detail, revealed on tapping the totals row.
+      var detail = '<div class="cols2">' + breakdownCard(head) + chartCard(head) + '</div>';
       var srb = rows.filter(function (r) { return r.rekening === 'kas_srb' && r.meetellen !== false; });
-      if (srb.length && headRek !== 'kas_srb') html += servieCard(srb);
+      if (srb.length && headRek !== 'kas_srb') detail += servieCard(srb);
+
+      var html = '<div class="statcard' + (statsOpen ? ' open' : '') + '" id="statCard">' +
+        '<div class="statrow" id="statToggle" role="button" tabindex="0" aria-expanded="' + (statsOpen ? 'true' : 'false') + '">' +
+          '<div class="statcell"><div class="lbl">Totaal in</div><div class="val in">' + euros(totIn) + '</div></div>' +
+          '<div class="statcell"><div class="lbl">Totaal uit</div><div class="val uit">' + euros(totUit) + '</div></div>' +
+          '<div class="statcell"><div class="lbl">Saldo · ' + rekLabel + '</div><div class="val ' + (saldo < 0 ? 'uit' : 'in') + '">' + euros(saldo) + '</div><div class="sub">' + saldoNote + '</div></div>' +
+          '<span class="statchev" title="Details">▾</span>' +
+        '</div>' +
+        '<div class="statdetail" id="statDetail" style="display:' + (statsOpen ? '' : 'none') + '">' + detail + '</div>' +
+      '</div>';
 
       $('stats').innerHTML = html;
+      var tgl = $('statToggle');
+      function toggleStats() { statsOpen = !statsOpen; $('statCard').classList.toggle('open', statsOpen); $('statDetail').style.display = statsOpen ? '' : 'none'; tgl.setAttribute('aria-expanded', statsOpen ? 'true' : 'false'); }
+      tgl.onclick = toggleStats;
+      tgl.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleStats(); } };
     }
 
     function groupByCat(rows, ri) {
@@ -808,11 +847,12 @@
         var sign = r.richting === 'uit' ? '−' : '+';
         var srbTag = (showRek && r.rekening === 'kas_srb') ? '<span class="tag-srb">SRB</span>' : '';
         var strike = r.meetellen === false ? 'opacity:.5;text-decoration:line-through' : '';
+        var nm = r.tegenpartij || '', ds = r.omschrijving || '';
+        var primary = nm || ds || catLabel(r.categorie), secondary = nm ? ds : '';   // name first, description underneath
         return '<tr data-id="' + r.id + '" style="' + strike + '">' +
           '<td class="selcell"><input type="checkbox" class="rowsel" data-id="' + r.id + '"></td>' +
           '<td class="t-date">' + fmtDate(r.datum) + '</td>' +
-          '<td><div class="t-desc">' + esc(r.omschrijving || '—') + srbTag + '</div>' + (r.tegenpartij ? '<div class="t-party">' + esc(r.tegenpartij) + '</div>' : '') + '</td>' +
-          '<td><span class="cat">' + esc(catLabel(r.categorie)) + '</span></td>' +
+          '<td><div class="tcell"><span class="catemoji" title="' + escA(catLabel(r.categorie)) + '">' + catEmoji(r.categorie) + '</span><div class="tmeta"><div class="t-desc">' + esc(primary) + srbTag + '</div>' + (secondary ? '<div class="t-party">' + esc(secondary) + '</div>' : '') + '</div></div></td>' +
           '<td class="t-amt ' + r.richting + '">' + sign + main + sub + '</td>' +
           '<td class="clip">' + (r.bon_pad ? '<span class="bonthumb" data-bon="' + escA(r.bon_pad) + '" title="Bon"></span>' : '') + '</td>' +
           '</tr>';
@@ -821,7 +861,7 @@
         recHtml +
         '<div id="bulkbar"><b id="bulkcount"></b><button type="button" class="btn btn-danger btn-sm" id="bulkDel">Verwijderen</button><button type="button" class="btn btn-ghost btn-sm" id="bulkClear">Wis selectie</button></div>' +
         '<div class="hint" style="margin:2px 2px 10px">' + mainRows.length + ' transactie(s)</div>' +
-        '<div class="tblwrap" id="mainTbl"><table class="tbl"><thead><tr><th class="selcell"><input type="checkbox" id="selAll" title="Alles selecteren"></th><th>Datum</th><th>Omschrijving</th><th>Categorie</th><th style="text-align:right">Bedrag</th><th></th></tr></thead><tbody>' + body + '</tbody></table></div>';
+        '<div class="tblwrap" id="mainTbl"><table class="tbl"><thead><tr><th class="selcell"><input type="checkbox" id="selAll" title="Alles selecteren"></th><th>Datum</th><th>Naam / omschrijving</th><th style="text-align:right">Bedrag</th><th></th></tr></thead><tbody>' + body + '</tbody></table></div>';
       var byId = {}; mainRows.forEach(function (r) { byId[r.id] = r; });
       $('mainTbl').querySelectorAll('tbody tr').forEach(function (tr) {
         tr.addEventListener('click', function (e) {
@@ -862,11 +902,12 @@
         var sub = isRsd ? '<span class="eur">' + euros(r.bedrag_eur_cents) + '</span>' : '';
         var sign = r.richting === 'uit' ? '−' : '+';
         var rekTag = r.rekening === 'kas_srb' ? '<span class="tag-srb">SRB</span>' : '';
+        var nm = r.tegenpartij || '', ds = r.omschrijving || '';
+        var primary = nm || ds || catLabel(r.categorie), secondary = nm ? ds : '';
         return '<tr data-id="' + r.id + '">' +
           '<td class="selcell"><input type="checkbox" class="recsel" data-id="' + r.id + '"></td>' +
           '<td class="t-date">' + fmtDate(r.datum) + '</td>' +
-          '<td><div class="t-desc">' + esc(r.omschrijving || catLabel(r.categorie) || '—') + rekTag + '</div>' + (r.tegenpartij ? '<div class="t-party">' + esc(r.tegenpartij) + '</div>' : '') + '</td>' +
-          '<td><span class="cat">' + esc(catLabel(r.categorie)) + '</span></td>' +
+          '<td><div class="tcell"><span class="catemoji" title="' + escA(catLabel(r.categorie)) + '">' + catEmoji(r.categorie) + '</span><div class="tmeta"><div class="t-desc">' + esc(primary) + rekTag + '</div>' + (secondary ? '<div class="t-party">' + esc(secondary) + '</div>' : '') + '</div></div></td>' +
           '<td class="t-amt ' + r.richting + '">' + sign + main + sub + '</td>' +
           '<td class="clip">' + (r.bon_pad ? '<span class="bonthumb" data-bon="' + escA(r.bon_pad) + '" title="Bon"></span>' : '') + '</td>' +
           '</tr>';
@@ -1681,34 +1722,6 @@
       finally { btn.disabled = false; btn.textContent = orig; }
     }
 
-    // create the paired Kas-Servië income for existing opname/overboeking rows that don't have one yet (idempotent)
-    async function backfillSerbiaIncome() {
-      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
-      function key(datum, cents, teg, cat) { return (datum || '') + '|' + cents + '|' + normName(teg) + '|' + cat; }
-      var have = {};
-      ALL.forEach(function (r) { if (r.rekening === 'kas_srb' && r.richting === 'in') have[key(r.datum, r.bedrag_eur_cents, r.tegenpartij, r.categorie)] = 1; });
-      var todo = ALL.filter(function (r) {
-        return r.rekening === 'bank_nl' && r.richting === 'uit' && (r.categorie === 'opname' || r.categorie === 'overboeking') && r.meetellen !== false
-          && !have[key(r.datum, r.bedrag_eur_cents, r.tegenpartij, r.categorie)];
-      });
-      if (!todo.length) { alert('Alle opnames/overboekingen hebben al een Servië-inkomstenregel.'); return; }
-      if (!confirm(todo.length + ' opname(s)/overboeking(en) krijgen een bijpassende inkomstenregel op de Servische rekening. Doorgaan?')) return;
-      var btn = $('sbBtn'); btn.disabled = true; var orig = btn.textContent;
-      try {
-        for (var i = 0; i < todo.length; i++) {
-          var r = todo[i]; btn.textContent = 'Bijwerken… ' + (i + 1) + '/' + todo.length;
-          await apiWrite('POST', 'transactions', {
-            rekening: 'kas_srb', richting: 'in', categorie: r.categorie, valuta: 'EUR',
-            bedrag_cents: r.bedrag_eur_cents, bedrag_eur_cents: r.bedrag_eur_cents, koers: null, btw_cents: null,
-            datum: r.datum, omschrijving: 'Ontvangen uit NL', tegenpartij: r.tegenpartij,
-            factuurnr: null, referentie: 'transfer NL→SRB', bron: 'backfill', dog_id: null, bon_pad: null, bon_bestand: null, opmerking: null, meetellen: true
-          });
-        }
-        showAll(); await load();
-        alert(todo.length + ' Servië-inkomstenregel(s) toegevoegd.');
-      } catch (e) { alert('Bijwerken mislukt: ' + e.message); }
-      finally { btn.disabled = false; btn.textContent = orig; }
-    }
 
     // ================= Year PDF (Belastingdienst / ANBI) =================
     async function openPdf() {
@@ -1803,24 +1816,9 @@
       $('pOverlay').classList.remove('open');
     }
 
-    // ================= wipe test data (danger) =================
+    // ================= receipt storage helper =================
     async function deleteBon(path) {
       try { await fetch(SB + '/storage/v1/object/administratie/' + path, { method: 'DELETE', headers: { apikey: ANON, Authorization: 'Bearer ' + (token() || ANON) } }); } catch (e) {}
-    }
-    async function wipeAll() {
-      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
-      var typed = prompt('Dit verwijdert ALLE transacties en adoptanten (en hun bonnen in opslag).\nDit kan niet ongedaan worden gemaakt.\n\nTyp WISSEN om te bevestigen:');
-      if (typed !== 'WISSEN') return;
-      var btn = $('wipeBtn'); btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Wissen…';
-      try {
-        var withBon = ALL.filter(function (r) { return r.bon_pad; });
-        for (var i = 0; i < withBon.length; i++) await deleteBon(withBon[i].bon_pad);
-        await apiWrite('DELETE', 'transactions?id=not.is.null');
-        try { await apiWrite('DELETE', 'adopters?id=not.is.null'); } catch (e) {}   // adopters table may not exist yet
-        await load();
-        alert('Alle testdata is gewist.');
-      } catch (e) { alert('Wissen mislukt: ' + e.message); }
-      finally { btn.disabled = false; btn.textContent = orig; }
     }
 
     // ================= wire events =================
@@ -1829,8 +1827,15 @@
       $('newBtn').onclick = function () { openForm(null); };
       $('transBtn').onclick = function () { resetTrans(); $('tOverlay').classList.add('open'); };
       $('pdfBtn').onclick = function () { openPdf(); };
-      $('wipeBtn').onclick = wipeAll;
-      $('sbBtn').onclick = backfillSerbiaIncome;
+      // + dropdown (menu items keep their own IDs + handlers; any item click closes it)
+      function closeAddMenu() { $('addMenu').style.display = 'none'; $('addMenuBtn').classList.remove('open'); $('addMenuBtn').setAttribute('aria-expanded', 'false'); }
+      $('addMenuBtn').onclick = function (e) {
+        e.stopPropagation();
+        if ($('addMenu').style.display === 'block') closeAddMenu();
+        else { $('addMenu').style.display = 'block'; $('addMenuBtn').classList.add('open'); $('addMenuBtn').setAttribute('aria-expanded', 'true'); }
+      };
+      $('addMenu').addEventListener('click', closeAddMenu);
+      document.addEventListener('click', function (e) { if ($('addMenu').style.display === 'block' && !$('addMenu').contains(e.target) && e.target !== $('addMenuBtn')) closeAddMenu(); });
       // filters
       $('fltFrom').addEventListener('change', refresh);
       $('fltTo').addEventListener('change', refresh);
