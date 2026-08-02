@@ -203,7 +203,8 @@
     .mo-month { border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:12px; }
     .mo-mhead { display:flex; align-items:baseline; justify-content:space-between; gap:8px 14px; margin-bottom:10px; flex-wrap:wrap; }
     .mo-mtitle { font-family:'Nunito',sans-serif; font-weight:800; font-size:16px; }
-    .mo-stats { display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--muted); }
+    .mo-stats { display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--muted); margin-bottom:10px; }
+    .mo-run { font-size:13px; font-weight:700; color:var(--muted); white-space:nowrap; }
     .mo-stats b { font-variant-numeric:tabular-nums; }
     .mo-in { color:var(--in); } .mo-uit { color:var(--uit); }
     .mo-cats { border-top:1px solid var(--line); padding-top:10px; display:flex; flex-direction:column; gap:8px; }
@@ -683,6 +684,7 @@
     function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
     function escA(s) { return esc(s).replace(/"/g, '&quot;'); }   // attribute-safe (for value="…")
     function euros(cents) { return '€' + (Number(cents || 0) / 100).toFixed(2).replace('.', ','); }
+    function eurosSigned(cents) { var n = Number(cents || 0); return (n < 0 ? '−' : '') + '€' + (Math.abs(n) / 100).toFixed(2).replace('.', ','); }   // −€1081,00
     function rsd(cents) { return 'din ' + Math.round(Number(cents || 0) / 100).toLocaleString('nl-NL'); }
     function dinEur(rsdCents, eurCents) { return (rsdCents > 0 ? (rsd(rsdCents) + ' · ') : '') + euros(eurCents); }   // "din 5.000 · €42,58" (or just € when no RSD)
     function sanitizeName(s) { return String(s == null ? '' : s).replace(/[^\w.-]+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '').slice(0, 50); }
@@ -893,7 +895,8 @@
     }
     function openMonthly() {
       var d = serbiaMonths();
-      function monthBlock(title, m) {
+      // running = cumulative saldo carried into/through this month (null = not part of the chain, e.g. undated)
+      function monthBlock(title, m, running) {
         var cats = Object.keys(m.cats).map(function (k) { return [k, m.cats[k]]; }).sort(function (a, b) { return b[1].eur - a[1].eur; });
         var maxc = cats.reduce(function (s, p) { return Math.max(s, p[1].eur); }, 1);
         var catsH = cats.length ? cats.map(function (p) {
@@ -901,30 +904,27 @@
             '<div class="nm">' + esc(catLabel(p[0])) + '<div class="mo-bar"><i style="width:' + Math.round(p[1].eur / maxc * 100) + '%"></i></div></div>' +
             '<span class="amt">' + dinEur(p[1].rsd, p[1].eur) + '</span></div>';
         }).join('') : '<div class="hint">Geen uitgaven deze maand.</div>';
-        return '<div class="mo-month"><div class="mo-mhead"><div class="mo-mtitle">' + title + '</div>' +
+        var net = m.inEur - m.uitEur;
+        var runH = (running == null) ? '' : '<div class="mo-run">Loopend saldo <b class="' + (running < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(running) + '</b></div>';
+        return '<div class="mo-month"><div class="mo-mhead"><div class="mo-mtitle">' + title + '</div>' + runH + '</div>' +
           '<div class="mo-stats"><span>Ontvangen <b class="mo-in">' + euros(m.inEur) + '</b></span>' +
           '<span>Uitgegeven <b class="mo-uit">' + dinEur(m.uitRsd, m.uitEur) + '</b></span>' +
-          '<span>Verschil <b>' + euros(m.inEur - m.uitEur) + '</b></span></div></div>' +
+          '<span>Deze maand <b class="' + (net < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(net) + '</b></span></div>' +
           '<div class="mo-cats">' + catsH + '</div></div>';
       }
-      var keys = Object.keys(d.byMonth).filter(function (k) { return d.byMonth[k].inEur > 0; }).sort();   // only months funded from NL, ascending
       var html;
       if (!d.hasRows) {
         html = '<div class="empty">Nog geen transacties op de Servische rekening.</div>';
-      } else if (!keys.length) {
-        html = '<div class="empty">Geen maanden waarin vanuit Nederland geld naar Servië is gestuurd.</div>';
       } else {
-        var sIn = 0, sUitEur = 0, sUitRsd = 0;
-        keys.forEach(function (k) { var b = d.byMonth[k]; sIn += b.inEur; sUitEur += b.uitEur; sUitRsd += b.uitRsd; });
+        var endSaldo = d.totIn - d.totUitEur;
         html = '<div class="mo-sum">' +
-          '<div class="box"><div class="lbl">Ontvangen uit NL</div><div class="v mo-in">' + euros(sIn) + '</div></div>' +
-          '<div class="box"><div class="lbl">Uitgegeven</div><div class="v mo-uit">' + dinEur(sUitRsd, sUitEur) + '</div></div>' +
-          '<div class="box"><div class="lbl">Saldo (rest)</div><div class="v">' + euros(sIn - sUitEur) + '</div></div>' +
+          '<div class="box"><div class="lbl">Totaal ontvangen uit NL</div><div class="v mo-in">' + euros(d.totIn) + '</div></div>' +
+          '<div class="box"><div class="lbl">Totaal uitgegeven</div><div class="v mo-uit">' + dinEur(d.totUitRsd, d.totUitEur) + '</div></div>' +
+          '<div class="box"><div class="lbl">Saldo (loopend)</div><div class="v ' + (endSaldo < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(endSaldo) + '</div></div>' +
           '</div>';
-        keys.forEach(function (k) { html += monthBlock(moMonthName(k), d.byMonth[k]); });
-        // transparency: spending in months without an NL transfer, or on undated receipts, is not shown here
-        var exclEur = d.totUitEur - sUitEur, exclRsd = d.totUitRsd - sUitRsd;
-        if (exclEur > 0) html += '<div class="hint" style="margin-top:8px">Let op: ' + dinEur(exclRsd, exclEur) + ' aan uitgaven valt buiten deze maanden (maanden zonder overboeking uit NL, of bonnen zonder leesbare datum) en staat niet in dit overzicht of de export.</div>';
+        var running = 0;   // carries over month to month
+        Object.keys(d.byMonth).sort().forEach(function (k) { running += (d.byMonth[k].inEur - d.byMonth[k].uitEur); html += monthBlock(moMonthName(k), d.byMonth[k], running); });   // all months, ascending
+        if (d.undated.inEur || d.undated.uitEur) html += monthBlock('Zonder datum (bon zonder leesbare datum)', d.undated, null);
       }
       $('moBody').innerHTML = html;
       $('moMsg').textContent = ''; $('moMsg').className = 'msg';
