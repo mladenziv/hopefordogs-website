@@ -94,6 +94,8 @@
     .t-amt .eur { display:block; font-size:11.5px; font-weight:600; color:var(--muted); }
     .cat { display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:#eef0f2; color:#445; white-space:nowrap; }
     .clip { color:var(--muted); }
+    .bonthumb { display:inline-block; width:44px; height:33px; border-radius:6px; border:1px solid var(--line); background:#f0eee9 center/cover no-repeat; vertical-align:middle; }
+    .bonthumb.has { border-color:rgba(0,0,0,.16); }
     .tag-srb { font-size:10.5px; font-weight:800; color:#b45309; margin-left:6px; }
     /* overlays / sheet (from loterijen) */
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:flex-start; justify-content:center; padding:32px 16px; overflow-y:auto; z-index:100; }
@@ -549,6 +551,51 @@
       if (!r.ok) throw new Error('Sign ' + r.status);
       var d = await r.json(); return SB + '/storage/v1' + d.signedURL;
     }
+    // batch-sign many receipt paths in ONE request, cached ~50min so re-renders
+    // (e.g. typing in the search filter) don't re-sign. Returns { path: signedUrl }.
+    var _signCache = {};
+    async function signedUrls(paths) {
+      var now = Date.now(), need = [], out = {};
+      paths.forEach(function (p) {
+        var c = _signCache[p];
+        if (c && c.exp > now + 60000) out[p] = c.url;
+        else if (need.indexOf(p) === -1) need.push(p);
+      });
+      if (!need.length) return out;
+      function sign(tok) {
+        return fetch(SB + '/storage/v1/object/sign/administratie', {   // no path = batch endpoint
+          method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + (tok || ANON), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ expiresIn: 3600, paths: need })
+        });
+      }
+      var r = await sign(token());
+      if (r.status === 401) { var nt = await refreshToken(); if (nt) r = await sign(nt); }
+      if (!r.ok) throw new Error('Sign ' + r.status);
+      var arr = await r.json();
+      (arr || []).forEach(function (o) {
+        if (o && o.signedURL && !o.error) { var u = SB + '/storage/v1' + o.signedURL; _signCache[o.path] = { url: u, exp: now + 3600000 }; out[o.path] = u; }
+      });
+      return out;
+    }
+    // fill the table's receipt thumbnails: sign all (cheap), but only load the image
+    // bytes for rows in/near the viewport so a big ledger doesn't fetch every full-size
+    // receipt at once (esp. on mobile).
+    var _bonIO = null;
+    function loadBonThumbs() {
+      var root = $('list'); if (!root) return;
+      var els = root.querySelectorAll('.bonthumb[data-bon]'); if (!els.length) return;
+      var paths = [], seen = {};
+      els.forEach(function (el) { var p = el.getAttribute('data-bon'); if (p && !seen[p]) { seen[p] = 1; paths.push(p); } });
+      signedUrls(paths).then(function (map) {
+        function show(el) { var u = map[el.getAttribute('data-bon')]; if (u) { el.style.backgroundImage = 'url("' + u + '")'; el.classList.add('has'); } }
+        if (_bonIO) { _bonIO.disconnect(); _bonIO = null; }
+        if (!('IntersectionObserver' in window)) { els.forEach(show); return; }   // fallback: load all
+        _bonIO = new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (e) { if (e.isIntersecting) { show(e.target); obs.unobserve(e.target); } });
+        }, { rootMargin: '200px' });
+        els.forEach(function (el) { _bonIO.observe(el); });
+      }).catch(function () {});
+    }
 
     // ---- image: HEIC→JPEG (heic-to, lazy) + canvas compress ----
     // heic2any's bundled libheif can't decode modern iPhone HEIC (ERR_LIBHEIF), so we
@@ -784,7 +831,7 @@
           '<td><div class="t-desc">' + esc(r.omschrijving || '—') + srbTag + '</div>' + (r.tegenpartij ? '<div class="t-party">' + esc(r.tegenpartij) + '</div>' : '') + '</td>' +
           '<td><span class="cat">' + esc(catLabel(r.categorie)) + '</span></td>' +
           '<td class="t-amt ' + r.richting + '">' + sign + main + sub + '</td>' +
-          '<td class="clip">' + (r.bon_pad ? '📎' : '') + '</td>' +
+          '<td class="clip">' + (r.bon_pad ? '<span class="bonthumb" data-bon="' + escA(r.bon_pad) + '" title="Bon"></span>' : '') + '</td>' +
           '</tr>';
       }).join('');
       $('list').innerHTML =
@@ -803,6 +850,7 @@
       $('bulkClear').addEventListener('click', function () { $('list').querySelectorAll('.rowsel').forEach(function (cb) { cb.checked = false; }); $('selAll').checked = false; updateBulkBar(); });
       $('bulkDel').addEventListener('click', deleteSelected);
       updateBulkBar();
+      loadBonThumbs();
     }
     function selectedIds() {
       return Array.prototype.slice.call(document.querySelectorAll('.rowsel')).filter(function (cb) { return cb.checked; }).map(function (cb) { return cb.getAttribute('data-id'); });
