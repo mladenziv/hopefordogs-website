@@ -142,35 +142,30 @@
     .log { margin-top:12px; background:#0f1115; color:#cfe8d4; font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; border-radius:12px; padding:12px 14px; max-height:200px; overflow:auto; white-space:pre-wrap; word-break:break-word; }
     .log .ok{color:#86efac;} .log .warn{color:#facc15;} .log .err{color:#fca5a5;}
     @media (max-width:560px){ .grid2,.grid3{grid-template-columns:1fr;} }
-    /* ===== mobile receipt scan (full-screen capture → confirm price) ===== */
+    /* ===== mobile receipt scan (full-screen capture → list → save on Klaar) ===== */
     .overlay.mobile { padding:0; align-items:stretch; }
     .msheet { background:#fff; width:100%; max-width:560px; margin:0 auto; min-height:100dvh; padding:16px 16px calc(24px + env(safe-area-inset-bottom)); position:relative; display:flex; flex-direction:column; }
     .msheet h2 { font-family:'Nunito',sans-serif; font-weight:800; font-size:20px; margin:2px 0 8px; }
     .msaved { font-size:13px; font-weight:800; color:var(--in); margin-bottom:6px; min-height:16px; }
-    .mbig-btn { display:flex; align-items:center; justify-content:center; gap:10px; background:var(--brand); color:#fff; font-weight:800; font-size:21px; border-radius:16px; padding:26px 18px; cursor:pointer; margin:12px 0; box-shadow:0 6px 20px rgba(255,83,20,.25); user-select:none; }
+    .mbig-btn { display:flex; align-items:center; justify-content:center; gap:10px; background:var(--brand); color:#fff; font-weight:800; font-size:21px; border-radius:16px; padding:26px 18px; cursor:pointer; margin:12px 0 8px; box-shadow:0 6px 20px rgba(255,83,20,.25); user-select:none; }
     .mbig-btn:active { filter:brightness(.95); }
-    .mscan-preview { width:100%; border-radius:14px; border:1px solid var(--line); max-height:52vh; object-fit:contain; background:var(--beige); }
-    .mspin { text-align:center; color:var(--muted); font-weight:700; padding:16px 8px; }
-    .mprice-head { display:flex; flex-direction:column; align-items:center; gap:4px; margin:2px 0 10px; }
-    .mprice-label { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; color:#999; }
-    .mprice-input { display:flex; align-items:center; gap:8px; }
-    .mprice-input input { font-family:'Nunito',sans-serif; font-weight:900; font-size:38px; text-align:right; padding:6px 10px; border:2px solid var(--line); border-radius:12px; width:auto; max-width:220px; }
-    .mprice-input input:focus { border-color:var(--brand); }
-    .mprice-input select { font-size:18px; font-weight:800; padding:12px 8px; width:auto; }
-    .mmag-label { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:#999; margin:2px 0 5px; }
-    .mmag { width:100%; height:190px; border-radius:14px; border:1px solid var(--line); background:#000; touch-action:none; display:block; cursor:grab; }
-    .mmag:active { cursor:grabbing; }
-    .mzoom { width:100%; margin:10px 0 4px; }
-    .mfullwrap { position:relative; width:100%; margin-top:6px; border-radius:12px; overflow:hidden; border:1px solid var(--line); background:var(--beige); line-height:0; }
-    .mfull { display:block; width:100%; cursor:crosshair; }
-    .mbox { position:absolute; border:2px solid var(--brand); box-shadow:0 0 0 9999px rgba(0,0,0,.30); border-radius:3px; pointer-events:none; }
-    .mcenter { text-align:center; }
-    .mdetails { margin:10px 0 2px; }
-    .mdetails summary { font-weight:700; color:var(--muted); cursor:pointer; padding:8px 0; font-size:14px; }
+    .mspin { text-align:center; color:var(--muted); font-weight:700; padding:12px 8px; }
+    .mlist { margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+    .mitem { display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:12px; padding:8px 10px; }
+    .mitem-thumb { width:52px; height:40px; flex:0 0 auto; }
+    .mitem-amt { font-family:'Nunito',sans-serif; font-weight:800; font-size:18px; text-align:right; padding:8px 8px; border:1.5px solid var(--line); border-radius:9px; width:auto; flex:1 1 auto; min-width:0; }
+    .mitem-amt:focus { border-color:var(--brand); }
+    .mitem-cur { font-size:15px; font-weight:800; padding:9px 6px; width:auto; flex:0 0 auto; }
+    .mdup { font-size:11px; font-weight:800; color:#b45309; background:#fff3e0; border-radius:999px; padding:3px 7px; flex:0 0 auto; white-space:nowrap; }
+    .mitem-x { flex:0 0 auto; width:34px; height:34px; border-radius:50%; border:1.5px solid rgba(192,57,43,.3); background:#fff; color:#c0392b; font-size:14px; cursor:pointer; }
     .mactions { display:flex; gap:10px; margin-top:14px; }
     .mactions .btn { flex:1; padding:15px; font-size:16px; }
-    .mdone { width:100%; margin-top:10px; }
     .mgrow { flex:1; }
+    /* recently-added section in the ledger */
+    .reccard { background:#fff8f3; border:1px solid #ffd9bf; border-radius:16px; padding:12px 14px; margin-bottom:16px; }
+    .rechead { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+    .rechead .recacts { display:flex; gap:6px; margin-left:auto; flex-wrap:wrap; }
+    .reccard .tblwrap { border-color:#ffd9bf; }
   </style>
 </head>
 <body>
@@ -358,61 +353,25 @@
     </div>
   </div>
 
-  <!-- Mobile receipt scan (camera → confirm price) -->
+  <!-- Mobile receipt scan (camera → list → save on Klaar) -->
   <div class="overlay mobile" id="mOverlay">
     <div class="msheet">
       <button class="close" id="mClose" aria-label="Sluiten">✕</button>
       <div class="msaved" id="mSaved"></div>
-
-      <!-- step 1: capture -->
-      <div class="mstep" id="mStepCapture">
-        <h2>Bon scannen</h2>
-        <p class="hint" style="margin:-2px 0 4px">Maak een foto van de bon. De prijs wordt automatisch uitgelezen — je controleert 'm daarna. Standaard: <b>Kas Servië (RSD)</b>.</p>
-        <label class="mbig-btn">📷 Maak foto
-          <input type="file" id="mFile" accept="image/*" capture="environment" style="display:none">
-        </label>
-        <label class="hint" style="display:block;text-align:center;text-decoration:underline;cursor:pointer">Of kies uit galerij
-          <input type="file" id="mFileGallery" accept="image/*,.heic,.heif" style="display:none">
-        </label>
-        <div class="msg" id="mMsg"></div>
-      </div>
-
-      <!-- step 2: scanning -->
-      <div class="mstep" id="mStepScan" style="display:none">
-        <h2>Scannen…</h2>
-        <img id="mScanPreview" class="mscan-preview" alt="">
-        <div class="mspin">Bezig met uitlezen… ⏳</div>
-      </div>
-
-      <!-- step 3: confirm the detected price -->
-      <div class="mstep" id="mStepConfirm" style="display:none">
-        <div class="mprice-head">
-          <div class="mprice-label">Herkende prijs — klopt dit?</div>
-          <div class="mprice-input">
-            <input type="number" step="0.01" min="0" id="mPrice" inputmode="decimal">
-            <select id="mCur"><option value="RSD">din</option><option value="EUR">€</option></select>
-          </div>
-        </div>
-        <div class="mmag-label">Ingezoomd op de prijs</div>
-        <canvas id="mMag" class="mmag"></canvas>
-        <input type="range" id="mZoom" class="mzoom" min="1.2" max="7" step="0.1" value="3" aria-label="Zoom">
-        <div class="mfullwrap"><img id="mFull" class="mfull" alt=""><div id="mBox" class="mbox" style="display:none"></div></div>
-        <p class="hint mcenter" style="margin:8px 0 2px">Sleep op de uitsnede om te verschuiven · tik op de foto om daar te centreren · schuif voor zoom.</p>
-        <details class="mdetails">
-          <summary>Meer details (categorie, datum, leverancier)</summary>
-          <div class="field" style="margin:8px 0 12px"><label>Categorie</label><select id="mCat"></select></div>
-          <div class="grid2">
-            <div class="field"><label>Datum</label><input type="date" id="mDate"></div>
-            <div class="field"><label>Leverancier</label><input type="text" id="mVendor"></div>
-          </div>
-          <div class="field"><label>Factuurnr.</label><input type="text" id="mInvoice"></div>
-        </details>
-        <div class="msg" id="mMsg2"></div>
-        <div class="mactions">
-          <button type="button" class="btn btn-ghost" id="mRetake">Opnieuw</button>
-          <button type="button" class="btn btn-primary mgrow" id="mSaveNext">Opslaan &amp; volgende</button>
-        </div>
-        <button type="button" class="btn btn-ghost mdone" id="mDone">Klaar</button>
+      <h2>Bonnen scannen</h2>
+      <p class="hint" style="margin:-2px 0 6px">Maak foto's van de bonnen — ze komen hieronder in een lijst. Bij <b>Klaar &amp; opslaan</b> worden ze bewaard in <b>Kas Servië (RSD)</b>. Controleer waar nodig het bedrag.</p>
+      <label class="mbig-btn">📷 Maak foto
+        <input type="file" id="mFile" accept="image/*" capture="environment" style="display:none">
+      </label>
+      <label class="hint" style="display:block;text-align:center;text-decoration:underline;cursor:pointer;margin-bottom:4px">Of kies uit galerij (meerdere mag)
+        <input type="file" id="mFileGallery" accept="image/*,.heic,.heif" multiple style="display:none">
+      </label>
+      <div class="mspin" id="mSpin" style="display:none">Bezig met uitlezen… ⏳</div>
+      <div class="msg" id="mMsg"></div>
+      <div id="mList" class="mlist"></div>
+      <div class="mactions">
+        <button type="button" class="btn btn-ghost" id="mCancel">Annuleren</button>
+        <button type="button" class="btn btn-primary mgrow" id="mSaveAll" disabled>Klaar &amp; opslaan</button>
       </div>
     </div>
   </div>
@@ -816,9 +775,16 @@
     }
 
     function renderTable(rows) {
-      if (!rows.length) { $('list').innerHTML = '<div class="empty">Geen transacties voor deze filter.</div>'; return; }
+      var recent = recentRows(), recentIds = {};
+      recent.forEach(function (r) { recentIds[r.id] = 1; });
+      var mainRows = rows.filter(function (r) { return !recentIds[r.id]; });   // recent shown separately above
+      var recHtml = renderRecentCard(recent);
+      if (!mainRows.length) {
+        $('list').innerHTML = recHtml + '<div class="empty">' + (rows.length ? 'Alle transacties in deze filter staan hierboven (zojuist toegevoegd).' : 'Geen transacties voor deze filter.') + '</div>';
+        wireRecentCard(); loadBonThumbs(); return;
+      }
       var showRek = $('fltRekening').value === 'alle';
-      var body = rows.map(function (r) {
+      var body = mainRows.map(function (r) {
         var isRsd = r.valuta === 'RSD';
         var main = isRsd ? rsd(r.bedrag_cents) : euros(r.bedrag_eur_cents);
         var sub = isRsd ? '<span class="eur">' + euros(r.bedrag_eur_cents) + '</span>' : '';
@@ -835,11 +801,12 @@
           '</tr>';
       }).join('');
       $('list').innerHTML =
+        recHtml +
         '<div id="bulkbar"><b id="bulkcount"></b><button type="button" class="btn btn-danger btn-sm" id="bulkDel">Verwijderen</button><button type="button" class="btn btn-ghost btn-sm" id="bulkClear">Wis selectie</button></div>' +
-        '<div class="hint" style="margin:2px 2px 10px">' + rows.length + ' transactie(s)</div>' +
-        '<div class="tblwrap"><table class="tbl"><thead><tr><th class="selcell"><input type="checkbox" id="selAll" title="Alles selecteren"></th><th>Datum</th><th>Omschrijving</th><th>Categorie</th><th style="text-align:right">Bedrag</th><th></th></tr></thead><tbody>' + body + '</tbody></table></div>';
-      var byId = {}; rows.forEach(function (r) { byId[r.id] = r; });
-      $('list').querySelectorAll('tbody tr').forEach(function (tr) {
+        '<div class="hint" style="margin:2px 2px 10px">' + mainRows.length + ' transactie(s)</div>' +
+        '<div class="tblwrap" id="mainTbl"><table class="tbl"><thead><tr><th class="selcell"><input type="checkbox" id="selAll" title="Alles selecteren"></th><th>Datum</th><th>Omschrijving</th><th>Categorie</th><th style="text-align:right">Bedrag</th><th></th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      var byId = {}; mainRows.forEach(function (r) { byId[r.id] = r; });
+      $('mainTbl').querySelectorAll('tbody tr').forEach(function (tr) {
         tr.addEventListener('click', function (e) {
           if (e.target.classList.contains('rowsel') || e.target.classList.contains('selcell')) return;   // don't open detail when (de)selecting
           openDetail(byId[tr.getAttribute('data-id')]);
@@ -850,7 +817,73 @@
       $('bulkClear').addEventListener('click', function () { $('list').querySelectorAll('.rowsel').forEach(function (cb) { cb.checked = false; }); $('selAll').checked = false; updateBulkBar(); });
       $('bulkDel').addEventListener('click', deleteSelected);
       updateBulkBar();
+      wireRecentCard();
       loadBonThumbs();
+    }
+    // rows created in the last 5 minutes — shown in their own card, independent of the
+    // account/date filter, so a fresh scan batch is easy to review and clean up.
+    function recentRows() {
+      var cutoff = Date.now() - 5 * 60 * 1000;
+      return ALL.filter(function (r) { var t = r.created_at ? Date.parse(r.created_at) : NaN; return !isNaN(t) && t >= cutoff; })
+        .sort(function (a, b) { return (b.created_at || '').localeCompare(a.created_at || ''); });
+    }
+    function renderRecentCard(recent) {
+      if (!recent.length) return '';
+      var rowsH = recent.map(function (r) {
+        var isRsd = r.valuta === 'RSD';
+        var main = isRsd ? rsd(r.bedrag_cents) : euros(r.bedrag_eur_cents);
+        var sub = isRsd ? '<span class="eur">' + euros(r.bedrag_eur_cents) + '</span>' : '';
+        var sign = r.richting === 'uit' ? '−' : '+';
+        var rekTag = r.rekening === 'kas_srb' ? '<span class="tag-srb">SRB</span>' : '';
+        return '<tr data-id="' + r.id + '">' +
+          '<td class="selcell"><input type="checkbox" class="recsel" data-id="' + r.id + '"></td>' +
+          '<td class="t-date">' + fmtDate(r.datum) + '</td>' +
+          '<td><div class="t-desc">' + esc(r.omschrijving || catLabel(r.categorie) || '—') + rekTag + '</div>' + (r.tegenpartij ? '<div class="t-party">' + esc(r.tegenpartij) + '</div>' : '') + '</td>' +
+          '<td><span class="cat">' + esc(catLabel(r.categorie)) + '</span></td>' +
+          '<td class="t-amt ' + r.richting + '">' + sign + main + sub + '</td>' +
+          '<td class="clip">' + (r.bon_pad ? '<span class="bonthumb" data-bon="' + escA(r.bon_pad) + '" title="Bon"></span>' : '') + '</td>' +
+          '</tr>';
+      }).join('');
+      return '<div class="reccard">' +
+        '<div class="rechead"><b>Zojuist toegevoegd</b>&nbsp;<span class="hint">· laatste 5 min · ' + recent.length + '</span>' +
+        '<div class="recacts">' +
+        '<button type="button" class="btn btn-ghost btn-sm" id="recSelAll">Alles selecteren</button>' +
+        '<button type="button" class="btn btn-danger btn-sm" id="recDelSel">Verwijder selectie</button>' +
+        '<button type="button" class="btn btn-danger btn-sm" id="recDelAll">Alles verwijderen</button>' +
+        '</div></div>' +
+        '<div class="tblwrap"><table class="tbl"><tbody>' + rowsH + '</tbody></table></div></div>';
+    }
+    function wireRecentCard() {
+      var card = $('list') && $('list').querySelector('.reccard'); if (!card) return;
+      var recent = recentRows(), byId = {}; recent.forEach(function (r) { byId[r.id] = r; });
+      card.querySelectorAll('tbody tr').forEach(function (tr) {
+        tr.addEventListener('click', function (e) {
+          if (e.target.classList.contains('recsel') || e.target.classList.contains('selcell')) return;
+          openDetail(byId[tr.getAttribute('data-id')]);
+        });
+      });
+      $('recSelAll').onclick = function () {
+        var boxes = card.querySelectorAll('.recsel'), anyOff = Array.prototype.some.call(boxes, function (b) { return !b.checked; });
+        boxes.forEach(function (b) { b.checked = anyOff; });
+      };
+      $('recDelSel').onclick = function () {
+        var ids = Array.prototype.slice.call(card.querySelectorAll('.recsel')).filter(function (b) { return b.checked; }).map(function (b) { return b.getAttribute('data-id'); });
+        if (!ids.length) { alert('Selecteer eerst een of meer rijen.'); return; }
+        deleteTransactionIds(ids, ids.length + ' geselecteerde transactie(s) verwijderen?');
+      };
+      $('recDelAll').onclick = function () { deleteTransactionIds(recent.map(function (r) { return r.id; }), 'Alle ' + recent.length + ' zojuist toegevoegde transactie(s) verwijderen?'); };
+    }
+    // shared delete for the recent card (best-effort removes attached receipts first)
+    async function deleteTransactionIds(ids, confirmMsg) {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      if (!ids.length) return;
+      if (!confirm(confirmMsg + ' Dit kan niet ongedaan worden gemaakt.')) return;
+      try {
+        var byId = {}; ALL.forEach(function (r) { byId[r.id] = r; });
+        for (var i = 0; i < ids.length; i++) { var r = byId[ids[i]]; if (r && r.bon_pad) await deleteBon(r.bon_pad); }
+        for (var s = 0; s < ids.length; s += 50) await apiWrite('DELETE', 'transactions?id=in.(' + ids.slice(s, s + 50).join(',') + ')');
+        await load();
+      } catch (e) { alert('Verwijderen mislukt: ' + e.message); }
     }
     function selectedIds() {
       return Array.prototype.slice.call(document.querySelectorAll('.rowsel')).filter(function (cb) { return cb.checked; }).map(function (cb) { return cb.getAttribute('data-id'); });
@@ -1253,151 +1286,129 @@
       finally { btn.disabled = false; btn.textContent = orig; }
     }
 
-    // ================= mobile receipt scan (camera → confirm price) =================
-    // A full-screen phone flow: take a photo → receipt OCR → confirm the detected price
-    // on a magnifier zoomed onto it → save to Kas Servië and immediately scan the next.
-    // Reuses ocrImage / uploadBon / apiWrite / CATS (mirrors the saveRs receipt path).
-    var mBlob = null, mData = {}, mFileName = '', mSavedCount = 0, mImg = null, mUrls = [];
-    var mCrop = { cx: 0.5, cy: 0.5, zoom: 3 }, mDrag = null;
-
+    // ================= mobile receipt scan (camera → list → save on Klaar) =================
+    // Photograph receipts one after another; each is OCR'd and added to an on-screen list
+    // (thumbnail + editable amount). Nothing is saved until "Klaar & opslaan", which uploads
+    // each photo and writes the transaction (Kas Servië · uit · RSD). Suspected duplicates
+    // (same account + amount + date/supplier) are confirmed one by one. Photo-upload failures
+    // are surfaced (not swallowed) so a receipt never saves silently without its photo.
+    var mItems = [], mSavedCount = 0, mBusy = false, mUrls = [];
     function mTrackUrl(u) { mUrls.push(u); return u; }
     function mRevokeUrls() { mUrls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} }); mUrls = []; }
-    function mStep(s) {
-      $('mStepCapture').style.display = s === 'capture' ? '' : 'none';
-      $('mStepScan').style.display    = s === 'scan'    ? '' : 'none';
-      $('mStepConfirm').style.display = s === 'confirm' ? '' : 'none';
-    }
+    function mMsg(cls, txt) { var el = $('mMsg'); el.className = 'msg' + (cls ? (' ' + cls) : ''); el.textContent = txt || ''; }
     function updateMSaved() { $('mSaved').textContent = mSavedCount ? ('✓ ' + mSavedCount + ' bon(nen) opgeslagen') : ''; }
-    function mResetShot() {
-      mBlob = null; mData = {}; mFileName = ''; mImg = null;
-      $('mFile').value = ''; $('mFileGallery').value = '';
-      $('mMsg').textContent = ''; $('mMsg').className = 'msg'; $('mMsg2').textContent = ''; $('mMsg2').className = 'msg';
-      mRevokeUrls();
+    function mEurCents(amountStr, cur) { var n = num(amountStr); if (isNaN(n)) return null; var c = Math.round(n * 100); return cur === 'RSD' ? Math.round(c / 117.42) : c; }
+    // a likely duplicate: same account + same EUR amount + (same date OR same supplier).
+    // `extra` = rows already saved earlier in this same batch (so two shots of one receipt catch too).
+    function findDuplicate(rekening, eurCents, datum, vendor, extra) {
+      if (eurCents == null) return null;
+      var pool = ALL.concat(extra || []);
+      for (var i = 0; i < pool.length; i++) {
+        var r = pool[i];
+        if (r.rekening !== rekening || (r.bedrag_eur_cents || 0) !== eurCents) continue;
+        var dOk = datum && r.datum && r.datum === datum;
+        var vOk = vendor && r.tegenpartij && normName(vendor) === normName(r.tegenpartij);
+        if (dOk || vOk) return r;
+      }
+      return null;
     }
     function openMobile() {
-      mSavedCount = 0; updateMSaved(); mResetShot();
-      $('mOverlay').classList.add('open'); mStep('capture');
-      if (!authed()) { $('mMsg').className = 'msg err'; $('mMsg').textContent = 'Je bent niet ingelogd — open het beheer, log in, en kom dan terug.'; }
+      mSavedCount = 0; updateMSaved(); mRevokeUrls(); mItems = []; renderMItems();
+      mMsg('', ''); $('mSpin').style.display = 'none'; $('mFile').value = ''; $('mFileGallery').value = '';
+      $('mOverlay').classList.add('open');
+      if (!authed()) { mMsg('err', 'Je bent niet ingelogd — open het beheer, log in, en kom dan terug.'); }
     }
-    function closeMobile() {
-      $('mOverlay').classList.remove('open'); mResetShot();
+    function closeMobile(fromSave) {
+      if (!fromSave && mItems.length && !mBusy && !confirm(mItems.length + ' nog niet opgeslagen bon(nen) weggooien?')) return;
+      $('mOverlay').classList.remove('open'); mRevokeUrls(); mItems = [];
       if (location.hash === '#scan') { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
       if (mSavedCount > 0) { showAll(); load(); }   // reflect freshly-saved rows in the ledger
     }
-    async function onMobileFile(file) {
-      if (!file) return;
-      if (!authed()) { $('mMsg').className = 'msg err'; $('mMsg').textContent = 'Log eerst in via het beheer.'; return; }
-      mFileName = file.name || ('bon-' + Date.now() + '.jpg');
-      $('mScanPreview').src = mTrackUrl(URL.createObjectURL(file));   // instant preview (cosmetic)
-      mStep('scan');
-      try {
-        var out = await ocrImage('receipt', file);                   // heic→jpeg + compress + Claude vision
-        mData = out.data || {}; mBlob = out.blob;
-        mShowConfirm();
-      } catch (e) {
-        mStep('capture');
-        $('mMsg').className = 'msg err'; $('mMsg').textContent = 'Scan mislukt: ' + e.message;
+    async function onMobileFiles(files) {
+      files = Array.prototype.slice.call(files || []); if (!files.length) return;
+      if (!authed()) { mMsg('err', 'Log eerst in via het beheer.'); return; }
+      mMsg('', ''); $('mSpin').style.display = '';
+      for (var i = 0; i < files.length; i++) {
+        var f = files[i], name = f.name || ('bon-' + Date.now() + '-' + i + '.jpg');
+        $('mSpin').textContent = files.length > 1 ? ('Uitlezen ' + (i + 1) + '/' + files.length + '… ⏳') : 'Bezig met uitlezen… ⏳';
+        try {
+          var out = await ocrImage('receipt', f);                    // heic→jpeg + compress + Claude vision
+          var d = out.data || {}, url = mTrackUrl(URL.createObjectURL(out.blob));
+          mItems.push({ blob: out.blob, data: d, fileName: name, url: url,
+            amountStr: (d.total != null && isFinite(d.total)) ? String(d.total) : '',
+            cur: (d.currency === 'EUR') ? 'EUR' : 'RSD' });
+          renderMItems();
+        } catch (e) { mMsg('err', 'Scan mislukt (' + name + '): ' + e.message); }
       }
+      $('mSpin').style.display = 'none'; $('mSpin').textContent = 'Bezig met uitlezen… ⏳';
+      $('mFile').value = ''; $('mFileGallery').value = '';
     }
-    // normalize + clamp the model's total bounding box; null if missing/invalid
-    function mCleanBox() {
-      var b = mData.total_box;
-      if (!b || !isFinite(b.x) || !isFinite(b.y) || !isFinite(b.w) || !isFinite(b.h) || b.w <= 0 || b.h <= 0) return null;
-      var x = Math.max(0, Math.min(1, b.x)), y = Math.max(0, Math.min(1, b.y));
-      return { x: x, y: y, w: Math.min(1 - x, b.w), h: Math.min(1 - y, b.h) };
+    function renderMItems() {
+      var wrap = $('mList');
+      if (!mItems.length) { wrap.innerHTML = ''; $('mSaveAll').disabled = true; $('mSaveAll').textContent = 'Klaar & opslaan'; return; }
+      wrap.innerHTML = mItems.map(function (it, i) {
+        var ec = mEurCents(it.amountStr, it.cur);
+        var earlier = mItems.slice(0, i).map(function (x) { return { rekening: 'kas_srb', bedrag_eur_cents: mEurCents(x.amountStr, x.cur), datum: isDate((x.data || {}).date) ? x.data.date : null, tegenpartij: (x.data || {}).vendor || null }; });
+        var dup = (ec != null) ? findDuplicate('kas_srb', ec, isDate((it.data || {}).date) ? it.data.date : null, (it.data || {}).vendor || null, earlier) : null;
+        return '<div class="mitem" data-i="' + i + '">' +
+          '<span class="bonthumb mitem-thumb has" style="background-image:url(\'' + it.url + '\')"></span>' +
+          '<input type="number" step="0.01" min="0" inputmode="decimal" class="mitem-amt" value="' + escA(it.amountStr) + '" placeholder="bedrag">' +
+          '<select class="mitem-cur"><option value="RSD"' + (it.cur === 'EUR' ? '' : ' selected') + '>din</option><option value="EUR"' + (it.cur === 'EUR' ? ' selected' : '') + '>€</option></select>' +
+          (dup ? '<span class="mdup" title="Zelfde bedrag en datum/leverancier bestaat al">⚠ dubbel?</span>' : '') +
+          '<button type="button" class="mitem-x" title="Verwijderen">✕</button>' +
+          '</div>';
+      }).join('');
+      wrap.querySelectorAll('.mitem').forEach(function (el) {
+        var i = +el.getAttribute('data-i');
+        el.querySelector('.mitem-amt').addEventListener('input', function () { mItems[i].amountStr = this.value; });          // live model update, keep focus
+        el.querySelector('.mitem-amt').addEventListener('change', function () { mItems[i].amountStr = this.value; renderMItems(); }); // recompute dup on blur
+        el.querySelector('.mitem-cur').addEventListener('change', function () { mItems[i].cur = this.value; renderMItems(); });
+        el.querySelector('.mitem-x').addEventListener('click', function () { if (mItems[i].url) { try { URL.revokeObjectURL(mItems[i].url); } catch (_) {} } mItems.splice(i, 1); renderMItems(); });
+      });
+      $('mSaveAll').disabled = false; $('mSaveAll').textContent = 'Klaar & opslaan (' + mItems.length + ')';
     }
-    function mShowConfirm() {
-      $('mPrice').value = (mData.total != null && isFinite(mData.total)) ? mData.total : '';
-      $('mCur').value = (mData.currency === 'EUR') ? 'EUR' : 'RSD';
-      $('mCat').innerHTML = CATS.kas_srb.uit.map(function (p) { return '<option value="' + p[0] + '">' + esc(p[1]) + '</option>'; }).join('');
-      $('mCat').value = (mData.category_guess && CATS.kas_srb.uit.some(function (p) { return p[0] === mData.category_guess; })) ? mData.category_guess : 'overig';
-      $('mDate').value = isDate(mData.date) ? mData.date : '';
-      $('mVendor').value = mData.vendor || '';
-      $('mInvoice').value = mData.invoice_no || '';
-
-      var url = mTrackUrl(URL.createObjectURL(mBlob));   // compressed blob = already upright (EXIF baked in)
-      $('mFull').src = url;
-      var box = mCleanBox();
-      if (box) {
-        $('mBox').style.display = ''; $('mBox').style.left = (box.x * 100) + '%'; $('mBox').style.top = (box.y * 100) + '%';
-        $('mBox').style.width = (box.w * 100) + '%'; $('mBox').style.height = (box.h * 100) + '%';
-        mCrop.cx = box.x + box.w / 2; mCrop.cy = box.y + box.h / 2;
-      } else {
-        $('mBox').style.display = 'none'; mCrop.cx = 0.5; mCrop.cy = 0.5;   // no box → center, rely on manual zoom/pan
-      }
-      mStep('confirm');                                  // show step first so the canvas has a layout size
-      mImg = new Image();
-      mImg.onload = function () {
-        var cv = $('mMag'), ch = cv.clientHeight || 190, cw = cv.clientWidth || 300;
-        if (box) { var scale = (0.62 * ch) / (box.h * mImg.height); mCrop.zoom = Math.max(1.2, Math.min(7, scale * mImg.width / cw)); }
-        else { mCrop.zoom = 2.4; }
-        $('mZoom').value = mCrop.zoom;
-        mDraw();
-      };
-      mImg.src = url;
-    }
-    // draw the magnifier: image scaled by zoom (1 = fit width), centred on (cx,cy)
-    function mDraw() {
-      if (!mImg || !mImg.width) return;
-      var cv = $('mMag'), dpr = window.devicePixelRatio || 1, cw = cv.clientWidth, ch = cv.clientHeight;
-      if (!cw || !ch) return;
-      if (cv.width !== Math.round(cw * dpr)) cv.width = Math.round(cw * dpr);
-      if (cv.height !== Math.round(ch * dpr)) cv.height = Math.round(ch * dpr);
-      var ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cw, ch);
-      var scale = mCrop.zoom * (cw / mImg.width);
-      var dx = cw / 2 - (mCrop.cx * mImg.width) * scale, dy = ch / 2 - (mCrop.cy * mImg.height) * scale;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(mImg, dx, dy, mImg.width * scale, mImg.height * scale);
-    }
-    async function mSave() {
-      if (!authed()) { $('mMsg2').className = 'msg err'; $('mMsg2').textContent = 'Log eerst in via het beheer.'; return; }
-      var bedrag = num($('mPrice').value);
-      if (isNaN(bedrag) || bedrag <= 0) { $('mMsg2').className = 'msg err'; $('mMsg2').textContent = 'Vul een geldig bedrag in.'; return; }
-      var btn = $('mSaveNext'); btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Opslaan…';
+    async function mSaveAll() {
+      if (!authed()) { mMsg('err', 'Log eerst in via het beheer.'); return; }
+      if (!mItems.length) { closeMobile(true); return; }
+      for (var v = 0; v < mItems.length; v++) { var n = num(mItems[v].amountStr); if (isNaN(n) || n <= 0) { mMsg('err', 'Bon ' + (v + 1) + ': vul een geldig bedrag in.'); return; } }
+      mBusy = true; var btn = $('mSaveAll'); btn.disabled = true; var orig = btn.textContent;
+      var savedPool = [], saved = 0, skipped = 0, failed = 0;
       try {
-        var valuta = $('mCur').value, koers = valuta === 'RSD' ? 117.42 : null;
-        var bc = Math.round(bedrag * 100), ec = valuta === 'RSD' ? Math.round(bc / koers) : bc;
-        var bonPad = null; if (mBlob) { try { bonPad = await uploadBon(mBlob); } catch (e) {} }
-        await apiWrite('POST', 'transactions', {
-          rekening: 'kas_srb', richting: 'uit', categorie: $('mCat').value, valuta: valuta,
-          bedrag_cents: bc, bedrag_eur_cents: ec, koers: koers, btw_cents: null,
-          datum: $('mDate').value || null, omschrijving: null,
-          tegenpartij: $('mVendor').value.trim() || null, factuurnr: $('mInvoice').value.trim() || null,
-          referentie: null, bron: 'scan', dog_id: null, bon_pad: bonPad, bon_bestand: mFileName, opmerking: null, meetellen: true
-        });
-        mSavedCount++; updateMSaved();
-        mResetShot(); mStep('capture');                  // back to the camera for the next receipt
-      } catch (e) { $('mMsg2').className = 'msg err'; $('mMsg2').textContent = 'Opslaan mislukt: ' + e.message; }
-      finally { btn.disabled = false; btn.textContent = orig; }
+        for (var k = 0; k < mItems.length; k++) {
+          var it = mItems[k], cur = it.cur || 'RSD', koers = cur === 'RSD' ? 117.42 : null;
+          var bc = Math.round(num(it.amountStr) * 100), ec = cur === 'RSD' ? Math.round(bc / koers) : bc;
+          var datum = isDate((it.data || {}).date) ? it.data.date : null, vendor = (it.data || {}).vendor || null;
+          var dup = findDuplicate('kas_srb', ec, datum, vendor, savedPool);
+          if (dup) {
+            var when = dup.datum ? fmtDate(dup.datum) : 'zonder datum';
+            if (!confirm('Bon ' + (k + 1) + ' (' + euros(ec) + (datum ? ' · ' + fmtDate(datum) : '') + ') lijkt al te bestaan:\n\n"' + (dup.omschrijving || dup.tegenpartij || catLabel(dup.categorie)) + '" — ' + when + ', ' + euros(dup.bedrag_eur_cents) + '\n\nToch toevoegen?  (Annuleren = overslaan)')) { skipped++; continue; }
+          }
+          btn.textContent = 'Opslaan… ' + (saved + 1) + '/' + mItems.length;
+          var bonPad = null;
+          if (it.blob) { try { bonPad = await uploadBon(it.blob); } catch (e) { failed++; continue; } }   // upload fails → skip row (no photoless save), report at end
+          await apiWrite('POST', 'transactions', {
+            rekening: 'kas_srb', richting: 'uit',
+            categorie: ((it.data || {}).category_guess && CATS.kas_srb.uit.some(function (p) { return p[0] === it.data.category_guess; })) ? it.data.category_guess : 'overig',
+            valuta: cur, bedrag_cents: bc, bedrag_eur_cents: ec, koers: koers, btw_cents: null,
+            datum: datum, omschrijving: null, tegenpartij: vendor, factuurnr: (it.data || {}).invoice_no || null,
+            referentie: null, bron: 'scan', dog_id: null, bon_pad: bonPad, bon_bestand: it.fileName, opmerking: null, meetellen: true
+          });
+          savedPool.push({ rekening: 'kas_srb', bedrag_eur_cents: ec, datum: datum, tegenpartij: vendor });
+          saved++;
+        }
+        mSavedCount += saved;
+        closeMobile(true);   // closes + refreshes the ledger (recent section shows the batch, thumbnails confirm the photos)
+        alert(saved + ' bon(nen) opgeslagen' + (skipped ? (' · ' + skipped + ' overgeslagen (dubbel)') : '') + (failed ? (' · ' + failed + ' mislukt (foto-upload — controleer de opslag-bucket)') : '') + '.');
+      } catch (e) { mMsg('err', 'Opslaan mislukt: ' + e.message); }
+      finally { mBusy = false; btn.disabled = false; btn.textContent = orig; renderMItems(); }
     }
     function mWire() {
       $('mobBtn').onclick = openMobile;
-      $('mClose').onclick = closeMobile;
-      $('mDone').onclick = closeMobile;
-      $('mRetake').onclick = function () { mResetShot(); mStep('capture'); };
-      $('mFile').addEventListener('change', function () { onMobileFile((this.files || [])[0]); });
-      $('mFileGallery').addEventListener('change', function () { onMobileFile((this.files || [])[0]); });
-      $('mSaveNext').addEventListener('click', mSave);
-      $('mZoom').addEventListener('input', function () { mCrop.zoom = parseFloat(this.value) || 2; mDraw(); });
-      var mag = $('mMag');
-      mag.addEventListener('pointerdown', function (e) { mDrag = { x: e.clientX, y: e.clientY }; try { mag.setPointerCapture(e.pointerId); } catch (_) {} });
-      mag.addEventListener('pointermove', function (e) {
-        if (!mDrag || !mImg || !mImg.width) return;
-        var cw = mag.clientWidth, scale = mCrop.zoom * (cw / mImg.width);
-        mCrop.cx = Math.max(0, Math.min(1, mCrop.cx - (e.clientX - mDrag.x) / (mImg.width * scale)));
-        mCrop.cy = Math.max(0, Math.min(1, mCrop.cy - (e.clientY - mDrag.y) / (mImg.height * scale)));
-        mDrag = { x: e.clientX, y: e.clientY }; mDraw();
-      });
-      function endDrag() { mDrag = null; }
-      mag.addEventListener('pointerup', endDrag); mag.addEventListener('pointercancel', endDrag);
-      $('mFull').addEventListener('click', function (e) {   // tap the full photo → recenter the magnifier there
-        var r = this.getBoundingClientRect(); if (!r.width || !r.height) return;
-        mCrop.cx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-        mCrop.cy = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
-        mDraw();
-      });
-      window.addEventListener('resize', function () { if ($('mOverlay').classList.contains('open')) mDraw(); });
+      $('mClose').onclick = function () { closeMobile(false); };
+      $('mCancel').onclick = function () { closeMobile(false); };
+      $('mSaveAll').addEventListener('click', mSaveAll);
+      $('mFile').addEventListener('change', function () { onMobileFiles(this.files); });
+      $('mFileGallery').addEventListener('change', function () { onMobileFiles(this.files); });
       window.addEventListener('hashchange', function () { if (location.hash === '#scan' && !$('mOverlay').classList.contains('open')) openMobile(); });
     }
 

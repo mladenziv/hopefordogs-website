@@ -100,9 +100,8 @@ if ($kind === 'adopters' || $kind === 'bank_statement') {
     } else {
         $prompt = 'This image is a photo of a receipt or invoice (often Serbian; amounts often in RSD dinar). '
             . 'Respond with ONLY a JSON object and no other text: '
-            . '{"vendor":"shop or company name","date":"YYYY-MM-DD or null","currency":"RSD or EUR","total":<number, the total paid>,"vat":<number or null>,"invoice_no":"string or null","category_guess":"<one of: dierenarts, diervoeding, dierbenodigdheden, bouwmaterialen, gemengd, overig>","total_box":{"x":<number 0-1>,"y":<number 0-1>,"w":<number 0-1>,"h":<number 0-1>}}. '
-            . 'Category meaning: dierenarts=vet/medical, diervoeding=pet food, dierbenodigdheden=pet supplies, bouwmaterialen=building materials, gemengd=mixed, overig=other. '
-            . 'total_box is the bounding box around the printed TOTAL amount on the receipt, normalized 0-1 with the origin at the TOP-LEFT of the image (x=left edge, y=top edge, w=width, h=height). Draw it tightly around just the total price digits. If you cannot locate the total, set total_box to null.';
+            . '{"vendor":"shop or company name","date":"YYYY-MM-DD or null","currency":"RSD or EUR","total":<number, the total paid>,"vat":<number or null>,"invoice_no":"string or null","category_guess":"<one of: dierenarts, diervoeding, dierbenodigdheden, bouwmaterialen, gemengd, overig>"}. '
+            . 'Category meaning: dierenarts=vet/medical, diervoeding=pet food, dierbenodigdheden=pet supplies, bouwmaterialen=building materials, gemengd=mixed, overig=other.';
     }
     $content = array(
         array('type' => 'image', 'source' => array('type' => 'base64', 'media_type' => $mime, 'data' => $img)),
