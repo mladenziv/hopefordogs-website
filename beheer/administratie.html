@@ -580,19 +580,36 @@
       if (!out) throw new Error('kon de afbeelding niet omzetten (HEIC wordt niet ondersteund in deze browser)');
       return out;
     }
-    function compressImage(blob) {
+    function compressImage(blob, max, quality) {
+      max = max || 1600; quality = quality || 0.82;
       return new Promise(function (resolve) {
         var url = URL.createObjectURL(blob), img = new Image();
         img.onload = function () {
-          var max = 1600, w = img.width, h = img.height;
+          var w = img.width, h = img.height;
           if (w > max || h > max) { if (w > h) { h = Math.round(h * max / w); w = max; } else { w = Math.round(w * max / h); h = max; } }
           var c = document.createElement('canvas'); c.width = w; c.height = h;
           c.getContext('2d').drawImage(img, 0, 0, w, h);
-          c.toBlob(function (b) { URL.revokeObjectURL(url); resolve(b || null); }, 'image/jpeg', 0.82);
+          c.toBlob(function (b) { URL.revokeObjectURL(url); resolve(b || null); }, 'image/jpeg', quality);
         };
         img.onerror = function () { URL.revokeObjectURL(url); resolve(null); };  // undecodable → null (caller throws; never stored)
         img.src = url;
       });
+    }
+    // shrink an image specifically for the /api/ocr request body — GoDaddy caps the POST
+    // size, so full-detail phone photos 413. Storage keeps the full-quality blob; only the
+    // request payload is reduced, stepping down until the JPEG is small enough (still fine
+    // for the vision model to read a receipt).
+    async function ocrPayloadBlob(blob) {
+      if (blob && blob.size <= 360 * 1024) return blob;                    // already small enough
+      var steps = [[1200, 0.6], [1000, 0.55], [820, 0.5], [640, 0.45]];
+      var out = blob;
+      for (var i = 0; i < steps.length; i++) {
+        var c = await compressImage(blob, steps[i][0], steps[i][1]);
+        if (!c) break;
+        out = c;
+        if (c.size <= 360 * 1024) break;                                   // ~360KB blob → ~480KB base64, under the body cap
+      }
+      return out;
     }
 
     // ---- formatting helpers ----
@@ -822,10 +839,20 @@
     }
     // rows created in the last 5 minutes — shown in their own card, independent of the
     // account/date filter, so a fresh scan batch is easy to review and clean up.
+    // parse a Postgres timestamptz robustly: normalize space→T and, when no timezone
+    // offset is present, assume UTC (else Date.parse reads it as local time and a fresh
+    // row lands hours in the past → the recent section would silently stay empty).
+    function tsMs(s) {
+      if (!s) return NaN;
+      var v = String(s).trim().replace(' ', 'T');
+      if (!/([zZ]|[+-]\d{2}(:?\d{2})?)$/.test(v)) v += 'Z';
+      var t = Date.parse(v);
+      return isNaN(t) ? NaN : t;
+    }
     function recentRows() {
-      var cutoff = Date.now() - 5 * 60 * 1000;
-      return ALL.filter(function (r) { var t = r.created_at ? Date.parse(r.created_at) : NaN; return !isNaN(t) && t >= cutoff; })
-        .sort(function (a, b) { return (b.created_at || '').localeCompare(a.created_at || ''); });
+      var cutoff = Date.now() - 5 * 60 * 1000;   // any transaction created in the last 5 min, regardless of source (manual, scan, import…)
+      return ALL.filter(function (r) { var t = tsMs(r.created_at); return !isNaN(t) && t >= cutoff; })
+        .sort(function (a, b) { return tsMs(b.created_at) - tsMs(a.created_at); });
     }
     function renderRecentCard(recent) {
       if (!recent.length) return '';
@@ -1202,8 +1229,8 @@
       });
     }
     async function ocrImage(kind, file, extra) {
-      var blob = await fileToJpegBlob(file);                 // heic-to + compress (reused)
-      var b64 = await blobToBase64(blob);
+      var blob = await fileToJpegBlob(file);                 // heic-to + compress (storage quality, reused)
+      var b64 = await blobToBase64(await ocrPayloadBlob(blob));   // smaller copy for the request → avoids 413
       var r = await fetch('/api/ocr/', {
         method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (token() || '') },
         body: JSON.stringify(Object.assign({ kind: kind, image_base64: b64, mime: 'image/jpeg' }, extra || {}))
