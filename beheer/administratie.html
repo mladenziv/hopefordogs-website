@@ -1,0 +1,1569 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administratie · Beheer — Hope for Dogs</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- CDN libs: SheetJS (xlsx/csv), jsPDF + autotable (PDF). HEIC→JPEG uses heic-to
+       (current libheif), loaded lazily via dynamic import() only when a receipt is processed. -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+  <style>
+    :root { --brand:#ff5314; --ink:#1a1a1a; --muted:#666; --line:rgba(0,0,0,.1); --beige:#faf8f4; --in:#177a3a; --uit:#c0392b; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:'Manrope',system-ui,sans-serif; color:var(--ink); background:#f4f2ee; }
+    .bnav { position:sticky; top:0; z-index:60; background:rgba(255,255,255,.92); backdrop-filter:blur(8px); border-bottom:1px solid rgba(0,0,0,.08); }
+    .bnav-inner { max-width:1160px; margin:0 auto; display:flex; align-items:center; gap:16px; height:64px; padding:0 20px; }
+    .bnav-logo { flex-shrink:0; display:flex; align-items:center; }
+    .bnav-logo img { height:38px; width:auto; }
+    .bnav-links { display:flex; align-items:center; gap:2px; flex-wrap:wrap; }
+    .bnav-links a { padding:8px 12px; font-size:14px; font-weight:600; border-radius:999px; color:rgba(26,26,26,.7); text-decoration:none; white-space:nowrap; }
+    .bnav-links a:hover { color:var(--ink); background:rgba(0,0,0,.05); }
+    .bnav-links a.active { color:var(--brand); background:rgba(255,83,20,.1); }
+    @media (max-width:960px){ .bnav-links { display:none; } }
+    .wrap { max-width:1160px; margin:0 auto; padding:24px 20px 80px; }
+    .top { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
+    h1 { font-family:'Nunito',sans-serif; font-weight:900; font-size:26px; margin:0 0 4px; }
+    a.back { color:var(--muted); text-decoration:none; font-size:14px; font-weight:600; }
+    a.back:hover { color:var(--ink); }
+    .top-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .btn { border:none; border-radius:999px; font-family:inherit; font-weight:700; font-size:14px; padding:10px 16px; cursor:pointer; }
+    .btn-primary { background:var(--brand); color:#fff; }
+    .btn-primary:hover { filter:brightness(.95); }
+    .btn-ghost { background:#fff; color:var(--ink); border:1.5px solid var(--line); }
+    .btn-ghost:hover { border-color:var(--brand); }
+    .btn-sm { padding:7px 12px; font-size:13px; }
+    .btn-danger { background:#fff; color:#c0392b; border:1.5px solid rgba(192,57,43,.3); }
+    .btn:disabled { opacity:.5; cursor:not-allowed; }
+    .warn { background:#fff5e6; border:1px solid #ffd58a; border-radius:12px; padding:14px 18px; margin-bottom:18px; font-size:14px; color:#7a5200; }
+    .empty { text-align:center; color:var(--muted); padding:50px 20px; }
+    /* filter bar */
+    .filters { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:18px; }
+    .filters .f { display:flex; flex-direction:column; gap:5px; }
+    .filters .f.grow { flex:1 1 200px; }
+    .filters label { font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:#999; }
+    .filters select, .filters input { font-family:inherit; font-size:14px; padding:8px 10px; border:1.5px solid var(--line); border-radius:9px; background:#fff; outline:none; }
+    .filters select:focus, .filters input:focus { border-color:var(--brand); }
+    /* stat cards */
+    .statgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:16px; }
+    .stat { background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px 18px; }
+    .stat .lbl { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:#999; margin-bottom:6px; }
+    .stat .val { font-family:'Nunito',sans-serif; font-weight:900; font-size:26px; }
+    .stat .sub { font-size:12.5px; color:var(--muted); margin-top:3px; }
+    .val.in { color:var(--in); } .val.uit { color:var(--uit); }
+    .cols2 { display:grid; grid-template-columns:1.3fr 1fr; gap:14px; margin-bottom:18px; align-items:start; }
+    @media (max-width:820px){ .statgrid{grid-template-columns:1fr;} .cols2{grid-template-columns:1fr;} }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px; }
+    .card h3 { font-family:'Nunito',sans-serif; font-weight:800; font-size:15px; margin:0 0 12px; }
+    .card h3 .note { font-weight:600; font-size:12px; color:#999; }
+    /* breakdown table */
+    .bd { width:100%; border-collapse:collapse; font-size:13.5px; }
+    .bd td { padding:6px 2px; border-bottom:1px solid var(--line); }
+    .bd td:last-child { text-align:right; font-variant-numeric:tabular-nums; font-weight:700; }
+    .bd tr:last-child td { border-bottom:none; }
+    /* mini bar chart */
+    .chart { display:flex; gap:5px; align-items:flex-end; height:150px; padding-top:8px; }
+    .cmonth { flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; min-width:0; }
+    .cbars { display:flex; gap:2px; align-items:flex-end; height:118px; }
+    .cbar { width:9px; border-radius:3px 3px 0 0; min-height:1px; }
+    .cbar.in { background:var(--in); } .cbar.uit { background:var(--uit); }
+    .cmlabel { font-size:10.5px; color:var(--muted); }
+    .legend { display:flex; gap:14px; font-size:12px; color:var(--muted); margin-top:8px; }
+    .legend i { display:inline-block; width:11px; height:11px; border-radius:3px; vertical-align:middle; margin-right:5px; }
+    /* ledger table */
+    .tblwrap { background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+    table.tbl { width:100%; border-collapse:collapse; font-size:14px; }
+    table.tbl th { text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:#999; font-weight:800; padding:12px 14px; border-bottom:1px solid var(--line); background:var(--beige); }
+    table.tbl td { padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
+    table.tbl tr:last-child td { border-bottom:none; }
+    table.tbl tbody tr { cursor:pointer; }
+    table.tbl tbody tr:hover { background:#fafafa; }
+    .t-date { color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .t-desc { font-weight:600; }
+    .t-party { color:var(--muted); font-size:12.5px; }
+    .t-amt { text-align:right; white-space:nowrap; font-weight:800; font-variant-numeric:tabular-nums; }
+    .t-amt.in { color:var(--in); } .t-amt.uit { color:var(--uit); }
+    .t-amt .eur { display:block; font-size:11.5px; font-weight:600; color:var(--muted); }
+    .cat { display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:#eef0f2; color:#445; white-space:nowrap; }
+    .clip { color:var(--muted); }
+    .tag-srb { font-size:10.5px; font-weight:800; color:#b45309; margin-left:6px; }
+    /* overlays / sheet (from loterijen) */
+    .overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:flex-start; justify-content:center; padding:32px 16px; overflow-y:auto; z-index:100; }
+    .overlay.open { display:flex; }
+    .sheet { background:#fff; border-radius:20px; width:100%; max-width:640px; padding:26px; position:relative; }
+    .sheet.wide { max-width:900px; }
+    .sheet h2 { font-family:'Nunito',sans-serif; font-weight:800; font-size:20px; margin:0 0 18px; }
+    .close { position:absolute; top:16px; right:16px; width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,.06); border:none; cursor:pointer; font-size:15px; }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+    .field { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    .field label { font-size:13px; font-weight:700; color:var(--muted); }
+    .field .hint { font-size:12px; color:#999; font-weight:500; }
+    input, textarea, select { font-family:inherit; font-size:15px; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px; outline:none; width:100%; background:#fff; }
+    input:focus, textarea:focus, select:focus { border-color:var(--brand); }
+    input[type="checkbox"] { width:auto; height:16px; padding:0; cursor:pointer; }
+    table.tbl th.selcell, table.tbl td.selcell { width:36px; text-align:center; padding-right:0; }
+    #bulkbar { display:none; align-items:center; gap:12px; margin:2px 2px 10px; padding:8px 12px; background:#fff5ed; border:1px solid #ffd9bf; border-radius:12px; }
+    textarea { resize:vertical; min-height:60px; }
+    .section-label { font-family:'Nunito',sans-serif; font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:#999; margin:18px 0 10px; }
+    .form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:22px; }
+    .form-actions.split { justify-content:space-between; }
+    .msg { font-size:13.5px; margin-top:12px; min-height:18px; }
+    .msg.err { color:#c0392b; } .msg.ok { color:#177a3a; }
+    .hint { font-size:12px; color:#999; }
+    /* detail sheet */
+    .dl { display:grid; grid-template-columns:auto 1fr; gap:8px 16px; font-size:14px; margin-bottom:8px; }
+    .dl dt { color:var(--muted); font-weight:700; }
+    .dl dd { margin:0; }
+    .bonimg { max-width:100%; border-radius:12px; border:1px solid var(--line); margin-top:12px; background:var(--beige); }
+    /* import / preview */
+    .drop { border:2px dashed var(--line); border-radius:14px; padding:26px; text-align:center; color:var(--muted); font-size:14px; }
+    .drop input { border:none; padding:10px 0 0; }
+    .prev { max-height:44vh; overflow:auto; border:1px solid var(--line); border-radius:12px; margin-top:14px; }
+    .prev table { width:100%; border-collapse:collapse; font-size:12.5px; }
+    .prev th, .prev td { padding:6px 8px; border-bottom:1px solid var(--line); text-align:left; white-space:nowrap; }
+    .prev th { position:sticky; top:0; background:#fff; font-size:11px; text-transform:uppercase; color:#999; }
+    .impsum { display:flex; gap:18px; flex-wrap:wrap; font-size:13.5px; margin:14px 0 4px; }
+    .impsum b { font-variant-numeric:tabular-nums; }
+    .pbar { height:10px; background:#eee; border-radius:999px; overflow:hidden; margin:14px 0 8px; }
+    .pbar > i { display:block; height:100%; width:0; background:var(--brand); border-radius:999px; transition:width .15s; }
+    .maprow { display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:center; margin-bottom:8px; }
+    .maprow .k { font-weight:700; font-size:13px; }
+    .log { margin-top:12px; background:#0f1115; color:#cfe8d4; font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; border-radius:12px; padding:12px 14px; max-height:200px; overflow:auto; white-space:pre-wrap; word-break:break-word; }
+    .log .ok{color:#86efac;} .log .warn{color:#facc15;} .log .err{color:#fca5a5;}
+    @media (max-width:560px){ .grid2,.grid3{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+  <header class="bnav">
+    <div class="bnav-inner">
+      <a class="bnav-logo" href="../index.html"><img src="../logo.png" alt="Hope for Dogs"></a>
+      <nav class="bnav-links">
+        <a href="index.html#/">Home</a>
+        <a href="index.html#/adoptants">Adoptanten</a>
+        <a href="index.html#/social">Social Media</a>
+        <a href="index.html#/nieuws">Nieuws</a>
+        <a href="index.html#/ervaringen">Ervaringen</a>
+        <a href="index.html#/website-content?tab=faq">FAQ</a>
+        <a href="loterijen.html">Acties</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Administratie</h1>
+        <a class="back" href="index.html#/">← Terug naar beheer</a>
+      </div>
+      <div class="top-actions">
+        <button class="btn btn-primary" id="newBtn">+ Nieuwe transactie</button>
+        <button class="btn btn-ghost" id="rsBtn">Scan bonnen</button>
+        <button class="btn btn-ghost" id="ksBtn">Bankafschrift</button>
+        <button class="btn btn-ghost" id="adoptBtn">Adoptanten</button>
+        <button class="btn btn-ghost" id="transBtn">Transportlijst</button>
+        <button class="btn btn-ghost" id="pdfBtn">Exporteer jaaroverzicht</button>
+        <button class="btn btn-ghost btn-sm" id="sbBtn" title="Maak Servië-inkomsten voor bestaande opnames/overboekingen">Servië bijwerken</button>
+        <button class="btn btn-danger btn-sm" id="wipeBtn" title="Verwijder alle testdata">Testdata wissen</button>
+      </div>
+    </div>
+
+    <div id="authWarn" class="warn" style="display:none">
+      Je bent niet ingelogd in het beheerpaneel. Open eerst <a href="index.html#/">het beheer</a> en log in, en kom dan hier terug — anders kun je niets opslaan of laden.
+    </div>
+
+    <div class="filters" id="filters">
+      <div class="f">
+        <label>Rekening</label>
+        <select id="fltRekening">
+          <option value="bank_nl">Bank NL (EUR)</option>
+          <option value="kas_srb">Kas Servië (RSD)</option>
+          <option value="alle">Alles</option>
+        </select>
+      </div>
+      <div class="f"><label>Van</label><input type="date" id="fltFrom"></div>
+      <div class="f"><label>Tot</label><input type="date" id="fltTo"></div>
+      <div class="f">
+        <label>Richting</label>
+        <select id="fltRichting"><option value="">Alle</option><option value="in">In</option><option value="uit">Uit</option></select>
+      </div>
+      <div class="f"><label>Categorie</label><select id="fltCat"><option value="">Alle</option></select></div>
+      <div class="f grow"><label>Zoeken</label><input id="fltSearch" placeholder="naam, omschrijving, referentie…"></div>
+    </div>
+
+    <div id="stats"></div>
+    <div id="list"><div class="empty">Laden…</div></div>
+  </div>
+
+  <!-- Transaction form -->
+  <div class="overlay" id="fOverlay">
+    <div class="sheet">
+      <button class="close" id="fClose" aria-label="Sluiten">✕</button>
+      <h2 id="fTitle">Nieuwe transactie</h2>
+      <form id="form">
+        <input type="hidden" id="f_id">
+        <div class="grid3">
+          <div class="field">
+            <label for="f_rekening">Rekening</label>
+            <select id="f_rekening">
+              <option value="bank_nl">Bank NL (EUR)</option>
+              <option value="kas_srb">Kas Servië (RSD)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f_richting">Richting</label>
+            <select id="f_richting"><option value="in">In (baten)</option><option value="uit">Uit (lasten)</option></select>
+          </div>
+          <div class="field">
+            <label for="f_categorie">Categorie</label>
+            <select id="f_categorie"></select>
+          </div>
+        </div>
+        <div class="grid3">
+          <div class="field"><label for="f_datum">Datum</label><input type="date" id="f_datum"></div>
+          <div class="field">
+            <label for="f_valuta">Valuta</label>
+            <select id="f_valuta"><option value="EUR">EUR (€)</option><option value="RSD">RSD (din)</option></select>
+          </div>
+          <div class="field"><label for="f_bedrag" id="f_bedrag_lbl">Bedrag (€)</label><input type="number" id="f_bedrag" step="0.01" min="0"></div>
+        </div>
+        <div class="grid3" id="f_rsdrow" style="display:none">
+          <div class="field"><label for="f_koers">Koers (RSD per €)</label><input type="number" id="f_koers" step="0.01" value="117.42"></div>
+          <div class="field"><label>= EUR</label><input type="text" id="f_eurcalc" readonly></div>
+          <div class="field"><label for="f_btw">BTW (din, optioneel)</label><input type="number" id="f_btw" step="0.01" min="0"></div>
+        </div>
+        <div class="field"><label for="f_omschrijving">Omschrijving</label><input type="text" id="f_omschrijving" placeholder="bijv. Behandeling dieren / Donatie"></div>
+        <div class="grid2">
+          <div class="field"><label for="f_tegenpartij">Tegenpartij</label><input type="text" id="f_tegenpartij" placeholder="donateur / leverancier / adoptant"></div>
+          <div class="field"><label for="f_factuurnr">Factuurnr. / referentie</label><input type="text" id="f_factuurnr"></div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label for="f_dog">Hond (optioneel)</label>
+            <select id="f_dog"><option value="">—</option></select>
+          </div>
+          <div class="field">
+            <label for="f_bonfile">Bon / bewijs (optioneel)</label>
+            <input type="file" id="f_bonfile" accept="image/*,.heic,.heif">
+            <span class="hint" id="f_bonhint"></span>
+          </div>
+        </div>
+        <input type="hidden" id="f_bon_pad">
+        <input type="hidden" id="f_bon_bestand">
+        <div class="msg" id="fMsg"></div>
+        <div class="form-actions split">
+          <button type="button" class="btn btn-danger" id="fDelete" style="display:none">Verwijderen</button>
+          <div style="display:flex;gap:10px;">
+            <button type="button" class="btn btn-ghost" id="fCancel">Annuleren</button>
+            <button type="submit" class="btn btn-primary" id="fSave">Opslaan</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Detail sheet -->
+  <div class="overlay" id="dOverlay">
+    <div class="sheet">
+      <button class="close" id="dClose" aria-label="Sluiten">✕</button>
+      <h2 id="dTitle">Transactie</h2>
+      <div id="dBody"></div>
+      <div class="form-actions split">
+        <button type="button" class="btn btn-danger" id="dDelete">Verwijderen</button>
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-ghost" id="dCloseBtn">Sluiten</button>
+          <button type="button" class="btn btn-primary" id="dEdit">Bewerken</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transport list / generic import (column mapping) -->
+  <div class="overlay" id="tOverlay">
+    <div class="sheet wide">
+      <button class="close" id="tClose" aria-label="Sluiten">✕</button>
+      <h2>Transportlijst importeren</h2>
+      <p class="hint" style="margin:-8px 0 14px">Kies een transportlijst — <b>Word (.docx)</b> wordt met AI uitgelezen; <b>CSV/Excel</b> koppel je per kolom. Elke regel wordt een <b>adoptant</b> in de lijst, waarmee binnenkomende betalingen als adoptie (i.p.v. donatie) worden herkend.</p>
+      <div class="drop"><input type="file" id="tFile" accept=".csv,.xlsx,.xls,.docx" multiple></div>
+      <div id="tMap"></div>
+      <div id="tPreview"></div>
+      <div class="msg" id="tMsg"></div>
+      <div class="form-actions split">
+        <span class="hint" id="tHint"></span>
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-ghost" id="tCancel">Annuleren</button>
+          <button type="button" class="btn btn-primary" id="tConfirm" disabled>Importeren</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt scan (OCR) -->
+  <div class="overlay" id="rsOverlay">
+    <div class="sheet wide">
+      <button class="close" id="rsClose" aria-label="Sluiten">✕</button>
+      <h2>Bonnen scannen</h2>
+      <p class="hint" style="margin:-8px 0 14px">Kies bonfoto's — elke foto wordt automatisch uitgelezen (bedrag, datum, leverancier, categorie). Controleer en pas aan waar nodig, en sla op. De foto wordt als bon bewaard.</p>
+      <div class="drop"><input type="file" id="rsFiles" accept="image/*,.heic,.heif" multiple></div>
+      <div class="pbar" id="rsBar" style="display:none"><i></i></div>
+      <div id="rsReview"></div>
+      <div class="msg" id="rsMsg"></div>
+      <div class="form-actions split">
+        <span class="hint" id="rsHint"></span>
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-ghost" id="rsCancel">Sluiten</button>
+          <button type="button" class="btn btn-primary" id="rsSave" disabled>Opslaan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bank scan (OCR) -->
+  <div class="overlay" id="ksOverlay">
+    <div class="sheet wide">
+      <button class="close" id="ksClose" aria-label="Sluiten">✕</button>
+      <h2>Bankafschrift inlezen</h2>
+      <p class="hint" style="margin:-8px 0 14px">Kies je ING-bankafschrift (<b>PDF</b>, bijv. het hele jaar). Alle transacties worden uitgelezen — datum, tegenpartij, omschrijving en bedrag — en inkomsten worden verdeeld in <b>adoptie</b>/<b>donatie</b>. Geld naar Servië (opname/overboeking) verschijnt ook als inkomst op de Servische rekening. Controleer en sla op.</p>
+      <div class="drop"><input type="file" id="ksFiles" accept=".pdf,application/pdf"></div>
+      <div class="pbar" id="ksBar" style="display:none"><i></i></div>
+      <div id="ksReview"></div>
+      <div class="msg" id="ksMsg"></div>
+      <div class="form-actions split">
+        <span class="hint" id="ksHint"></span>
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-ghost" id="ksCancel">Sluiten</button>
+          <button type="button" class="btn btn-primary" id="ksSave" disabled>Opslaan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Adopter registry -->
+  <div class="overlay" id="aOverlay">
+    <div class="sheet wide">
+      <button class="close" id="aClose" aria-label="Sluiten">✕</button>
+      <h2>Adoptanten</h2>
+      <p class="hint" style="margin:-8px 0 14px">De opgeslagen lijst waarmee inkomsten worden verdeeld in <b>adoptie</b> vs <b>donatie</b>. Gevuld door transportlijst-imports én handmatig hieronder. Een binnenkomende betaling die matcht met een adoptant = adoptie; de rest = donatie.</p>
+      <div class="grid3">
+        <div class="field"><label for="a_naam">Naam</label><input type="text" id="a_naam" placeholder="naam op de overschrijving"></div>
+        <div class="field"><label for="a_bedrag">Bedrag (€, optioneel)</label><input type="number" id="a_bedrag" step="0.01" min="0"></div>
+        <div class="field"><label for="a_dog">Hond (optioneel)</label><select id="a_dog"><option value="">—</option></select></div>
+      </div>
+      <div class="form-actions" style="margin-top:0">
+        <button type="button" class="btn btn-primary btn-sm" id="aAdd">+ Adoptant toevoegen</button>
+      </div>
+      <div class="msg" id="aMsg"></div>
+      <div class="section-label">Opgeslagen adoptanten</div>
+      <div id="aList" class="prev" style="max-height:40vh"></div>
+      <p class="hint" style="margin-top:12px">Bestaande inkomsten worden niet automatisch bijgewerkt. Klik hieronder om alle <b>donaties</b> die matchen met een adoptant om te zetten naar <b>adoptie</b>.</p>
+      <div class="form-actions split">
+        <button type="button" class="btn btn-primary" id="aReclass">Inkomsten herclassificeren</button>
+        <button type="button" class="btn btn-ghost" id="aCloseBtn">Sluiten</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Year PDF export -->
+  <div class="overlay" id="pOverlay">
+    <div class="sheet">
+      <button class="close" id="pClose" aria-label="Sluiten">✕</button>
+      <h2>Jaaroverzicht exporteren</h2>
+      <div class="grid2">
+        <div class="field"><label for="p_year">Boekjaar</label><select id="p_year"></select></div>
+        <div class="field"><label for="p_begin">Beginsaldo bank op 1 jan (€)</label><input type="number" id="p_begin" step="0.01" placeholder="0,00"></div>
+      </div>
+      <p class="hint">De PDF bevat de staat van baten en lasten (bank EUR), de kas/bank-mutatie, en als bijlage de besteding in Servië (bonnen) + het volledige transactieoverzicht. <b>Let op:</b> dit is geen belastingadvies — controleer de indeling en totalen voordat je het indient.</p>
+      <div class="msg" id="pMsg"></div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" id="pCancel">Annuleren</button>
+        <button type="button" class="btn btn-primary" id="pExport">Genereer PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    // ---- config + auth (mirrors loterijen.html / vertalen.html) ----
+    var SB = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
+    var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
+    var AUTH_KEY = 'sb-gdmntnrsgfntcgqmbmtj-auth-token';
+
+    function authObj() { try { var raw = localStorage.getItem(AUTH_KEY); if (raw) return JSON.parse(raw); } catch (e) {} return null; }
+    function token() { var o = authObj(); return o && o.access_token ? o.access_token : null; }
+    function authed() { return !!token(); }
+    var _refreshing = null;
+    function refreshToken() {
+      if (_refreshing) return _refreshing;
+      _refreshing = (async function () {
+        var o = authObj(); if (!o || !o.refresh_token) return null;
+        try {
+          var r = await fetch(SB + '/auth/v1/token?grant_type=refresh_token', {
+            method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: o.refresh_token })
+          });
+          if (!r.ok) return null;
+          var d = await r.json(); if (!d || !d.access_token) return null;
+          localStorage.setItem(AUTH_KEY, JSON.stringify(Object.assign({}, o, d)));
+          return d.access_token;
+        } catch (e) { return null; } finally { _refreshing = null; }
+      })();
+      return _refreshing;
+    }
+    function headers(write) {
+      var h = { apikey: ANON, Authorization: 'Bearer ' + (token() || ANON) };
+      if (write) { h['Content-Type'] = 'application/json'; h.Prefer = 'return=representation'; }
+      return h;
+    }
+    async function apiGet(q) {
+      var r = await fetch(SB + '/rest/v1/' + q, { headers: headers(false) });
+      if (r.status === 401) { if (await refreshToken()) r = await fetch(SB + '/rest/v1/' + q, { headers: headers(false) }); }  // expired JWT → renew + retry
+      if (!r.ok) throw new Error('GET ' + r.status + ' ' + (await r.text()));
+      return r.json();
+    }
+    async function apiWrite(method, q, body) {
+      var b = body ? JSON.stringify(body) : undefined;
+      var r = await fetch(SB + '/rest/v1/' + q, { method: method, headers: headers(true), body: b });
+      if (r.status === 401) { if (await refreshToken()) r = await fetch(SB + '/rest/v1/' + q, { method: method, headers: headers(true), body: b }); }
+      if (!r.ok) throw new Error(method + ' ' + r.status + ' ' + (await r.text()));
+      var txt = await r.text(); return txt ? JSON.parse(txt) : null;
+    }
+
+    // ---- storage (private bucket 'administratie') ----
+    async function uploadBon(blob) {
+      var path = 'bon/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.jpg';
+      async function put(tok) {
+        return fetch(SB + '/storage/v1/object/administratie/' + path, {
+          method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + (tok || ANON), 'Content-Type': blob.type || 'image/jpeg', 'x-upsert': 'true' }, body: blob
+        });
+      }
+      var r = await put(token());
+      if (r.status === 401) { var nt = await refreshToken(); if (nt) r = await put(nt); }
+      if (!r.ok) throw new Error('Upload ' + r.status + ' ' + (await r.text()));
+      return path;
+    }
+    async function signedUrl(path) {
+      function sign(tok) {
+        return fetch(SB + '/storage/v1/object/sign/administratie/' + path, {
+          method: 'POST', headers: { apikey: ANON, Authorization: 'Bearer ' + (tok || ANON), 'Content-Type': 'application/json' }, body: JSON.stringify({ expiresIn: 3600 })
+        });
+      }
+      var r = await sign(token());
+      if (r.status === 401) { var nt = await refreshToken(); if (nt) r = await sign(nt); }
+      if (!r.ok) throw new Error('Sign ' + r.status);
+      var d = await r.json(); return SB + '/storage/v1' + d.signedURL;
+    }
+
+    // ---- image: HEIC→JPEG (heic-to, lazy) + canvas compress ----
+    // heic2any's bundled libheif can't decode modern iPhone HEIC (ERR_LIBHEIF), so we
+    // use heic-to (current libheif), imported on demand. If no decoder can read the
+    // file we THROW — we never upload undisplayable bytes.
+    var _heicTo = null, _heicToTried = false;
+    async function loadHeicTo() {
+      if (_heicTo || _heicToTried) return _heicTo;
+      _heicToTried = true;
+      try { var m = await import('https://cdn.jsdelivr.net/npm/heic-to@1.5.2/+esm'); _heicTo = m.heicTo || (m.default && m.default.heicTo) || null; }
+      catch (e) { _heicTo = null; }
+      return _heicTo;
+    }
+    function isHeicFile(file) { var n = (file.name || '').toLowerCase(); return /\.hei[cf]$/.test(n) || /hei[cf]/.test(file.type || ''); }
+    async function fileToJpegBlob(file) {
+      var blob = file;
+      if (isHeicFile(file)) {
+        var ht = await loadHeicTo(), conv = null;
+        if (ht) { try { conv = await ht({ blob: file, type: 'image/jpeg', quality: 0.85 }); } catch (e) {} }
+        if (conv) blob = conv;   // else fall through: Safari decodes HEIC natively; other browsers fail below
+      }
+      var out = await compressImage(blob);
+      if (!out) throw new Error('kon de afbeelding niet omzetten (HEIC wordt niet ondersteund in deze browser)');
+      return out;
+    }
+    function compressImage(blob) {
+      return new Promise(function (resolve) {
+        var url = URL.createObjectURL(blob), img = new Image();
+        img.onload = function () {
+          var max = 1600, w = img.width, h = img.height;
+          if (w > max || h > max) { if (w > h) { h = Math.round(h * max / w); w = max; } else { w = Math.round(w * max / h); h = max; } }
+          var c = document.createElement('canvas'); c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          c.toBlob(function (b) { URL.revokeObjectURL(url); resolve(b || null); }, 'image/jpeg', 0.82);
+        };
+        img.onerror = function () { URL.revokeObjectURL(url); resolve(null); };  // undecodable → null (caller throws; never stored)
+        img.src = url;
+      });
+    }
+
+    // ---- formatting helpers ----
+    var $ = function (id) { return document.getElementById(id); };
+    function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+    function escA(s) { return esc(s).replace(/"/g, '&quot;'); }   // attribute-safe (for value="…")
+    function euros(cents) { return '€' + (Number(cents || 0) / 100).toFixed(2).replace('.', ','); }
+    function rsd(cents) { return 'din ' + Math.round(Number(cents || 0) / 100).toLocaleString('nl-NL'); }
+    function fmtDate(iso) { if (!iso) return '—'; try { return new Date(iso + 'T00:00:00').toLocaleDateString('nl-NL', { day: '2-digit', month: 'short', year: 'numeric' }); } catch (e) { return iso; } }
+    // robust number parse: handles "1.234,56" (eu), "1234.56", "12800", "-22,72", "€/din" prefixes
+    function num(v) {
+      if (v == null) return NaN;
+      if (typeof v === 'number') return v;
+      var s = String(v).trim().replace(/[^\d.,\-]/g, '');
+      if (s === '' || s === '-') return NaN;
+      if (s.indexOf('.') > -1 && s.indexOf(',') > -1) { s = s.replace(/\./g, '').replace(',', '.'); }      // 1.234,56 → 1234.56
+      else if (s.indexOf(',') > -1) { s = s.replace(',', '.'); }                                            // 6,55 → 6.55
+      var n = parseFloat(s); return isNaN(n) ? NaN : n;
+    }
+    function cents(v) { var n = num(v); return isNaN(n) ? 0 : Math.round(n * 100); }
+
+    // ---- category vocab (drives dropdowns + PDF grouping) ----
+    var CATS = {
+      bank_nl: {
+        in:  [['donatie', 'Donatie'], ['adoptie_transport', 'Adoptie/transport'], ['overig', 'Overig']],
+        uit: [['opname', 'Opname (contant Servië)'], ['overboeking', 'Overboeking'], ['bankkosten', 'Bankkosten'], ['overig', 'Overig']]
+      },
+      kas_srb: {
+        in:  [['opname', 'Opname uit NL'], ['overboeking', 'Overboeking uit NL'], ['overig', 'Overig']],
+        uit: [['dierenarts', 'Dierenarts'], ['diervoeding', 'Diervoeding'], ['dierbenodigdheden', 'Dierbenodigdheden'], ['bouwmaterialen', 'Bouwmaterialen'], ['gemengd', 'Gemengd'], ['overig', 'Overig']]
+      }
+    };
+    var CAT_LABEL = {};
+    Object.keys(CATS).forEach(function (rek) { ['in', 'uit'].forEach(function (ri) { CATS[rek][ri].forEach(function (p) { CAT_LABEL[p[0]] = p[1]; }); }); });
+    function catLabel(k) { return CAT_LABEL[k] || k || '—'; }
+
+    var MONTHS = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+
+    // ---- shared state ----
+    var ALL = [];       // all transactions in memory
+    var DOGS = [];      // {id,naam} for the optional dog link
+    var ADOPTERS = [];  // saved adopter list (drives adoption vs donation)
+    var editing = null; // row being viewed/edited
+
+    // ================= load + filter + stats + table =================
+    function yearOf(r) { return r.datum ? parseInt(r.datum.slice(0, 4), 10) : null; }
+
+    async function load() {
+      $('authWarn').style.display = authed() ? 'none' : 'block';
+      try {
+        ALL = await apiGet('transactions?select=*&order=datum.desc.nullslast,created_at.desc');
+        try { DOGS = await apiGet('dogs?select=id,naam&order=naam.asc'); } catch (e) { DOGS = []; }
+        await loadAdopters();
+        populateDogSelect();
+        syncCatFilter();
+        refresh();
+      } catch (e) {
+        $('stats').innerHTML = '';
+        var expired = /401|JWT expired|PGRST303/i.test(e.message || '');
+        $('list').innerHTML = '<div class="empty">Kon de administratie niet laden.<br><small>' + esc(e.message) + '</small><br><br>' +
+          (expired
+            ? 'Je sessie is verlopen. Open <a href="index.html#/">het beheer</a>, log opnieuw in, en kom dan hier terug.'
+            : 'Heb je de database-migratie al gedraaid? (<code>db/administratie-schema.md</code>)') + '</div>';
+      }
+    }
+
+    // after a bulk add (scan/import) clear the date filter so freshly-added rows are never hidden
+    function showAll() { $('fltFrom').value = ''; $('fltTo').value = ''; }
+
+    function syncCatFilter() {
+      var rek = $('fltRekening').value, sel = $('fltCat'), prev = sel.value;
+      var seen = {}, opts = ['<option value="">Alle</option>'];
+      var reks = rek === 'alle' ? ['bank_nl', 'kas_srb'] : [rek];
+      reks.forEach(function (rk) { ['in', 'uit'].forEach(function (ri) { CATS[rk][ri].forEach(function (p) { if (!seen[p[0]]) { seen[p[0]] = 1; opts.push('<option value="' + p[0] + '">' + esc(p[1]) + '</option>'); } }); }); });
+      sel.innerHTML = opts.join('');
+      if (prev && seen[prev]) sel.value = prev;
+    }
+
+    function filtered() {
+      var rek = $('fltRekening').value;
+      var from = $('fltFrom').value || null, to = $('fltTo').value || null;   // ISO yyyy-mm-dd; lexicographic compare
+      var ri = $('fltRichting').value, cat = $('fltCat').value, q = ($('fltSearch').value || '').trim().toLowerCase();
+      return ALL.filter(function (r) {
+        if (rek !== 'alle' && r.rekening !== rek) return false;
+        if (from || to) {                               // a dated range excludes undated rows
+          if (!r.datum) return false;
+          if (from && r.datum < from) return false;
+          if (to && r.datum > to) return false;
+        }
+        if (ri && r.richting !== ri) return false;
+        if (cat && r.categorie !== cat) return false;
+        if (q) {
+          var hay = ((r.omschrijving || '') + ' ' + (r.tegenpartij || '') + ' ' + (r.referentie || '') + ' ' + (r.factuurnr || '') + ' ' + (r.bon_bestand || '')).toLowerCase();
+          if (hay.indexOf(q) === -1) return false;
+        }
+        return true;
+      });
+    }
+
+    function sum(rows, ri) { return rows.reduce(function (s, r) { return s + ((r.richting === ri && r.meetellen !== false) ? (r.bedrag_eur_cents || 0) : 0); }, 0); }
+
+    function refresh() {
+      var rows = filtered();
+      renderStats(rows);
+      renderTable(rows);
+    }
+
+    function renderStats(rows) {
+      var rekSel = $('fltRekening').value;
+      var headRek = rekSel === 'kas_srb' ? 'kas_srb' : 'bank_nl';
+      var head = rows.filter(function (r) { return r.rekening === headRek; });
+      var totIn = sum(head, 'in'), totUit = sum(head, 'uit'), saldo = totIn - totUit;
+      var rekLabel = headRek === 'kas_srb' ? 'Kas Servië' : 'Bank NL';
+      var saldoNote = headRek === 'bank_nl' ? 'resultaat = baten − lasten' : 'uitgaven in Servië (RSD→EUR)';
+
+      var html = '<div class="statgrid">' +
+        '<div class="stat"><div class="lbl">Totaal in · ' + rekLabel + '</div><div class="val in">' + euros(totIn) + '</div></div>' +
+        '<div class="stat"><div class="lbl">Totaal uit · ' + rekLabel + '</div><div class="val uit">' + euros(totUit) + '</div></div>' +
+        '<div class="stat"><div class="lbl">Saldo</div><div class="val ' + (saldo < 0 ? 'uit' : 'in') + '">' + euros(saldo) + '</div><div class="sub">' + saldoNote + '</div></div>' +
+        '</div>';
+
+      // per-category breakdown + monthly chart
+      html += '<div class="cols2">' + breakdownCard(head) + chartCard(head) + '</div>';
+
+      // Besteding in Servië (kas_srb portion of the filtered set) — proof, not in the result
+      var srb = rows.filter(function (r) { return r.rekening === 'kas_srb' && r.meetellen !== false; });
+      if (srb.length && headRek !== 'kas_srb') html += servieCard(srb);
+
+      $('stats').innerHTML = html;
+    }
+
+    function groupByCat(rows, ri) {
+      var m = {};
+      rows.forEach(function (r) { if (r.richting === ri && r.meetellen !== false) m[r.categorie] = (m[r.categorie] || 0) + (r.bedrag_eur_cents || 0); });
+      return Object.keys(m).map(function (k) { return [k, m[k]]; }).sort(function (a, b) { return b[1] - a[1]; });
+    }
+
+    function breakdownCard(head) {
+      function block(title, ri, cls) {
+        var g = groupByCat(head, ri); if (!g.length) return '';
+        var rowsH = g.map(function (p) { return '<tr><td><span class="cat">' + esc(catLabel(p[0])) + '</span></td><td class="' + cls + '">' + euros(p[1]) + '</td></tr>'; }).join('');
+        return '<div style="margin-bottom:12px"><div class="hint" style="font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">' + title + '</div><table class="bd">' + rowsH + '</table></div>';
+      }
+      var b = block('Baten', 'in', '') + block('Lasten', 'uit', '');
+      return '<div class="card"><h3>Per categorie</h3>' + (b || '<div class="hint">Geen gegevens.</div>') + '</div>';
+    }
+
+    function chartCard(head) {
+      // bucket by calendar month (YYYY-MM) present in the filtered set
+      var by = {};
+      head.forEach(function (r) {
+        if (!r.datum || r.meetellen === false) return;
+        var k = r.datum.slice(0, 7);
+        (by[k] = by[k] || { in: 0, uit: 0 })[r.richting] += (r.bedrag_eur_cents || 0);
+      });
+      var keys = Object.keys(by).sort();
+      if (!keys.length) return '<div class="card"><h3>Per maand</h3><div class="hint">Geen gegevens voor deze periode.</div></div>';
+      if (keys.length > 24) return '<div class="card"><h3>Per maand</h3><div class="hint">Te veel maanden om te tonen — kies een kortere periode.</div></div>';
+      var max = 1; keys.forEach(function (k) { max = Math.max(max, by[k].in, by[k].uit); });
+      var multiYear = keys.length > 12;
+      var cols = keys.map(function (k) {
+        var mi = by[k].in, mu = by[k].uit;
+        var hi = Math.round((mi / max) * 116), hu = Math.round((mu / max) * 116);
+        var mo = parseInt(k.slice(5, 7), 10) - 1;
+        var label = MONTHS[mo] + (multiYear ? (" '" + k.slice(2, 4)) : '');
+        return '<div class="cmonth"><div class="cbars">' +
+          '<div class="cbar in" style="height:' + hi + 'px" title="' + k + ' in ' + euros(mi) + '"></div>' +
+          '<div class="cbar uit" style="height:' + hu + 'px" title="' + k + ' uit ' + euros(mu) + '"></div>' +
+          '</div><div class="cmlabel">' + label + '</div></div>';
+      }).join('');
+      return '<div class="card"><h3>Per maand</h3><div class="chart">' + cols + '</div>' +
+        '<div class="legend"><span><i style="background:var(--in)"></i>In</span><span><i style="background:var(--uit)"></i>Uit</span></div></div>';
+    }
+
+    function servieCard(srb) {
+      var g = groupByCat(srb, 'uit'), tot = g.reduce(function (s, p) { return s + p[1]; }, 0);
+      var rowsH = g.map(function (p) { return '<tr><td><span class="cat">' + esc(catLabel(p[0])) + '</span></td><td>' + euros(p[1]) + '</td></tr>'; }).join('');
+      return '<div class="card" style="margin-bottom:18px"><h3>Besteding in Servië <span class="note">— onderbouwing (bonnen), niet in het bankresultaat</span></h3>' +
+        '<table class="bd">' + rowsH + '<tr><td><b>Totaal gedocumenteerd</b></td><td><b>' + euros(tot) + '</b></td></tr></table></div>';
+    }
+
+    function renderTable(rows) {
+      if (!rows.length) { $('list').innerHTML = '<div class="empty">Geen transacties voor deze filter.</div>'; return; }
+      var showRek = $('fltRekening').value === 'alle';
+      var body = rows.map(function (r) {
+        var isRsd = r.valuta === 'RSD';
+        var main = isRsd ? rsd(r.bedrag_cents) : euros(r.bedrag_eur_cents);
+        var sub = isRsd ? '<span class="eur">' + euros(r.bedrag_eur_cents) + '</span>' : '';
+        var sign = r.richting === 'uit' ? '−' : '+';
+        var srbTag = (showRek && r.rekening === 'kas_srb') ? '<span class="tag-srb">SRB</span>' : '';
+        var strike = r.meetellen === false ? 'opacity:.5;text-decoration:line-through' : '';
+        return '<tr data-id="' + r.id + '" style="' + strike + '">' +
+          '<td class="selcell"><input type="checkbox" class="rowsel" data-id="' + r.id + '"></td>' +
+          '<td class="t-date">' + fmtDate(r.datum) + '</td>' +
+          '<td><div class="t-desc">' + esc(r.omschrijving || '—') + srbTag + '</div>' + (r.tegenpartij ? '<div class="t-party">' + esc(r.tegenpartij) + '</div>' : '') + '</td>' +
+          '<td><span class="cat">' + esc(catLabel(r.categorie)) + '</span></td>' +
+          '<td class="t-amt ' + r.richting + '">' + sign + main + sub + '</td>' +
+          '<td class="clip">' + (r.bon_pad ? '📎' : '') + '</td>' +
+          '</tr>';
+      }).join('');
+      $('list').innerHTML =
+        '<div id="bulkbar"><b id="bulkcount"></b><button type="button" class="btn btn-danger btn-sm" id="bulkDel">Verwijderen</button><button type="button" class="btn btn-ghost btn-sm" id="bulkClear">Wis selectie</button></div>' +
+        '<div class="hint" style="margin:2px 2px 10px">' + rows.length + ' transactie(s)</div>' +
+        '<div class="tblwrap"><table class="tbl"><thead><tr><th class="selcell"><input type="checkbox" id="selAll" title="Alles selecteren"></th><th>Datum</th><th>Omschrijving</th><th>Categorie</th><th style="text-align:right">Bedrag</th><th></th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      var byId = {}; rows.forEach(function (r) { byId[r.id] = r; });
+      $('list').querySelectorAll('tbody tr').forEach(function (tr) {
+        tr.addEventListener('click', function (e) {
+          if (e.target.classList.contains('rowsel') || e.target.classList.contains('selcell')) return;   // don't open detail when (de)selecting
+          openDetail(byId[tr.getAttribute('data-id')]);
+        });
+      });
+      $('list').querySelectorAll('.rowsel').forEach(function (cb) { cb.addEventListener('change', updateBulkBar); });
+      $('selAll').addEventListener('change', function () { var on = this.checked; $('list').querySelectorAll('.rowsel').forEach(function (cb) { cb.checked = on; }); updateBulkBar(); });
+      $('bulkClear').addEventListener('click', function () { $('list').querySelectorAll('.rowsel').forEach(function (cb) { cb.checked = false; }); $('selAll').checked = false; updateBulkBar(); });
+      $('bulkDel').addEventListener('click', deleteSelected);
+      updateBulkBar();
+    }
+    function selectedIds() {
+      return Array.prototype.slice.call(document.querySelectorAll('.rowsel')).filter(function (cb) { return cb.checked; }).map(function (cb) { return cb.getAttribute('data-id'); });
+    }
+    function updateBulkBar() {
+      var bar = $('bulkbar'); if (!bar) return;
+      var ids = selectedIds();
+      bar.style.display = ids.length ? 'flex' : 'none';
+      if (ids.length) $('bulkcount').textContent = ids.length + ' geselecteerd';
+    }
+    async function deleteSelected() {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      var ids = selectedIds(); if (!ids.length) return;
+      if (!confirm(ids.length + ' transactie(s) verwijderen? Dit kan niet ongedaan worden gemaakt.')) return;
+      var btn = $('bulkDel'); btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Verwijderen…';
+      try {
+        var byId = {}; ALL.forEach(function (r) { byId[r.id] = r; });
+        for (var i = 0; i < ids.length; i++) { var r = byId[ids[i]]; if (r && r.bon_pad) await deleteBon(r.bon_pad); }   // best-effort remove receipts
+        for (var s = 0; s < ids.length; s += 50) await apiWrite('DELETE', 'transactions?id=in.(' + ids.slice(s, s + 50).join(',') + ')');
+        await load();
+      } catch (e) { alert('Verwijderen mislukt: ' + e.message); }
+      finally { btn.disabled = false; btn.textContent = orig; }
+    }
+
+    // ================= dog select + form + detail =================
+    function populateDogSelect() {
+      $('f_dog').innerHTML = '<option value="">—</option>' + DOGS.map(function (d) { return '<option value="' + d.id + '">' + esc(d.naam || '(zonder naam)') + '</option>'; }).join('');
+    }
+    function dogName(id) { for (var i = 0; i < DOGS.length; i++) if (DOGS[i].id === id) return DOGS[i].naam; return null; }
+
+    function syncFormCats() {
+      var rek = $('f_rekening').value, ri = $('f_richting').value;
+      var list = (CATS[rek] && CATS[rek][ri]) || [];
+      var prev = $('f_categorie').value;
+      $('f_categorie').innerHTML = list.map(function (p) { return '<option value="' + p[0] + '">' + esc(p[1]) + '</option>'; }).join('');
+      if (prev && list.some(function (p) { return p[0] === prev; })) $('f_categorie').value = prev;
+    }
+    function syncValuta() {
+      var v = $('f_valuta').value, isRsd = v === 'RSD';
+      $('f_rsdrow').style.display = isRsd ? '' : 'none';
+      $('f_bedrag_lbl').textContent = isRsd ? 'Bedrag (din)' : 'Bedrag (€)';
+      recalcEur();
+    }
+    function recalcEur() {
+      if ($('f_valuta').value !== 'RSD') return;
+      var b = num($('f_bedrag').value), k = num($('f_koers').value);
+      $('f_eurcalc').value = (!isNaN(b) && k > 0) ? euros(Math.round((b / k) * 100)) : '';
+    }
+
+    function openForm(r) {
+      editing = r || null;
+      $('fMsg').textContent = ''; $('fMsg').className = 'msg';
+      $('fTitle').textContent = r ? 'Transactie bewerken' : 'Nieuwe transactie';
+      $('f_id').value = r ? r.id : '';
+      $('f_rekening').value = r ? r.rekening : 'bank_nl';
+      $('f_richting').value = r ? r.richting : 'in';
+      syncFormCats();
+      $('f_categorie').value = r ? r.categorie : ($('f_categorie').options[0] && $('f_categorie').options[0].value);
+      $('f_datum').value = r && r.datum ? r.datum : '';
+      $('f_valuta').value = r ? (r.valuta || 'EUR') : 'bank_nl' === $('f_rekening').value ? 'EUR' : 'EUR';
+      $('f_bedrag').value = r ? (r.bedrag_cents / 100) : '';
+      $('f_koers').value = r && r.koers ? r.koers : '117.42';
+      $('f_btw').value = r && r.btw_cents ? (r.btw_cents / 100) : '';
+      $('f_omschrijving').value = r ? (r.omschrijving || '') : '';
+      $('f_tegenpartij').value = r ? (r.tegenpartij || '') : '';
+      $('f_factuurnr').value = r ? (r.factuurnr || '') : '';
+      $('f_dog').value = r && r.dog_id ? r.dog_id : '';
+      $('f_bon_pad').value = r && r.bon_pad ? r.bon_pad : '';
+      $('f_bon_bestand').value = r && r.bon_bestand ? r.bon_bestand : '';
+      $('f_bonfile').value = '';
+      $('f_bonhint').textContent = (r && r.bon_pad) ? 'Er is al een bon gekoppeld. Kies een nieuw bestand om te vervangen.' : '';
+      $('fDelete').style.display = r ? '' : 'none';
+      syncValuta();
+      $('fOverlay').classList.add('open');
+    }
+    function closeForm() { $('fOverlay').classList.remove('open'); }
+
+    // when rekening changes, default the currency to match the pot
+    function onRekeningChange() {
+      $('f_valuta').value = $('f_rekening').value === 'kas_srb' ? 'RSD' : 'EUR';
+      syncFormCats(); syncValuta();
+    }
+
+    async function saveForm(e) {
+      e.preventDefault();
+      var msg = $('fMsg'); msg.className = 'msg';
+      if (!authed()) { msg.className = 'msg err'; msg.textContent = 'Je bent niet ingelogd — open het beheer en log in.'; return; }
+      var bedrag = num($('f_bedrag').value);
+      if (isNaN(bedrag) || bedrag <= 0) { msg.className = 'msg err'; msg.textContent = 'Vul een geldig bedrag in.'; return; }
+      if (!$('f_categorie').value) { msg.className = 'msg err'; msg.textContent = 'Kies een categorie.'; return; }
+      var btn = $('fSave'); btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Opslaan…';
+      try {
+        var valuta = $('f_valuta').value;
+        var koers = valuta === 'RSD' ? (num($('f_koers').value) || 117.42) : null;
+        var bedrag_cents = Math.round(bedrag * 100);
+        var bedrag_eur_cents = valuta === 'RSD' ? Math.round(bedrag_cents / koers) : bedrag_cents;
+
+        var bonPad = $('f_bon_pad').value || null, bonBestand = $('f_bon_bestand').value || null;
+        var file = $('f_bonfile').files[0];
+        if (file) { var blob = await fileToJpegBlob(file); bonPad = await uploadBon(blob); bonBestand = file.name; }
+
+        var payload = {
+          datum: $('f_datum').value || null,
+          rekening: $('f_rekening').value,
+          richting: $('f_richting').value,
+          categorie: $('f_categorie').value,
+          valuta: valuta,
+          bedrag_cents: bedrag_cents,
+          bedrag_eur_cents: bedrag_eur_cents,
+          koers: koers,
+          btw_cents: (valuta === 'RSD' && $('f_btw').value) ? cents($('f_btw').value) : null,
+          omschrijving: $('f_omschrijving').value.trim() || null,
+          tegenpartij: $('f_tegenpartij').value.trim() || null,
+          factuurnr: $('f_factuurnr').value.trim() || null,
+          dog_id: $('f_dog').value || null,
+          bon_pad: bonPad,
+          bon_bestand: bonBestand,
+          bron: editing ? (editing.bron || 'handmatig') : 'handmatig',
+          meetellen: editing ? (editing.meetellen !== false) : true
+        };
+        var id = $('f_id').value;
+        if (id) await apiWrite('PATCH', 'transactions?id=eq.' + id, payload);
+        else await apiWrite('POST', 'transactions', payload);
+        closeForm();
+        await load();
+      } catch (err) {
+        msg.className = 'msg err'; msg.textContent = 'Opslaan mislukt: ' + err.message;
+      } finally { btn.disabled = false; btn.textContent = orig; }
+    }
+
+    async function deleteRow(id) {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      if (!confirm('Deze transactie verwijderen?')) return;
+      try { await apiWrite('DELETE', 'transactions?id=eq.' + id); closeForm(); $('dOverlay').classList.remove('open'); await load(); }
+      catch (e) { alert('Verwijderen mislukt: ' + e.message); }
+    }
+
+    function openDetail(r) {
+      if (!r) return;
+      editing = r;
+      $('dTitle').textContent = (r.omschrijving || catLabel(r.categorie) || 'Transactie');
+      var isRsd = r.valuta === 'RSD';
+      var amt = (r.richting === 'uit' ? '−' : '+') + (isRsd ? rsd(r.bedrag_cents) + ' (' + euros(r.bedrag_eur_cents) + ')' : euros(r.bedrag_eur_cents));
+      var rows = [
+        ['Datum', fmtDate(r.datum)],
+        ['Rekening', r.rekening === 'kas_srb' ? 'Kas Servië (RSD)' : 'Bank NL (EUR)'],
+        ['Richting', r.richting === 'in' ? 'In (baten)' : 'Uit (lasten)'],
+        ['Categorie', catLabel(r.categorie)],
+        ['Bedrag', amt + (r.meetellen === false ? '  <span class="tag-srb">telt niet mee</span>' : '')],
+        ['Tegenpartij', r.tegenpartij || '—'],
+        ['Factuurnr.', r.factuurnr || '—'],
+        ['Referentie', r.referentie || '—'],
+        ['Hond', r.dog_id ? (esc(dogName(r.dog_id) || '') || '—') : '—'],
+        ['Bron', r.bron || '—'],
+        ['Bestand', r.bon_bestand || '—']
+      ];
+      if (r.opmerking) rows.push(['Opmerking', r.opmerking]);
+      var dl = '<dl class="dl">' + rows.map(function (p) { return '<dt>' + p[0] + '</dt><dd>' + p[1] + '</dd>'; }).join('') + '</dl>';
+      // reclassify income between donation and adoption (bank_nl · in only)
+      var reclassTo = null;
+      if (r.rekening === 'bank_nl' && r.richting === 'in') {
+        reclassTo = r.categorie === 'adoptie_transport' ? 'donatie' : 'adoptie_transport';
+        dl += '<button type="button" class="btn btn-ghost btn-sm" id="dReclass" style="margin-top:6px">' +
+          (reclassTo === 'adoptie_transport' ? 'Markeer als adoptie' : 'Markeer als donatie') + '</button>';
+      }
+      if (r.bon_pad) dl += '<div id="dBon" class="hint">Bon laden…</div>';
+      $('dBody').innerHTML = dl;
+      if (reclassTo) $('dReclass').onclick = function () { reclassify(r, reclassTo); };
+      $('dOverlay').classList.add('open');
+      if (r.bon_pad) {
+        signedUrl(r.bon_pad).then(function (u) {
+          $('dBon').outerHTML = '<a href="' + u + '" target="_blank" rel="noopener"><img class="bonimg" src="' + u + '" alt="bon"></a>';
+        }).catch(function () { if ($('dBon')) $('dBon').textContent = 'Kon de bon niet laden.'; });
+      }
+    }
+
+    // ================= shared spreadsheet reader (used by the transport importer) =================
+    function readAoa(file) {
+      return new Promise(function (resolve, reject) {
+        var fr = new FileReader();
+        fr.onload = function () {
+          try {
+            // raw:true keeps every cell as its literal text — otherwise SheetJS reformats ISO dates.
+            var wb = XLSX.read(new Uint8Array(fr.result), { type: 'array', raw: true });
+            var ws = wb.Sheets[wb.SheetNames[0]];
+            resolve(XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' }));
+          } catch (e) { reject(e); }
+        };
+        fr.onerror = function () { reject(new Error('Kon bestand niet lezen')); };
+        fr.readAsArrayBuffer(file);
+      });
+    }
+    function cell(row, i) { return (row[i] == null ? '' : String(row[i])).trim(); }
+    function isDate(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || '').trim()); }
+
+    // ================= Transportlijst / generic import (column mapping) =================
+    var tAoa = [], tHeaders = [], tDataStart = 1;
+    var TFIELDS = [
+      ['naam', 'Naam / adoptant', ['naam', 'persoon', 'adopt', 'name', 'koper']],
+      ['hond', 'Hond', ['hond', 'dog', 'omschrij']],
+      ['bedrag', 'Bedrag (€, optioneel)', ['bedrag', 'betaald', 'amount', 'prijs', 'totaal', '€']]
+    ];
+    var tMode = 'sheet', tDocxAdopters = [];   // 'sheet' (csv/xlsx, column mapping) | 'docx' (AI-extracted)
+    function resetTrans() { tAoa = []; tHeaders = []; tMode = 'sheet'; tDocxAdopters = []; $('tFile').value = ''; $('tMap').innerHTML = ''; $('tPreview').innerHTML = ''; $('tMsg').textContent = ''; $('tConfirm').disabled = true; }
+    function docxToText(file) {
+      return new Promise(function (resolve, reject) {
+        var fr = new FileReader();
+        fr.onload = function () {
+          if (!window.mammoth) { reject(new Error('mammoth (docx-lezer) niet geladen')); return; }
+          window.mammoth.extractRawText({ arrayBuffer: fr.result }).then(function (res) { resolve(res.value || ''); }).catch(function (e) { reject(e); });
+        };
+        fr.onerror = function () { reject(new Error('kon bestand niet lezen')); };
+        fr.readAsArrayBuffer(file);
+      });
+    }
+    async function onTransDocx(files) {
+      if (!authed()) { $('tMsg').className = 'msg err'; $('tMsg').textContent = 'Log eerst in via het beheer.'; return; }
+      tMode = 'docx'; tDocxAdopters = []; $('tMap').innerHTML = ''; $('tPreview').innerHTML = ''; $('tConfirm').disabled = true;
+      $('tMsg').className = 'msg';
+      try {
+        for (var i = 0; i < files.length; i++) {
+          $('tMsg').textContent = 'Uitlezen ' + (i + 1) + '/' + files.length + '… (' + files[i].name + ')';
+          var text = await docxToText(files[i]);
+          if (!text || text.trim().length < 3) continue;
+          var r = await fetch('/api/ocr/', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (token() || '') }, body: JSON.stringify({ kind: 'adopters', text: text }) });
+          var txt = await r.text(), j = null; try { j = JSON.parse(txt); } catch (e) {}
+          if (!r.ok || !j) throw new Error((j && j.error) || ('OCR ' + r.status));
+          var got = (((j.data || {}).adopters) || []).map(function (a) {
+            return { naam: (a.naam || a.name || '').toString().trim(), bedrag_eur_cents: a.bedrag != null ? cents(a.bedrag) : (a.amount != null ? cents(a.amount) : null), dog_naam: (a.hond || a.dog || '') || null, bron: 'transport' };
+          }).filter(function (a) { return a.naam; });
+          tDocxAdopters = tDocxAdopters.concat(got);
+        }
+        renderDocxPreview();
+        $('tMsg').textContent = '';
+      } catch (e) { $('tMsg').className = 'msg err'; $('tMsg').textContent = 'Kon niet inlezen: ' + e.message; }
+    }
+    function renderDocxPreview() {
+      if (!tDocxAdopters.length) { $('tPreview').innerHTML = '<div class="hint" style="padding:10px">Geen adoptanten herkend.</div>'; $('tConfirm').disabled = true; return; }
+      var sample = tDocxAdopters.slice(0, 100).map(function (a) { return '<tr><td>' + esc(a.naam) + '</td><td>' + esc(a.dog_naam || '') + '</td><td style="text-align:right">' + (a.bedrag_eur_cents != null ? euros(a.bedrag_eur_cents) : '—') + '</td></tr>'; }).join('');
+      $('tPreview').innerHTML = '<div class="impsum"><span><b>' + tDocxAdopters.length + '</b> adoptanten</span></div>' +
+        '<div class="prev"><table><thead><tr><th>Naam</th><th>Hond</th><th>Bedrag</th></tr></thead><tbody>' + sample + '</tbody></table></div>';
+      $('tConfirm').disabled = false; $('tHint').textContent = tDocxAdopters.length + ' adoptanten klaar.';
+    }
+    async function onTransFile() {
+      var files = Array.prototype.slice.call($('tFile').files || []); if (!files.length) return;
+      var docx = files.filter(function (f) { return /\.docx?$/i.test(f.name); });
+      if (docx.length) { await onTransDocx(docx); return; }              // Word → AI extraction (multiple ok)
+      tMode = 'sheet';
+      var f = files[0];   // spreadsheets use column mapping → one at a time
+      $('tMsg').className = 'msg'; $('tMsg').textContent = files.length > 1 ? 'Meerdere spreadsheets gekozen — alleen de eerste wordt gebruikt (Word-lijsten kunnen wél met meerdere tegelijk).' : 'Lezen…';
+      try {
+        tAoa = await readAoa(f);
+        var hi = 0; for (var i = 0; i < tAoa.length; i++) { if (tAoa[i].filter(function (c) { return String(c || '').trim(); }).length >= 2) { hi = i; break; } }
+        tDataStart = hi + 1;
+        tHeaders = (tAoa[hi] || []).map(function (c, idx) { return { idx: idx, name: String(c || '').trim() || ('Kolom ' + (idx + 1)) }; });
+        buildTransMap();
+        $('tMsg').textContent = '';
+      } catch (e) { $('tMsg').className = 'msg err'; $('tMsg').textContent = 'Kon niet inlezen: ' + e.message; }
+    }
+    function guessCol(patterns) {
+      for (var i = 0; i < tHeaders.length; i++) { var n = tHeaders[i].name.toLowerCase(); for (var j = 0; j < patterns.length; j++) if (n.indexOf(patterns[j]) > -1) return String(tHeaders[i].idx); }
+      return '';
+    }
+    function buildTransMap() {
+      var opts = '<option value="">—</option>' + tHeaders.map(function (h) { return '<option value="' + h.idx + '">' + esc(h.name) + '</option>'; }).join('');
+      $('tMap').innerHTML = '<div class="section-label">Kolommen koppelen</div>' + TFIELDS.map(function (fld) {
+        return '<div class="maprow"><span class="k">' + fld[1] + '</span><select data-fld="' + fld[0] + '">' + opts + '</select></div>';
+      }).join('');
+      $('tMap').querySelectorAll('select[data-fld]').forEach(function (sel) {
+        var fld = TFIELDS.filter(function (f) { return f[0] === sel.getAttribute('data-fld'); })[0];
+        sel.value = guessCol(fld[2]);
+        sel.addEventListener('change', previewTrans);
+      });
+      previewTrans();
+    }
+    function transMapping() { var m = {}; $('tMap').querySelectorAll('select[data-fld]').forEach(function (s) { m[s.getAttribute('data-fld')] = s.value === '' ? -1 : parseInt(s.value, 10); }); return m; }
+    function buildTransRows() {
+      var m = transMapping(), out = [];
+      for (var i = tDataStart; i < tAoa.length; i++) {
+        var row = tAoa[i]; if (!row) continue;
+        var get = function (key) { return m[key] >= 0 ? cell(row, m[key]) : ''; };
+        var naam = get('naam').trim(); if (!naam) continue;                       // an adopter needs a name
+        out.push({ naam: naam, bedrag_eur_cents: get('bedrag') !== '' ? cents(get('bedrag')) : null, dog_naam: get('hond') || null, bron: 'transport' });
+      }
+      return out;
+    }
+    function previewTrans() {
+      var rows = buildTransRows();
+      if (!rows.length) { $('tPreview').innerHTML = ''; $('tConfirm').disabled = true; $('tHint').textContent = 'Koppel minstens de kolom Naam.'; return; }
+      var sample = rows.slice(0, 10).map(function (r) { return '<tr><td>' + esc(r.naam) + '</td><td>' + esc(r.dog_naam || '') + '</td><td style="text-align:right">' + (r.bedrag_eur_cents != null ? euros(r.bedrag_eur_cents) : '—') + '</td></tr>'; }).join('');
+      $('tPreview').innerHTML = '<div class="impsum"><span><b>' + rows.length + '</b> adoptanten</span></div>' +
+        '<div class="prev"><table><thead><tr><th>Naam</th><th>Hond</th><th>Bedrag</th></tr></thead><tbody>' + sample + '</tbody></table></div>';
+      $('tConfirm').disabled = false; $('tHint').textContent = rows.length + ' adoptanten klaar.';
+    }
+    async function confirmTrans() {
+      if (!authed()) { $('tMsg').className = 'msg err'; $('tMsg').textContent = 'Log eerst in via het beheer.'; return; }
+      var rows = tMode === 'docx' ? tDocxAdopters : buildTransRows(); if (!rows.length) return;
+      var btn = $('tConfirm'); btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Importeren…';
+      try {
+        for (var i = 0; i < rows.length; i += 100) await apiWrite('POST', 'adopters', rows.slice(i, i + 100));
+        await loadAdopters();
+        btn.textContent = 'Inkomsten koppelen…';
+        var flipped = await applyAdopterMatching();     // auto-flip matching donations → adoptie
+        $('tOverlay').classList.remove('open'); resetTrans(); showAll(); await load();
+        alert(rows.length + ' adoptanten toegevoegd' + (flipped ? ('; ' + flipped + ' donatie(s) omgezet naar adoptie') : ' (geen bestaande donaties kwamen overeen)') + '.');
+      } catch (e) { $('tMsg').className = 'msg err'; $('tMsg').textContent = 'Import mislukt: ' + e.message; btn.disabled = false; btn.textContent = orig; }
+    }
+
+    // ================= OCR scanning (Claude vision via /api/ocr) =================
+    function blobToBase64(blob) {
+      return new Promise(function (resolve, reject) {
+        var fr = new FileReader();
+        fr.onload = function () { var s = String(fr.result); resolve(s.slice(s.indexOf('base64,') + 7)); };
+        fr.onerror = function () { reject(new Error('kon afbeelding niet lezen')); };
+        fr.readAsDataURL(blob);
+      });
+    }
+    async function ocrImage(kind, file, extra) {
+      var blob = await fileToJpegBlob(file);                 // heic-to + compress (reused)
+      var b64 = await blobToBase64(blob);
+      var r = await fetch('/api/ocr/', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (token() || '') },
+        body: JSON.stringify(Object.assign({ kind: kind, image_base64: b64, mime: 'image/jpeg' }, extra || {}))
+      });
+      var txt = await r.text(), j = null; try { j = JSON.parse(txt); } catch (e) {}
+      if (!r.ok || !j) throw new Error((j && j.error) || ('OCR ' + r.status));
+      return { data: j.data || {}, blob: blob };
+    }
+
+    // ---- receipt scan ----
+    var rsRows = [];
+    async function onRsFiles() {
+      var files = Array.prototype.slice.call($('rsFiles').files || []); if (!files.length) return;
+      if (!authed()) { $('rsMsg').className = 'msg err'; $('rsMsg').textContent = 'Log eerst in via het beheer.'; return; }
+      rsRows = []; $('rsReview').innerHTML = ''; $('rsSave').disabled = true;
+      $('rsBar').style.display = ''; var bar = $('rsBar').firstElementChild; bar.style.width = '0%';
+      $('rsMsg').className = 'msg'; $('rsMsg').textContent = 'Scannen…';
+      for (var i = 0; i < files.length; i++) {
+        bar.style.width = Math.round(i / files.length * 100) + '%';
+        try { var out = await ocrImage('receipt', files[i]); rsRows.push({ data: out.data, blob: out.blob, fileName: files[i].name }); }
+        catch (e) { rsRows.push({ data: {}, blob: null, fileName: files[i].name, err: e.message }); }
+      }
+      bar.style.width = '100%'; $('rsMsg').textContent = '';
+      renderRsReview();
+    }
+    function renderRsReview() {
+      if (!rsRows.length) { $('rsReview').innerHTML = ''; return; }
+      var catOpts = CATS.kas_srb.uit.map(function (p) { return '<option value="' + p[0] + '">' + esc(p[1]) + '</option>'; }).join('');
+      var html = rsRows.map(function (row, idx) {
+        var d = row.data || {};
+        return '<div class="rrow" data-i="' + idx + '" style="border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px">' +
+          '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px">' +
+            '<label class="hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" class="rs-inc" ' + (row.err ? '' : 'checked') + ' style="width:auto"> ' + esc(row.fileName) + '</label>' +
+            (row.err ? '<span class="tag-srb" title="' + escA(row.err) + '">scan mislukt: ' + esc((row.err || '').slice(0, 70)) + '</span>' : '') + '</div>' +
+          '<div class="grid3">' +
+            '<div class="field" style="margin:0"><label>Datum</label><input type="date" class="rs-datum" value="' + (isDate(d.date) ? d.date : '') + '"></div>' +
+            '<div class="field" style="margin:0"><label>Leverancier</label><input type="text" class="rs-teg" value="' + escA(d.vendor || '') + '"></div>' +
+            '<div class="field" style="margin:0"><label>Categorie</label><select class="rs-cat">' + catOpts + '</select></div>' +
+          '</div>' +
+          '<div class="grid3" style="margin-top:8px">' +
+            '<div class="field" style="margin:0"><label>Valuta</label><select class="rs-val"><option value="RSD">RSD</option><option value="EUR">EUR</option></select></div>' +
+            '<div class="field" style="margin:0"><label>Bedrag</label><input type="number" step="0.01" class="rs-bedrag" value="' + (d.total != null ? d.total : '') + '"></div>' +
+            '<div class="field" style="margin:0"><label>Factuurnr.</label><input type="text" class="rs-fact" value="' + escA(d.invoice_no || '') + '"></div>' +
+          '</div></div>';
+      }).join('');
+      $('rsReview').innerHTML = '<div class="section-label">Controleer &amp; pas aan</div>' + html;
+      $('rsReview').querySelectorAll('.rrow').forEach(function (el) {
+        var d = rsRows[+el.getAttribute('data-i')].data || {};
+        var cat = (d.category_guess && CATS.kas_srb.uit.some(function (p) { return p[0] === d.category_guess; })) ? d.category_guess : 'overig';
+        el.querySelector('.rs-cat').value = cat;
+        el.querySelector('.rs-val').value = (d.currency === 'EUR') ? 'EUR' : 'RSD';
+      });
+      $('rsSave').disabled = false; $('rsHint').textContent = rsRows.length + ' bon(nen) gescand.';
+    }
+    async function saveRs() {
+      if (!authed()) { $('rsMsg').className = 'msg err'; $('rsMsg').textContent = 'Log eerst in.'; return; }
+      var btn = $('rsSave'); btn.disabled = true; var orig = btn.textContent;
+      var els = $('rsReview').querySelectorAll('.rrow'), saved = 0;
+      try {
+        for (var k = 0; k < els.length; k++) {
+          var el = els[k]; if (!el.querySelector('.rs-inc').checked) continue;
+          var idx = +el.getAttribute('data-i'), blob = rsRows[idx].blob;
+          var bedrag = num(el.querySelector('.rs-bedrag').value); if (isNaN(bedrag) || bedrag <= 0) continue;
+          var valuta = el.querySelector('.rs-val').value, koers = valuta === 'RSD' ? 117.42 : null;
+          var bc = Math.round(bedrag * 100), ec = valuta === 'RSD' ? Math.round(bc / koers) : bc;
+          var bonPad = null; if (blob) { try { bonPad = await uploadBon(blob); } catch (e) {} }
+          btn.textContent = 'Opslaan… ' + (saved + 1);
+          await apiWrite('POST', 'transactions', {
+            rekening: 'kas_srb', richting: 'uit', categorie: el.querySelector('.rs-cat').value, valuta: valuta,
+            bedrag_cents: bc, bedrag_eur_cents: ec, koers: koers, btw_cents: null,
+            datum: el.querySelector('.rs-datum').value || null, omschrijving: null,
+            tegenpartij: el.querySelector('.rs-teg').value.trim() || null, factuurnr: el.querySelector('.rs-fact').value.trim() || null,
+            referentie: null, bron: 'scan', dog_id: null, bon_pad: bonPad, bon_bestand: rsRows[idx].fileName, opmerking: null, meetellen: true
+          });
+          saved++;
+        }
+        $('rsOverlay').classList.remove('open'); $('rsFiles').value = ''; rsRows = []; showAll(); await load();
+        alert(saved + ' bon(nen) opgeslagen.');
+      } catch (e) { $('rsMsg').className = 'msg err'; $('rsMsg').textContent = 'Opslaan mislukt: ' + e.message; }
+      finally { btn.disabled = false; btn.textContent = orig; }
+    }
+
+    // ---- bank scan ----
+    var ksRows = [];
+    // extract text from a (digital) PDF, one line per visual row, using pdf.js
+    async function pdfToText(file) {
+      var buf = await file.arrayBuffer();
+      var pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+      var out = [];
+      for (var p = 1; p <= pdf.numPages; p++) {
+        var page = await pdf.getPage(p);
+        var tc = await page.getTextContent();
+        var lines = {};
+        tc.items.forEach(function (it) { if (!it.str) return; var y = Math.round(it.transform[5]); (lines[y] = lines[y] || []).push({ x: it.transform[4], s: it.str }); });
+        Object.keys(lines).map(Number).sort(function (a, b) { return b - a; }).forEach(function (y) {
+          var line = lines[y].sort(function (a, b) { return a.x - b.x; }).map(function (o) { return o.s; }).join(' ').replace(/\s+/g, ' ').trim();
+          if (line) out.push(line);
+        });
+        out.push('');
+      }
+      return out.join('\n');
+    }
+    // split the statement text into chunks, breaking only at a transaction boundary (a DD/MM/YYYY line)
+    function chunkStatement(text, maxLines) {
+      var lines = text.split('\n'), chunks = [], cur = [];
+      var isDate = function (l) { return /^\d{2}\/\d{2}\/\d{4}/.test(l); };
+      for (var i = 0; i < lines.length; i++) {
+        if (cur.length >= maxLines && isDate(lines[i])) { chunks.push(cur.join('\n')); cur = []; }
+        cur.push(lines[i]);
+      }
+      if (cur.join('').trim()) chunks.push(cur.join('\n'));
+      return chunks;
+    }
+    async function onKsFiles() {
+      var f = ($('ksFiles').files || [])[0]; if (!f) return;
+      if (!authed()) { $('ksMsg').className = 'msg err'; $('ksMsg').textContent = 'Log eerst in via het beheer.'; return; }
+      if (!window.pdfjsLib) { $('ksMsg').className = 'msg err'; $('ksMsg').textContent = 'PDF-lezer niet geladen.'; return; }
+      ksRows = []; $('ksReview').innerHTML = ''; $('ksSave').disabled = true;
+      $('ksBar').style.display = ''; var bar = $('ksBar').firstElementChild; bar.style.width = '5%';
+      $('ksMsg').className = 'msg'; $('ksMsg').textContent = 'PDF lezen…';
+      try {
+        var text = await pdfToText(f);
+        var chunks = chunkStatement(text, 200);
+        for (var i = 0; i < chunks.length; i++) {
+          $('ksMsg').textContent = 'Uitlezen ' + (i + 1) + '/' + chunks.length + '…';
+          bar.style.width = Math.round((i + 1) / chunks.length * 100) + '%';
+          var r = await fetch('/api/ocr/', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (token() || '') }, body: JSON.stringify({ kind: 'bank_statement', text: chunks[i] }) });
+          var txt = await r.text(), j = null; try { j = JSON.parse(txt); } catch (e) {}
+          if (!r.ok || !j) throw new Error((j && j.error) || ('OCR ' + r.status));
+          ((j.data && j.data.transactions) || []).forEach(function (t) { ksRows.push(classifyBankTxn(t)); });
+        }
+        $('ksMsg').textContent = '';
+        renderKsReview();
+      } catch (e) { $('ksMsg').className = 'msg err'; $('ksMsg').textContent = 'Kon niet inlezen: ' + e.message; }
+    }
+    // outgoing bank rows: money sent to Serbia (cash withdrawal or transfer) vs bank fees
+    function outCategory(counterparty) {
+      var n = normName(counterparty);
+      if (/ZIVANOVIC/.test(n)) return 'overboeking';                                    // transfer to the Serbian org
+      if (/RAIFFEISEN|BANCA INTESA|LOZNICA|BEOGRAD|SABAC|\bSRB\b/.test(n)) return 'opname'; // cash withdrawal in Serbia
+      if (/\bING\b|MOLLIE|PAYPAL|KOSTEN|ZAKELIJK/.test(n)) return 'bankkosten';
+      return 'overig';
+    }
+    function classifyBankTxn(t) {
+      var richting = (String(t.direction || '').toLowerCase().indexOf('uit') > -1) ? 'uit' : 'in';
+      var eur = Math.round(Math.abs(num(t.amount) || 0) * 100);
+      var matched = richting === 'in' ? matchAdopter(t.counterparty, eur) : null;
+      var cat = richting === 'in' ? (matched ? 'adoptie_transport' : 'donatie') : outCategory(t.counterparty);
+      return { datum: isDate(t.date) ? t.date : null, tegenpartij: t.counterparty || '', bedrag_eur_cents: eur, richting: richting, categorie: cat, matched: matched, omschrijving: (t.description || '').toString().trim() };
+    }
+    function renderKsReview() {
+      if (!ksRows.length) { $('ksReview').innerHTML = '<div class="hint" style="padding:10px">Geen transacties gevonden.</div>'; $('ksSave').disabled = true; return; }
+      var inOpts = CATS.bank_nl.in.map(function (p) { return '<option value="' + p[0] + '">' + esc(p[1]) + '</option>'; }).join('');
+      var uitOpts = CATS.bank_nl.uit.map(function (p) { return '<option value="' + p[0] + '">' + esc(p[1]) + '</option>'; }).join('');
+      var html = ksRows.map(function (row, idx) {
+        return '<div class="krow" data-i="' + idx + '" style="border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px">' +
+          '<div class="grid3">' +
+            '<div class="field" style="margin:0"><label>Datum</label><input type="date" class="ks-datum" value="' + (row.datum || '') + '"></div>' +
+            '<div class="field" style="margin:0"><label>Tegenpartij</label><input type="text" class="ks-teg" value="' + escA(row.tegenpartij) + '"></div>' +
+            '<div class="field" style="margin:0"><label>Bedrag (€)</label><input type="number" step="0.01" class="ks-bedrag" value="' + (row.bedrag_eur_cents / 100) + '"></div>' +
+          '</div>' +
+          '<div class="grid3" style="margin-top:8px;align-items:end">' +
+            '<div class="field" style="margin:0"><label>Richting</label><select class="ks-ri"><option value="in">In</option><option value="uit">Uit</option></select></div>' +
+            '<div class="field" style="margin:0"><label>Categorie</label><select class="ks-cat">' + (row.richting === 'in' ? inOpts : uitOpts) + '</select></div>' +
+            '<label class="hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" class="ks-inc" checked style="width:auto"> opnemen' + (row.matched ? ' <span class="tag-srb">adoptie: ' + esc(row.matched.naam) + '</span>' : '') + '</label>' +
+          '</div>' +
+          '<div class="field" style="margin:8px 0 0"><label>Omschrijving</label><input type="text" class="ks-oms" value="' + escA(row.omschrijving || '') + '"></div>' +
+          '</div>';
+      }).join('');
+      $('ksReview').innerHTML = '<div class="section-label">Controleer &amp; pas aan</div>' + html;
+      $('ksReview').querySelectorAll('.krow').forEach(function (el) {
+        var row = ksRows[+el.getAttribute('data-i')];
+        el.querySelector('.ks-ri').value = row.richting;
+        el.querySelector('.ks-cat').value = row.categorie;
+        el.querySelector('.ks-ri').addEventListener('change', function () {
+          var sel = el.querySelector('.ks-cat');
+          sel.innerHTML = this.value === 'in' ? inOpts : uitOpts;
+          sel.value = this.value === 'in' ? 'donatie' : 'overig';
+        });
+      });
+      $('ksSave').disabled = false; $('ksHint').textContent = ksRows.length + ' transactie(s).';
+    }
+    async function saveKs() {
+      if (!authed()) { $('ksMsg').className = 'msg err'; $('ksMsg').textContent = 'Log eerst in.'; return; }
+      var btn = $('ksSave'); btn.disabled = true; var orig = btn.textContent;
+      var els = $('ksReview').querySelectorAll('.krow'), saved = 0;
+      try {
+        for (var k = 0; k < els.length; k++) {
+          var el = els[k]; if (!el.querySelector('.ks-inc').checked) continue;
+          var bedrag = num(el.querySelector('.ks-bedrag').value); if (isNaN(bedrag) || bedrag <= 0) continue;
+          var ec = Math.round(bedrag * 100), ri = el.querySelector('.ks-ri').value, cat = el.querySelector('.ks-cat').value;
+          var dat = el.querySelector('.ks-datum').value || null, teg = el.querySelector('.ks-teg').value.trim() || null;
+          var oms = el.querySelector('.ks-oms') ? (el.querySelector('.ks-oms').value.trim() || null) : null;
+          btn.textContent = 'Opslaan… ' + (saved + 1);
+          await apiWrite('POST', 'transactions', {
+            rekening: 'bank_nl', richting: ri, categorie: cat, valuta: 'EUR',
+            bedrag_cents: ec, bedrag_eur_cents: ec, koers: null, btw_cents: null,
+            datum: dat, omschrijving: oms, tegenpartij: teg,
+            factuurnr: null, referentie: 'afschrift', bron: 'afschrift', dog_id: null, bon_pad: null, bon_bestand: null, opmerking: null, meetellen: true
+          });
+          // money sent to Serbia (opname/overboeking) = income into the Serbian (kas_srb) account
+          if (ri === 'uit' && (cat === 'opname' || cat === 'overboeking')) {
+            await apiWrite('POST', 'transactions', {
+              rekening: 'kas_srb', richting: 'in', categorie: cat, valuta: 'EUR',
+              bedrag_cents: ec, bedrag_eur_cents: ec, koers: null, btw_cents: null,
+              datum: dat, omschrijving: 'Ontvangen uit NL', tegenpartij: teg,
+              factuurnr: null, referentie: 'transfer NL→SRB', bron: 'scan', dog_id: null, bon_pad: null, bon_bestand: null, opmerking: null, meetellen: true
+            });
+          }
+          var m = ksRows[+el.getAttribute('data-i')].matched;
+          if (ri === 'in' && cat === 'adoptie_transport' && m && m.id) { try { await apiWrite('PATCH', 'adopters?id=eq.' + m.id, { matched: true }); } catch (e) {} }
+          saved++;
+        }
+        $('ksOverlay').classList.remove('open'); $('ksFiles').value = ''; ksRows = []; showAll(); await load();
+        alert(saved + ' transactie(s) opgeslagen.');
+      } catch (e) { $('ksMsg').className = 'msg err'; $('ksMsg').textContent = 'Opslaan mislukt: ' + e.message; }
+      finally { btn.disabled = false; btn.textContent = orig; }
+    }
+
+    // ================= adopter registry + matcher =================
+    async function loadAdopters() { try { ADOPTERS = await apiGet('adopters?select=*&order=naam.asc'); } catch (e) { ADOPTERS = []; } }
+    function populateAdoptDog() { $('a_dog').innerHTML = '<option value="">—</option>' + DOGS.map(function (d) { return '<option value="' + d.id + '">' + esc(d.naam || '(zonder naam)') + '</option>'; }).join(''); }
+    function openAdopters() {
+      populateAdoptDog();
+      $('a_naam').value = ''; $('a_bedrag').value = ''; $('a_dog').value = ''; $('aMsg').textContent = '';
+      renderAdopters();
+      $('aOverlay').classList.add('open');
+    }
+    function renderAdopters() {
+      if (!ADOPTERS.length) { $('aList').innerHTML = '<div class="hint" style="padding:10px">Nog geen adoptanten.</div>'; return; }
+      var rows = ADOPTERS.map(function (a) {
+        var hond = a.dog_naam || (a.dog_id ? (dogName(a.dog_id) || '') : '') || '—';
+        return '<tr><td>' + esc(a.naam) + '</td><td>' + (a.bedrag_eur_cents != null ? euros(a.bedrag_eur_cents) : '—') + '</td><td>' + esc(hond) + '</td><td>' + esc(a.bron || '') + '</td><td style="text-align:right"><button class="btn btn-danger btn-sm" data-del="' + a.id + '">✕</button></td></tr>';
+      }).join('');
+      $('aList').innerHTML = '<table><thead><tr><th>Naam</th><th>Bedrag</th><th>Hond</th><th>Bron</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+      $('aList').querySelectorAll('[data-del]').forEach(function (b) { b.addEventListener('click', function () { delAdopter(b.getAttribute('data-del')); }); });
+    }
+    async function addAdopter() {
+      if (!authed()) { $('aMsg').className = 'msg err'; $('aMsg').textContent = 'Log eerst in via het beheer.'; return; }
+      var naam = $('a_naam').value.trim();
+      if (!naam) { $('aMsg').className = 'msg err'; $('aMsg').textContent = 'Vul een naam in.'; return; }
+      var dogId = $('a_dog').value || null;
+      var payload = { naam: naam, bedrag_eur_cents: $('a_bedrag').value !== '' ? cents($('a_bedrag').value) : null, dog_id: dogId, dog_naam: dogId ? (dogName(dogId) || null) : null, bron: 'handmatig' };
+      try {
+        await apiWrite('POST', 'adopters', payload);
+        $('a_naam').value = ''; $('a_bedrag').value = ''; $('a_dog').value = '';
+        $('aMsg').className = 'msg ok'; $('aMsg').textContent = 'Toegevoegd.';
+        await loadAdopters(); renderAdopters();
+      } catch (e) { $('aMsg').className = 'msg err'; $('aMsg').textContent = 'Mislukt: ' + e.message; }
+    }
+    async function delAdopter(id) {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      try { await apiWrite('DELETE', 'adopters?id=eq.' + id); await loadAdopters(); renderAdopters(); }
+      catch (e) { alert('Verwijderen mislukt: ' + e.message); }
+    }
+    // add an adopter from a reclassified income row, if not already listed
+    async function ensureAdopter(naam, eurCents, dogId) {
+      if (!naam) return;
+      if (ADOPTERS.some(function (a) { return normName(a.naam) === normName(naam); })) return;
+      try { await apiWrite('POST', 'adopters', { naam: naam, bedrag_eur_cents: eurCents != null ? eurCents : null, dog_id: dogId || null, bron: 'handmatig' }); await loadAdopters(); } catch (e) {}
+    }
+
+    // ---- name/amount matcher (adoption vs donation) ----
+    function normName(s) {
+      return (s || '').toString().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+    // drop Dutch titles/connectors so "Mw MME Wiltjer" ↔ "Wiltjer" still matches (single-char initials already gone via length>1)
+    var NAME_STOP = { HR: 1, DHR: 1, MW: 1, MME: 1, MEVR: 1, MEVROUW: 1, MR: 1, MEJ: 1, FAM: 1, FAMILIE: 1, EN: 1, OF: 1, ENOF: 1 };
+    function nameTokens(s) { return normName(s).split(' ').filter(function (t) { return t.length > 1 && !NAME_STOP[t]; }); }
+    // best-matching adopter for a payer name + amount, or null.
+    // Needs a solid name overlap AND — when the adopter has an expected amount — the payment to be in
+    // the same ballpark, so a small DONATION from someone who also adopted is NOT flipped to adoption.
+    function matchAdopter(naam, eurCents) {
+      var pt = nameTokens(naam); if (!pt.length) return null;
+      var best = null, bestScore = -1;
+      ADOPTERS.forEach(function (a) {
+        var at = nameTokens(a.naam); if (!at.length) return;
+        var overlap = 0; at.forEach(function (t) { if (pt.indexOf(t) > -1) overlap++; });
+        var shorter = Math.min(pt.length, at.length);
+        var haveAmt = a.bedrag_eur_cents != null && eurCents != null;
+        var amtClose = haveAmt && Math.abs(a.bedrag_eur_cents - eurCents) <= 10000;   // within €100
+        var ok = (overlap >= 2) || (shorter === 1 && overlap === 1 && amtClose);      // strong name, or single-token name confirmed by amount
+        if (!ok) return;
+        if (haveAmt && !amtClose) return;                                             // amounts far apart → different payment (e.g. a small donation)
+        var amtBonus = haveAmt ? Math.max(0, 100 - Math.abs(a.bedrag_eur_cents - eurCents) / 100) : 0;
+        var score = overlap * 100 + amtBonus;
+        if (score > bestScore) { bestScore = score; best = a; }
+      });
+      return best;
+    }
+
+    async function reclassify(r, toCat) {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      try {
+        await apiWrite('PATCH', 'transactions?id=eq.' + r.id, { categorie: toCat });
+        if (toCat === 'adoptie_transport') await ensureAdopter(r.tegenpartij, r.bedrag_eur_cents, r.dog_id);
+        $('dOverlay').classList.remove('open');
+        await load();
+      } catch (e) { alert('Herclassificeren mislukt: ' + e.message); }
+    }
+
+    // flip existing donations that match an adopter → adoptie_transport; returns how many were flipped
+    async function applyAdopterMatching() {
+      var hits = [];
+      ALL.filter(function (r) { return r.rekening === 'bank_nl' && r.richting === 'in' && r.categorie === 'donatie' && r.meetellen !== false; })
+        .forEach(function (r) { var m = matchAdopter(r.tegenpartij, r.bedrag_eur_cents); if (m) hits.push({ r: r, m: m }); });
+      for (var i = 0; i < hits.length; i++) {
+        await apiWrite('PATCH', 'transactions?id=eq.' + hits[i].r.id, { categorie: 'adoptie_transport' });
+        if (hits[i].m.id) { try { await apiWrite('PATCH', 'adopters?id=eq.' + hits[i].m.id, { matched: true }); } catch (e) {} }
+      }
+      return hits.length;
+    }
+    async function reclassifyIncome() {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      var btn = $('aReclass'); btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Bezig…';
+      try {
+        var n = await applyAdopterMatching();
+        await loadAdopters(); renderAdopters(); await load();
+        alert(n ? (n + ' donatie(s) omgezet naar adoptie.') : 'Geen donaties gevonden die matchen met de adoptantenlijst.');
+      } catch (e) { alert('Herclassificeren mislukt: ' + e.message); }
+      finally { btn.disabled = false; btn.textContent = orig; }
+    }
+
+    // create the paired Kas-Servië income for existing opname/overboeking rows that don't have one yet (idempotent)
+    async function backfillSerbiaIncome() {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      function key(datum, cents, teg, cat) { return (datum || '') + '|' + cents + '|' + normName(teg) + '|' + cat; }
+      var have = {};
+      ALL.forEach(function (r) { if (r.rekening === 'kas_srb' && r.richting === 'in') have[key(r.datum, r.bedrag_eur_cents, r.tegenpartij, r.categorie)] = 1; });
+      var todo = ALL.filter(function (r) {
+        return r.rekening === 'bank_nl' && r.richting === 'uit' && (r.categorie === 'opname' || r.categorie === 'overboeking') && r.meetellen !== false
+          && !have[key(r.datum, r.bedrag_eur_cents, r.tegenpartij, r.categorie)];
+      });
+      if (!todo.length) { alert('Alle opnames/overboekingen hebben al een Servië-inkomstenregel.'); return; }
+      if (!confirm(todo.length + ' opname(s)/overboeking(en) krijgen een bijpassende inkomstenregel op de Servische rekening. Doorgaan?')) return;
+      var btn = $('sbBtn'); btn.disabled = true; var orig = btn.textContent;
+      try {
+        for (var i = 0; i < todo.length; i++) {
+          var r = todo[i]; btn.textContent = 'Bijwerken… ' + (i + 1) + '/' + todo.length;
+          await apiWrite('POST', 'transactions', {
+            rekening: 'kas_srb', richting: 'in', categorie: r.categorie, valuta: 'EUR',
+            bedrag_cents: r.bedrag_eur_cents, bedrag_eur_cents: r.bedrag_eur_cents, koers: null, btw_cents: null,
+            datum: r.datum, omschrijving: 'Ontvangen uit NL', tegenpartij: r.tegenpartij,
+            factuurnr: null, referentie: 'transfer NL→SRB', bron: 'backfill', dog_id: null, bon_pad: null, bon_bestand: null, opmerking: null, meetellen: true
+          });
+        }
+        showAll(); await load();
+        alert(todo.length + ' Servië-inkomstenregel(s) toegevoegd.');
+      } catch (e) { alert('Bijwerken mislukt: ' + e.message); }
+      finally { btn.disabled = false; btn.textContent = orig; }
+    }
+
+    // ================= Year PDF (Belastingdienst / ANBI) =================
+    async function openPdf() {
+      // years present in the data (+ current), newest first
+      var set = {}; ALL.forEach(function (r) { var y = yearOf(r); if (y) set[y] = 1; }); set[new Date().getFullYear()] = 1;
+      var years = Object.keys(set).map(Number).sort(function (a, b) { return b - a; });
+      $('p_year').innerHTML = years.map(function (y) { return '<option>' + y + '</option>'; }).join('');
+      var ref = ($('fltTo').value || $('fltFrom').value || '').slice(0, 4);   // default to the current range's year
+      $('p_year').value = (ref && years.indexOf(+ref) > -1) ? ref : String(years[0]);
+      $('pMsg').textContent = '';
+      await loadBegin();
+      $('pOverlay').classList.add('open');
+    }
+    async function loadBegin() {
+      var y = parseInt($('p_year').value, 10);
+      try { var r = await apiGet('admin_instellingen?select=beginsaldo_eur_cents&jaar=eq.' + y); $('p_begin').value = (r && r[0]) ? (r[0].beginsaldo_eur_cents / 100) : ''; }
+      catch (e) { $('p_begin').value = ''; }
+    }
+    async function saveBegin(y, beginCents) {
+      if (!authed()) return;
+      try {
+        var upd = await apiWrite('PATCH', 'admin_instellingen?jaar=eq.' + y, { beginsaldo_eur_cents: beginCents, updated_at: new Date().toISOString() });
+        if (!upd || !upd.length) await apiWrite('POST', 'admin_instellingen', { jaar: y, beginsaldo_eur_cents: beginCents });
+      } catch (e) {}
+    }
+    function byDate(a, b) { return (a.datum || '9999').localeCompare(b.datum || '9999'); }
+
+    async function exportPdf() {
+      if (!window.jspdf || !window.jspdf.jsPDF) { $('pMsg').className = 'msg err'; $('pMsg').textContent = 'PDF-bibliotheek niet geladen.'; return; }
+      var y = parseInt($('p_year').value, 10);
+      var beginCents = $('p_begin').value !== '' ? cents($('p_begin').value) : 0;
+      await saveBegin(y, beginCents);
+
+      var yr = ALL.filter(function (r) { return yearOf(r) === y; });
+      var bank = yr.filter(function (r) { return r.rekening === 'bank_nl' && r.meetellen !== false; });
+      var baten = groupByCat(bank, 'in'), totBaten = baten.reduce(function (s, p) { return s + p[1]; }, 0);
+      var lasten = groupByCat(bank, 'uit'), totLasten = lasten.reduce(function (s, p) { return s + p[1]; }, 0);
+      var result = totBaten - totLasten, eind = beginCents + result;
+      var srb = yr.concat(ALL.filter(function (r) { return r.datum == null && r.rekening === 'kas_srb'; }))
+        .filter(function (r) { return r.rekening === 'kas_srb' && r.meetellen !== false; });
+      var srbG = groupByCat(srb, 'uit'), srbTot = srbG.reduce(function (s, p) { return s + p[1]; }, 0);
+
+      var jsPDF = window.jspdf.jsPDF, doc = new jsPDF({ unit: 'pt', format: 'a4' }), M = 40, W = 515;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.text('Stichting Hope for Dogs Europe', M, 50);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+      doc.text('KvK 91166500 · Boekjaar ' + y + ' · gegenereerd ' + new Date().toLocaleDateString('nl-NL'), M, 66);
+
+      var BR = [255, 83, 20], GR = [120, 120, 120];
+      function bold(v) { return { content: v, styles: { fontStyle: 'bold' } }; }
+      function money(opts) { return Object.assign({ 1: { halign: 'right', cellWidth: 120 } }, opts || {}); }
+
+      var staat = [];
+      staat.push([bold('Baten'), '']);
+      baten.forEach(function (p) { staat.push(['   ' + catLabel(p[0]), euros(p[1])]); });
+      staat.push([bold('Totaal baten'), bold(euros(totBaten))]);
+      staat.push(['', '']);
+      staat.push([bold('Lasten'), '']);
+      lasten.forEach(function (p) { staat.push(['   ' + catLabel(p[0]), euros(p[1])]); });
+      staat.push([bold('Totaal lasten'), bold(euros(totLasten))]);
+      staat.push([bold('Resultaat (saldo)'), bold(euros(result))]);
+      doc.autoTable({ startY: 84, head: [['Staat van baten en lasten (EUR)', 'Bedrag']], body: staat, theme: 'striped', headStyles: { fillColor: BR }, columnStyles: money() });
+
+      doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 18, head: [['Kas/bank-mutatie', 'Bedrag']], theme: 'striped', headStyles: { fillColor: BR }, columnStyles: money(),
+        body: [['Beginsaldo bank (1 jan)', euros(beginCents)], ['Resultaat boekjaar', euros(result)], [bold('Eindsaldo bank (31 dec)'), bold(euros(eind))]]
+      });
+
+      var srbBody = srbG.map(function (p) { return ['   ' + catLabel(p[0]), euros(p[1])]; });
+      srbBody.push([bold('Totaal gedocumenteerd'), bold(euros(srbTot))]);
+      doc.autoTable({ startY: doc.lastAutoTable.finalY + 18, head: [['Bijlage — Besteding in Servië (onderbouwing, EUR)', 'Bedrag']], body: srbBody, theme: 'striped', headStyles: { fillColor: GR }, columnStyles: money() });
+      doc.setFontSize(8); doc.setTextColor(120);
+      doc.text('Deze bonnen zijn gefinancierd uit de opnames/overboekingen hierboven en tellen niet nogmaals mee in het resultaat.', M, doc.lastAutoTable.finalY + 13, { maxWidth: W });
+      doc.setTextColor(0);
+
+      // detail — bank ledger
+      doc.addPage(); doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.text('Detailoverzicht — bank NL (EUR)', M, 46);
+      doc.autoTable({
+        startY: 56, styles: { fontSize: 8 }, headStyles: { fillColor: BR }, columnStyles: { 3: { halign: 'right' } },
+        head: [['Datum', 'Categorie', 'Omschrijving / tegenpartij', 'Bedrag']],
+        body: bank.slice().sort(byDate).map(function (r) { return [fmtDate(r.datum), catLabel(r.categorie), (r.omschrijving || '') + (r.tegenpartij ? ' · ' + r.tegenpartij : ''), (r.richting === 'in' ? '+' : '−') + euros(r.bedrag_eur_cents)]; })
+      });
+      // detail — SRB receipts
+      if (srb.length) {
+        doc.addPage(); doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.text('Detailoverzicht — bonnen Servië', M, 46);
+        doc.autoTable({
+          startY: 56, styles: { fontSize: 8 }, headStyles: { fillColor: GR }, columnStyles: { 4: { halign: 'right' } },
+          head: [['Datum', 'Categorie', 'Leverancier / omschrijving', 'Bestand', 'EUR']],
+          body: srb.slice().sort(byDate).map(function (r) { return [fmtDate(r.datum), catLabel(r.categorie), (r.tegenpartij || '') + (r.omschrijving ? ' · ' + r.omschrijving : ''), r.bon_bestand || '', euros(r.bedrag_eur_cents)]; })
+        });
+      }
+      doc.save('jaaroverzicht-' + y + '.pdf');
+      $('pOverlay').classList.remove('open');
+    }
+
+    // ================= wipe test data (danger) =================
+    async function deleteBon(path) {
+      try { await fetch(SB + '/storage/v1/object/administratie/' + path, { method: 'DELETE', headers: { apikey: ANON, Authorization: 'Bearer ' + (token() || ANON) } }); } catch (e) {}
+    }
+    async function wipeAll() {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      var typed = prompt('Dit verwijdert ALLE transacties en adoptanten (en hun bonnen in opslag).\nDit kan niet ongedaan worden gemaakt.\n\nTyp WISSEN om te bevestigen:');
+      if (typed !== 'WISSEN') return;
+      var btn = $('wipeBtn'); btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Wissen…';
+      try {
+        var withBon = ALL.filter(function (r) { return r.bon_pad; });
+        for (var i = 0; i < withBon.length; i++) await deleteBon(withBon[i].bon_pad);
+        await apiWrite('DELETE', 'transactions?id=not.is.null');
+        try { await apiWrite('DELETE', 'adopters?id=not.is.null'); } catch (e) {}   // adopters table may not exist yet
+        await load();
+        alert('Alle testdata is gewist.');
+      } catch (e) { alert('Wissen mislukt: ' + e.message); }
+      finally { btn.disabled = false; btn.textContent = orig; }
+    }
+
+    // ================= wire events =================
+    function wire() {
+      // top actions
+      $('newBtn').onclick = function () { openForm(null); };
+      $('transBtn').onclick = function () { resetTrans(); $('tOverlay').classList.add('open'); };
+      $('pdfBtn').onclick = function () { openPdf(); };
+      $('wipeBtn').onclick = wipeAll;
+      $('sbBtn').onclick = backfillSerbiaIncome;
+      // filters
+      $('fltFrom').addEventListener('change', refresh);
+      $('fltTo').addEventListener('change', refresh);
+      ['fltRichting', 'fltCat'].forEach(function (id) { $(id).addEventListener('change', refresh); });
+      $('fltRekening').addEventListener('change', function () { syncCatFilter(); refresh(); });
+      $('fltSearch').addEventListener('input', refresh);
+      // form
+      $('fClose').onclick = closeForm; $('fCancel').onclick = closeForm;
+      $('fOverlay').addEventListener('click', function (e) { if (e.target === $('fOverlay')) closeForm(); });
+      $('form').addEventListener('submit', saveForm);
+      $('f_rekening').addEventListener('change', onRekeningChange);
+      $('f_richting').addEventListener('change', syncFormCats);
+      $('f_valuta').addEventListener('change', syncValuta);
+      $('f_bedrag').addEventListener('input', recalcEur);
+      $('f_koers').addEventListener('input', recalcEur);
+      $('f_bonfile').addEventListener('change', function () { var f = this.files[0]; $('f_bonhint').textContent = f ? ('Gekozen: ' + f.name) : ''; });
+      $('fDelete').onclick = function () { if ($('f_id').value) deleteRow($('f_id').value); };
+      // detail
+      $('dClose').onclick = function () { $('dOverlay').classList.remove('open'); };
+      $('dCloseBtn').onclick = function () { $('dOverlay').classList.remove('open'); };
+      $('dOverlay').addEventListener('click', function (e) { if (e.target === $('dOverlay')) $('dOverlay').classList.remove('open'); });
+      $('dEdit').onclick = function () { $('dOverlay').classList.remove('open'); openForm(editing); };
+      $('dDelete').onclick = function () { if (editing) deleteRow(editing.id); };
+      // transportlijst
+      $('tClose').onclick = function () { $('tOverlay').classList.remove('open'); };
+      $('tCancel').onclick = function () { $('tOverlay').classList.remove('open'); };
+      $('tFile').addEventListener('change', onTransFile);
+      $('tConfirm').addEventListener('click', confirmTrans);
+      // adoptanten
+      $('adoptBtn').onclick = openAdopters;
+      $('aClose').onclick = function () { $('aOverlay').classList.remove('open'); };
+      $('aCloseBtn').onclick = function () { $('aOverlay').classList.remove('open'); };
+      $('aAdd').addEventListener('click', addAdopter);
+      $('aReclass').addEventListener('click', reclassifyIncome);
+      // scan bonnen
+      $('rsBtn').onclick = function () { rsRows = []; $('rsReview').innerHTML = ''; $('rsMsg').textContent = ''; $('rsHint').textContent = ''; $('rsFiles').value = ''; $('rsBar').style.display = 'none'; $('rsSave').disabled = true; $('rsOverlay').classList.add('open'); };
+      $('rsClose').onclick = function () { $('rsOverlay').classList.remove('open'); };
+      $('rsCancel').onclick = function () { $('rsOverlay').classList.remove('open'); };
+      $('rsFiles').addEventListener('change', onRsFiles);
+      $('rsSave').addEventListener('click', saveRs);
+      // scan bank
+      $('ksBtn').onclick = function () { ksRows = []; $('ksReview').innerHTML = ''; $('ksMsg').textContent = ''; $('ksHint').textContent = ''; $('ksFiles').value = ''; $('ksBar').style.display = 'none'; $('ksSave').disabled = true; $('ksOverlay').classList.add('open'); };
+      $('ksClose').onclick = function () { $('ksOverlay').classList.remove('open'); };
+      $('ksCancel').onclick = function () { $('ksOverlay').classList.remove('open'); };
+      $('ksFiles').addEventListener('change', onKsFiles);
+      $('ksSave').addEventListener('click', saveKs);
+      // pdf
+      $('pClose').onclick = function () { $('pOverlay').classList.remove('open'); };
+      $('pCancel').onclick = function () { $('pOverlay').classList.remove('open'); };
+      $('p_year').addEventListener('change', loadBegin);
+      $('pExport').addEventListener('click', exportPdf);
+    }
+
+    wire();
+    load();
+  })();
+  </script>
+</body>
+</html>

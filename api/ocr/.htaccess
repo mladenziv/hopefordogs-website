@@ -1,0 +1,8 @@
+# Pass the Authorization header through to PHP (some Apache/FastCGI setups strip it).
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+# CGI/FastCGI fallback
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
