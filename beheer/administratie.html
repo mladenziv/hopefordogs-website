@@ -194,6 +194,24 @@
     .tcell { display:flex; align-items:center; gap:10px; }
     .catemoji { flex:0 0 auto; width:44px; height:44px; border-radius:10px; background:#f4f2ee; display:flex; align-items:center; justify-content:center; font-size:22px; line-height:1; }
     .tmeta { min-width:0; }
+    /* monthly overview — Kas Servië */
+    .mo-sum { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+    .mo-sum .box { flex:1 1 150px; background:var(--beige); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+    .mo-sum .box .lbl { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.03em; color:#999; margin-bottom:4px; }
+    .mo-sum .box .v { font-family:'Nunito',sans-serif; font-weight:900; font-size:20px; }
+    .mo-month { border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:12px; }
+    .mo-mhead { display:flex; align-items:baseline; justify-content:space-between; gap:8px 14px; margin-bottom:10px; flex-wrap:wrap; }
+    .mo-mtitle { font-family:'Nunito',sans-serif; font-weight:800; font-size:16px; }
+    .mo-stats { display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--muted); }
+    .mo-stats b { font-variant-numeric:tabular-nums; }
+    .mo-in { color:var(--in); } .mo-uit { color:var(--uit); }
+    .mo-cats { border-top:1px solid var(--line); padding-top:10px; display:flex; flex-direction:column; gap:8px; }
+    .mo-cat { display:flex; align-items:center; gap:10px; font-size:13.5px; }
+    .mo-cat .e { width:32px; height:32px; border-radius:8px; background:#f4f2ee; display:flex; align-items:center; justify-content:center; font-size:17px; flex:0 0 auto; }
+    .mo-cat .nm { flex:1; min-width:0; font-weight:600; }
+    .mo-cat .amt { font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .mo-bar { height:6px; border-radius:999px; background:#eee; overflow:hidden; margin-top:4px; }
+    .mo-bar > i { display:block; height:100%; background:var(--uit); border-radius:999px; }
   </style>
 </head>
 <body>
@@ -225,6 +243,7 @@
             <button class="menu-item" id="ksBtn" role="menuitem"><span>🏦</span> Bankafschrift</button>
             <button class="menu-item" id="adoptBtn" role="menuitem"><span>👥</span> Adoptanten</button>
             <button class="menu-item" id="transBtn" role="menuitem"><span>📋</span> Transportlijst</button>
+            <button class="menu-item" id="moBtn" role="menuitem"><span>📅</span> Maandoverzicht Servië</button>
             <button class="menu-item" id="pdfBtn" role="menuitem"><span>📄</span> Exporteer jaaroverzicht</button>
           </div>
         </div>
@@ -467,6 +486,17 @@
     </div>
   </div>
 
+  <!-- Monthly overview — Kas Servië -->
+  <div class="overlay" id="moOverlay">
+    <div class="sheet wide">
+      <button class="close" id="moClose" aria-label="Sluiten">✕</button>
+      <h2>Maandoverzicht — Kas Servië</h2>
+      <p class="hint" style="margin:-8px 0 14px">Per maand: hoeveel er vanuit Nederland binnenkwam, hoeveel er in Servië is uitgegeven, en aan welke categorieën. Alle bedragen in euro (RSD → €).</p>
+      <div id="moBody"></div>
+      <div class="form-actions"><button type="button" class="btn btn-ghost" id="moCloseBtn">Sluiten</button></div>
+    </div>
+  </div>
+
   <script>
   (function () {
     // ---- config + auth (mirrors loterijen.html / vertalen.html) ----
@@ -678,6 +708,7 @@
     function catEmoji(k) { return CAT_EMOJI[k] || '📦'; }
 
     var MONTHS = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+    var MONTHS_FULL = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
 
     // ---- shared state ----
     var ALL = [];       // all transactions in memory
@@ -828,6 +859,50 @@
       var rowsH = g.map(function (p) { return '<tr><td><span class="cat">' + esc(catLabel(p[0])) + '</span></td><td>' + euros(p[1]) + '</td></tr>'; }).join('');
       return '<div class="card" style="margin-bottom:18px"><h3>Besteding in Servië <span class="note">— onderbouwing (bonnen), niet in het bankresultaat</span></h3>' +
         '<table class="bd">' + rowsH + '<tr><td><b>Totaal gedocumenteerd</b></td><td><b>' + euros(tot) + '</b></td></tr></table></div>';
+    }
+
+    // ================= monthly overview — Kas Servië =================
+    // Per month: money received from NL (kas_srb "in") vs spent (kas_srb "uit"),
+    // with the per-category breakdown of that month's spending. All in EUR.
+    function moMonthName(ym) { return MONTHS_FULL[parseInt(ym.slice(5, 7), 10) - 1] + ' ' + ym.slice(0, 4); }
+    function openMonthly() {
+      var rows = ALL.filter(function (r) { return r.rekening === 'kas_srb' && r.meetellen !== false; });
+      var byMonth = {}, undated = { in: 0, uit: 0, cats: {} }, totIn = 0, totUit = 0;
+      rows.forEach(function (r) {
+        var eur = r.bedrag_eur_cents || 0;
+        var ym = (r.datum && /^\d{4}-\d{2}/.test(r.datum)) ? r.datum.slice(0, 7) : null;
+        var b = ym ? (byMonth[ym] = byMonth[ym] || { in: 0, uit: 0, cats: {} }) : undated;
+        if (r.richting === 'in') { b.in += eur; totIn += eur; }
+        else { b.uit += eur; b.cats[r.categorie] = (b.cats[r.categorie] || 0) + eur; totUit += eur; }
+      });
+      function monthBlock(title, m) {
+        var cats = Object.keys(m.cats).map(function (k) { return [k, m.cats[k]]; }).sort(function (a, b) { return b[1] - a[1]; });
+        var maxc = cats.reduce(function (s, p) { return Math.max(s, p[1]); }, 1);
+        var catsH = cats.length ? cats.map(function (p) {
+          return '<div class="mo-cat"><span class="e">' + catEmoji(p[0]) + '</span>' +
+            '<div class="nm">' + esc(catLabel(p[0])) + '<div class="mo-bar"><i style="width:' + Math.round(p[1] / maxc * 100) + '%"></i></div></div>' +
+            '<span class="amt">' + euros(p[1]) + '</span></div>';
+        }).join('') : '<div class="hint">Geen uitgaven deze maand.</div>';
+        return '<div class="mo-month"><div class="mo-mhead"><div class="mo-mtitle">' + title + '</div>' +
+          '<div class="mo-stats"><span>Ontvangen <b class="mo-in">' + euros(m.in) + '</b></span>' +
+          '<span>Uitgegeven <b class="mo-uit">' + euros(m.uit) + '</b></span>' +
+          '<span>Verschil <b>' + euros(m.in - m.uit) + '</b></span></div></div>' +
+          '<div class="mo-cats">' + catsH + '</div></div>';
+      }
+      var html;
+      if (!rows.length) {
+        html = '<div class="empty">Nog geen transacties op de Servische rekening.</div>';
+      } else {
+        html = '<div class="mo-sum">' +
+          '<div class="box"><div class="lbl">Totaal ontvangen uit NL</div><div class="v mo-in">' + euros(totIn) + '</div></div>' +
+          '<div class="box"><div class="lbl">Totaal uitgegeven</div><div class="v mo-uit">' + euros(totUit) + '</div></div>' +
+          '<div class="box"><div class="lbl">Saldo (rest)</div><div class="v">' + euros(totIn - totUit) + '</div></div>' +
+          '</div>';
+        Object.keys(byMonth).sort().reverse().forEach(function (k) { html += monthBlock(moMonthName(k), byMonth[k]); });   // newest month first
+        if (undated.in || undated.uit) html += monthBlock('Zonder datum', undated);
+      }
+      $('moBody').innerHTML = html;
+      $('moOverlay').classList.add('open');
     }
 
     function renderTable(rows) {
@@ -1827,6 +1902,10 @@
       $('newBtn').onclick = function () { openForm(null); };
       $('transBtn').onclick = function () { resetTrans(); $('tOverlay').classList.add('open'); };
       $('pdfBtn').onclick = function () { openPdf(); };
+      $('moBtn').onclick = openMonthly;
+      $('moClose').onclick = function () { $('moOverlay').classList.remove('open'); };
+      $('moCloseBtn').onclick = function () { $('moOverlay').classList.remove('open'); };
+      $('moOverlay').addEventListener('click', function (e) { if (e.target === $('moOverlay')) $('moOverlay').classList.remove('open'); });
       // + dropdown (menu items keep their own IDs + handlers; any item click closes it)
       function closeAddMenu() { $('addMenu').style.display = 'none'; $('addMenuBtn').classList.remove('open'); $('addMenuBtn').setAttribute('aria-expanded', 'false'); }
       $('addMenuBtn').onclick = function (e) {
