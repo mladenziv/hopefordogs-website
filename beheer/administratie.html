@@ -907,17 +907,24 @@
           '<span>Verschil <b>' + euros(m.inEur - m.uitEur) + '</b></span></div></div>' +
           '<div class="mo-cats">' + catsH + '</div></div>';
       }
+      var keys = Object.keys(d.byMonth).filter(function (k) { return d.byMonth[k].inEur > 0; }).sort();   // only months funded from NL, ascending
       var html;
       if (!d.hasRows) {
         html = '<div class="empty">Nog geen transacties op de Servische rekening.</div>';
+      } else if (!keys.length) {
+        html = '<div class="empty">Geen maanden waarin vanuit Nederland geld naar Servië is gestuurd.</div>';
       } else {
+        var sIn = 0, sUitEur = 0, sUitRsd = 0;
+        keys.forEach(function (k) { var b = d.byMonth[k]; sIn += b.inEur; sUitEur += b.uitEur; sUitRsd += b.uitRsd; });
         html = '<div class="mo-sum">' +
-          '<div class="box"><div class="lbl">Totaal ontvangen uit NL</div><div class="v mo-in">' + euros(d.totIn) + '</div></div>' +
-          '<div class="box"><div class="lbl">Totaal uitgegeven</div><div class="v mo-uit">' + dinEur(d.totUitRsd, d.totUitEur) + '</div></div>' +
-          '<div class="box"><div class="lbl">Saldo (rest)</div><div class="v">' + euros(d.totIn - d.totUitEur) + '</div></div>' +
+          '<div class="box"><div class="lbl">Ontvangen uit NL</div><div class="v mo-in">' + euros(sIn) + '</div></div>' +
+          '<div class="box"><div class="lbl">Uitgegeven</div><div class="v mo-uit">' + dinEur(sUitRsd, sUitEur) + '</div></div>' +
+          '<div class="box"><div class="lbl">Saldo (rest)</div><div class="v">' + euros(sIn - sUitEur) + '</div></div>' +
           '</div>';
-        Object.keys(d.byMonth).sort().forEach(function (k) { html += monthBlock(moMonthName(k), d.byMonth[k]); });   // ascending (oldest first)
-        if (d.undated.inEur || d.undated.uitEur) html += monthBlock('Zonder datum (bon zonder leesbare datum)', d.undated);
+        keys.forEach(function (k) { html += monthBlock(moMonthName(k), d.byMonth[k]); });
+        // transparency: spending in months without an NL transfer, or on undated receipts, is not shown here
+        var exclEur = d.totUitEur - sUitEur, exclRsd = d.totUitRsd - sUitRsd;
+        if (exclEur > 0) html += '<div class="hint" style="margin-top:8px">Let op: ' + dinEur(exclRsd, exclEur) + ' aan uitgaven valt buiten deze maanden (maanden zonder overboeking uit NL, of bonnen zonder leesbare datum) en staat niet in dit overzicht of de export.</div>';
       }
       $('moBody').innerHTML = html;
       $('moMsg').textContent = ''; $('moMsg').className = 'msg';
@@ -1002,7 +1009,8 @@
           try {
             var resp = await fetch(u); if (!resp.ok) continue;
             var buf = await resp.arrayBuffer();
-            var base = x.r.datum + '_' + sanitizeName(catLabel(x.r.categorie)) + '_' + sanitizeName(x.r.tegenpartij || '') + '_' + (x.r.valuta === 'RSD' ? ('din' + Math.round((x.r.bedrag_cents || 0) / 100)) : ('eur' + ((x.r.bedrag_eur_cents || 0) / 100).toFixed(2)));
+            var vend = sanitizeName(x.r.tegenpartij || '');                                   // filename: date_category_nameofvendor
+            var base = x.r.datum + '_' + sanitizeName(catLabel(x.r.categorie)) + (vend ? ('_' + vend) : '');
             var fn = x.m + '/' + base + '.jpg', n = 1;
             while (used[fn]) { fn = x.m + '/' + base + '_' + (++n) + '.jpg'; }
             used[fn] = 1; zip.file(fn, buf); ok++;
