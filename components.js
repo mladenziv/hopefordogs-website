@@ -69,11 +69,11 @@ var H4D_I18N = {
   'index.hero.btn1':     { nl: 'Ontdek onze missie', de: 'Entdecke unsere Mission', en: 'Discover our mission' },
   'index.hero.btn2':     { nl: 'Onze honden',   de: 'Unsere Hunde',     en: 'Our dogs' },
   'index.hero.social.fb':      { nl: 'Facebook', de: 'Facebook', en: 'Facebook' },
-  'index.hero.social.fb.desc': { nl: '6.600+ Volgers', de: '6.600+ Follower', en: '6,600+ Followers' },
+  'index.hero.social.fb.desc': { nl: '5.800+ Volgers', de: '5.800+ Follower', en: '5,800+ Followers' },
   'index.hero.social.ig':      { nl: 'Instagram', de: 'Instagram', en: 'Instagram' },
-  'index.hero.social.ig.desc': { nl: '1.750+ Followers', de: '1.750+ Follower', en: '1,750+ Followers' },
+  'index.hero.social.ig.desc': { nl: '7.849+ Followers', de: '7.849+ Follower', en: '7,849+ Followers' },
   'index.hero.social.tt':      { nl: 'TikTok', de: 'TikTok', en: 'TikTok' },
-  'index.hero.social.tt.desc': { nl: '64+ Followers', de: '64+ Follower', en: '64+ Followers' },
+  'index.hero.social.tt.desc': { nl: '1.030+ Followers', de: '1.030+ Follower', en: '1,030+ Followers' },
 
   // --- Index: Impact stats ---
   'index.stat.rescued':    { nl: 'Honden gered',              de: 'Hunde gerettet',               en: 'Dogs rescued' },
