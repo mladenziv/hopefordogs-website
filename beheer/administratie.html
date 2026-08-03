@@ -765,10 +765,14 @@
     // Powers the "choose an existing vendor" dropdown AND catches OCR typos where a scan
     // reads e.g. "PRINT RASTER" for an existing "INT RASTER". Reuses normName() (defined
     // lower down, hoisted) so case/accents/spacing/punctuation don't matter.
-    // distinct existing counterparties, most-used first (so the likely vendor shows on top)
+    // Scoped to Serbian-cash spending (rekening kas_srb · richting uit) — i.e. the shops/
+    // clinics we buy from — so it never suggests Dutch-account donors or adopters.
     function vendorList() {
       var freq = {};
-      ALL.forEach(function (r) { var v = (r.tegenpartij || '').trim(); if (v) freq[v] = (freq[v] || 0) + 1; });
+      ALL.forEach(function (r) {
+        if (r.rekening !== 'kas_srb' || r.richting !== 'uit') return;
+        var v = (r.tegenpartij || '').trim(); if (v) freq[v] = (freq[v] || 0) + 1;
+      });
       return Object.keys(freq).sort(function (a, b) { return freq[b] - freq[a] || a.localeCompare(b); });
     }
     // (re)fill the single shared <datalist> that every vendor input points at via list="vendorOptions"
