@@ -87,6 +87,10 @@
     table.tbl tr:last-child td { border-bottom:none; }
     table.tbl tbody tr { cursor:pointer; }
     table.tbl tbody tr:hover { background:#fafafa; }
+    table.tbl th.sortable { cursor:pointer; user-select:none; white-space:nowrap; }
+    table.tbl th.sortable:hover { color:var(--brand); }
+    table.tbl th .sortarrow { font-size:10px; margin-left:3px; opacity:.35; }
+    table.tbl th.sorted .sortarrow { opacity:1; color:var(--brand); }
     .t-date { color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums; }
     .t-desc { font-weight:600; }
     .t-party { color:var(--muted); font-size:12.5px; }
@@ -794,6 +798,7 @@
     var ADOPTERS = [];  // saved adopter list (drives adoption vs donation)
     var editing = null; // row being viewed/edited
     var statsOpen = false; // combined totals card: categories + graph collapsed by default
+    var sortKey = 'datum', sortDir = 'desc';   // main-ledger column sort (default: newest first)
 
     // ================= load + filter + stats + table =================
     function yearOf(r) { return r.datum ? parseInt(r.datum.slice(0, 4), 10) : null; }
@@ -852,6 +857,32 @@
     }
 
     function sum(rows, ri) { return rows.reduce(function (s, r) { return s + ((r.richting === ri && r.meetellen !== false) ? (r.bedrag_eur_cents || 0) : 0); }, 0); }
+
+    // ---- main-ledger column sort ----
+    // datum: newest/oldest (undated rows always sink to the bottom); naam: A→Z on the
+    // displayed primary text; bedrag: by EUR value, signed (+ in / − uit) so income and
+    // expenses sort as real numbers even when RSD and EUR rows are mixed in one view.
+    function sortRows(rows) {
+      var dir = sortDir === 'asc' ? 1 : -1;
+      function nameKey(r) { return (r.tegenpartij || r.omschrijving || catLabel(r.categorie) || '').toLowerCase(); }
+      function eurKey(r) { return (r.richting === 'uit' ? -1 : 1) * (r.bedrag_eur_cents || 0); }
+      return rows.slice().sort(function (a, b) {
+        var c = 0;
+        if (sortKey === 'bedrag') c = (eurKey(a) - eurKey(b)) * dir;
+        else if (sortKey === 'naam') c = nameKey(a).localeCompare(nameKey(b), 'nl') * dir;
+        else {                                              // datum — undated last in both directions
+          if (a.datum && !b.datum) return -1;
+          if (!a.datum && b.datum) return 1;
+          if (a.datum && b.datum) c = (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : 0) * dir;
+        }
+        return c !== 0 ? c : (tsMs(b.created_at) - tsMs(a.created_at));   // stable tiebreak: newest entry first
+      });
+    }
+    function sortArrow(key) { return sortKey === key ? (sortDir === 'asc' ? '▲' : '▼') : '↕'; }
+    function sortTh(key, label, right) {
+      return '<th class="sortable' + (sortKey === key ? ' sorted' : '') + '" data-sort="' + key + '"' +
+        (right ? ' style="text-align:right"' : '') + '>' + label + ' <span class="sortarrow">' + sortArrow(key) + '</span></th>';
+    }
 
     function refresh() {
       var rows = filtered();
@@ -1095,6 +1126,7 @@
       var recent = recentRows(), recentIds = {};
       recent.forEach(function (r) { recentIds[r.id] = 1; });
       var mainRows = rows.filter(function (r) { return !recentIds[r.id]; });   // recent shown separately above
+      mainRows = sortRows(mainRows);
       var recHtml = renderRecentCard(recent);
       if (!mainRows.length) {
         $('list').innerHTML = recHtml + '<div class="empty">' + (rows.length ? 'Alle transacties in deze filter staan hierboven (zojuist toegevoegd).' : 'Geen transacties voor deze filter.') + '</div>';
@@ -1122,12 +1154,22 @@
         recHtml +
         '<div id="bulkbar"><b id="bulkcount"></b><button type="button" class="btn btn-danger btn-sm" id="bulkDel">Verwijderen</button><button type="button" class="btn btn-ghost btn-sm" id="bulkClear">Wis selectie</button></div>' +
         '<div class="hint" style="margin:2px 2px 10px">' + mainRows.length + ' transactie(s)</div>' +
-        '<div class="tblwrap" id="mainTbl"><table class="tbl"><thead><tr><th class="selcell"><input type="checkbox" id="selAll" title="Alles selecteren"></th><th>Datum</th><th>Naam / omschrijving</th><th style="text-align:right">Bedrag</th><th></th></tr></thead><tbody>' + body + '</tbody></table></div>';
+        '<div class="tblwrap" id="mainTbl"><table class="tbl"><thead><tr><th class="selcell"><input type="checkbox" id="selAll" title="Alles selecteren"></th>' +
+          sortTh('datum', 'Datum') + sortTh('naam', 'Naam / omschrijving') + sortTh('bedrag', 'Bedrag', true) +
+          '<th></th></tr></thead><tbody>' + body + '</tbody></table></div>';
       var byId = {}; mainRows.forEach(function (r) { byId[r.id] = r; });
       $('mainTbl').querySelectorAll('tbody tr').forEach(function (tr) {
         tr.addEventListener('click', function (e) {
           if (e.target.classList.contains('rowsel') || e.target.classList.contains('selcell')) return;   // don't open detail when (de)selecting
           openDetail(byId[tr.getAttribute('data-id')]);
+        });
+      });
+      $('mainTbl').querySelectorAll('th.sortable').forEach(function (th) {
+        th.addEventListener('click', function () {
+          var k = th.getAttribute('data-sort');
+          if (sortKey === k) sortDir = sortDir === 'asc' ? 'desc' : 'asc';   // same column → flip direction
+          else { sortKey = k; sortDir = k === 'naam' ? 'asc' : 'desc'; }      // new column → text A→Z, date/amount high→low
+          refresh();
         });
       });
       $('list').querySelectorAll('.rowsel').forEach(function (cb) { cb.addEventListener('change', updateBulkBar); });
