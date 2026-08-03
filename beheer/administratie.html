@@ -122,6 +122,10 @@
     .msg { font-size:13.5px; margin-top:12px; min-height:18px; }
     .msg.err { color:#c0392b; } .msg.ok { color:#177a3a; }
     .hint { font-size:12px; color:#999; }
+    /* "looks like an existing vendor" chip (catches OCR typos e.g. PRINT RASTER vs INT RASTER) */
+    .vendor-sug { font-size:12px; color:#b45309; font-weight:600; margin-top:2px; }
+    .vendor-sug b { font-weight:800; }
+    .vendor-sug a { color:#b45309; font-weight:800; text-decoration:underline; cursor:pointer; }
     /* detail sheet */
     .dl { display:grid; grid-template-columns:auto 1fr; gap:8px 16px; font-size:14px; margin-bottom:8px; }
     .dl dt { color:var(--muted); font-weight:700; }
@@ -152,13 +156,16 @@
     .mbig-btn:active { filter:brightness(.95); }
     .mspin { text-align:center; color:var(--muted); font-weight:700; padding:12px 8px; }
     .mlist { margin-top:8px; display:flex; flex-direction:column; gap:8px; }
-    .mitem { display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:12px; padding:8px 10px; }
+    .mitem { display:flex; flex-wrap:wrap; align-items:center; gap:10px; border:1px solid var(--line); border-radius:12px; padding:8px 10px; }
     .mitem-thumb { width:52px; height:40px; flex:0 0 auto; }
     .mitem-amt { font-family:'Nunito',sans-serif; font-weight:800; font-size:18px; text-align:right; padding:8px 8px; border:1.5px solid var(--line); border-radius:9px; width:auto; flex:1 1 auto; min-width:0; }
     .mitem-amt:focus { border-color:var(--brand); }
     .mitem-cur { font-size:15px; font-weight:800; padding:9px 6px; width:auto; flex:0 0 auto; }
     .mdup { font-size:11px; font-weight:800; color:#b45309; background:#fff3e0; border-radius:999px; padding:3px 7px; flex:0 0 auto; white-space:nowrap; }
     .mitem-x { flex:0 0 auto; width:34px; height:34px; border-radius:50%; border:1.5px solid rgba(192,57,43,.3); background:#fff; color:#c0392b; font-size:14px; cursor:pointer; }
+    .mitem-teg { flex:1 1 100%; font-size:14px; padding:8px 9px; border:1.5px solid var(--line); border-radius:9px; min-width:0; }
+    .mitem-teg:focus { border-color:var(--brand); }
+    .mitem .vendor-sug { flex:1 1 100%; }
     .mactions { display:flex; gap:10px; margin-top:14px; }
     .mactions .btn { flex:1; padding:15px; font-size:16px; }
     .mgrow { flex:1; }
@@ -318,7 +325,7 @@
         </div>
         <div class="field"><label for="f_omschrijving">Omschrijving</label><input type="text" id="f_omschrijving" placeholder="bijv. Behandeling dieren / Donatie"></div>
         <div class="grid2">
-          <div class="field"><label for="f_tegenpartij">Tegenpartij</label><input type="text" id="f_tegenpartij" placeholder="donateur / leverancier / adoptant"></div>
+          <div class="field"><label for="f_tegenpartij">Tegenpartij</label><input type="text" id="f_tegenpartij" list="vendorOptions" autocomplete="off" placeholder="donateur / leverancier / adoptant"><span class="vendor-sug" id="f_teg_sug" style="display:none"></span><datalist id="vendorOptions"></datalist></div>
           <div class="field"><label for="f_factuurnr">Factuurnr. / referentie</label><input type="text" id="f_factuurnr"></div>
         </div>
         <div class="grid2">
@@ -720,6 +727,64 @@
     var CAT_EMOJI = { donatie: '💛', adoptie_transport: '🐕', opname: '🏧', overboeking: '🔁', bankkosten: '💳', dierenarts: '🩺', diervoeding: '🦴', dierbenodigdheden: '🧸', bouwmaterialen: '🧱', gemengd: '🛒', overig: '📦' };
     function catEmoji(k) { return CAT_EMOJI[k] || '📦'; }
 
+    // ---- vendor (tegenpartij) suggestions + fuzzy match ----
+    // Powers the "choose an existing vendor" dropdown AND catches OCR typos where a scan
+    // reads e.g. "PRINT RASTER" for an existing "INT RASTER". Reuses normName() (defined
+    // lower down, hoisted) so case/accents/spacing/punctuation don't matter.
+    // distinct existing counterparties, most-used first (so the likely vendor shows on top)
+    function vendorList() {
+      var freq = {};
+      ALL.forEach(function (r) { var v = (r.tegenpartij || '').trim(); if (v) freq[v] = (freq[v] || 0) + 1; });
+      return Object.keys(freq).sort(function (a, b) { return freq[b] - freq[a] || a.localeCompare(b); });
+    }
+    // (re)fill the single shared <datalist> that every vendor input points at via list="vendorOptions"
+    function fillVendorDatalist() {
+      var dl = $('vendorOptions'); if (!dl) return;
+      dl.innerHTML = vendorList().map(function (v) { return '<option value="' + escA(v) + '"></option>'; }).join('');
+    }
+    // Levenshtein edit distance (short strings only — fine on this admin dataset)
+    function editDistance(a, b) {
+      a = a || ''; b = b || ''; var m = a.length, n = b.length; if (!m) return n; if (!n) return m;
+      var prev = [], cur = [], i, j;
+      for (j = 0; j <= n; j++) prev[j] = j;
+      for (i = 1; i <= m; i++) {
+        cur[0] = i;
+        for (j = 1; j <= n; j++) {
+          var cost = a.charCodeAt(i - 1) === b.charCodeAt(j - 1) ? 0 : 1;
+          cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost);
+        }
+        for (j = 0; j <= n; j++) prev[j] = cur[j];
+      }
+      return prev[n];
+    }
+    // nearest EXISTING vendor similar to `name` but not identical, or null.
+    // "similar" = a couple of edits (typo), a low edit ratio, or one clearly contains the
+    // other (leading/trailing OCR garbage like PR**INT RASTER**).
+    function similarVendor(name) {
+      var q = normName(name); if (q.length < 3) return null;
+      var best = null, bestD = 99;
+      vendorList().forEach(function (v) {
+        var nv = normName(v); if (!nv || nv === q) return;                 // skip empties + exact matches
+        var d = editDistance(q, nv), maxLen = Math.max(q.length, nv.length), minLen = Math.min(q.length, nv.length);
+        var contained = (q.indexOf(nv) > -1 || nv.indexOf(q) > -1) && minLen / maxLen >= 0.5;   // one name inside the other (dropped/added suffix), not a tiny fragment
+        if ((d <= 2 || d / maxLen <= 0.25 || contained) && d < bestD) { bestD = d; best = v; }
+      });
+      return best;
+    }
+    // show/hide the "looks like existing vendor" chip under a vendor input; clicking "gebruik" adopts it
+    function renderVendorSug(inputEl, sugEl) {
+      if (!inputEl || !sugEl) return;
+      var v = (inputEl.value || '').trim(), m = v ? similarVendor(v) : null;
+      if (!m) { sugEl.style.display = 'none'; sugEl.textContent = ''; return; }
+      sugEl.style.display = 'block';
+      sugEl.innerHTML = '↦ Lijkt op bestaande leverancier: <b>' + esc(m) + '</b> · <a href="#" class="vendor-use">gebruik deze</a>';
+      sugEl.querySelector('.vendor-use').onclick = function (e) {
+        e.preventDefault(); inputEl.value = m;
+        inputEl.dispatchEvent(new Event('input', { bubbles: true }));   // sync any model bound to the input
+        renderVendorSug(inputEl, sugEl);
+      };
+    }
+
     var MONTHS = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
     var MONTHS_FULL = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
 
@@ -741,6 +806,7 @@
         await loadAdopters();
         populateDogSelect();
         syncCatFilter();
+        fillVendorDatalist();
         refresh();
       } catch (e) {
         $('stats').innerHTML = '';
@@ -1218,6 +1284,7 @@
       $('f_bon_bestand').value = r && r.bon_bestand ? r.bon_bestand : '';
       $('f_bonfile').value = '';
       $('f_bonhint').textContent = (r && r.bon_pad) ? 'Er is al een bon gekoppeld. Kies een nieuw bestand om te vervangen.' : '';
+      fillVendorDatalist(); renderVendorSug($('f_tegenpartij'), $('f_teg_sug'));
       $('fDelete').style.display = r ? '' : 'none';
       syncValuta();
       $('fOverlay').classList.add('open');
@@ -1494,6 +1561,7 @@
     }
     function renderRsReview() {
       if (!rsRows.length) { $('rsReview').innerHTML = ''; return; }
+      fillVendorDatalist();
       var catOpts = CATS.kas_srb.uit.map(function (p) { return '<option value="' + p[0] + '">' + esc(p[1]) + '</option>'; }).join('');
       var html = rsRows.map(function (row, idx) {
         var d = row.data || {};
@@ -1503,7 +1571,7 @@
             (row.err ? '<span class="tag-srb" title="' + escA(row.err) + '">scan mislukt: ' + esc((row.err || '').slice(0, 70)) + '</span>' : '') + '</div>' +
           '<div class="grid3">' +
             '<div class="field" style="margin:0"><label>Datum</label><input type="date" class="rs-datum" value="' + (isDate(d.date) ? d.date : '') + '"></div>' +
-            '<div class="field" style="margin:0"><label>Leverancier</label><input type="text" class="rs-teg" value="' + escA(d.vendor || '') + '"></div>' +
+            '<div class="field" style="margin:0"><label>Leverancier</label><input type="text" class="rs-teg" list="vendorOptions" autocomplete="off" value="' + escA(d.vendor || '') + '"><span class="vendor-sug rs-teg-sug" style="display:none"></span></div>' +
             '<div class="field" style="margin:0"><label>Categorie</label><select class="rs-cat">' + catOpts + '</select></div>' +
           '</div>' +
           '<div class="grid3" style="margin-top:8px">' +
@@ -1518,6 +1586,9 @@
         var cat = (d.category_guess && CATS.kas_srb.uit.some(function (p) { return p[0] === d.category_guess; })) ? d.category_guess : 'overig';
         el.querySelector('.rs-cat').value = cat;
         el.querySelector('.rs-val').value = (d.currency === 'EUR') ? 'EUR' : 'RSD';
+        var teg = el.querySelector('.rs-teg'), sug = el.querySelector('.rs-teg-sug');
+        teg.addEventListener('input', function () { renderVendorSug(teg, sug); });
+        renderVendorSug(teg, sug);   // flag OCR typos immediately, before the user even looks
       });
       $('rsSave').disabled = false; $('rsHint').textContent = rsRows.length + ' bon(nen) gescand.';
     }
@@ -1578,7 +1649,7 @@
     function openMobile() {
       mSavedCount = 0; updateMSaved(); mRevokeUrls(); mItems = []; renderMItems();
       mMsg('', ''); $('mSpin').style.display = 'none'; $('mFile').value = ''; $('mFileGallery').value = '';
-      $('mOverlay').classList.add('open');
+      $('mOverlay').classList.add('open'); fillVendorDatalist();
       if (!authed()) { mMsg('err', 'Je bent niet ingelogd — open het beheer, log in, en kom dan terug.'); }
     }
     function closeMobile(fromSave) {
@@ -1599,7 +1670,7 @@
           var d = out.data || {}, url = mTrackUrl(URL.createObjectURL(out.blob));
           mItems.push({ blob: out.blob, data: d, fileName: name, url: url,
             amountStr: (d.total != null && isFinite(d.total)) ? String(d.total) : '',
-            cur: (d.currency === 'EUR') ? 'EUR' : 'RSD' });
+            cur: (d.currency === 'EUR') ? 'EUR' : 'RSD', vendorStr: (d.vendor || '') });
           renderMItems();
         } catch (e) { mMsg('err', 'Scan mislukt (' + name + '): ' + e.message); }
       }
@@ -1611,14 +1682,16 @@
       if (!mItems.length) { wrap.innerHTML = ''; $('mSaveAll').disabled = true; $('mSaveAll').textContent = 'Klaar & opslaan'; return; }
       wrap.innerHTML = mItems.map(function (it, i) {
         var ec = mEurCents(it.amountStr, it.cur);
-        var earlier = mItems.slice(0, i).map(function (x) { return { rekening: 'kas_srb', bedrag_eur_cents: mEurCents(x.amountStr, x.cur), datum: isDate((x.data || {}).date) ? x.data.date : null, tegenpartij: (x.data || {}).vendor || null }; });
-        var dup = (ec != null) ? findDuplicate('kas_srb', ec, isDate((it.data || {}).date) ? it.data.date : null, (it.data || {}).vendor || null, earlier) : null;
+        var earlier = mItems.slice(0, i).map(function (x) { return { rekening: 'kas_srb', bedrag_eur_cents: mEurCents(x.amountStr, x.cur), datum: isDate((x.data || {}).date) ? x.data.date : null, tegenpartij: x.vendorStr || null }; });
+        var dup = (ec != null) ? findDuplicate('kas_srb', ec, isDate((it.data || {}).date) ? it.data.date : null, it.vendorStr || null, earlier) : null;
         return '<div class="mitem" data-i="' + i + '">' +
           '<span class="bonthumb mitem-thumb has" style="background-image:url(\'' + it.url + '\')"></span>' +
           '<input type="number" step="0.01" min="0" inputmode="decimal" class="mitem-amt" value="' + escA(it.amountStr) + '" placeholder="bedrag">' +
           '<select class="mitem-cur"><option value="RSD"' + (it.cur === 'EUR' ? '' : ' selected') + '>din</option><option value="EUR"' + (it.cur === 'EUR' ? ' selected' : '') + '>€</option></select>' +
           (dup ? '<span class="mdup" title="Zelfde bedrag en datum/leverancier bestaat al">⚠ dubbel?</span>' : '') +
           '<button type="button" class="mitem-x" title="Verwijderen">✕</button>' +
+          '<input type="text" class="mitem-teg" list="vendorOptions" autocomplete="off" placeholder="leverancier" value="' + escA(it.vendorStr || '') + '">' +
+          '<span class="vendor-sug mitem-sug" style="display:none"></span>' +
           '</div>';
       }).join('');
       wrap.querySelectorAll('.mitem').forEach(function (el) {
@@ -1627,6 +1700,9 @@
         el.querySelector('.mitem-amt').addEventListener('change', function () { mItems[i].amountStr = this.value; renderMItems(); }); // recompute dup on blur
         el.querySelector('.mitem-cur').addEventListener('change', function () { mItems[i].cur = this.value; renderMItems(); });
         el.querySelector('.mitem-x').addEventListener('click', function () { if (mItems[i].url) { try { URL.revokeObjectURL(mItems[i].url); } catch (_) {} } mItems.splice(i, 1); renderMItems(); });
+        var teg = el.querySelector('.mitem-teg'), sug = el.querySelector('.mitem-sug');
+        teg.addEventListener('input', function () { mItems[i].vendorStr = this.value; renderVendorSug(teg, sug); });   // keep focus; update model + typo hint
+        renderVendorSug(teg, sug);
       });
       $('mSaveAll').disabled = false; $('mSaveAll').textContent = 'Klaar & opslaan (' + mItems.length + ')';
     }
@@ -1640,7 +1716,7 @@
         for (var k = 0; k < mItems.length; k++) {
           var it = mItems[k], cur = it.cur || 'RSD', koers = cur === 'RSD' ? 117.42 : null;
           var bc = Math.round(num(it.amountStr) * 100), ec = cur === 'RSD' ? Math.round(bc / koers) : bc;
-          var datum = isDate((it.data || {}).date) ? it.data.date : null, vendor = (it.data || {}).vendor || null;
+          var datum = isDate((it.data || {}).date) ? it.data.date : null, vendor = (it.vendorStr || '').trim() || null;
           var dup = findDuplicate('kas_srb', ec, datum, vendor, savedPool);
           if (dup) {
             var when = dup.datum ? fmtDate(dup.datum) : 'zonder datum';
@@ -2046,6 +2122,7 @@
       $('fClose').onclick = closeForm; $('fCancel').onclick = closeForm;
       $('fOverlay').addEventListener('click', function (e) { if (e.target === $('fOverlay')) closeForm(); });
       $('form').addEventListener('submit', saveForm);
+      $('f_tegenpartij').addEventListener('input', function () { renderVendorSug(this, $('f_teg_sug')); });
       $('f_rekening').addEventListener('change', onRekeningChange);
       $('f_richting').addEventListener('change', syncFormCats);
       $('f_valuta').addEventListener('change', syncValuta);
