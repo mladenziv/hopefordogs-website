@@ -236,6 +236,17 @@
     .mo-cat .amt { font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap; }
     .mo-bar { height:6px; border-radius:999px; background:#eee; overflow:hidden; margin-top:4px; }
     .mo-bar > i { display:block; height:100%; background:var(--uit); border-radius:999px; }
+    .mo-meta { font-size:12.5px; color:var(--muted); margin-bottom:8px; }
+    .mo-status { display:inline-block; font-weight:800; border-radius:999px; padding:2px 9px; font-size:11.5px; margin-left:4px; }
+    .mo-status.ok { background:#e7f6ec; color:#177a3a; }
+    .mo-status.warn { background:#fff3e0; color:#b45309; }
+    .mo-reasons { font-size:12.5px; color:#b45309; background:#fff8ef; border:1px solid #ffe0bf; border-radius:10px; padding:8px 12px; margin-bottom:14px; }
+    .mo-evidence { font-size:12.5px; color:var(--muted); margin:-6px 0 16px; }
+    .mo-nl, .mo-cattot { background:var(--beige); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:16px; }
+    .mo-sec-t { font-weight:800; text-transform:uppercase; letter-spacing:.03em; font-size:11px; color:#999; margin-bottom:8px; }
+    .mo-nl-row { display:flex; justify-content:space-between; gap:14px; font-size:13.5px; margin:3px 0; }
+    .mo-nl-row b { font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .mo-cattot .mo-cat { margin:7px 0; }
   </style>
 </head>
 <body>
@@ -515,15 +526,16 @@
   <div class="overlay" id="moOverlay">
     <div class="sheet wide">
       <button class="close" id="moClose" aria-label="Sluiten">✕</button>
-      <h2>Maandoverzicht — Kas Servië</h2>
-      <p class="hint" style="margin:-8px 0 14px">Per maand: hoeveel er vanuit Nederland binnenkwam, hoeveel er in Servië is uitgegeven, en aan welke categorieën. Alle bedragen in euro (RSD → €).</p>
+      <h2>Financieel verantwoordingsrapport — Servische activiteiten</h2>
+      <p class="hint" style="margin:-8px 0 14px">Per maand: middelen beschikbaar gesteld vanuit Nederland, aantoonbare kosten in Servië, en de categorieën. Bedragen in euro, met de oorspronkelijke dinar. De PDF toont exact dezelfde informatie als dit overzicht.</p>
       <div id="moBody"></div>
       <div class="msg" id="moMsg" style="margin-top:12px"></div>
       <div class="form-actions split">
-        <span class="hint">Export: alleen maanden met een overboeking uit NL · oplopend · bonnen als ZIP per maand.</span>
-        <div style="display:flex;gap:10px;">
+        <span class="hint">Export: alle maanden in de periode. Kies alleen de PDF, of de PDF met de bonnen als ZIP per maand.</span>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <button type="button" class="btn btn-ghost" id="moCloseBtn">Sluiten</button>
-          <button type="button" class="btn btn-primary" id="moExport">Exporteer PDF + bonnen</button>
+          <button type="button" class="btn btn-ghost" id="moExportPdf">Alleen PDF</button>
+          <button type="button" class="btn btn-primary" id="moExport">PDF + bonnen</button>
         </div>
       </div>
     </div>
@@ -724,13 +736,13 @@
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
     function escA(s) { return esc(s).replace(/"/g, '&quot;'); }   // attribute-safe (for value="…")
-    function euros(cents) { return '€' + (Number(cents || 0) / 100).toFixed(2).replace('.', ','); }
-    function eurosSigned(cents) { var n = Number(cents || 0); return (n < 0 ? '−' : '') + '€' + (Math.abs(n) / 100).toFixed(2).replace('.', ','); }   // −€1081,00
-    function rsd(cents) { return 'din ' + Math.round(Number(cents || 0) / 100).toLocaleString('nl-NL'); }
-    function dinEur(rsdCents, eurCents) { return (rsdCents > 0 ? (rsd(rsdCents) + ' · ') : '') + euros(eurCents); }   // "din 5.000 · €42,58" (or just € when no RSD)
+    function euros(cents) { return '€ ' + (Number(cents || 0) / 100).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }   // € 14.154,19
+    function eurosSigned(cents) { var n = Number(cents || 0); return (n < 0 ? '−' : '') + '€ ' + (Math.abs(n) / 100).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }   // −€ 1.081,00
+    function rsd(cents) { return 'RSD ' + Math.round(Number(cents || 0) / 100).toLocaleString('nl-NL'); }   // RSD 104.970
+    function dinEur(rsdCents, eurCents) { return (rsdCents > 0 ? (rsd(rsdCents) + ' · ') : '') + euros(eurCents); }   // "RSD 5.000 · € 42,58" (or just € when no RSD)
     function sanitizeName(s) { return String(s == null ? '' : s).replace(/[^\w.-]+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '').slice(0, 50); }
     function downloadBlob(blob, name) { var u = URL.createObjectURL(blob); var a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }
-    function fmtDate(iso) { if (!iso) return '—'; var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso)); return m ? (m[3] + '/' + m[2] + '/' + m[1]) : iso; }   // 2026-07-28 → 28/07/2026
+    function fmtDate(iso) { if (!iso) return '—'; var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso)); return m ? (m[3] + '-' + m[2] + '-' + m[1]) : iso; }   // 2026-07-28 → 28-07-2026
     // robust number parse: handles "1.234,56" (eu), "1234.56", "12800", "-22,72", "€/din" prefixes
     function num(v) {
       if (v == null) return NaN;
@@ -1009,20 +1021,112 @@
     // Per month: money received from NL (kas_srb "in") vs spent (kas_srb "uit"),
     // with the per-category breakdown of that month's spending. All in EUR.
     function moMonthName(ym) { return MONTHS_FULL[parseInt(ym.slice(5, 7), 10) - 1] + ' ' + ym.slice(0, 4); }
+
+    // ================= PDF helpers (shared by both exports) =================
+    // Legal identities of both cooperating organisations (shown in report headers).
+    var ORG_NL = 'Stichting Hope For Dogs Europe · KvK 91166500 · RSIN 865571107';
+    var ORG_RS = 'Udruženje za zaštitu napuštenih pasa „Nada za pse" · Matični broj 28364865 · PIB 113846010';
+    // jsPDF ships only Latin-1 fonts; embed DejaVu Sans so Serbian names (ć č š ž đ + Cyrillic)
+    // render instead of turning into boxes. Fetched once from a CDN, cached as base64, and
+    // registered into each new document. Falls back to Helvetica if the fetch fails.
+    var _pdfFont = null, _pdfFontTried = false;
+    function ab2b64(buf) {
+      var bytes = new Uint8Array(buf), chunk = 0x8000, s = '';
+      for (var i = 0; i < bytes.length; i += chunk) s += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+      return btoa(s);
+    }
+    async function loadPdfFont() {
+      if (_pdfFont || _pdfFontTried) return _pdfFont;
+      _pdfFontTried = true;
+      try {
+        var base = 'https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/';
+        var n = await fetch(base + 'DejaVuSans.ttf'), b = await fetch(base + 'DejaVuSans-Bold.ttf');
+        if (!n.ok || !b.ok) throw new Error('font ' + n.status + '/' + b.status);
+        _pdfFont = { normal: ab2b64(await n.arrayBuffer()), bold: ab2b64(await b.arrayBuffer()) };
+      } catch (e) { _pdfFont = null; }
+      return _pdfFont;
+    }
+    // register the cached font into a doc; returns the family to use everywhere INCLUDING
+    // autoTable styles.font (otherwise table cells silently fall back to Helvetica).
+    function pdfFontFamily(doc) {
+      if (!_pdfFont) return 'helvetica';
+      try {
+        doc.addFileToVFS('DejaVuSans.ttf', _pdfFont.normal); doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
+        doc.addFileToVFS('DejaVuSans-Bold.ttf', _pdfFont.bold); doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold');
+        return 'DejaVuSans';
+      } catch (e) { return 'helvetica'; }
+    }
+    // page numbers + report id/period in the footer of every page (call right before save)
+    function pdfStampFooters(doc, FONT, leftText) {
+      var n = doc.getNumberOfPages(), h = doc.internal.pageSize.getHeight(), w = doc.internal.pageSize.getWidth();
+      for (var i = 1; i <= n; i++) {
+        doc.setPage(i); doc.setFont(FONT, 'normal'); doc.setFontSize(7.5); doc.setTextColor(140);
+        if (leftText) doc.text(leftText, 40, h - 18);
+        doc.text('Pagina ' + i + ' van ' + n, w - 40, h - 18, { align: 'right' });
+      }
+      doc.setTextColor(0);
+    }
+    function reportId(prefix) { return prefix + '-' + new Date().toISOString().slice(0, 10).replace(/-/g, ''); }
+    // honest name for the cumulative position — never "reserve"
+    function positieLabel(cents) {
+      if (Math.abs(cents) <= 1) return 'Volledig aangesloten';
+      return cents < 0 ? 'Voorgefinancierd / nog te vergoeden' : 'Nog te verantwoorden bedrag';
+    }
+    // control status for the Serbia report (duplicates are checked manually, so not flagged here)
+    function serbiaStatus(d) {
+      var reasons = [], pos = d.totIn - d.totUitEur;
+      if (Math.abs(pos) > 1) reasons.push(positieLabel(pos).toLowerCase() + ' van ' + euros(Math.abs(pos)));
+      var noRate = 0, noBon = 0;
+      ALL.forEach(function (r) {
+        if (r.rekening !== 'kas_srb' || r.richting !== 'uit' || r.meetellen === false) return;
+        if (r.valuta === 'RSD' && !r.koers) noRate++;
+        if (!r.bon_pad) noBon++;
+      });
+      if (noRate) reasons.push(noRate + ' uitgave(n) zonder wisselkoers');
+      if (noBon) reasons.push(noBon + ' uitgave(n) zonder bon');
+      return { ok: reasons.length === 0, reasons: reasons };
+    }
     // aggregate kas_srb rows into per-month buckets { inEur, uitEur, uitRsd, cats:{cat:{eur,rsd}} }.
     // Serbian spending is in dinar, so we keep both the RSD original and its EUR value.
     function serbiaMonths() {
+      function mkB() { return { inEur: 0, uitEur: 0, uitRsd: 0, cats: {}, costs: [], transfers: [] }; }
       var rows = ALL.filter(function (r) { return r.rekening === 'kas_srb' && r.meetellen !== false; });
-      var byMonth = {}, undated = { inEur: 0, uitEur: 0, uitRsd: 0, cats: {} }, totIn = 0, totUitEur = 0, totUitRsd = 0;
-      function bucket(ym) { return ym ? (byMonth[ym] = byMonth[ym] || { inEur: 0, uitEur: 0, uitRsd: 0, cats: {} }) : undated; }
+      var byMonth = {}, undated = mkB(), totIn = 0, totUitEur = 0, totUitRsd = 0, bonEur = 0, noBonEur = 0, bonCount = 0, costCount = 0;
+      function bucket(ym) { return ym ? (byMonth[ym] = byMonth[ym] || mkB()) : undated; }
       rows.forEach(function (r) {
         var eur = r.bedrag_eur_cents || 0, rsdc = (r.valuta === 'RSD' ? (r.bedrag_cents || 0) : 0);
         var ym = (r.datum && /^\d{4}-\d{2}/.test(r.datum)) ? r.datum.slice(0, 7) : null;
         var b = bucket(ym);
-        if (r.richting === 'in') { b.inEur += eur; totIn += eur; }
-        else { b.uitEur += eur; b.uitRsd += rsdc; var c = b.cats[r.categorie] = b.cats[r.categorie] || { eur: 0, rsd: 0 }; c.eur += eur; c.rsd += rsdc; totUitEur += eur; totUitRsd += rsdc; }
+        if (r.richting === 'in') { b.inEur += eur; b.transfers.push(r); totIn += eur; }
+        else {
+          b.uitEur += eur; b.uitRsd += rsdc; b.costs.push(r);
+          var c = b.cats[r.categorie] = b.cats[r.categorie] || { eur: 0, rsd: 0 }; c.eur += eur; c.rsd += rsdc;
+          totUitEur += eur; totUitRsd += rsdc; costCount++;
+          if (r.bon_pad) { bonEur += eur; bonCount++; } else { noBonEur += eur; }
+        }
       });
-      return { byMonth: byMonth, undated: undated, totIn: totIn, totUitEur: totUitEur, totUitRsd: totUitRsd, hasRows: rows.length > 0 };
+      return { byMonth: byMonth, undated: undated, totIn: totIn, totUitEur: totUitEur, totUitRsd: totUitRsd,
+        bonEur: bonEur, noBonEur: noBonEur, bonCount: bonCount, costCount: costCount, hasRows: rows.length > 0 };
+    }
+    // total Serbian costs per category (across all months + undated), most expensive first
+    function serbiaCatTotals(d) {
+      var t = {};
+      function add(b) { Object.keys(b.cats).forEach(function (k) { var c = t[k] = t[k] || { eur: 0, rsd: 0 }; c.eur += b.cats[k].eur; c.rsd += b.cats[k].rsd; }); }
+      Object.keys(d.byMonth).forEach(function (k) { add(d.byMonth[k]); }); add(d.undated);
+      return Object.keys(t).map(function (k) { return [k, t[k]]; }).sort(function (a, c) { return c[1].eur - a[1].eur; });
+    }
+    // NL bank flows for the period: gross debit (opnames + overboekingen), bank/exchange/ATM
+    // costs (bankkosten), and net made available. Aggregate view — no 1:1 coupling to receipts.
+    function nlFlows(monthsArr) {
+      if (!monthsArr.length) return { bruto: 0, fees: 0, netto: 0, has: false };
+      var ps = monthsArr[0] + '-01', pe = monthsArr[monthsArr.length - 1] + '-31', bruto = 0, fees = 0, has = false;
+      ALL.forEach(function (r) {
+        if (r.rekening !== 'bank_nl' || r.richting !== 'uit' || r.meetellen === false) return;
+        if (!r.datum || r.datum < ps || r.datum > pe) return;
+        if (r.categorie === 'bankkosten') { fees += r.bedrag_eur_cents || 0; has = true; }
+        else if (r.categorie === 'opname' || r.categorie === 'overboeking') { bruto += r.bedrag_eur_cents || 0; has = true; }
+      });
+      return { bruto: bruto, fees: fees, netto: bruto - fees, has: has };
     }
     function openMonthly() {
       var d = serbiaMonths();
@@ -1036,23 +1140,44 @@
             '<span class="amt">' + dinEur(p[1].rsd, p[1].eur) + '</span></div>';
         }).join('') : '<div class="hint">Geen uitgaven deze maand.</div>';
         var net = m.inEur - m.uitEur;
-        var runH = (running == null) ? '' : '<div class="mo-run">Loopend saldo <b class="' + (running < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(running) + '</b></div>';
+        var runH = (running == null) ? '' : '<div class="mo-run">Lopend saldo <b class="' + (running < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(running) + '</b></div>';
         return '<div class="mo-month"><div class="mo-mhead"><div class="mo-mtitle">' + title + '</div>' + runH + '</div>' +
-          '<div class="mo-stats"><span>Ontvangen <b class="mo-in">' + euros(m.inEur) + '</b></span>' +
+          '<div class="mo-stats"><span>Middelen beschikbaar gesteld <b class="mo-in">' + euros(m.inEur) + '</b></span>' +
           '<span>Uitgegeven <b class="mo-uit">' + dinEur(m.uitRsd, m.uitEur) + '</b></span>' +
-          '<span>Deze maand <b class="' + (net < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(net) + '</b></span></div>' +
+          '<span>Mutatie deze maand <b class="' + (net < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(net) + '</b></span></div>' +
           '<div class="mo-cats">' + catsH + '</div></div>';
       }
       var html;
       if (!d.hasRows) {
         html = '<div class="empty">Nog geen transacties op de Servische rekening.</div>';
       } else {
-        var endSaldo = d.totIn - d.totUitEur;
-        html = '<div class="mo-sum">' +
-          '<div class="box"><div class="lbl">Totaal ontvangen uit NL</div><div class="v mo-in">' + euros(d.totIn) + '</div></div>' +
-          '<div class="box"><div class="lbl">Totaal uitgegeven</div><div class="v mo-uit">' + dinEur(d.totUitRsd, d.totUitEur) + '</div></div>' +
-          '<div class="box"><div class="lbl">Saldo (loopend)</div><div class="v ' + (endSaldo < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(endSaldo) + '</div></div>' +
-          '</div>';
+        var pos = d.totIn - d.totUitEur, st = serbiaStatus(d);
+        var mk = Object.keys(d.byMonth).sort();
+        var period = mk.length ? (moMonthName(mk[0]) + ' t/m ' + moMonthName(mk[mk.length - 1])) : '—';
+        html = '<div class="mo-meta">Periode <b>' + period + '</b> · gegenereerd ' + new Date().toLocaleDateString('nl-NL') +
+          ' · <span class="mo-status ' + (st.ok ? 'ok' : 'warn') + '">' + (st.ok ? 'Concept — gereed voor controle' : 'Concept — onvolledig') + '</span></div>';
+        if (!st.ok) html += '<div class="mo-reasons">Aandachtspunten: ' + esc(st.reasons.join(' · ')) + '</div>';
+        html += '<div class="mo-sum">' +
+          '<div class="box"><div class="lbl">Middelen beschikbaar gesteld (NL)</div><div class="v mo-in">' + euros(d.totIn) + '</div></div>' +
+          '<div class="box"><div class="lbl">Aantoonbare kosten Servië</div><div class="v mo-uit">' + dinEur(d.totUitRsd, d.totUitEur) + '</div></div>' +
+          '<div class="box"><div class="lbl">' + positieLabel(pos) + '</div><div class="v ' + (pos < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(pos) + '</div></div>' +
+          '</div>' +
+          '<div class="mo-evidence">Bewijs: <b>' + d.bonCount + ' van ' + d.costCount + '</b> uitgaven met bon · met bon ' + euros(d.bonEur) + ' · zonder bon ' + euros(d.noBonEur) + '</div>';
+        var nl = nlFlows(mk);
+        if (nl.has) html += '<div class="mo-nl"><div class="mo-sec-t">Nederlandse geldstromen (periode)</div>' +
+          '<div class="mo-nl-row"><span>Bruto afgeschreven van NL-rekening (opnames + overboekingen)</span><b>' + euros(nl.bruto) + '</b></div>' +
+          '<div class="mo-nl-row"><span>Bank-, wissel- en ATM-kosten</span><b class="mo-uit">' + eurosSigned(-nl.fees) + '</b></div>' +
+          '<div class="mo-nl-row"><span>Netto beschikbaar gesteld</span><b>' + euros(nl.netto) + '</b></div></div>';
+        var ct = serbiaCatTotals(d);
+        if (ct.length) {
+          var maxct = ct.reduce(function (s, p) { return Math.max(s, p[1].eur); }, 1);
+          html += '<div class="mo-cattot"><div class="mo-sec-t">Kosten per categorie</div>' + ct.map(function (p) {
+            var pct = d.totUitEur ? Math.round(p[1].eur / d.totUitEur * 100) : 0;
+            return '<div class="mo-cat"><span class="e">' + catEmoji(p[0]) + '</span>' +
+              '<div class="nm">' + esc(catLabel(p[0])) + ' <span class="hint">(' + pct + '%)</span><div class="mo-bar"><i style="width:' + Math.round(p[1].eur / maxct * 100) + '%"></i></div></div>' +
+              '<span class="amt">' + dinEur(p[1].rsd, p[1].eur) + '</span></div>';
+          }).join('') + '</div>';
+        }
         var running = 0;   // carries over month to month
         Object.keys(d.byMonth).sort().forEach(function (k) { running += (d.byMonth[k].inEur - d.byMonth[k].uitEur); html += monthBlock(moMonthName(k), d.byMonth[k], running); });   // all months, ascending
         if (d.undated.inEur || d.undated.uitEur) html += monthBlock('Zonder datum (bon zonder leesbare datum)', d.undated, null);
@@ -1063,71 +1188,137 @@
     }
 
     function moExportMsg(cls, txt) { var el = $('moMsg'); el.className = 'msg' + (cls ? (' ' + cls) : ''); el.textContent = txt || ''; }
-    // Export: a PDF (summary + per-month overview, then a detail section at the bottom —
-    // NL→Serbia transfers, then per-month cost tables) plus a ZIP of the receipt images
-    // grouped by month. Only months that received money from NL, ascending. din + €.
-    async function exportMonthly() {
+    // Export: a PDF that mirrors the on-screen overview (summary + per-month blocks with the
+    // SAME figures), then detail sections (middelen NL→Servië, kosten per maand), a bewijsindex,
+    // and a toelichting/controleblok — plus a ZIP of the receipts grouped by month. Reads the
+    // same serbiaMonths() aggregation as the screen so both always show identical information.
+    async function exportMonthly(withReceipts) {
       if (!window.jspdf || !window.jspdf.jsPDF) { moExportMsg('err', 'PDF-bibliotheek niet geladen.'); return; }
-      var rows = ALL.filter(function (r) { return r.rekening === 'kas_srb' && r.meetellen !== false; });
-      var monthIn = {};
-      rows.forEach(function (r) { if (r.richting === 'in' && r.datum && /^\d{4}-\d{2}/.test(r.datum)) { var ym = r.datum.slice(0, 7); monthIn[ym] = (monthIn[ym] || 0) + (r.bedrag_eur_cents || 0); } });
-      var months = Object.keys(monthIn).filter(function (ym) { return monthIn[ym] > 0; }).sort();   // funded months, ascending
-      if (!months.length) { moExportMsg('err', 'Geen maanden gevonden met een overboeking uit NL.'); return; }
-      var fset = {}; months.forEach(function (m) { fset[m] = 1; });
-      var per = {}; months.forEach(function (m) { per[m] = { inEur: 0, uitEur: 0, uitRsd: 0, cats: {}, costs: [], transfers: [] }; });
-      rows.forEach(function (r) {
-        var ym = (r.datum && /^\d{4}-\d{2}/.test(r.datum)) ? r.datum.slice(0, 7) : null;
-        if (!ym || !fset[ym]) return;
-        var b = per[ym], eur = r.bedrag_eur_cents || 0, rsdc = (r.valuta === 'RSD' ? (r.bedrag_cents || 0) : 0);
-        if (r.richting === 'in') { b.inEur += eur; b.transfers.push(r); }
-        else { b.uitEur += eur; b.uitRsd += rsdc; var c = b.cats[r.categorie] = b.cats[r.categorie] || { eur: 0, rsd: 0 }; c.eur += eur; c.rsd += rsdc; b.costs.push(r); }
-      });
+      var d = serbiaMonths();
+      if (!d.hasRows) { moExportMsg('err', 'Nog geen transacties op de Servische rekening.'); return; }
+      var months = Object.keys(d.byMonth).sort();                 // ALL months, ascending (mirrors the screen)
+      var allBuckets = months.map(function (k) { return d.byMonth[k]; });
+      if (d.undated.costs.length || d.undated.transfers.length) allBuckets.push(d.undated);
 
-      var btn = $('moExport'); btn.disabled = true; var orig = btn.textContent;
+      var btn = $('moExport'), btn2 = $('moExportPdf'); btn.disabled = true; btn2.disabled = true; var orig = btn.textContent;
       try {
+        moExportMsg('', 'Lettertype laden…'); await loadPdfFont();
         moExportMsg('', 'PDF maken…');
-        var jsPDF = window.jspdf.jsPDF, doc = new jsPDF({ unit: 'pt', format: 'a4' }), M = 40, W = 515, BR = [255, 83, 20], GR = [110, 110, 110];
+        var jsPDF = window.jspdf.jsPDF, doc = new jsPDF({ unit: 'pt', format: 'a4' });
+        var FONT = pdfFontFamily(doc), M = 40, W = 515, BR = [255, 83, 20], GR = [110, 110, 110];
         function bold(v) { return { content: v, styles: { fontStyle: 'bold' } }; }
-        function money() { return { 1: { halign: 'right', cellWidth: 220 } }; }
-        doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.text('Stichting Hope for Dogs Europe — Kas Servië', M, 50);
-        doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-        doc.text('Maandoverzicht · ' + moMonthName(months[0]) + ' t/m ' + moMonthName(months[months.length - 1]) + ' · gegenereerd ' + new Date().toLocaleDateString('nl-NL'), M, 66);
-        doc.setFontSize(8); doc.setTextColor(120); doc.text('Alleen maanden waarin vanuit Nederland geld naar Servië is gestuurd. Bedragen in dinar (din) met euro-tegenwaarde.', M, 79, { maxWidth: W }); doc.setTextColor(0);
+        function moneyCol() { return { 1: { halign: 'right', cellWidth: 190 } }; }
+        function AT(opts) {
+          opts.styles = Object.assign({ font: FONT, fontSize: 9, cellPadding: 4 }, opts.styles || {});
+          opts.headStyles = Object.assign({ font: FONT, fontStyle: 'bold' }, opts.headStyles || {});
+          opts.margin = opts.margin || { left: M, right: M };
+          doc.autoTable(opts);
+        }
+        var pos = d.totIn - d.totUitEur, st = serbiaStatus(d), rid = reportId('SRB');
+        var period = moMonthName(months[0]) + ' t/m ' + moMonthName(months[months.length - 1]);
 
-        var totIn = 0, totUitEur = 0, totUitRsd = 0;
-        months.forEach(function (m) { totIn += per[m].inEur; totUitEur += per[m].uitEur; totUitRsd += per[m].uitRsd; });
-        doc.autoTable({ startY: 92, head: [['Samenvatting', 'Bedrag']], theme: 'striped', headStyles: { fillColor: BR }, columnStyles: money(),
-          body: [['Ontvangen uit NL', euros(totIn)], ['Uitgegeven in Servië', dinEur(totUitRsd, totUitEur)], [bold('Verschil'), bold(euros(totIn - totUitEur))]] });
+        // ---- header (both organisations + period + status) ----
+        doc.setFont(FONT, 'bold'); doc.setFontSize(15); doc.text('Financieel verantwoordingsrapport Servische activiteiten', M, 46, { maxWidth: W });
+        doc.setFont(FONT, 'normal'); doc.setFontSize(8.5); doc.setTextColor(90);
+        doc.text(ORG_NL, M, 62, { maxWidth: W }); doc.text(ORG_RS, M, 73, { maxWidth: W });
+        doc.setTextColor(0); doc.setFontSize(9);
+        doc.text('Periode ' + period + ' · gegenereerd ' + new Date().toLocaleDateString('nl-NL') + ' · rapport ' + rid + ' · versie 1 · ' + (st.ok ? 'Concept (gereed voor controle)' : 'Concept — onvolledig'), M, 89, { maxWidth: W });
 
-        months.forEach(function (m) {
-          var b = per[m], cats = Object.keys(b.cats).map(function (k) { return [k, b.cats[k]]; }).sort(function (a, c) { return c[1].eur - a[1].eur; });
-          var body = [[bold('Ontvangen uit NL'), bold(euros(b.inEur))], [bold('Uitgegeven'), bold(dinEur(b.uitRsd, b.uitEur))]];
+        // ---- unique proof IDs (BON-YYYY-NNN), assigned once and reused in the detail, index and ZIP ----
+        var bonMap = {}, bseq = 0, pYear = months[0].slice(0, 4);
+        allBuckets.forEach(function (b) { b.costs.slice().sort(byDate).forEach(function (r) { if (r.bon_pad) { bseq++; bonMap[r.id] = 'BON-' + pYear + '-' + ('000' + bseq).slice(-3); } }); });
+
+        // ---- summary (honest labels + evidence split) ----
+        AT({ startY: 100, head: [['Samenvatting', 'Bedrag']], theme: 'striped', headStyles: { fillColor: BR }, columnStyles: moneyCol(), body: [
+          ['Middelen beschikbaar gesteld door de Nederlandse stichting', euros(d.totIn)],
+          ['Totaal aantoonbare kosten in Servië', dinEur(d.totUitRsd, d.totUitEur)],
+          [bold(positieLabel(pos)), bold(eurosSigned(pos))],
+          ['   waarvan uitgaven met bon', euros(d.bonEur)],
+          ['   waarvan uitgaven zonder bon', euros(d.noBonEur)]
+        ] });
+        if (!st.ok) { doc.setFontSize(8); doc.setTextColor(150, 70, 10); doc.text('Aandachtspunten: ' + st.reasons.join(' · '), M, doc.lastAutoTable.finalY + 12, { maxWidth: W }); doc.setTextColor(0); }
+
+        // ---- Nederlandse geldstromen: bruto / kosten / netto (aggregaat, geen 1-op-1 koppeling) ----
+        var nl = nlFlows(months);
+        if (nl.has) AT({ startY: doc.lastAutoTable.finalY + 16, head: [['Nederlandse geldstromen (periode)', 'Bedrag']], theme: 'striped', headStyles: { fillColor: GR }, columnStyles: moneyCol(), body: [
+          ['Bruto afgeschreven van NL-rekening (opnames + overboekingen)', euros(nl.bruto)],
+          ['Bank-, wissel- en ATM-kosten', eurosSigned(-nl.fees)],
+          [bold('Netto beschikbaar gesteld'), bold(euros(nl.netto))]
+        ] });
+
+        // ---- kosten per categorie (eerste pagina) ----
+        var ct = serbiaCatTotals(d);
+        if (ct.length) AT({ startY: doc.lastAutoTable.finalY + 16, head: [['Kosten per categorie', 'Bedrag', 'Aandeel']], theme: 'striped', headStyles: { fillColor: BR },
+          columnStyles: { 1: { halign: 'right', cellWidth: 150 }, 2: { halign: 'right', cellWidth: 70 } },
+          body: ct.map(function (p) { return [catLabel(p[0]), dinEur(p[1].rsd, p[1].eur), (d.totUitEur ? Math.round(p[1].eur / d.totUitEur * 100) : 0) + '%']; }) });
+
+        // ---- per-month blocks (same figures as the screen) ----
+        function monthTable(title, m, run) {
+          var cats = Object.keys(m.cats).map(function (k) { return [k, m.cats[k]]; }).sort(function (a, c) { return c[1].eur - a[1].eur; });
+          var net = m.inEur - m.uitEur;
+          var body = [['Middelen beschikbaar gesteld', euros(m.inEur)], ['Uitgegeven', dinEur(m.uitRsd, m.uitEur)], ['Mutatie deze maand', eurosSigned(net)]];
+          if (run != null) body.push([bold('Lopend saldo'), bold(eurosSigned(run))]);
           cats.forEach(function (p) { body.push(['   ' + catLabel(p[0]), dinEur(p[1].rsd, p[1].eur)]); });
-          doc.autoTable({ startY: doc.lastAutoTable.finalY + 16, head: [[moMonthName(m), 'Bedrag']], theme: 'striped', headStyles: { fillColor: BR }, columnStyles: money(), body: body });
-        });
+          AT({ startY: doc.lastAutoTable.finalY + 14, head: [[title, 'Bedrag']], theme: 'striped', headStyles: { fillColor: BR }, columnStyles: moneyCol(), body: body });
+        }
+        var running = 0;
+        months.forEach(function (k) { running += (d.byMonth[k].inEur - d.byMonth[k].uitEur); monthTable(moMonthName(k), d.byMonth[k], running); });
+        if (d.undated.inEur || d.undated.uitEur) monthTable('Zonder datum', d.undated, null);
 
-        // ---- bottom detail: transfers NL → Serbia ----
-        doc.addPage(); doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Detail — overboekingen NL → Servië', M, 46);
+        // ---- detail: middelen beschikbaar gesteld (NL → Servië) ----
+        doc.addPage(); doc.setFont(FONT, 'bold'); doc.setFontSize(12); doc.text('Detail — middelen beschikbaar gesteld (NL → Servië)', M, 46);
         var tb = [];
-        months.forEach(function (m) { per[m].transfers.slice().sort(byDate).forEach(function (r) { tb.push([fmtDate(r.datum), catLabel(r.categorie), (r.tegenpartij || r.omschrijving || ''), euros(r.bedrag_eur_cents)]); }); });
-        tb.push([bold('Totaal'), '', '', bold(euros(totIn))]);
-        doc.autoTable({ startY: 56, styles: { fontSize: 8 }, headStyles: { fillColor: GR }, columnStyles: { 3: { halign: 'right' } }, head: [['Datum', 'Soort', 'Omschrijving', 'Bedrag €']], body: tb });
+        allBuckets.forEach(function (b) { b.transfers.slice().sort(byDate).forEach(function (r) { tb.push([fmtDate(r.datum), catLabel(r.categorie), (r.tegenpartij || r.omschrijving || ''), euros(r.bedrag_eur_cents)]); }); });
+        if (!tb.length) tb.push(['—', '—', 'geen', '—']);
+        tb.push([bold('Totaal'), '', '', bold(euros(d.totIn))]);
+        AT({ startY: 56, head: [['Datum', 'Soort', 'Omschrijving', 'Bedrag €']], headStyles: { fillColor: GR }, styles: { fontSize: 8 }, columnStyles: { 0: { cellWidth: 62 }, 3: { halign: 'right', cellWidth: 80 } }, body: tb });
 
-        // ---- bottom detail: Serbian costs per month ----
-        months.forEach(function (m) {
-          var b = per[m];
-          doc.addPage(); doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Detail — uitgaven Servië · ' + moMonthName(m), M, 46);
-          var body = b.costs.slice().sort(byDate).map(function (r) { return [fmtDate(r.datum), catLabel(r.categorie), (r.tegenpartij || '') + (r.omschrijving ? ' · ' + r.omschrijving : '') + (r.bon_pad ? '  (bon)' : ''), (r.valuta === 'RSD' ? rsd(r.bedrag_cents) : '—'), euros(r.bedrag_eur_cents)]; });
-          if (!body.length) body.push(['—', '—', 'geen uitgaven', '—', '—']);
-          body.push([bold('Totaal'), '', '', bold(b.uitRsd ? rsd(b.uitRsd) : '—'), bold(euros(b.uitEur))]);
-          doc.autoTable({ startY: 56, styles: { fontSize: 8 }, headStyles: { fillColor: GR }, columnStyles: { 3: { halign: 'right' }, 4: { halign: 'right' } }, head: [['Datum', 'Categorie', 'Leverancier / omschrijving', 'din', '€']], body: body });
+        // ---- detail: kosten (één doorlopende tabel met maandkolom — geen bijna lege pagina's) ----
+        doc.addPage(); doc.setFont(FONT, 'bold'); doc.setFontSize(12); doc.text('Detail — kosten Servië', M, 46);
+        var cb = [];
+        allBuckets.forEach(function (b, bi) {
+          var mlabel = (bi < months.length) ? moMonthName(months[bi]) : 'Zonder datum';
+          b.costs.slice().sort(byDate).forEach(function (r) {
+            cb.push([mlabel, fmtDate(r.datum), catLabel(r.categorie), (r.tegenpartij || '') + (r.omschrijving ? ' · ' + r.omschrijving : ''), (bonMap[r.id] || '—'), (r.valuta === 'RSD' ? rsd(r.bedrag_cents) : '—'), euros(r.bedrag_eur_cents)]);
+          });
+        });
+        if (!cb.length) cb.push(['—', '—', '—', 'geen uitgaven', '—', '—', '—']);
+        cb.push([bold('Totaal'), '', '', '', '', bold(d.totUitRsd ? rsd(d.totUitRsd) : '—'), bold(euros(d.totUitEur))]);
+        AT({ startY: 56, head: [['Maand', 'Datum', 'Categorie', 'Leverancier / omschrijving', 'Bewijs-ID', 'RSD', '€']], headStyles: { fillColor: GR }, styles: { fontSize: 8, overflow: 'linebreak' },
+          columnStyles: { 0: { cellWidth: 64 }, 1: { cellWidth: 58 }, 4: { cellWidth: 74 }, 5: { halign: 'right', cellWidth: 66 }, 6: { halign: 'right', cellWidth: 60 } }, body: cb });
+
+        // ---- bewijsindex (uniek Bewijs-ID, status, korte referentie; ruime kolommen) ----
+        doc.addPage(); doc.setFont(FONT, 'bold'); doc.setFontSize(12); doc.text('Bewijsindex', M, 46);
+        doc.setFont(FONT, 'normal'); doc.setFontSize(7.5); doc.setTextColor(120);
+        doc.text('Bestanden in de bonnen-ZIP zijn genummerd volgens het Bewijs-ID.', M, 58); doc.setTextColor(0);
+        var idx = [];
+        allBuckets.forEach(function (b) { b.costs.slice().sort(byDate).forEach(function (r) {
+          idx.push([(bonMap[r.id] || '—'), fmtDate(r.datum), (r.tegenpartij || ''), catLabel(r.categorie), euros(r.bedrag_eur_cents), (r.bon_pad ? 'Gecontroleerd en leesbaar' : 'Ontbreekt'), (r.bon_pad ? (bonMap[r.id] + '.jpg') : '—')]); }); });
+        if (!idx.length) idx.push(['—', '—', 'geen', '—', '—', '—', '—']);
+        AT({ startY: 66, head: [['Bewijs-ID', 'Datum', 'Leverancier', 'Categorie', '€', 'Status', 'Bestand']], headStyles: { fillColor: GR }, styles: { fontSize: 8, overflow: 'linebreak', cellPadding: 3 },
+          columnStyles: { 0: { cellWidth: 76 }, 1: { cellWidth: 58 }, 2: { cellWidth: 108 }, 4: { halign: 'right', cellWidth: 60 }, 5: { cellWidth: 86 }, 6: { cellWidth: 76 } }, body: idx });
+
+        // ---- toelichting + controleblok ----
+        doc.addPage(); doc.setFont(FONT, 'bold'); doc.setFontSize(12); doc.text('Toelichting', M, 46);
+        doc.setFont(FONT, 'normal'); doc.setFontSize(9); doc.setTextColor(40);
+        doc.text('De in dit rapport opgenomen middelen zijn algemene financiële ondersteuning voor de activiteiten van de Servische partnerorganisatie. De middelen zijn niet per afzonderlijke Nederlandse transactie aan één kostencategorie of bewijsstuk gekoppeld. De verantwoording vindt cumulatief plaats over de weergegeven rapportageperiode. Alle opgenomen kosten moeten binnen de samenwerkingsovereenkomst en de statutaire dierenwelzijnsdoelstelling vallen.', M, 66, { maxWidth: W, lineHeightFactor: 1.45 });
+        doc.setTextColor(120); doc.setFontSize(8);
+        doc.text('Dit rapport is een interne financiële verantwoording en vormt geen zelfstandige jaarrekening. RSD-uitgaven zijn omgerekend naar euro op basis van de bij de transactie opgeslagen wisselkoers.', M, 150, { maxWidth: W, lineHeightFactor: 1.45 });
+        doc.setTextColor(0);
+        var sy = 196; doc.setFont(FONT, 'bold'); doc.setFontSize(10); doc.text('Controle en goedkeuring', M, sy); doc.setFont(FONT, 'normal'); doc.setFontSize(9);
+        ['Opgesteld door', 'Gecontroleerd door', 'Goedgekeurd door bestuur'].forEach(function (lab, i) {
+          var yy = sy + 32 + i * 36;
+          doc.text(lab + ':', M, yy); doc.line(M + 140, yy + 2, M + 300, yy + 2);
+          doc.text('Datum:', M + 315, yy); doc.line(M + 355, yy + 2, M + 510, yy + 2);
         });
 
-        doc.save('Maandoverzicht-Servie-' + months[0] + '_' + months[months.length - 1] + '.pdf');
+        pdfStampFooters(doc, FONT, 'Rapport ' + rid + ' · ' + period);
+        doc.save('Verantwoording-Servie-' + months[0] + '_' + months[months.length - 1] + '.pdf');
+        if (!withReceipts) { moExportMsg('ok', 'PDF opgeslagen.'); return; }
 
-        // ---- receipts ZIP grouped by month ----
+        // ---- receipts ZIP grouped by month (all months + undated) ----
         var withBon = [];
-        months.forEach(function (m) { per[m].costs.forEach(function (r) { if (r.bon_pad) withBon.push({ m: m, r: r }); }); });
+        allBuckets.forEach(function (b, bi) { var mlabel = (bi < months.length) ? months[bi] : 'zonder-datum'; b.costs.forEach(function (r) { if (r.bon_pad) withBon.push({ m: mlabel, r: r }); }); });
         if (!withBon.length) { moExportMsg('ok', 'PDF opgeslagen. Geen bonnen om te bundelen.'); return; }
         if (!window.JSZip) { moExportMsg('ok', 'PDF opgeslagen. Bonnen-ZIP niet mogelijk (JSZip niet geladen).'); return; }
         moExportMsg('', 'Bonnen ophalen… 0/' + withBon.length);
@@ -1140,10 +1331,9 @@
           try {
             var resp = await fetch(u); if (!resp.ok) continue;
             var buf = await resp.arrayBuffer();
-            var vend = sanitizeName(x.r.tegenpartij || '');                                   // filename: date_category_nameofvendor
-            var base = x.r.datum + '_' + sanitizeName(catLabel(x.r.categorie)) + (vend ? ('_' + vend) : '');
-            var fn = x.m + '/' + base + '.jpg', n = 1;
-            while (used[fn]) { fn = x.m + '/' + base + '_' + (++n) + '.jpg'; }
+            var bonId = bonMap[x.r.id] || ('BON-' + (i + 1));                                 // ZIP filename = Bewijs-ID (matches the bewijsindex)
+            var fn = x.m + '/' + bonId + '.jpg', n = 1;
+            while (used[fn]) { fn = x.m + '/' + bonId + '_' + (++n) + '.jpg'; }
             used[fn] = 1; zip.file(fn, buf); ok++;
           } catch (e) {}
         }
@@ -1153,7 +1343,7 @@
         downloadBlob(blob, 'Bonnen-Servie-' + months[0] + '_' + months[months.length - 1] + '.zip');
         moExportMsg('ok', 'Klaar — PDF + ' + ok + ' bon(nen) over ' + months.length + ' maand(en) geëxporteerd.');
       } catch (e) { moExportMsg('err', 'Export mislukt: ' + e.message); }
-      finally { btn.disabled = false; btn.textContent = orig; }
+      finally { btn.disabled = false; btn.textContent = orig; btn2.disabled = false; }
     }
 
     function renderTable(rows) {
@@ -2217,14 +2407,17 @@
         .filter(function (r) { return r.rekening === 'kas_srb' && r.meetellen !== false; });
       var srbG = groupByCat(srb, 'uit'), srbTot = srbG.reduce(function (s, p) { return s + p[1]; }, 0);
 
-      var jsPDF = window.jspdf.jsPDF, doc = new jsPDF({ unit: 'pt', format: 'a4' }), M = 40, W = 515;
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.text('Stichting Hope for Dogs Europe', M, 50);
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-      doc.text('KvK 91166500 · Boekjaar ' + y + ' · gegenereerd ' + new Date().toLocaleDateString('nl-NL'), M, 66);
-
-      var BR = [255, 83, 20], GR = [120, 120, 120];
+      await loadPdfFont();
+      var jsPDF = window.jspdf.jsPDF, doc = new jsPDF({ unit: 'pt', format: 'a4' }), FONT = pdfFontFamily(doc), M = 40, W = 515;
+      var BR = [255, 83, 20], GR = [120, 120, 120], rid = reportId('JAAR');
       function bold(v) { return { content: v, styles: { fontStyle: 'bold' } }; }
       function money(opts) { return Object.assign({ 1: { halign: 'right', cellWidth: 120 } }, opts || {}); }
+      function AT(o) { o.styles = Object.assign({ font: FONT }, o.styles || {}); o.headStyles = Object.assign({ font: FONT, fontStyle: 'bold' }, o.headStyles || {}); o.margin = o.margin || { left: M, right: M }; doc.autoTable(o); }
+
+      doc.setFont(FONT, 'bold'); doc.setFontSize(15); doc.text('Stichting Hope for Dogs Europe', M, 50);
+      doc.setFont(FONT, 'normal'); doc.setFontSize(9); doc.setTextColor(90); doc.text(ORG_NL, M, 64);
+      doc.setTextColor(0); doc.setFontSize(10);
+      doc.text('Boekjaar ' + y + ' · gegenereerd ' + new Date().toLocaleDateString('nl-NL') + ' · rapport ' + rid, M, 78);
 
       var staat = [];
       staat.push([bold('Baten'), '']);
@@ -2235,36 +2428,37 @@
       lasten.forEach(function (p) { staat.push(['   ' + catLabel(p[0]), euros(p[1])]); });
       staat.push([bold('Totaal lasten'), bold(euros(totLasten))]);
       staat.push([bold('Resultaat (saldo)'), bold(euros(result))]);
-      doc.autoTable({ startY: 84, head: [['Staat van baten en lasten (EUR)', 'Bedrag']], body: staat, theme: 'striped', headStyles: { fillColor: BR }, columnStyles: money() });
+      AT({ startY: 96, head: [['Staat van baten en lasten (EUR)', 'Bedrag']], body: staat, theme: 'striped', headStyles: { fillColor: BR }, columnStyles: money() });
 
-      doc.autoTable({
+      AT({
         startY: doc.lastAutoTable.finalY + 18, head: [['Kas/bank-mutatie', 'Bedrag']], theme: 'striped', headStyles: { fillColor: BR }, columnStyles: money(),
         body: [['Beginsaldo bank (1 jan)', euros(beginCents)], ['Resultaat boekjaar', euros(result)], [bold('Eindsaldo bank (31 dec)'), bold(euros(eind))]]
       });
 
       var srbBody = srbG.map(function (p) { return ['   ' + catLabel(p[0]), euros(p[1])]; });
       srbBody.push([bold('Totaal gedocumenteerd'), bold(euros(srbTot))]);
-      doc.autoTable({ startY: doc.lastAutoTable.finalY + 18, head: [['Bijlage — Besteding in Servië (onderbouwing, EUR)', 'Bedrag']], body: srbBody, theme: 'striped', headStyles: { fillColor: GR }, columnStyles: money() });
+      AT({ startY: doc.lastAutoTable.finalY + 18, head: [['Bijlage — Besteding in Servië (onderbouwing, EUR)', 'Bedrag']], body: srbBody, theme: 'striped', headStyles: { fillColor: GR }, columnStyles: money() });
       doc.setFontSize(8); doc.setTextColor(120);
       doc.text('Deze bonnen zijn gefinancierd uit de opnames/overboekingen hierboven en tellen niet nogmaals mee in het resultaat.', M, doc.lastAutoTable.finalY + 13, { maxWidth: W });
       doc.setTextColor(0);
 
       // detail — bank ledger
-      doc.addPage(); doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.text('Detailoverzicht — bank NL (EUR)', M, 46);
-      doc.autoTable({
+      doc.addPage(); doc.setFont(FONT, 'bold'); doc.setFontSize(12); doc.text('Detailoverzicht — bank NL (EUR)', M, 46);
+      AT({
         startY: 56, styles: { fontSize: 8 }, headStyles: { fillColor: BR }, columnStyles: { 3: { halign: 'right' } },
         head: [['Datum', 'Categorie', 'Omschrijving / tegenpartij', 'Bedrag']],
         body: bank.slice().sort(byDate).map(function (r) { return [fmtDate(r.datum), catLabel(r.categorie), (r.omschrijving || '') + (r.tegenpartij ? ' · ' + r.tegenpartij : ''), (r.richting === 'in' ? '+' : '−') + euros(r.bedrag_eur_cents)]; })
       });
       // detail — SRB receipts
       if (srb.length) {
-        doc.addPage(); doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.text('Detailoverzicht — bonnen Servië', M, 46);
-        doc.autoTable({
+        doc.addPage(); doc.setFont(FONT, 'bold'); doc.setFontSize(12); doc.text('Detailoverzicht — bonnen Servië', M, 46);
+        AT({
           startY: 56, styles: { fontSize: 8 }, headStyles: { fillColor: GR }, columnStyles: { 4: { halign: 'right' } },
           head: [['Datum', 'Categorie', 'Leverancier / omschrijving', 'Bestand', 'EUR']],
           body: srb.slice().sort(byDate).map(function (r) { return [fmtDate(r.datum), catLabel(r.categorie), (r.tegenpartij || '') + (r.omschrijving ? ' · ' + r.omschrijving : ''), r.bon_bestand || '', euros(r.bedrag_eur_cents)]; })
         });
       }
+      pdfStampFooters(doc, FONT, 'Jaaroverzicht ' + y + ' · rapport ' + rid);
       doc.save('jaaroverzicht-' + y + '.pdf');
       $('pOverlay').classList.remove('open');
     }
@@ -2283,7 +2477,8 @@
       $('moBtn').onclick = openMonthly;
       $('moClose').onclick = function () { $('moOverlay').classList.remove('open'); };
       $('moCloseBtn').onclick = function () { $('moOverlay').classList.remove('open'); };
-      $('moExport').onclick = exportMonthly;
+      $('moExport').onclick = function () { exportMonthly(true); };
+      $('moExportPdf').onclick = function () { exportMonthly(false); };
       // fix duplicates
       $('dupBtn').onclick = openDup;
       $('dupClose').onclick = closeDup;
