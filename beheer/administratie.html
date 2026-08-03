@@ -109,6 +109,17 @@
     .sheet.wide { max-width:900px; }
     .sheet h2 { font-family:'Nunito',sans-serif; font-weight:800; font-size:20px; margin:0 0 18px; }
     .close { position:absolute; top:16px; right:16px; width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,.06); border:none; cursor:pointer; font-size:15px; }
+    /* fix-duplicates side-by-side review */
+    .dupgrid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media (max-width:720px){ .dupgrid{ grid-template-columns:1fr; } }
+    .dupcard { border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; }
+    .dupimglink { display:block; }
+    .dupimg { width:100%; max-height:340px; object-fit:contain; background:#f0eee9; border-radius:10px; border:1px solid var(--line); display:block; }
+    .dupnobon { width:100%; height:120px; display:flex; align-items:center; justify-content:center; color:var(--muted); background:#f0eee9; border-radius:10px; border:1px dashed var(--line); font-size:13px; font-weight:700; }
+    .dupcard .dl { margin-bottom:0; }
+    .dl dd.dupdiff { color:var(--brand); font-weight:800; }
+    .dupcard .dupdel { margin-top:auto; }
+    .dupdone { text-align:center; padding:28px 10px; color:var(--muted); font-weight:700; font-size:15px; }
     .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
     .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
     .field { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
@@ -254,6 +265,7 @@
             <button class="menu-item" id="mobBtn" role="menuitem"><span>📷</span> Mobiel scannen</button>
             <button class="menu-item" id="rsBtn" role="menuitem"><span>🧾</span> Scan bonnen</button>
             <button class="menu-item" id="ksBtn" role="menuitem"><span>🏦</span> Bankafschrift</button>
+            <button class="menu-item" id="dupBtn" role="menuitem"><span>🧹</span> Dubbelen opschonen</button>
             <button class="menu-item" id="adoptBtn" role="menuitem"><span>👥</span> Adoptanten</button>
             <button class="menu-item" id="transBtn" role="menuitem"><span>📋</span> Transportlijst</button>
             <button class="menu-item" id="moBtn" role="menuitem"><span>📅</span> Maandoverzicht Servië</button>
@@ -512,6 +524,24 @@
         <div style="display:flex;gap:10px;">
           <button type="button" class="btn btn-ghost" id="moCloseBtn">Sluiten</button>
           <button type="button" class="btn btn-primary" id="moExport">Exporteer PDF + bonnen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fix duplicates (side-by-side review) -->
+  <div class="overlay" id="dupOverlay">
+    <div class="sheet wide">
+      <button class="close" id="dupClose" aria-label="Sluiten">✕</button>
+      <h2>Mogelijke dubbelen opschonen</h2>
+      <p class="hint" style="margin:-8px 0 14px">Bonnen met hetzelfde bedrag én dezelfde datum of leverancier, naast elkaar. Verschillen zijn oranje gemarkeerd. Verwijder de dubbele of behoud allebei.</p>
+      <div id="dupBody"></div>
+      <div class="msg" id="dupMsg"></div>
+      <div class="form-actions split">
+        <span class="hint" id="dupProgress"></span>
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-ghost" id="dupKeepBoth">Allebei behouden →</button>
+          <button type="button" class="btn btn-ghost" id="dupCloseBtn">Sluiten</button>
         </div>
       </div>
     </div>
@@ -1688,6 +1718,112 @@
       }
       return null;
     }
+
+    // ================= fix duplicates (side-by-side review) =================
+    // Candidate pair = same account + direction + EUR amount, sharing a date OR a vendor,
+    // with at least one row being an actual receipt (bon). Same signal as findDuplicate()
+    // but pairwise across the whole ledger, and receipt-scoped so two separate same-day
+    // donations (no receipt) are NOT flagged.
+    var dupPairs = [], dupPos = 0, dupBusy = false;
+    function findDuplicatePairs() {
+      var groups = {};
+      ALL.forEach(function (r) {
+        if (!r.bedrag_eur_cents) return;
+        var k = r.rekening + '|' + r.richting + '|' + r.bedrag_eur_cents;
+        (groups[k] = groups[k] || []).push(r);
+      });
+      var pairs = [];
+      Object.keys(groups).forEach(function (k) {
+        var g = groups[k]; if (g.length < 2) return;
+        for (var i = 0; i < g.length; i++) for (var j = i + 1; j < g.length; j++) {
+          var a = g[i], b = g[j];
+          if (!a.bon_pad && !b.bon_pad) continue;                                       // receipt-scoped
+          var dOk = a.datum && b.datum && a.datum === b.datum;
+          var vOk = a.tegenpartij && b.tegenpartij && normName(a.tegenpartij) === normName(b.tegenpartij);
+          if (dOk || vOk) pairs.push([a.id, b.id]);
+        }
+      });
+      return pairs;
+    }
+    function rowById(id) { for (var i = 0; i < ALL.length; i++) if (ALL[i].id === id) return ALL[i]; return null; }
+    function liveRemainingPairs() {   // pairs from the current position on whose rows both still exist
+      var n = 0; for (var i = dupPos; i < dupPairs.length; i++) if (rowById(dupPairs[i][0]) && rowById(dupPairs[i][1])) n++; return n;
+    }
+    function fmtWhen(iso) { if (!iso) return '—'; var d = fmtDate(iso); var m = /T(\d{2}:\d{2})/.exec(String(iso)); return m ? (d + ' ' + m[1]) : d; }
+    function openDup() {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      dupPairs = findDuplicatePairs(); dupPos = 0; dupBusy = false;
+      $('dupMsg').className = 'msg'; $('dupMsg').textContent = '';
+      $('dupOverlay').classList.add('open');
+      renderDupPair();
+    }
+    function closeDup() { if (dupBusy) return; $('dupOverlay').classList.remove('open'); }
+    function advanceDup() { dupPos++; renderDupPair(); }
+    function dupField(label, val, isDiff) { return '<dt>' + label + '</dt><dd' + (isDiff ? ' class="dupdiff"' : '') + '>' + val + '</dd>'; }
+    function dupCardHtml(r, other) {
+      var isRsd = r.valuta === 'RSD';
+      var amt = (r.richting === 'uit' ? '−' : '+') + (isRsd ? rsd(r.bedrag_cents) + ' (' + euros(r.bedrag_eur_cents) + ')' : euros(r.bedrag_eur_cents));
+      var img = r.bon_pad
+        ? '<a class="dupimglink" target="_blank" rel="noopener"><img class="dupimg" data-bon="' + escA(r.bon_pad) + '" alt="bon"></a>'
+        : '<div class="dupnobon">Geen bon</div>';
+      function neq(key) { return (r[key] || '') !== (other[key] || ''); }
+      var dl = '<dl class="dl">' +
+        dupField('Datum', fmtDate(r.datum), (r.datum || '') !== (other.datum || '')) +
+        dupField('Bedrag', amt + (r.meetellen === false ? ' <span class="tag-srb">telt niet mee</span>' : ''), false) +
+        dupField('Leverancier', esc(r.tegenpartij || '—'), normName(r.tegenpartij) !== normName(other.tegenpartij)) +
+        dupField('Categorie', esc(catLabel(r.categorie)), r.categorie !== other.categorie) +
+        (r.omschrijving ? dupField('Omschrijving', esc(r.omschrijving), neq('omschrijving')) : '') +
+        (r.factuurnr ? dupField('Factuurnr.', esc(r.factuurnr), neq('factuurnr')) : '') +
+        dupField('Bron', esc(r.bron || '—'), neq('bron')) +
+        dupField('Bestand', esc(r.bon_bestand || '—'), neq('bon_bestand')) +
+        dupField('Toegevoegd', fmtWhen(r.created_at), false) +
+        '</dl>';
+      return '<div class="dupcard">' + img + dl +
+        '<button type="button" class="btn btn-danger dupdel" data-id="' + r.id + '">Verwijder deze' + (r.bon_pad ? ' bon' : '') + '</button></div>';
+    }
+    function renderDupPair() {
+      while (dupPos < dupPairs.length) {                                    // skip pairs whose rows were already deleted
+        var p = dupPairs[dupPos]; if (rowById(p[0]) && rowById(p[1])) break; dupPos++;
+      }
+      var remaining = liveRemainingPairs();
+      $('dupProgress').textContent = remaining ? (remaining + ' mogelijke dubbel(en) te controleren') : '';
+      $('dupKeepBoth').disabled = !remaining;
+      if (dupPos >= dupPairs.length) {
+        $('dupBody').innerHTML = '<div class="dupdone">✓ ' + (dupPairs.length ? 'Alle mogelijke dubbelen zijn beoordeeld.' : 'Geen mogelijke dubbelen gevonden.') + '</div>';
+        return;
+      }
+      var a = rowById(dupPairs[dupPos][0]), b = rowById(dupPairs[dupPos][1]);
+      $('dupBody').innerHTML = '<div class="dupgrid">' + dupCardHtml(a, b) + dupCardHtml(b, a) + '</div>';
+      var paths = []; if (a.bon_pad) paths.push(a.bon_pad); if (b.bon_pad) paths.push(b.bon_pad);
+      if (paths.length) {
+        signedUrls(paths).then(function (map) {
+          $('dupBody').querySelectorAll('img.dupimg[data-bon]').forEach(function (im) {
+            var u = map[im.getAttribute('data-bon')]; if (u) { im.src = u; if (im.parentElement && im.parentElement.tagName === 'A') im.parentElement.href = u; }
+          });
+        }).catch(function () {});
+      }
+      $('dupBody').querySelectorAll('.dupdel').forEach(function (btn) {
+        btn.addEventListener('click', function () { dupDelete(btn.getAttribute('data-id')); });
+      });
+    }
+    async function dupDelete(id) {
+      if (dupBusy) return;
+      var r = rowById(id); if (!r) { advanceDup(); return; }
+      if (!authed()) { $('dupMsg').className = 'msg err'; $('dupMsg').textContent = 'Log eerst in via het beheer.'; return; }
+      if (!confirm('Deze transactie' + (r.bon_pad ? ' en de bijbehorende bon' : '') + ' verwijderen? Dit kan niet ongedaan worden gemaakt.')) return;
+      dupBusy = true; $('dupMsg').className = 'msg'; $('dupMsg').textContent = 'Verwijderen…';
+      try {
+        if (r.bon_pad) await deleteBon(r.bon_pad);
+        await apiWrite('DELETE', 'transactions?id=eq.' + id);
+        ALL = ALL.filter(function (x) { return x.id !== id; });   // keep in-memory model in sync
+        dupBusy = false; $('dupMsg').textContent = '';
+        refresh();                                                 // update the ledger behind the dialog
+        advanceDup();                                              // resolved: skip any remaining pairs referencing the deleted row
+      } catch (e) {
+        dupBusy = false; $('dupMsg').className = 'msg err'; $('dupMsg').textContent = 'Verwijderen mislukt: ' + e.message;
+      }
+    }
+    function dupKeepBoth() { if (dupBusy) return; advanceDup(); }
     function openMobile() {
       mSavedCount = 0; updateMSaved(); mRevokeUrls(); mItems = []; renderMItems();
       mMsg('', ''); $('mSpin').style.display = 'none'; $('mFile').value = ''; $('mFileGallery').value = '';
@@ -2144,6 +2280,12 @@
       $('moClose').onclick = function () { $('moOverlay').classList.remove('open'); };
       $('moCloseBtn').onclick = function () { $('moOverlay').classList.remove('open'); };
       $('moExport').onclick = exportMonthly;
+      // fix duplicates
+      $('dupBtn').onclick = openDup;
+      $('dupClose').onclick = closeDup;
+      $('dupCloseBtn').onclick = closeDup;
+      $('dupOverlay').addEventListener('click', function (e) { if (e.target === $('dupOverlay')) closeDup(); });
+      $('dupKeepBoth').onclick = dupKeepBoth;
       $('moOverlay').addEventListener('click', function (e) { if (e.target === $('moOverlay')) $('moOverlay').classList.remove('open'); });
       // + dropdown (menu items keep their own IDs + handlers; any item click closes it)
       function closeAddMenu() { $('addMenu').style.display = 'none'; $('addMenuBtn').classList.remove('open'); $('addMenuBtn').setAttribute('aria-expanded', 'false'); }
