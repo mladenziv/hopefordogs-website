@@ -1,6 +1,11 @@
 RewriteEngine On
 RewriteBase /
 
+# Homepage renders through its SSR wrapper (index.php localizes <head> per language:
+# lang/title/description/canonical/hreflang). Falls back to static index.html if the
+# wrapper is unavailable.
+DirectoryIndex index.php index.html
+
 # Force the canonical host: https + www (matches <link rel="canonical"> on every page)
 RewriteCond %{HTTPS} off [OR]
 RewriteCond %{HTTP_HOST} !^www\. [NC]
@@ -26,9 +31,11 @@ RewriteRule ^ https://www.hopefordogseurope.com%{REQUEST_URI} [R=301,L]
 # Stale Google sitelink pointing to a page that never existed on this site
 RewriteRule ^hondenblog2/?$ /nieuws.html [R=301,L,NC]
 
-# Language-prefixed URLs (/en/..., /de/...): internal rewrite, not a redirect —
-# same physical .html file serves all languages, JS renders per the URL prefix.
-RewriteRule ^(en|de)/?$ /index.html [L]
+# Language-prefixed URLs (/en/..., /de/...): internal rewrite, not a redirect.
+# The homepage renders through index.php (SSR <head> per language); the other static
+# pages are rewritten to their bare .html (then to their .php wrapper below, where one
+# exists). REQUEST_URI keeps the /en//de/ prefix so ssr_lang() detects the language.
+RewriteRule ^(en|de)/?$ index.php [L]
 RewriteRule ^(en|de)/([a-z-]+)\.html$ /$2.html [L]
 
 # Slug detail pages: /hond/<slug> and /nieuws/<slug> (optional /en /de prefix).
@@ -62,6 +69,10 @@ RewriteRule ^ervaring\.html$ ervaring.php [L]
 RewriteRule ^ervaringen\.html$ ervaringen.php [L]
 RewriteRule ^nieuws\.html$ nieuws.php [L]
 RewriteRule ^over-ons\.html$ over-ons.php [L]
+RewriteRule ^adoptie\.html$ adoptie.php [L]
+RewriteRule ^contact\.html$ contact.php [L]
+RewriteRule ^doneer\.html$ doneer.php [L]
+RewriteRule ^privacy\.html$ privacy.php [L]
 
 # Extension-less requests (e.g. /honden, /contact) for a page that exists as .html
 # -> redirect there instead of 404. Skips API/admin/asset paths.

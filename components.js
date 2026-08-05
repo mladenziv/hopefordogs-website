@@ -540,8 +540,8 @@ var H4D_PAGE_SEO = {
     desc: { nl: 'Privacyverklaring van Stichting Hope for Dogs Europe: welke persoonsgegevens wij verwerken en welke rechten je hebt volgens de AVG.', de: 'Datenschutzerklärung der Stiftung Hope for Dogs Europe: welche personenbezogenen Daten wir verarbeiten und welche Rechte du gemäß DSGVO hast.', en: 'Privacy policy of Stichting Hope for Dogs Europe: which personal data we process and your rights under the GDPR.' }
   },
   'index': {
-    title: { nl: 'Hope for Dogs — Adopteer een Straathond uit Bosnië en Servië', de: 'Hope for Dogs — Adoptiere einen Streunerhund aus Bosnien und Serbien', en: 'Hope for Dogs — Adopt a Stray Dog from Bosnia & Serbia' },
-    desc: { nl: 'Hope for Dogs redt straathonden in Bosnië en Servië en vindt hen een liefdevol thuis in Nederland, België, Duitsland en Oostenrijk. Bekijk onze honden.', de: 'Hope for Dogs rettet Streunerhunde in Bosnien und Serbien und vermittelt sie in die Niederlande, Belgien, Deutschland und Österreich. Entdecke unsere Hunde.', en: 'Hope for Dogs rescues stray dogs in Bosnia and Serbia and finds them loving homes in the Netherlands, Belgium, Germany and Austria. Browse our dogs.' }
+    title: { nl: 'Hope for Dogs — Adopteer een Straathond uit Bosnië en Servië', de: 'Hope for Dogs — Adoptiere einen Streunerhund aus Bosnien und Serbien', en: 'Rescue Dogs from Europe — Adopt a Street Dog | Hope for Dogs' },
+    desc: { nl: 'Hope for Dogs redt straathonden in Bosnië en Servië en vindt hen een liefdevol thuis in Nederland, België, Duitsland en Oostenrijk. Bekijk onze honden.', de: 'Hope for Dogs rettet Streunerhunde in Bosnien und Serbien und vermittelt sie in die Niederlande, Belgien, Deutschland und Österreich. Entdecke unsere Hunde.', en: 'We rescue street dogs from Serbia & Bosnia and rehome them across Europe — the Netherlands, Belgium, Germany & Austria. Meet our rescue dogs looking for a home.' }
   },
   'honden': {
     title: { nl: 'Adoptiehonden — Beschikbare Honden | Hope for Dogs', de: 'Adoptionshunde — Verfügbare Hunde | Hope for Dogs', en: 'Adoptable Dogs — Available Dogs | Hope for Dogs' },
