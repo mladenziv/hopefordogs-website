@@ -287,14 +287,26 @@
     async function loadPost() {
       var params = new URLSearchParams(window.location.search);
       var postId = params.get('id');
+      // Clean post URLs are /nieuws/<slug> (see .htaccess) — they carry no ?id=.
+      // Fall back to the slug from the query string or the path, otherwise a slug-URL
+      // visit hits showError() and paints "Bericht niet gevonden" on top of the
+      // server-prerendered post (post.php resolves by slug).
+      var slug = params.get('slug');
+      if (!slug && !postId) {
+        var m = window.location.pathname.match(/\/nieuws\/([A-Za-z0-9-]+)\/?$/);
+        if (m) slug = m[1];
+      }
 
-      if (!postId) {
+      if (!postId && !slug) {
         showError();
         return;
       }
 
       try {
-        var posts = await supabaseGet('posts', 'select=*&id=eq.' + postId);
+        var query = postId
+          ? 'select=*&id=eq.' + encodeURIComponent(postId)
+          : 'select=*&slug=eq.' + encodeURIComponent(slug);
+        var posts = await supabaseGet('posts', query);
 
         if (!posts || posts.length === 0) {
           showError();
@@ -386,7 +398,7 @@
           document.head.appendChild(articleSchema);
         }
 
-        loadRelatedPosts(postId);
+        loadRelatedPosts(post.id);
 
       } catch (err) {
         console.error('Error loading post:', err);
