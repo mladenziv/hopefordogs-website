@@ -65,7 +65,7 @@ var H4D_I18N = {
   // --- Index: Hero ---
   'index.hero.badge':    { nl: 'non-profitorganisatie', de: 'Gemeinn\u00FCtzige Organisation', en: 'non-profit organization' },
   'index.hero.title':    { nl: 'Waar hoop een thuis vindt', de: 'Wo Hoffnung ein Zuhause findet', en: 'Where hope finds a home' },
-  'index.hero.subtitle': { nl: 'Wij zijn een non-profitorganisatie, bestaande uit een handjevol vrijwilligers uit Nederland, Belgi\u00EB, Servi\u00EB en Bosni\u00EB. Samen bundelen we onze krachten om de talloze zwerfhonden een beter leven te geven.', de: 'Wir sind eine gemeinn\u00FCtzige Organisation aus einer Handvoll Freiwilliger aus den Niederlanden, Belgien, Serbien und Bosnien. Gemeinsam b\u00FCndeln wir unsere Kr\u00E4fte, um den zahllosen Stra\u00DFenhunden ein besseres Leben zu geben.', en: 'We are a non-profit organization made up of a handful of volunteers from the Netherlands, Belgium, Serbia and Bosnia. Together we join forces to give the countless stray dogs a better life.' },
+  'index.hero.subtitle': { nl: 'Wij zijn een non-profitorganisatie, bestaande uit een handjevol vrijwilligers uit Nederland, Belgi\u00EB, Servi\u00EB en Bosni\u00EB. Samen bundelen we onze krachten om de talloze zwerfhonden een beter leven te geven.', de: 'Wir retten Stra\u00DFenhunde aus Serbien und Bosnien und vermitteln sie in ganz Europa \u2014 in die Niederlande, Belgien, Deutschland und \u00D6sterreich. Eine gemeinn\u00FCtzige Organisation aus einer Handvoll Freiwilliger, die zahllosen Stra\u00DFenhunden ein besseres Leben schenkt.', en: 'We rescue street dogs from Serbia and Bosnia and rehome them across Europe \u2014 the Netherlands, Belgium, Germany and Austria. A non-profit run by a handful of volunteers, giving countless stray dogs a better life.' },
   'index.hero.btn1':     { nl: 'Ontdek onze missie', de: 'Entdecke unsere Mission', en: 'Discover our mission' },
   'index.hero.btn2':     { nl: 'Onze honden',   de: 'Unsere Hunde',     en: 'Our dogs' },
   'index.hero.social.fb':      { nl: 'Facebook', de: 'Facebook', en: 'Facebook' },
@@ -155,8 +155,8 @@ var H4D_I18N = {
   'honden.cta.doneer':   { nl: 'Doneer nu',       de: 'Jetzt spenden',      en: 'Donate now' },
   'honden.cta.contact':  { nl: 'Neem contact op',  de: 'Kontaktiere uns',   en: 'Get in touch' },
 
-  'overons.hero':    { nl: 'Een klein team. Een grote missie.', de: 'Ein kleines Team. Eine große Mission.', en: 'A small team. A big mission.' },
-  'adoptie.hero':    { nl: 'Adopteer een buitenlandse hond en geef hoop een thuis', de: 'Adoptiere einen Hund aus dem Ausland und schenke Hoffnung ein Zuhause', en: 'Adopt a dog from abroad and give hope a home' },
+  'overons.hero':    { nl: 'Een klein team. Een grote missie.', de: 'Europäische Hunderettung aus Bosnien & Serbien', en: 'European dog rescue from Bosnia & Serbia' },
+  'adoptie.hero':    { nl: 'Adopteer een buitenlandse hond en geef hoop een thuis', de: 'Adoptiere einen Rettungshund aus Europa — aus Bosnien & Serbien', en: 'Adopt a rescue dog from Europe — from Bosnia & Serbia' },
   'ervaringen.hero': { nl: 'Van straat naar warm nestje', de: 'Von der Stra\u00DFe ins warme Nest', en: 'From street to loving home' },
   'nieuws.hero':     { nl: 'Actueel', de: 'Aktuell', en: 'News' },
   'doneer.hero':     { nl: 'Help onze honden', de: 'Hilf unseren Hunden', en: 'Help our dogs' },
@@ -181,7 +181,7 @@ var H4D_I18N = {
   'honden.geadopteerd': { nl: 'Geadopteerd', de: 'Adoptiert', en: 'Adopted' },
 
   // --- Over ons page ---
-  'overons.hero.sub':   { nl: 'We zetten ons in om straathonden een beter bestaan te geven', de: 'Wir setzen uns daf\u00FCr ein, Stra\u00DFenhunden ein besseres Leben zu geben', en: 'We work to give stray dogs a better life' },
+  'overons.hero.sub':   { nl: 'We zetten ons in om straathonden een beter bestaan te geven', de: 'Ein kleines Team, eine gro\u00DFe Mission \u2014 f\u00FCr ein besseres Leben f\u00FCr Stra\u00DFenhunde.', en: 'A small team, a big mission \u2014 giving street dogs a better life.' },
   'overons.leefomstandigheden': { nl: 'Er is geen overheid die ingrijpt. Geen vangnetten. Geen financi\u00EBle steun. Alleen mensen zoals wij \u2014 en zoals jij.', de: 'Es gibt keine Regierung, die eingreift. Keine Sicherheitsnetze. Keine finanzielle Unterst\u00FCtzung. Nur Menschen wie wir \u2014 und wie Sie.', en: 'There is no government stepping in. No safety nets. No financial support. Just people like us \u2014 and like you.' },
   'overons.hart':       { nl: 'Ons hart, onze drijfveer', de: 'Unser Herz, unser Antrieb', en: 'Our heart, our drive' },
   'overons.hart.p1':    { nl: 'Hope for Dogs draait volledig op een klein team van vrijwilligers. We hebben geen grote organisatie achter ons en geen vaste subsidies die alles betalen. Alles wat we doen, doen we naast ons werk, gezin en andere verplichtingen. Omdat we vinden dat deze honden een kans verdienen.', de: 'Hope for Dogs l\u00E4uft vollst\u00E4ndig auf einem kleinen Team von Freiwilligen. Wir haben keine gro\u00DFe Organisation hinter uns und keine festen Subventionen, die alles bezahlen. Alles was wir tun, tun wir neben unserer Arbeit, Familie und anderen Verpflichtungen. Weil wir finden, dass diese Hunde eine Chance verdienen.', en: 'Hope for Dogs runs entirely on a small team of volunteers. We have no large organization behind us and no fixed subsidies that cover everything. Everything we do, we do alongside our work, family and other commitments. Because we believe these dogs deserve a chance.' },
@@ -548,11 +548,11 @@ var H4D_PAGE_SEO = {
     desc: { nl: 'Bekijk alle beschikbare adoptiehonden van Hope for Dogs. Straathonden uit Bosnië en Servië, medisch behandeld en klaar voor een nieuw thuis.', de: 'Entdecke alle verfügbaren Adoptionshunde von Hope for Dogs. Streunerhunde aus Bosnien und Serbien, medizinisch behandelt und bereit für ein neues Zuhause.', en: 'Browse all adoptable dogs at Hope for Dogs. Stray dogs from Bosnia and Serbia, medically treated and ready for a new home.' }
   },
   'over-ons': {
-    title: { nl: 'Over Ons — Ons Verhaal & Missie | Hope for Dogs', de: 'Über Uns — Unsere Geschichte & Mission | Hope for Dogs', en: 'About Us — Our Story & Mission | Hope for Dogs' },
+    title: { nl: 'Over Ons — Ons Verhaal & Missie | Hope for Dogs', de: 'Europäische Hunderettung — Straßenhunde aus Bosnien & Serbien retten | Hope for Dogs', en: 'European Dog Rescue — Rescuing Street Dogs from Bosnia & Serbia | Hope for Dogs' },
     desc: { nl: 'Leer meer over Hope for Dogs, een non-profit die straathonden redt in Bosnië en Servië. Ons team van vrijwilligers zet zich dag en nacht in voor een beter leven.', de: 'Erfahre mehr über Hope for Dogs, eine gemeinnützige Organisation, die Streunerhunde in Bosnien und Serbien rettet. Unser Team aus Freiwilligen setzt sich Tag und Nacht für ein besseres Leben ein.', en: 'Learn more about Hope for Dogs, a non-profit rescuing stray dogs in Bosnia and Serbia. Our team of volunteers works day and night for a better life.' }
   },
   'adoptie': {
-    title: { nl: 'Buitenlandse Hond Adopteren uit Bosnië & Servië | Hope for Dogs', de: 'Hund aus dem Ausland adoptieren — aus Bosnien & Serbien | Hope for Dogs', en: 'Adopt a Dog from Abroad — from Bosnia & Serbia | Hope for Dogs' },
+    title: { nl: 'Buitenlandse Hond Adopteren uit Bosnië & Servië | Hope for Dogs', de: 'Rettungshund aus Europa adoptieren — aus Bosnien & Serbien | Hope for Dogs', en: 'Adopt a Rescue Dog from Europe — from Bosnia & Serbia | Hope for Dogs' },
     desc: { nl: 'Een buitenlandse straathond uit Bosnië of Servië adopteren? Ontdek het proces, de kosten (€230 + €200 transport) en hoe wij alles regelen. Bekijk onze honden.', de: 'Einen Straßenhund aus dem Ausland (Bosnien/Serbien) adoptieren? Ablauf, Kosten (230 € + 200 € Transport) und wie wir alles organisieren. Entdecke unsere Hunde.', en: 'Adopt a foreign street dog from Bosnia or Serbia? Discover the process, the costs (€230 + €200 transport) and how we arrange everything. Browse our dogs.' }
   },
   'ervaringen': {

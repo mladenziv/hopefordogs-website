@@ -11,8 +11,8 @@ $tpl = __DIR__ . '/over-ons.html';
 
 $TITLES = [
     'nl' => 'Over Ons — Ons Verhaal & Missie | Hope for Dogs',
-    'de' => 'Über Uns — Unsere Geschichte & Mission | Hope for Dogs',
-    'en' => 'About Us — Our Story & Mission | Hope for Dogs',
+    'de' => 'Europäische Hunderettung — Straßenhunde aus Bosnien & Serbien retten | Hope for Dogs',
+    'en' => 'European Dog Rescue — Rescuing Street Dogs from Bosnia & Serbia | Hope for Dogs',
 ];
 $DESCS = [
     'nl' => 'Leer meer over Hope for Dogs, een non-profit die straathonden redt in Bosnië en Servië. Ons team van vrijwilligers zet zich dag en nacht in voor een beter leven.',

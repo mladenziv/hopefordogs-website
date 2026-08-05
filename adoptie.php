@@ -11,8 +11,8 @@ $tpl = __DIR__ . '/adoptie.html';
 
 $TITLES = [
     'nl' => 'Buitenlandse Hond Adopteren uit Bosnië & Servië | Hope for Dogs',
-    'de' => 'Hund aus dem Ausland adoptieren — aus Bosnien & Serbien | Hope for Dogs',
-    'en' => 'Adopt a Dog from Abroad — from Bosnia & Serbia | Hope for Dogs',
+    'de' => 'Rettungshund aus Europa adoptieren — aus Bosnien & Serbien | Hope for Dogs',
+    'en' => 'Adopt a Rescue Dog from Europe — from Bosnia & Serbia | Hope for Dogs',
 ];
 $DESCS = [
     'nl' => 'Een buitenlandse straathond uit Bosnië of Servië adopteren? Ontdek het proces, de kosten (€230 + €200 transport) en hoe wij alles regelen. Bekijk onze honden.',
