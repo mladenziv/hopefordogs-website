@@ -113,13 +113,12 @@ function dogCardHTML(dog, opts) {
   if (opts.featured === 'big') cls += ' big';
   else if (opts.featured === 'small') cls += ' small';
 
-  // display:block is essential: as an <a> the card would default to display:inline, which
-  // collapses its tap target until images reflow (broke mobile tappability for ~5–10s).
-  var cardStyle = 'display:block;text-decoration:none;color:inherit;' + (opts.index != null ? 'animation-delay:' + (opts.index * 0.05) + 's;' : '');
-  var cardHref = (typeof h4dDetailUrl === 'function') ? h4dDetailUrl('hond', 'hond.html', dog) : ('hond.html?id=' + dog.id);
-  // Real link to the dog's full page (crawlable + keyboard-accessible). A normal click still
-  // opens the quick-view modal; cmd/ctrl/shift-click opens the full page in a new tab.
-  return '<a href="' + cardHref + '" class="' + cls + '" data-status="' + safeStatus + '" data-dog-id="' + safeId + '" style="' + cardStyle + '" onclick="if(event.metaKey||event.ctrlKey||event.shiftKey)return;event.preventDefault();openDogModal(\'' + dog.id + '\');">' + inner + '</a>';
+  // Plain <div> (NOT an <a>): on iOS a real link cancels the tap on the slightest
+  // layout shift (lazy images) or finger movement — you get a highlight flicker but
+  // no click. A div+onclick is immune, so the quick-view opens reliably on mobile.
+  // Dog detail pages stay crawlable via sitemap-dogs.xml.
+  var animDelay = opts.index != null ? ' style="animation-delay: ' + (opts.index * 0.05) + 's;"' : '';
+  return '<div class="' + cls + '" data-status="' + safeStatus + '" data-dog-id="' + safeId + '"' + animDelay + ' onclick="openDogModal(\'' + dog.id + '\')">' + inner + '</div>';
 }
 
 /* ---- On-card gallery + inline video behavior (delegated; acts only on `.dog-card-media`) ----
