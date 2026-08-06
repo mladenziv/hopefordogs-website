@@ -86,7 +86,8 @@ var H4D_I18N = {
   'index.dogs.title':    { nl: 'Op zoek naar een warm huis', de: 'Auf der Suche nach einem warmen Zuhause', en: 'Looking for a loving home' },
   'index.dogs.subtitle': { nl: 'Elk van deze honden is gered van de straat, medisch behandeld en klaar voor een nieuw begin.', de: 'Jeder dieser Hunde wurde von der Stra\u00DFe gerettet, medizinisch versorgt und ist bereit f\u00FCr einen Neuanfang.', en: 'Each of these dogs was rescued from the streets, medically treated, and ready for a fresh start.' },
   'index.dogs.btn':      { nl: 'Bekijk alle honden', de: 'Alle Hunde ansehen', en: 'View all dogs' },
-  'index.dogs.btn2':     { nl: 'Meer over adopteren', de: 'Mehr \u00FCber Adoption', en: 'More about adoption' },
+  'index.dogs.btn2':     { nl: 'Een buitenlandse hond adopteren', de: 'Einen Hund aus dem Ausland adoptieren', en: 'Adopt a rescue dog from Europe' },
+  'index.dogs.bridge':   { nl: 'Zie je een hond die bij je past? Zo werkt het adopteren van een buitenlandse straathond.', de: 'Ist der passende Hund dabei? So funktioniert die Adoption eines Auslandshundes.', en: 'Found a dog that fits? Here is how adopting a foreign rescue dog works.' },
 
   // --- Index: Crisis section ---
   'index.crisis.title':    { nl: 'Een crisis die niemand ziet', de: 'Eine Krise, die niemand sieht', en: 'A crisis nobody sees' },
@@ -136,7 +137,8 @@ var H4D_I18N = {
   'cta.mollie':     { nl: 'Veilig betalen via Mollie', de: 'Sicher bezahlen \u00FCber Mollie', en: 'Secure payment via Mollie' },
 
   // --- Other page hero headings ---
-  'honden.hero':     { nl: 'Lieverds op zoek naar een huisje', de: 'Lieblinge auf der Suche nach einem Zuhause', en: 'Sweethearts looking for a home' },
+  'honden.hero':     { nl: 'Adoptiehonden uit Bosnië & Servië', de: 'Adoptionshunde aus Bosnien & Serbien', en: 'Adoptable Dogs from Bosnia & Serbia' },
+  'honden.hero.adoptlink': { nl: 'Meer over een buitenlandse hond adopteren', de: 'Mehr über die Adoption eines Auslandshundes', en: 'More about adopting a foreign rescue dog' },
   'honden.dotd.title': { nl: 'Dog of the day', de: 'Dog of the day', en: 'Dog of the day' },
   'honden.dotd.sub': { nl: 'Elke dag staat een ander hondje in het zonnetje.', de: 'Jeden Tag steht ein anderer Hund im Rampenlicht.', en: 'Every day a different dog gets its moment in the sun.' },
   'honden.adopted':  { nl: 'Whoohoo, wij zijn geadopteerd!', de: 'Juhu, wir sind adoptiert!', en: 'Woohoo, we\u2019ve been adopted!' },
@@ -251,6 +253,24 @@ var H4D_I18N = {
   'overons.cta.btn2': { nl: 'Bekijk onze honden', de: 'Unsere Hunde ansehen', en: 'View our dogs' },
 
   // --- Adoptie page ---
+  'adoptie.why':        { nl: 'Waarom een buitenlandse hond adopteren?', de: 'Warum einen Hund aus dem Ausland adoptieren?', en: 'Why adopt a foreign rescue dog?' },
+  'adoptie.why.p':      { nl: 'In Bosni\u00EB en Servi\u00EB leven duizenden honden op straat of in overvolle asielen, vaak zonder uitzicht op beter. Door een buitenlandse straathond te adopteren geef je \u00E9\u00E9n van hen een echte tweede kans \u2014 en maak je plek vrij voor de volgende hond die gered kan worden. Al onze honden zijn medisch behandeld, gevaccineerd en klaar voor een liefdevol thuis in Nederland, Belgi\u00EB, Duitsland of Oostenrijk.', de: 'In Bosnien und Serbien leben Tausende Hunde auf der Stra\u00DFe oder in \u00FCberf\u00FCllten Tierheimen, oft ohne Perspektive. Wenn du einen Stra\u00DFenhund aus dem Ausland adoptierst, schenkst du einem von ihnen eine echte zweite Chance \u2014 und machst Platz f\u00FCr den n\u00E4chsten Hund, den wir retten k\u00F6nnen. Alle unsere Hunde sind medizinisch versorgt, geimpft und bereit f\u00FCr ein liebevolles Zuhause in den Niederlanden, Belgien, Deutschland oder \u00D6sterreich.', en: 'In Bosnia and Serbia, thousands of dogs live on the street or in overcrowded shelters, often with no way out. By adopting a foreign street dog you give one of them a real second chance \u2014 and free up space for the next dog we can rescue. All our dogs are medically treated, vaccinated and ready for a loving home in the Netherlands, Belgium, Germany or Austria.' },
+  'adoptie.origin':     { nl: 'Waar onze honden vandaan komen', de: 'Woher unsere Hunde kommen', en: 'Where our dogs come from' },
+  'adoptie.origin.p':   { nl: 'Al onze honden komen uit de grensstreek van Bosni\u00EB en Servi\u00EB, waar door onbeperkte fok en achterlating ontelbare zwerfhonden op straat belanden. Wij vangen ze op in ons asiel, geven ze de medische zorg die ze nodig hebben, en zoeken daarna rustig een passend thuis.', de: 'Alle unsere Hunde stammen aus der Grenzregion von Bosnien und Serbien, wo durch unkontrollierte Vermehrung und Aussetzung unz\u00E4hlige Stra\u00DFenhunde ohne Ausweg zur\u00FCckbleiben. Wir nehmen sie in unserem Tierheim auf, geben ihnen die n\u00F6tige medizinische Versorgung und suchen dann in Ruhe ein passendes Zuhause.', en: 'All our dogs come from the border region of Bosnia and Serbia, where uncontrolled breeding and abandonment leave countless street dogs with nowhere to go. We take them into our shelter, give them the medical care they need, and then calmly look for the right home.' },
+  'adoptie.origin.docs':{ nl: 'Elke hond reist met volledige vaccinaties, een Europees dierenpaspoort, een chip en een gezondheidscheck door een dierenarts \u2014 zo weet je precies wat je in huis haalt.', de: 'Jeder Hund reist mit vollst\u00E4ndigen Impfungen, einem EU-Heimtierausweis, einem Chip und einem tier\u00E4rztlichen Gesundheitscheck \u2014 so wei\u00DFt du genau, was auf dich zukommt.', en: 'Every dog travels with full vaccinations, a European pet passport, a microchip and a vet health check \u2014 so you know exactly what you are bringing home.' },
+  'adoptie.why.lead':   { nl: 'Je geeft een straathond uit Bosni\u00EB of Servi\u00EB een echte tweede kans \u2014 en maakt plek vrij voor de volgende hond die gered kan worden.', de: 'Du schenkst einem Stra\u00DFenhund aus Bosnien oder Serbien eine echte zweite Chance \u2014 und machst Platz f\u00FCr den n\u00E4chsten Hund, den wir retten k\u00F6nnen.', en: 'You give a street dog from Bosnia or Serbia a real second chance \u2014 and free up space for the next dog we can rescue.' },
+  'adoptie.why.r1t':    { nl: 'Een echte tweede kans', de: 'Eine echte zweite Chance', en: 'A real second chance' },
+  'adoptie.why.r1d':    { nl: 'Gered van de straat en klaar voor een liefdevol thuis.', de: 'Von der Stra\u00DFe gerettet und bereit f\u00FCr ein liebevolles Zuhause.', en: 'Rescued from the street and ready for a loving home.' },
+  'adoptie.why.r2t':    { nl: 'Medisch helemaal klaar', de: 'Medizinisch versorgt', en: 'Fully vetted' },
+  'adoptie.why.r2d':    { nl: 'Gevaccineerd, ontvlooid, ontwormd en gechipt.', de: 'Geimpft, entfloht, entwurmt und gechipt.', en: 'Vaccinated, treated for fleas and worms, and microchipped.' },
+  'adoptie.why.r3t':    { nl: 'Wij begeleiden je', de: 'Wir begleiten dich', en: 'We guide you' },
+  'adoptie.why.r3d':    { nl: 'Van kennismaking tot nazorg \u2014 je staat er nooit alleen voor.', de: 'Vom Kennenlernen bis zur Nachsorge \u2014 du bist nie allein.', en: 'From first contact to aftercare \u2014 you are never on your own.' },
+  'adoptie.origin.reist':{ nl: 'Elke hond reist met:', de: 'Jeder Hund reist mit:', en: 'Every dog travels with:' },
+  'adoptie.origin.d1':  { nl: 'Volledige vaccinaties', de: 'Vollst\u00E4ndige Impfungen', en: 'Full vaccinations' },
+  'adoptie.origin.d2':  { nl: 'Europees dierenpaspoort', de: 'EU-Heimtierausweis', en: 'European pet passport' },
+  'adoptie.origin.d3':  { nl: 'Chip', de: 'Chip', en: 'Microchip' },
+  'adoptie.origin.d4':  { nl: 'Gezondheidscheck door een dierenarts', de: 'Tier\u00E4rztlicher Gesundheitscheck', en: 'Vet health check' },
+  'adoptie.crosslink':  { nl: 'Lees hoe het adopteren van een buitenlandse hond werkt', de: 'So funktioniert die Adoption eines Auslandshundes', en: 'See how adopting a foreign rescue dog works' },
   'adoptie.hero.sub':  { nl: 'Hun start was niet eerlijk, maar hun toekomst kan dat w\u00E9l zijn.', de: 'Ihr Anfang war nicht fair, aber ihre Zukunft kann es sein.', en: 'Their start wasn\u2019t fair, but their future can be.' },
   'adoptie.bekijk':    { nl: 'Onze honden', de: 'Unsere Hunde', en: 'Our dogs' },
   'adoptie.waarom':    { nl: 'Waarom adopteren via Hope for Dogs?', de: 'Warum \u00FCber Hope for Dogs adoptieren?', en: 'Why adopt through Hope for Dogs?' },
@@ -418,7 +438,7 @@ var H4D_I18N = {
   'dog.meta.gewicht':    { nl: 'Gewicht', de: 'Gewicht', en: 'Weight' },
   'dog.stuurBericht':    { nl: 'Stuur een bericht', de: 'Nachricht senden', en: 'Send a message' },
   'dog.chatFacebook':    { nl: 'Chat op Facebook', de: 'Chatte auf Facebook', en: 'Chat on Facebook' },
-  'dog.adoptieHint':     { nl: 'Wil je een buitenlandse hond adopteren? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">Bekijk het proces en de kosten</a>', de: 'Möchtest du einen Hund aus dem Ausland adoptieren? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">So läuft die Adoption ab</a>', en: 'Want to adopt a dog from abroad? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">See the process and costs</a>' },
+  'dog.adoptieHint':     { nl: 'Overweeg je te adopteren? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">Meer over een buitenlandse hond adopteren</a>', de: 'Denkst du über eine Adoption nach? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">Mehr über die Adoption eines Auslandshundes</a>', en: 'Thinking about adopting? <a href="adoptie.html" style="color:var(--brand);font-weight:700;">More about adopting a foreign rescue dog</a>' },
   'adoptie.dogs':        { nl: 'Onze beschikbare adoptiehonden', de: 'Unsere verfügbaren Adoptionshunde', en: 'Our available dogs for adoption' },
   'adoptie.dogs.sub':    { nl: 'Maak kennis met een paar van onze buitenlandse straathonden uit Bosnië en Servië die op zoek zijn naar een thuis.', de: 'Lerne einige unserer Straßenhunde aus Bosnien und Serbien kennen, die ein Zuhause suchen.', en: 'Meet a few of our foreign street dogs from Bosnia and Serbia looking for a home.' },
   'adoptie.dogs.all':    { nl: 'Bekijk alle honden', de: 'Alle Hunde ansehen', en: 'View all dogs' },
@@ -584,6 +604,10 @@ var H4D_PAGE_SEO = {
     desc: { nl: 'Lees dit adoptieverhaal van Hope for Dogs. Ontdek hoe een straathond uit Bosnië of Servië een liefdevol thuis vond.', de: 'Lies diese Adoptionsgeschichte von Hope for Dogs. Erfahre, wie ein Streunerhund aus Bosnien oder Serbien ein liebevolles Zuhause gefunden hat.', en: 'Read this adoption story from Hope for Dogs. Discover how a stray dog from Bosnia or Serbia found a loving home.' }
   }
 };
+
+// The flagship adoption page lives at the keyword-clean URL /buitenlandse-hond-adopteren;
+// alias its SEO entry so the filename-keyed lookup (pageKey) resolves for that path too.
+H4D_PAGE_SEO['buitenlandse-hond-adopteren'] = H4D_PAGE_SEO['adoptie'];
 
 // The homepage's canonical form is the bare root ('/', '/en/', '/de/') — matches
 // the site's pre-existing canonical tag, not '/index.html'.
@@ -768,7 +792,7 @@ document.addEventListener('DOMContentLoaded', function () {
     else if (page === 'over-ons.html') activeNav = 'over-ons';
     else if (page === 'nieuws.html') activeNav = 'nieuws';
     else if (page === 'ervaringen.html' || page === 'ervaring.html') activeNav = 'ervaringen';
-    else if (page === 'adoptie.html') activeNav = 'adoptie';
+    else if (page === 'adoptie.html' || page === 'buitenlandse-hond-adopteren') activeNav = 'adoptie';
     else if (page === 'doneer.html') activeNav = 'doneer';
     else if (location.pathname.indexOf('/beheer') !== -1) activeNav = 'beheer';
 

@@ -31,6 +31,21 @@ RewriteRule ^ https://www.hopefordogseurope.com%{REQUEST_URI} [R=301,L]
 # Stale Google sitelink pointing to a page that never existed on this site
 RewriteRule ^hondenblog2/?$ /nieuws.html [R=301,L,NC]
 
+# Legacy Squarespace URLs still pulling impressions -> current pages (found in GSC)
+RewriteRule ^vragen/?$ /contact.html [R=301,L,NC]
+RewriteRule ^contact-1/?$ /contact.html [R=301,L,NC]
+RewriteRule ^hondenblog(/.*)?$ /nieuws.html [R=301,L,NC]
+RewriteRule ^geadopteerd(-[0-9]+)?(/.*)?$ /honden.html [R=301,L,NC]
+RewriteRule ^sv-baica/?$ /honden.html [R=301,L,NC]
+RewriteRule ^svrif/?$ /honden.html [R=301,L,NC]
+
+# Flagship adoption page moved to a keyword-clean URL. 301 the old paths (all languages).
+# These must precede the /en//de/ .html-collapse rule below so the language prefix is kept.
+RewriteRule ^(en|de)/adoptie\.html$ /$1/buitenlandse-hond-adopteren [R=301,L]
+RewriteRule ^adoptie\.html$ /buitenlandse-hond-adopteren [R=301,L]
+RewriteRule ^(en|de)/adoptie/?$ /$1/buitenlandse-hond-adopteren [R=301,L]
+RewriteRule ^adoptie/?$ /buitenlandse-hond-adopteren [R=301,L]
+
 # Language-prefixed URLs (/en/..., /de/...): internal rewrite, not a redirect.
 # The homepage renders through index.php (SSR <head> per language); the other static
 # pages are rewritten to their bare .html (then to their .php wrapper below, where one
@@ -69,7 +84,8 @@ RewriteRule ^ervaring\.html$ ervaring.php [L]
 RewriteRule ^ervaringen\.html$ ervaringen.php [L]
 RewriteRule ^nieuws\.html$ nieuws.php [L]
 RewriteRule ^over-ons\.html$ over-ons.php [L]
-RewriteRule ^adoptie\.html$ adoptie.php [L]
+# Flagship served at its keyword-clean URL (internal rewrite; URL bar stays clean).
+RewriteRule ^(?:(en|de)/)?buitenlandse-hond-adopteren/?$ adoptie.php [L,QSA]
 RewriteRule ^contact\.html$ contact.php [L]
 RewriteRule ^doneer\.html$ doneer.php [L]
 RewriteRule ^privacy\.html$ privacy.php [L]

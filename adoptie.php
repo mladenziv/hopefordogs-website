@@ -27,7 +27,7 @@ try {
 
     $title = $TITLES[$lang] ?? $TITLES['nl'];
     $desc = $DESCS[$lang] ?? $DESCS['nl'];
-    $canonical = ssr_url('adoptie.html', $lang);
+    $canonical = ssr_url_path('buitenlandse-hond-adopteren', $lang);
 
     if ($lang !== 'nl') $html = str_replace('<html lang="nl">', '<html lang="' . $lang . '">', $html);
     $html = str_replace('<title>Buitenlandse Hond Adopteren uit Bosnië & Servië | Hope for Dogs</title>',
@@ -35,17 +35,17 @@ try {
     $html = str_replace(
         '<meta name="description" content="Een buitenlandse straathond uit Bosnië of Servië adopteren? Ontdek het proces, de kosten (€230 + €200 transport) en hoe wij alles regelen. Bekijk onze honden.">',
         '<meta name="description" content="' . ssr_h($desc) . '">', $html);
-    $html = str_replace('<link rel="canonical" href="https://www.hopefordogseurope.com/adoptie.html">',
+    $html = str_replace('<link rel="canonical" href="https://www.hopefordogseurope.com/buitenlandse-hond-adopteren">',
         '<link rel="canonical" href="' . ssr_h($canonical) . '">', $html);
     $html = str_replace('<meta property="og:title" content="Buitenlandse Hond Adopteren uit Bosnië & Servië | Hope for Dogs">',
         '<meta property="og:title" content="' . ssr_h($title) . '">', $html);
     $html = str_replace(
         '<meta property="og:description" content="Een buitenlandse straathond uit Bosnië of Servië adopteren? Ontdek het proces, de kosten (€230 + €200 transport) en hoe wij alles regelen. Bekijk onze honden.">',
         '<meta property="og:description" content="' . ssr_h($desc) . '">', $html);
-    $html = str_replace('<meta property="og:url" content="https://www.hopefordogseurope.com/adoptie.html">',
+    $html = str_replace('<meta property="og:url" content="https://www.hopefordogseurope.com/buitenlandse-hond-adopteren">',
         '<meta property="og:url" content="' . ssr_h($canonical) . '">', $html);
 
-    $html = str_replace('</head>', ssr_hreflang('adoptie.html') . '</head>', $html);
+    $html = str_replace('</head>', ssr_hreflang_path('buitenlandse-hond-adopteren') . '</head>', $html);
 
     echo $html;
     exit;

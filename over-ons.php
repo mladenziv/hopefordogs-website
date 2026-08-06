@@ -1,9 +1,9 @@
 <?php
 // Server-side prerender wrapper for over-ons.html (about page). Localizes the
-// head per language and injects the FAQPage JSON-LD (built from the faqs table,
-// full Q&A) into <head> so the FAQ is machine-readable and AI-citable without JS.
-// The visible FAQ accordion + team stay client-rendered (a client guard on
-// #ssr-ld-faq prevents a duplicate schema). On ANY failure -> untouched shell.
+// head per language (title/description/canonical/og + hreflang mesh). The FAQ was
+// moved to the adoption flagship (adoptie) to avoid duplicate FAQ content + schema
+// across pages, so this wrapper no longer injects FAQPage JSON-LD.
+// On ANY failure -> untouched shell.
 
 require __DIR__ . '/render.php';
 
@@ -46,26 +46,6 @@ try {
         '<meta property="og:url" content="' . ssr_h($canonical) . '">', $html);
 
     $headInsert = ssr_hreflang('over-ons.html');
-
-    // --- FAQPage schema (best-effort) — full Q&A, machine-readable + AI-citable.
-    // The faqs table uses question_<lang>/answer_<lang> columns (no bare base col),
-    // so read them directly the way the client does (f['question_'+lang] || question_nl).
-    $faqs = ssr_get('/rest/v1/faqs?select=*&order=sort_order.asc,created_at.asc');
-    if ($faqs !== null && count($faqs) > 0) {
-        $mainEntity = [];
-        foreach ($faqs as $f) {
-            $q = !empty($f['question_' . $lang]) ? $f['question_' . $lang] : ($f['question_nl'] ?? '');
-            $a = !empty($f['answer_' . $lang]) ? $f['answer_' . $lang] : ($f['answer_nl'] ?? '');
-            if (trim((string) $q) === '' || trim((string) $a) === '') continue;
-            $mainEntity[] = ['@type' => 'Question', 'name' => $q,
-                'acceptedAnswer' => ['@type' => 'Answer', 'text' => $a]];
-        }
-        if (count($mainEntity) > 0) {
-            $faqSchema = ['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $mainEntity];
-            $headInsert .= '  <script type="application/ld+json" id="ssr-ld-faq">'
-                . json_encode($faqSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
-        }
-    }
 
     $html = str_replace('</head>', $headInsert . '</head>', $html);
     echo $html;
