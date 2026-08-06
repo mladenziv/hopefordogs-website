@@ -113,7 +113,9 @@ function dogCardHTML(dog, opts) {
   if (opts.featured === 'big') cls += ' big';
   else if (opts.featured === 'small') cls += ' small';
 
-  var cardStyle = 'text-decoration:none;color:inherit;' + (opts.index != null ? 'animation-delay:' + (opts.index * 0.05) + 's;' : '');
+  // display:block is essential: as an <a> the card would default to display:inline, which
+  // collapses its tap target until images reflow (broke mobile tappability for ~5–10s).
+  var cardStyle = 'display:block;text-decoration:none;color:inherit;' + (opts.index != null ? 'animation-delay:' + (opts.index * 0.05) + 's;' : '');
   var cardHref = (typeof h4dDetailUrl === 'function') ? h4dDetailUrl('hond', 'hond.html', dog) : ('hond.html?id=' + dog.id);
   // Real link to the dog's full page (crawlable + keyboard-accessible). A normal click still
   // opens the quick-view modal; cmd/ctrl/shift-click opens the full page in a new tab.

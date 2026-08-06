@@ -908,6 +908,8 @@
 
             /* --- XS: 0–767px --- */
             @media (max-width: 767px) {
+                /* Drop the 2nd intro sentence on phones to keep the hero compact */
+                .hero-sub-tail { display: none; }
                 /* Responsive type — XS */
                 .dog-card-name {
                     font-size: 18px;
@@ -1533,8 +1535,8 @@
                 <div class="page-hero-inner">
                     <div class="hero-text">
                         <h1 class="t-heading-lg" data-i18n="honden.hero">Adoptiehonden uit Bosnië &amp; Servië</h1>
-                        <p data-i18n="honden.hero.sub">
-                            Al onze adoptiehonden zijn buitenlandse straathonden uit Bosni&#235; en Servi&#235;, medisch behandeld en klaar voor een nieuw thuis. Sommige verblijven nog in ons asiel, andere al in een opvanggezin in Nederland of Belgi&#235;.
+                        <p>
+                            <span data-i18n="honden.hero.sub">Al onze adoptiehonden zijn buitenlandse straathonden uit Bosni&#235; en Servi&#235;, medisch behandeld en klaar voor een nieuw thuis.</span><span class="hero-sub-tail" data-i18n="honden.hero.sub2"> Sommige verblijven nog in ons asiel, andere al in een opvanggezin in Nederland of Belgi&#235;.</span>
                         </p>
                         <p style="margin-top:12px;"><a href="adoptie.html" style="color:var(--dark-2);font-weight:600;text-decoration:underline;text-underline-offset:2px;" data-i18n="honden.hero.adoptlink">Meer over een buitenlandse hond adopteren</a></p>
                     </div>
@@ -1874,10 +1876,10 @@
             </div>
         </div>
 
-        <script src="components.js?v=34"></script>
+        <script src="components.js?v=35"></script>
         <!-- ============ SUPABASE ============ -->
         <script src="supabase-config.js"></script>
-        <script src="dog-card.js?v=4"></script>
+        <script src="dog-card.js?v=5"></script>
 
         <!-- ============ JAVASCRIPT ============ -->
         <script>
