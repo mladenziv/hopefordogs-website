@@ -113,12 +113,12 @@ function dogCardHTML(dog, opts) {
   if (opts.featured === 'big') cls += ' big';
   else if (opts.featured === 'small') cls += ' small';
 
-  // Plain <div> (NOT an <a>): on iOS a real link cancels the tap on the slightest
-  // layout shift (lazy images) or finger movement — you get a highlight flicker but
-  // no click. A div+onclick is immune, so the quick-view opens reliably on mobile.
-  // Dog detail pages stay crawlable via sitemap-dogs.xml.
-  var animDelay = opts.index != null ? ' style="animation-delay: ' + (opts.index * 0.05) + 's;"' : '';
-  return '<div class="' + cls + '" data-status="' + safeStatus + '" data-dog-id="' + safeId + '"' + animDelay + ' onclick="openDogModal(\'' + dog.id + '\')">' + inner + '</div>';
+  // Plain link to the dog's full page — no modal/sheet, so a tap always works on mobile
+  // (it navigates like any other link, with no dependence on JS having loaded yet). The
+  // full page shows the same content the quick-view used to (and more).
+  var cardStyle = 'display:block;text-decoration:none;color:inherit;' + (opts.index != null ? 'animation-delay:' + (opts.index * 0.05) + 's;' : '');
+  var cardHref = (typeof h4dDetailUrl === 'function') ? h4dDetailUrl('hond', 'hond.html', dog) : ('hond.html?id=' + dog.id);
+  return '<a href="' + cardHref + '" class="' + cls + '" data-status="' + safeStatus + '" data-dog-id="' + safeId + '" style="' + cardStyle + '">' + inner + '</a>';
 }
 
 /* ---- On-card gallery + inline video behavior (delegated; acts only on `.dog-card-media`) ----

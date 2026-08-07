@@ -90,13 +90,10 @@ try {
             // so the prerendered/first-paint cards are fully styled — without the
             // wrappers the CSS has nothing to attach to and the card renders unframed
             // with the name in raw flow until the client JS hydrates (FOUC).
-            // Real link (crawlable + works with no JS: navigates to the dog page). The instant
-            // the modal JS exists, the inline onclick intercepts and opens the quick-view instead
-            // — so a tap opens the sheet as soon as openDogModal is defined, WITHOUT waiting for
-            // the full dog-list fetch + re-render (that wait was the "cards not tappable for
-            // several seconds" gap). openDogModal handles "data not loaded yet" with a spinner.
-            $cards .= '<a class="dog-card" href="' . ssr_h($href) . '" data-dog-id="' . ssr_h($did) . '"'
-                . ' onclick="if(window.openDogModal){event.preventDefault();openDogModal(\'' . ssr_h($did) . '\')}">'
+            // Plain link straight to the dog's full page — no modal/sheet, no JS timing, so a
+            // tap always works on mobile (it navigates like any other link). The full page shows
+            // the same info the old quick-view did (and more).
+            $cards .= '<a class="dog-card" href="' . ssr_h($href) . '">'
                 . '<div class="dog-card-inner">'
                 . '<img class="dog-card-img" src="' . ssr_h($img) . '" alt="' . ssr_h($naam . ' — ' . $altSuffix) . '" loading="lazy" width="400" height="300">'
                 . '<div class="dog-card-body"><div class="dog-card-name">' . ssr_h($naam) . '</div></div>'
