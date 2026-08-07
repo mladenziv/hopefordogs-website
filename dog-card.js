@@ -231,3 +231,37 @@ function dogCardHTML(dog, opts) {
     }
   }, true);
 })();
+
+/* ---- iOS tap-to-navigate rescue (delegated; survives grid re-renders) ----
+ * On iOS, a dog card can sit inside an overflow/scroll container that captures touch events
+ * for scroll detection and SUPPRESSES the link's synthetic click — you see touchstart +
+ * touchend fire but no click, so the <a> never navigates (the card just highlights). This is
+ * the same iOS quirk already worked around for the nav bar in components.js. Fix: on a short,
+ * stationary tap anywhere on a card, navigate to its href ourselves. A real drag/scroll
+ * (moved > 12px) or a long press is ignored, and taps on the gallery controls are left alone. */
+(function () {
+  if (window.__dogTapNavInit) return;
+  window.__dogTapNavInit = true;
+  var sx = 0, sy = 0, st = 0, card = null;
+  document.addEventListener('touchstart', function (e) {
+    card = null;
+    var t0 = e.target;
+    if (!t0 || !t0.closest) return;
+    if (t0.closest('.dog-card-nav, .dog-card-vplay, .dog-card-vmute')) return; // gallery controls
+    var c = t0.closest('a.dog-card[href]');
+    if (!c) return;
+    card = c;
+    var t = e.touches[0];
+    sx = t.clientX; sy = t.clientY; st = Date.now();
+  }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (!card) return;
+    var c = card; card = null;
+    var t = e.changedTouches[0];
+    if (!t) return;
+    if (Date.now() - st < 500 && Math.abs(t.clientX - sx) < 12 && Math.abs(t.clientY - sy) < 12) {
+      e.preventDefault();
+      window.location.href = c.getAttribute('href');
+    }
+  }, { passive: false });
+})();
