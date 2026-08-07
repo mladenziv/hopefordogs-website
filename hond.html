@@ -54,6 +54,12 @@
       align-items: start;
     }
 
+    /* Grid items must be allowed to shrink below their content's intrinsic width. Without
+       this, a gallery with many photos lets the flex carousel-track drive the column (and the
+       whole page) wider than the viewport, so the big photo overflows and the page scrolls
+       sideways. min-width:0 lets the column stay put and the carousel clip its slides. */
+    .detail-grid > div { min-width: 0; }
+
     /* ============ IMAGE CAROUSEL ============ */
     .carousel {
       position: relative;
@@ -231,6 +237,13 @@
       flex-wrap: wrap;
       padding-top: 8px;
     }
+
+    /* Keep both CTA buttons the same height. The Facebook button is an <a> (inherits the
+       body's larger line-height) while the message button is a <button> (UA line-height), so
+       they diverge when they wrap onto separate lines. A shared line-height >= the 20px icon
+       makes their natural heights match at every width. */
+    .dog-cta .btn-primary,
+    .dog-cta .btn-facebook { line-height: 1.25; }
 
     .btn-facebook {
       display: inline-flex;
