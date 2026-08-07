@@ -598,6 +598,7 @@
     let touchEndX = 0;
 
     async function loadDog() {
+      let dogFound = false;
       const params = new URLSearchParams(window.location.search);
       let dogId = params.get('id');
 
@@ -624,6 +625,7 @@
 
         const dog = dogs[0];
         dogId = dog.id;
+        dogFound = true;
         // Adopted dogs are noindex,follow (kept live, but out of the index). The server
         // prerender already sets this; this covers the case where it fell back to the shell.
         if (dog.status === 'geadopteerd' && !document.querySelector('meta[name="robots"]')) {
@@ -774,7 +776,7 @@
         const photos = await supabaseGet('dog_photos', `select=*&dog_id=eq.${dogId}&order=sort_order.asc.nullslast,is_primary.desc,created_at.asc`);
         images = photos.map(p => p.photo_url);
         if (images.length > 0) {
-          initCarousel();
+          initCarousel(dog.naam);
         }
 
         // Show detail
@@ -783,7 +785,10 @@
 
       } catch (err) {
         console.error('Error loading dog:', err);
-        showError();
+        // Only surface "not found" if we never got the dog. An error AFTER the dog is
+        // found + shown (e.g. an enhancement/render error) must NOT flip the page to
+        // "not found" — the dog is already on screen (server-rendered).
+        if (!dogFound) showError();
       }
     }
 
@@ -793,7 +798,7 @@
     }
 
     // ============ CAROUSEL ============
-    function initCarousel() {
+    function initCarousel(dogNaam) {
       const track = document.getElementById('carouselTrack');
       const dots = document.getElementById('carouselDots');
       const thumbs = document.getElementById('carouselThumbs');
@@ -803,7 +808,7 @@
         const isVideo = url && (url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.mov'));
         return isVideo
           ? `<div class="carousel-slide"><video src="${url}" controls playsinline style="width:100%;height:100%;object-fit:contain;background:#000"></video></div>`
-          : `<div class="carousel-slide"><img src="${url}" alt="Foto van ${dog.naam}" width="800" height="600" loading="lazy" decoding="async"></div>`;
+          : `<div class="carousel-slide"><img src="${url}" alt="Foto van ${dogNaam}" width="800" height="600" loading="lazy" decoding="async"></div>`;
       }).join('');
 
       // Build dots
@@ -816,7 +821,7 @@
         const isVideo = url && (url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.mov'));
         return isVideo
           ? `<div class="carousel-thumb ${i === 0 ? 'active' : ''}" data-index="${i}"><div style="width:100%;height:100%;background:var(--beige);display:flex;align-items:center;justify-content:center;position:relative"><video src="${url}" style="width:100%;height:100%;object-fit:cover"></video><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.5))"><polygon points="5,3 19,12 5,21"/></svg></div></div></div>`
-          : `<div class="carousel-thumb ${i === 0 ? 'active' : ''}" data-index="${i}"><img src="${url}" alt="Foto ${i + 1} van ${dog.naam}" width="120" height="90" loading="lazy" decoding="async"></div>`;
+          : `<div class="carousel-thumb ${i === 0 ? 'active' : ''}" data-index="${i}"><img src="${url}" alt="Foto ${i + 1} van ${dogNaam}" width="120" height="90" loading="lazy" decoding="async"></div>`;
       }).join('');
 
       // Hide nav if only 1 image
