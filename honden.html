@@ -310,6 +310,12 @@
                 cursor: pointer;
                 /* Register taps immediately (no 300ms delay / double-tap zoom) */
                 touch-action: manipulation;
+                /* iOS: a tap on the card's text can start a text-SELECTION (that's the
+                   "highlight") instead of following the link, so the card never opens.
+                   Disable selection + the long-press callout so a tap only navigates. */
+                -webkit-user-select: none;
+                user-select: none;
+                -webkit-touch-callout: none;
             }
 
             .dog-card-inner {
@@ -1887,6 +1893,39 @@
         <!-- ============ SUPABASE ============ -->
         <script src="supabase-config.js"></script>
         <script src="dog-card.js?v=8"></script>
+        <!-- OPT-IN tap debugger: visit /honden?debug=1 to show an on-screen readout of the
+             touch/click flow on a dog card. Invisible to normal visitors. Lets us see exactly
+             what a real iPhone does when a tap fails. Remove once the tap issue is resolved. -->
+        <script>
+        (function () {
+          if (location.search.indexOf('debug=1') === -1) return;
+          var box = document.createElement('div');
+          box.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2147483647;background:rgba(0,0,0,.9);color:#0f0;font:12px/1.4 monospace;padding:8px;max-height:45vh;overflow:auto;white-space:pre-wrap';
+          function add() { (document.body || document.documentElement).appendChild(box); }
+          if (document.body) add(); else document.addEventListener('DOMContentLoaded', add);
+          var lines = ['DEBUG on — tap a dog card once.'];
+          function log(m) { lines.unshift(m); if (lines.length > 24) lines.pop(); box.textContent = lines.join('\n'); }
+          function tgt(e) {
+            var c = e.target && e.target.closest && e.target.closest('.dog-card');
+            if (c) return c.tagName + ' .dog-card href=' + (c.getAttribute('href') || '(none)');
+            return (e.target && e.target.tagName || '?') + '.' + ((e.target && e.target.className) || '');
+          }
+          document.addEventListener('touchstart', function (e) { log('touchstart  ' + tgt(e)); }, true);
+          document.addEventListener('touchend', function (e) {
+            var t = (e.changedTouches && e.changedTouches[0]) || {};
+            log('touchend    ' + tgt(e) + '  defaultPrevented=' + e.defaultPrevented);
+          }, true);
+          document.addEventListener('click', function (e) {
+            log('CLICK       ' + tgt(e) + '  defaultPrevented=' + e.defaultPrevented);
+            setTimeout(function () { log('  after-click prevented=' + e.defaultPrevented + '  url=' + location.pathname); }, 50);
+          }, true);
+          // selection change = iOS turned the tap into text selection
+          document.addEventListener('selectionchange', function () {
+            var s = (window.getSelection && window.getSelection().toString()) || '';
+            if (s) log('SELECTION!  "' + s.slice(0, 30) + '"  <-- tap became text-select');
+          });
+        })();
+        </script>
 
         <!-- ============ JAVASCRIPT ============ -->
         <script>
