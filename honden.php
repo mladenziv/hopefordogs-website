@@ -76,6 +76,15 @@ try {
             $href = ($s !== '')
                 ? (($lang === 'nl' ? '/hond/' : '/' . $lang . '/hond/') . rawurlencode($s))
                 : ($hondPath . '?id=' . rawurlencode($did));
+            $pos++;
+            $items[] = ['@type' => 'ListItem', 'position' => $pos,
+                'url' => SSR_ORIGIN . $href, 'name' => $naam];
+            // Prerender only the first screenful of cards; the client JS hydrates the full
+            // list on load. Fewer prerendered cards => far smaller HTML (was ~160KB with the
+            // whole kennel) => the page's scripts download and run sooner => cards become
+            // tappable faster on mobile. Crawlers still get every dog via the ItemList schema
+            // below + sitemap-dogs.xml, so nothing is lost for indexing.
+            if ($pos > 24) continue;
             $img = $photoBy[$did] ?? '/images/placeholder-dog.svg';
             // Mirror the client card structure (.dog-card-inner > img + .dog-card-body)
             // so the prerendered/first-paint cards are fully styled — without the
@@ -86,9 +95,6 @@ try {
                 . '<img class="dog-card-img" src="' . ssr_h($img) . '" alt="' . ssr_h($naam . ' — ' . $altSuffix) . '" loading="lazy" width="400" height="300">'
                 . '<div class="dog-card-body"><div class="dog-card-name">' . ssr_h($naam) . '</div></div>'
                 . '</div></a>';
-            $pos++;
-            $items[] = ['@type' => 'ListItem', 'position' => $pos,
-                'url' => SSR_ORIGIN . $href, 'name' => $naam];
         }
         if ($cards !== '') {
             // Inject server cards right after the grid's opening tag (before the

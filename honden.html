@@ -18,6 +18,13 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link rel="preconnect" href="https://gdmntnrsgfntcgqmbmtj.supabase.co" crossorigin />
+        <!-- Start the page scripts downloading WITH the HTML. They sit at the bottom of the
+             body (after 100+ prerendered cards), so without these hints the 177KB components.js
+             only begins downloading once the whole page is parsed — leaving the dog cards
+             un-tappable (the modal JS isn't ready yet) for several seconds on mobile/fresh loads. -->
+        <link rel="preload" as="script" href="components.js?v=35" />
+        <link rel="preload" as="script" href="supabase-config.js" />
+        <link rel="preload" as="script" href="dog-card.js?v=6" />
         <link
             href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700;800&amp;family=Nunito:wght@400;500;600;700;800;900&amp;display=swap"
             rel="stylesheet"
