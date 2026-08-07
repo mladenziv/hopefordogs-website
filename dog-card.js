@@ -78,10 +78,14 @@ function dogCardHTML(dog, opts) {
     media =
       '<div class="dog-card-media' + (isDogVideo(img) ? ' is-video' : '') + '" data-dog-id="' + safeId + '">' +
         mediaEl +
-        '<button type="button" class="dog-card-nav prev" aria-label="' + escapeHTML(T('dogcard.aria.prev')) + '">' + DOG_NAV_SVG.prev + '</button>' +
-        '<button type="button" class="dog-card-nav next" aria-label="' + escapeHTML(T('dogcard.aria.next')) + '">' + DOG_NAV_SVG.next + '</button>' +
-        '<button type="button" class="dog-card-vplay" aria-label="' + escapeHTML(T('dogcard.aria.playpause')) + '">' + DOG_VID_SVG.play + '</button>' +
-        '<button type="button" class="dog-card-vmute" aria-label="' + escapeHTML(T('dogcard.aria.mute')) + '">' + DOG_VID_SVG.muted + '</button>' +
+        // These live INSIDE the card's <a>. They MUST NOT be <button> (or any interactive
+        // element): a <button> nested in an <a> is invalid HTML, and Safari mishandles it —
+        // the whole card highlights on tap but refuses to navigate. <span> is valid inside
+        // <a>; the capture-phase click handler below still drives them by class name.
+        '<span role="button" class="dog-card-nav prev" aria-label="' + escapeHTML(T('dogcard.aria.prev')) + '">' + DOG_NAV_SVG.prev + '</span>' +
+        '<span role="button" class="dog-card-nav next" aria-label="' + escapeHTML(T('dogcard.aria.next')) + '">' + DOG_NAV_SVG.next + '</span>' +
+        '<span role="button" class="dog-card-vplay" aria-label="' + escapeHTML(T('dogcard.aria.playpause')) + '">' + DOG_VID_SVG.play + '</span>' +
+        '<span role="button" class="dog-card-vmute" aria-label="' + escapeHTML(T('dogcard.aria.mute')) + '">' + DOG_VID_SVG.muted + '</span>' +
       '</div>';
   }
 
