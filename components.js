@@ -40,7 +40,31 @@ function h4dTrack(name, data) {
   } catch (e) {}
 }
 window.h4dTrack = h4dTrack;
-h4dAdSource();   // capture the campaign on the initial landing URL, before any navigation clears it
+
+// Readable entry source for stamping into server-side records (contact emails, donations)
+// so a conversion's origin is known even when client analytics is blocked. Captured once
+// per tab on the first page; kept separate from h4dAdSource so it never alters Umami events.
+function h4dEntrySource() {
+  try {
+    var K = 'h4d_entry';
+    var v = sessionStorage.getItem(K);
+    if (v) return v;
+    var p = new URLSearchParams(location.search);
+    if (p.get('utm_campaign') || p.get('gclid') || p.get('utm_source')) {
+      v = (p.get('utm_campaign') || 'ad') + ' (' + (p.get('utm_source') || (p.get('gclid') ? 'google' : '?')) + '/' + (p.get('utm_medium') || 'cpc') + ')';
+    } else {
+      var host = '';
+      try { host = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''; } catch (e) {}
+      v = (host && host.indexOf('hopefordogseurope.com') === -1) ? ('referral: ' + host) : 'direct';
+    }
+    sessionStorage.setItem(K, v);
+    return v;
+  } catch (e) { return ''; }
+}
+window.h4dEntrySource = h4dEntrySource;
+
+h4dAdSource();      // capture the campaign for Umami attribution (utm only)
+h4dEntrySource();   // capture a readable entry source for server-side conversion stamping
 
 // ===== TRANSLATION SYSTEM =====
 var H4D_I18N = {

@@ -587,7 +587,7 @@
     </div>
   </div>
 
-  <script src="components.js?v=41"></script>
+  <script src="components.js?v=42"></script>
 
   <!-- ============ SUPABASE ============ -->
   <script src="supabase-config.js"></script>
@@ -931,7 +931,8 @@
             email: document.getElementById('contactEmail').value.trim(),
             telefoon: document.getElementById('contactTelefoon').value.trim() || null,
             bericht: document.getElementById('contactBericht').value.trim(),
-            website: document.getElementById('contactWebsite').value
+            website: document.getElementById('contactWebsite').value,
+            bron: (window.h4dEntrySource ? h4dEntrySource() : '')
           };
 
           // Route through the PHP endpoint so it's saved AND emails the team

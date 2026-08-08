@@ -52,8 +52,14 @@ $dogId = (isset($input['dog_id']) && is_string($input['dog_id']) && preg_match('
     ? $input['dog_id'] : null;
 $hond  = isset($input['hond']) ? trim($input['hond']) : '';
 
+// Traffic source (from the client's h4dEntrySource): the ad campaign for paid clicks,
+// else the referring site or "direct". Stamped into the stored message + the notification
+// email so every enquiry's origin is known even when client analytics is blocked.
+$bron = isset($input['bron']) ? substr(preg_replace('/[\r\n]+/', ' ', trim((string) $input['bron'])), 0, 120) : '';
+
 // Fold the optional subject into the message body (no dedicated column).
-$fullMessage = ($onderwerp !== '' ? ('Onderwerp: ' . $onderwerp . "\n\n") : '') . $bericht;
+$fullMessage = ($onderwerp !== '' ? ('Onderwerp: ' . $onderwerp . "\n\n") : '') . $bericht
+             . ($bron !== '' ? ("\n\n\u{2014} Herkomst: " . $bron) : '');
 
 $row = [
     'dog_id'   => $dogId,
@@ -95,6 +101,7 @@ $subject = '=?UTF-8?B?' . base64_encode($subjectText) . '?=';
 $body    = "Naam: $naam\nE-mail: $email\nTelefoon: " . ($telefoon !== '' ? $telefoon : '-') . "\n"
          . ($hond !== '' ? "Interesse in hond: $hond\n" : '')
          . ($onderwerp !== '' ? "Onderwerp: $onderwerp\n" : '')
+         . ($bron !== '' ? "Herkomst: $bron\n" : '')
          . "\nBericht:\n$bericht\n";
 $fromEmail = defined('DONATION_FROM_EMAIL') ? DONATION_FROM_EMAIL : 'info@hopefordogseurope.com';
 // Strip CR/LF from the name before it goes into a mail header — prevents email

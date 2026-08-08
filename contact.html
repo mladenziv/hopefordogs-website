@@ -235,7 +235,7 @@
   <div id="footer-placeholder"></div>
 
   <script src="supabase-config.js"></script>
-  <script src="components.js?v=41"></script>
+  <script src="components.js?v=42"></script>
   <script>
     // Pre-fill the subject when arriving from a dog card (?hond=<naam>).
     (function () {
@@ -260,7 +260,8 @@
             telefoon: document.getElementById('cfTel').value.trim(),
             onderwerp: document.getElementById('cfSubject').value.trim(),
             bericht: document.getElementById('cfBericht').value.trim(),
-            website: document.getElementById('cfWebsite').value
+            website: document.getElementById('cfWebsite').value,
+            bron: (window.h4dEntrySource ? h4dEntrySource() : '')
           })
         });
         var data = await res.json();
