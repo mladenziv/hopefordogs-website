@@ -8,17 +8,32 @@ require __DIR__ . '/render.php';
 
 $tpl = __DIR__ . '/ervaring.html';
 $id = isset($_GET['id']) ? (string) $_GET['id'] : '';
+$slug = isset($_GET['slug']) ? (string) $_GET['slug'] : '';
 
 try {
     $lang = ssr_lang();
 
-    if ($id === '' || !preg_match('/^[A-Za-z0-9_-]{8,64}$/', $id)) ssr_passthru($tpl);
-    $rows = ssr_get('/rest/v1/stories?select=*&id=eq.' . rawurlencode($id));
-    if ($rows === null || count($rows) === 0) ssr_passthru($tpl);
+    // Resolve by slug (/ervaring/<slug>) or by legacy ?id= which 301s to the slug.
+    if ($slug !== '' && preg_match('/^[A-Za-z0-9-]{1,120}$/', $slug)) {
+        $rows = ssr_get('/rest/v1/stories?select=*&slug=eq.' . rawurlencode($slug));
+    } elseif ($id !== '' && preg_match('/^[A-Za-z0-9_-]{8,64}$/', $id)) {
+        $rows = ssr_get('/rest/v1/stories?select=*&id=eq.' . rawurlencode($id));
+    } else {
+        ssr_passthru($tpl);
+    }
+    if ($rows === null) ssr_passthru($tpl);        // API error -> 200 shell (client retries)
+    if (count($rows) === 0) ssr_not_found($tpl);   // unknown story -> 404
     $story = $rows[0];
 
     $name = trim((string) ($story['dog_name'] ?? ''));
     if ($name === '') ssr_passthru($tpl);
+
+    // Consolidate a legacy ?id= URL onto the clean slug.
+    $storySlug = trim((string) ($story['slug'] ?? ''));
+    if ($slug === '' && $storySlug !== '') {
+        header('Location: ' . ssr_url_path('ervaring/' . rawurlencode($storySlug), $lang), true, 301);
+        exit;
+    }
 
     $description = (string) ssr_field($story, 'description', $lang);
     $fullStory  = (string) ssr_field($story, 'full_story', $lang);
@@ -34,9 +49,14 @@ try {
 
     $fullTitle = $name . ' — Adoptieverhaal | Hope for Dogs';
     $descShort = $description !== '' ? mb_substr(trim($description), 0, 140) : ('Lees het adoptieverhaal van ' . $name . '.');
-    $q = '?id=' . rawurlencode($id);
-    $canonical = ssr_url('ervaring.html', $lang, $q);
-    $hreflangMesh = ssr_hreflang('ervaring.html', $q);
+    if ($storySlug !== '') {
+        $canonical = ssr_url_path('ervaring/' . $storySlug, $lang);
+        $hreflangMesh = ssr_hreflang_path('ervaring/' . $storySlug);
+    } else {
+        $q = '?id=' . rawurlencode($id);
+        $canonical = ssr_url('ervaring.html', $lang, $q);
+        $hreflangMesh = ssr_hreflang('ervaring.html', $q);
+    }
 
     $html = file_get_contents($tpl);
     if ($html === false) ssr_passthru($tpl);

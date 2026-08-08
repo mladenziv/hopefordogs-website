@@ -310,7 +310,7 @@
       }).join('');
       try {
         // Only the columns the card needs (smaller payload than select=*), incl. translations
-        var stories = await supabaseGet('stories', 'select=id,photo_url,dog_name,adopter_name,description,description_de,description_en,sort_order,created_at&order=sort_order.asc.nullslast,created_at.desc');
+        var stories = await supabaseGet('stories', 'select=id,slug,photo_url,dog_name,adopter_name,description,description_de,description_en,sort_order,created_at&order=sort_order.asc.nullslast,created_at.desc');
         window._stories = stories;
         renderStories();
       } catch (err) {
@@ -332,7 +332,7 @@
         var adopter = story.adopter_name || '';
         // First 3 load eagerly (above the fold); the rest lazy + async decode
         var loadAttr = i < 3 ? 'eager' : 'lazy';
-        return '<a href="' + h4dUrl('ervaring.html') + '?id=' + story.id + '" class="testimonial-card" style="animation-delay:' + (i * 0.05) + 's">' +
+        return '<a href="' + h4dDetailUrl('ervaring', 'ervaring.html', story) + '" class="testimonial-card" style="animation-delay:' + (i * 0.05) + 's">' +
           '<img src="' + raw + '" alt="' + escapeAttr(story.dog_name) + '" class="testimonial-card-img" loading="' + loadAttr + '" decoding="async">' +
           '<div class="testimonial-card-body">' +
             '<div class="testimonial-card-name t-heading-sm">' + escapeHtml(story.dog_name) + '</div>' +

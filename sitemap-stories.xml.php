@@ -8,7 +8,7 @@ header('Content-Type: application/xml; charset=UTF-8');
 $SUPABASE_URL = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
 $SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
 
-$path = '/rest/v1/stories?select=id,created_at&order=sort_order.asc.nullslast,created_at.desc';
+$path = '/rest/v1/stories?select=id,slug,created_at&order=sort_order.asc.nullslast,created_at.desc';
 
 $ch = curl_init();
 curl_setopt_array($ch, [
@@ -33,7 +33,10 @@ foreach ($stories as $story) {
     if (empty($story['id'])) continue;
     $lastmod = !empty($story['created_at']) ? gmdate('Y-m-d', strtotime($story['created_at'])) : null;
     foreach ($prefixes as $prefix) {
-        $loc = 'https://www.hopefordogseurope.com/' . $prefix . 'ervaring.html?id=' . rawurlencode($story['id']);
+        $slug = trim((string) ($story['slug'] ?? ''));
+        $loc = $slug !== ''
+            ? 'https://www.hopefordogseurope.com/' . $prefix . 'ervaring/' . rawurlencode($slug)
+            : 'https://www.hopefordogseurope.com/' . $prefix . 'ervaring.html?id=' . rawurlencode($story['id']);
         echo '  <url>' . "\n";
         echo '    <loc>' . htmlspecialchars($loc, ENT_XML1) . '</loc>' . "\n";
         if ($lastmod) {

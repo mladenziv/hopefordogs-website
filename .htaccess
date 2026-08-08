@@ -62,6 +62,7 @@ RewriteRule ^(en|de)/([a-z-]+)\.html$ /$2.html [L]
 # the raw template on any failure.
 RewriteRule ^(?:(en|de)/)?hond/([A-Za-z0-9-]+)/?$   hond.php?slug=$2 [L,QSA]
 RewriteRule ^(?:(en|de)/)?nieuws/([A-Za-z0-9-]+)/?$ post.php?slug=$2 [L,QSA]
+RewriteRule ^(?:(en|de)/)?ervaring/([A-Za-z0-9-]+)/?$ ervaring.php?slug=$2 [L,QSA]
 
 # Blog posts sitemap: serve the PHP script at a clean .xml URL (internal rewrite,
 # not a redirect) since Search Console's sitemap field rejects .xml.php addresses.
