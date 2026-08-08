@@ -11,16 +11,36 @@
   (document.head || document.documentElement).appendChild(s);
 })();
 
+// Ad attribution: the campaign (utm_*/gclid) only sits on the FIRST landing URL, so we
+// stash it once per tab in first-party sessionStorage (no cookies, nothing sent to any
+// third party; cleared when the tab closes) and merge it into every custom event — so a
+// conversion fired AFTER the visitor navigates is still attributable to the ad in Umami.
+function h4dAdSource() {
+  try {
+    var stored = sessionStorage.getItem('h4d_src');
+    if (stored) return JSON.parse(stored);
+    var p = new URLSearchParams(location.search);
+    var src = p.get('utm_source') || (p.get('gclid') ? 'google' : '');
+    if (!src) return null;
+    var obj = { source: src, campaign: p.get('utm_campaign') || '', content: p.get('utm_content') || '' };
+    sessionStorage.setItem('h4d_src', JSON.stringify(obj));
+    return obj;
+  } catch (e) { return null; }
+}
+
 // h4dTrack(name[, data]) — fire a Umami custom event if the tracker is loaded.
 // Safe no-op when analytics is blocked or still loading.
 function h4dTrack(name, data) {
   try {
+    var s = h4dAdSource();
+    if (s) data = Object.assign({}, data || {}, { utm_source: s.source, utm_campaign: s.campaign });
     if (window.umami && typeof window.umami.track === 'function') {
       data ? window.umami.track(name, data) : window.umami.track(name);
     }
   } catch (e) {}
 }
 window.h4dTrack = h4dTrack;
+h4dAdSource();   // capture the campaign on the initial landing URL, before any navigation clears it
 
 // ===== TRANSLATION SYSTEM =====
 var H4D_I18N = {
