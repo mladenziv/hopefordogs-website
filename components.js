@@ -392,6 +392,7 @@ var H4D_I18N = {
   'dogcard.tag.puppy':      { nl: 'Puppy',      de: 'Welpe',       en: 'Puppy' },
   'dogcard.tag.senior':     { nl: 'Senior',     de: 'Senior',      en: 'Senior' },
   'dogcard.tag.langzitter': { nl: 'Langzitter', de: 'Langzeithund', en: 'Long-stay' },
+  'dogcard.tag.gereserveerd': { nl: 'Gereserveerd', de: 'Reserviert', en: 'Reserved' },
   'dogcard.size.klein':     { nl: 'Klein',      de: 'Klein',       en: 'Small' },
   'dogcard.size.middel':    { nl: 'Middel',     de: 'Mittel',      en: 'Medium' },
   'dogcard.size.groot':     { nl: 'Groot',      de: 'Groß',        en: 'Large' },

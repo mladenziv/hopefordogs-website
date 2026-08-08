@@ -18,9 +18,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Preload the page scripts so they download alongside the HTML instead of after it. -->
-  <link rel="preload" as="script" href="components.js?v=35">
+  <link rel="preload" as="script" href="components.js?v=36">
   <link rel="preload" as="script" href="supabase-config.js">
-  <link rel="preload" as="script" href="dog-card.js?v=9">
+  <link rel="preload" as="script" href="dog-card.js?v=10">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700;800&amp;family=Nunito:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="shared.css?v=21">
   <style>
@@ -525,6 +525,8 @@
     .dog-card-badge.senior .dog-card-badge-tail { border-color: transparent #991b1b transparent transparent; }
     .dog-card-badge.langzitter .dog-card-badge-label { background: #ea580c; }
     .dog-card-badge.langzitter .dog-card-badge-tail { border-color: transparent #c2410c transparent transparent; }
+    .dog-card-badge.gereserveerd .dog-card-badge-label { background: #2563eb; }
+    .dog-card-badge.gereserveerd .dog-card-badge-tail { border-color: transparent #1d4ed8 transparent transparent; }
     .dog-card-media { position: relative; }
     .dog-card-media .dog-card-img { display: block; }
     .dog-card-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: none; border-radius: 50%; background: rgba(255, 255, 255, 0.9); color: var(--dark-1); display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.2s ease, background 0.2s ease; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18); z-index: 3; }
@@ -944,9 +946,9 @@
 
   </main>
   <div id="footer-placeholder"></div>
-  <script src="components.js?v=35"></script>
+  <script src="components.js?v=36"></script>
   <script src="supabase-config.js"></script>
-  <script src="dog-card.js?v=9"></script>
+  <script src="dog-card.js?v=10"></script>
   <script>
     // Live block of available dogs on the flagship. Uses the SAME card renderer as
     // the listing (dogCardHTML) and opens a clean detail modal on click. Hides the

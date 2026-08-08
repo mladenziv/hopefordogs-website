@@ -60,9 +60,14 @@ function dogCardHTML(dog, opts) {
   var dogTags = dog.tags || [];
   var tagType = dogTags.includes('puppy') ? 'puppy' : dogTags.includes('senior') ? 'senior' : dogTags.includes('langzitter') ? 'langzitter' : '';
   var tagLabel = tagType === 'puppy' ? T('dogcard.tag.puppy') : tagType === 'senior' ? T('dogcard.tag.senior') : tagType === 'langzitter' ? T('dogcard.tag.langzitter') : '';
+  // A reserved dog (beheer "Gereserveerd" = status 'in_gesprek') gets a reserved ribbon,
+  // which takes precedence over the age/size tag.
+  var isReserved = dog.status === 'in_gesprek' || dog.status === 'gereserveerd';
+  var badgeType = isReserved ? 'gereserveerd' : tagType;
+  var badgeLabel = isReserved ? T('dogcard.tag.gereserveerd') : tagLabel;
   var badge = '';
-  if (tagType) {
-    badge = '<div class="dog-card-badge ' + tagType + '"><span class="dog-card-badge-label">' + tagLabel + '</span><span class="dog-card-badge-tail"></span></div>';
+  if (badgeType) {
+    badge = '<div class="dog-card-badge ' + badgeType + '"><span class="dog-card-badge-label">' + badgeLabel + '</span><span class="dog-card-badge-tail"></span></div>';
   }
 
   var safeName = escapeHTML(dog.naam);
