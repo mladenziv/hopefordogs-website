@@ -551,7 +551,7 @@
       <button class="modal-close" id="modalClose">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
       </button>
-      <h2><span data-i18n="dog.inquiry.titlePre">Interesse in </span><span id="contactDogName"></span><span data-i18n="dog.inquiry.titlePost">?</span></h2>
+      <h2><span id="contactTitlePre"></span><span id="contactDogName"></span><span id="contactTitlePost"></span></h2>
       <p data-i18n="dog.inquiry.intro">Vul het formulier in en wij nemen zo snel mogelijk contact met je op.</p>
 
       <form class="contact-form" id="contactForm">
@@ -587,14 +587,14 @@
     </div>
   </div>
 
-  <script src="components.js?v=38"></script>
+  <script src="components.js?v=39"></script>
 
   <!-- ============ SUPABASE ============ -->
   <script src="supabase-config.js"></script>
 
   <script>
     const statusLabels = {
-      opzoek: 'Opzoek',
+      opzoek: 'Op zoek',
       in_gesprek: 'Gereserveerd',
       geadopteerd: 'Geadopteerd'
     };
@@ -744,6 +744,8 @@
           document.getElementById('dogCta').style.display = 'none';
         } else {
           document.getElementById('contactDogName').textContent = dog.naam;
+          document.getElementById('contactTitlePre').textContent = h4dT('dog.inquiry.titlePre');
+          document.getElementById('contactTitlePost').textContent = h4dT('dog.inquiry.titlePost');
           var modal = document.getElementById('contactModal');
           function closeModal() {
             var mq = window.matchMedia('(max-width: 767px)');

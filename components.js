@@ -323,7 +323,7 @@ var H4D_I18N = {
   'ervaringen.cta.btn1': { nl: 'Bekijk onze honden', de: 'Unsere Hunde ansehen', en: 'View our dogs' },
 
   // --- Doneer page ---
-  'doneer.hero.sub':    { nl: 'Onze vrijwilligers doen alles met veel liefde. Daarnaast betalen ze ook alles uit eigen zak; voer, onderhoud en de dierenarts kosten. Dit gaat allemaal door en loopt qua kosten behoorlijk op. We zijn dus volledig afhankelijk van de goedheid van andere mensen. Draagt u onze hondjes ook een warm hart toe?', de: 'Unsere Freiwilligen tun alles mit viel Liebe. Dar\u00FCber hinaus bezahlen sie auch alles aus eigener Tasche: Futter, Pflege und Tierarztkosten. Das geht immer weiter und summiert sich erheblich. Wir sind daher v\u00F6llig auf die G\u00FCte anderer Menschen angewiesen. Tragen auch Sie unsere Hunde im Herzen?', en: 'Our volunteers do everything with a lot of love. On top of that, they pay for everything out of their own pocket: food, care and vet bills. It never stops and the costs add up considerably. So we depend entirely on the kindness of others. Will you take our dogs into your heart too?' },
+  'doneer.hero.sub':    { nl: 'Onze vrijwilligers doen alles met veel liefde. Daarnaast betalen ze ook alles uit eigen zak; voer, onderhoud en de dierenartskosten. Dit gaat allemaal door en loopt qua kosten behoorlijk op. We zijn dus volledig afhankelijk van de goedheid van andere mensen. Draagt u onze hondjes ook een warm hart toe?', de: 'Unsere Freiwilligen tun alles mit viel Liebe. Dar\u00FCber hinaus bezahlen sie auch alles aus eigener Tasche: Futter, Pflege und Tierarztkosten. Das geht immer weiter und summiert sich erheblich. Wir sind daher v\u00F6llig auf die G\u00FCte anderer Menschen angewiesen. Tragen auch Sie unsere Hunde im Herzen?', en: 'Our volunteers do everything with a lot of love. On top of that, they pay for everything out of their own pocket: food, care and vet bills. It never stops and the costs add up considerably. So we depend entirely on the kindness of others. Will you take our dogs into your heart too?' },
   'doneer.kies':        { nl: 'Kies een bedrag', de: 'W\u00E4hlen Sie einen Betrag', en: 'Choose an amount' },
   'doneer.anders':      { nl: 'Anders', de: 'Andere', en: 'Other' },
   'doneer.frequentie':  { nl: 'Frequentie', de: 'H\u00E4ufigkeit', en: 'Frequency' },
@@ -451,7 +451,7 @@ var H4D_I18N = {
   'adoptie.dogs.cta':    { nl: 'Neem contact op', de: 'Kontakt aufnehmen', en: 'Get in touch' },
   'contact.interesse':   { nl: 'Interesse in', de: 'Interesse an', en: 'Interested in' },
   // Dog status labels
-  'dog.status.opzoek':      { nl: 'Opzoek', de: 'Sucht ein Zuhause', en: 'Looking for a home' },
+  'dog.status.opzoek':      { nl: 'Op zoek', de: 'Sucht ein Zuhause', en: 'Looking for a home' },
   'dog.status.in_gesprek':  { nl: 'Gereserveerd', de: 'Reserviert', en: 'Reserved' },
   'dog.status.geadopteerd': { nl: 'Geadopteerd', de: 'Adoptiert', en: 'Adopted' },
   // Dog compatibility / test badges
@@ -624,11 +624,22 @@ function h4dCanonicalPath(barePath, lang) {
   return h4dUrlFor(barePath, lang);
 }
 
+// The only query param that belongs in a canonical is the legacy detail-page ?id=
+// (real detail pages 301 it to a slug anyway). STATE/tracking params (?bedrag=, ?freq=,
+// ?hond=, ?utm*, ?fbclid, …) must NOT appear in the canonical/hreflang, or each variant
+// self-canonicalises and creates duplicate URLs (e.g. /doneer.html?bedrag=50).
+function h4dCanonicalQuery() {
+  try {
+    var id = new URLSearchParams(location.search).get('id');
+    return id ? '?id=' + encodeURIComponent(id) : '';
+  } catch (e) { return ''; }
+}
+
 // Sets document.title/meta description/canonical/OG + injects the hreflang mesh (self +
 // both siblings + x-default) for the current page and language. Runs on every page's
 // DOMContentLoaded. Detail pages (hond/post/ervaring) override title/description again
-// once their per-record fetch completes, but canonical/og:url/hreflang — query string
-// included — are already correct here since location.search is available synchronously.
+// once their per-record fetch completes; canonical/og:url/hreflang keep only the
+// canonical-relevant query (?id=) via h4dCanonicalQuery().
 function h4dInitSEOTags() {
   var lang = h4dGetLanguage();
   var bare = h4dStripLangPrefix(location.pathname);
@@ -649,7 +660,7 @@ function h4dInitSEOTags() {
   }
 
   var canonicalEl = document.querySelector('link[rel="canonical"]');
-  var selfUrl = H4D_SITE_ORIGIN + h4dCanonicalPath(barePath, lang) + location.search;
+  var selfUrl = H4D_SITE_ORIGIN + h4dCanonicalPath(barePath, lang) + h4dCanonicalQuery();
   if (canonicalEl) canonicalEl.setAttribute('href', selfUrl);
   var ogUrlEl = document.querySelector('meta[property="og:url"]');
   if (ogUrlEl) ogUrlEl.setAttribute('content', selfUrl);
@@ -662,13 +673,13 @@ function h4dInitSEOTags() {
     var link = document.createElement('link');
     link.rel = 'alternate';
     link.hreflang = l;
-    link.href = H4D_SITE_ORIGIN + h4dCanonicalPath(barePath, l) + location.search;
+    link.href = H4D_SITE_ORIGIN + h4dCanonicalPath(barePath, l) + h4dCanonicalQuery();
     document.head.appendChild(link);
   });
   var defaultLink = document.createElement('link');
   defaultLink.rel = 'alternate';
   defaultLink.hreflang = 'x-default';
-  defaultLink.href = H4D_SITE_ORIGIN + h4dCanonicalPath(barePath, 'nl') + location.search;
+  defaultLink.href = H4D_SITE_ORIGIN + h4dCanonicalPath(barePath, 'nl') + h4dCanonicalQuery();
   document.head.appendChild(defaultLink);
 }
 

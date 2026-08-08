@@ -22,7 +22,7 @@
              body (after 100+ prerendered cards), so without these hints the 177KB components.js
              only begins downloading once the whole page is parsed — leaving the dog cards
              un-tappable (the modal JS isn't ready yet) for several seconds on mobile/fresh loads. -->
-        <link rel="preload" as="script" href="components.js?v=38" />
+        <link rel="preload" as="script" href="components.js?v=39" />
         <link rel="preload" as="script" href="supabase-config.js" />
         <link rel="preload" as="script" href="dog-card.js?v=10" />
         <link
@@ -1826,7 +1826,7 @@
                         <line x1="12" y1="4" x2="4" y2="12" />
                     </svg>
                 </button>
-                <h2><span data-i18n="dog.inquiry.titlePre">Interesse in </span><span id="contactDogName"></span><span data-i18n="dog.inquiry.titlePost">?</span></h2>
+                <h2><span id="contactTitlePre"></span><span id="contactDogName"></span><span id="contactTitlePost"></span></h2>
                 <p data-i18n="dog.inquiry.intro">
                     Vul het formulier in en wij nemen zo snel mogelijk contact
                     met je op.
@@ -1895,7 +1895,7 @@
             </div>
         </div>
 
-        <script src="components.js?v=38"></script>
+        <script src="components.js?v=39"></script>
         <!-- ============ SUPABASE ============ -->
         <script src="supabase-config.js"></script>
         <script src="dog-card.js?v=10"></script>
@@ -2575,6 +2575,8 @@
             function openContactModal(dogId, dogName) {
                 contactDogId = dogId;
                 document.getElementById("contactDogName").textContent = dogName;
+                document.getElementById("contactTitlePre").textContent = h4dT("dog.inquiry.titlePre");
+                document.getElementById("contactTitlePost").textContent = h4dT("dog.inquiry.titlePost");
                 document.getElementById("contactForm").reset();
                 document.getElementById("contactForm").style.display = "";
                 document.getElementById("contactSuccess").style.display =
