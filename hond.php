@@ -41,17 +41,21 @@ try {
     $adopted = ((string) ($dog['status'] ?? '')) === 'geadopteerd';
 
     $beschrijving = (string) ssr_field($dog, 'beschrijving', $lang);
+    $DESC_FALLBACK = ['nl' => 'Gered van de straat en klaar voor een nieuw thuis.', 'de' => 'Von der Straße gerettet und bereit für ein neues Zuhause.', 'en' => 'Rescued from the streets and ready for a new home.'];
     $descShort = $beschrijving !== ''
         ? mb_substr($beschrijving, 0, 120)
-        : 'Gered van de straat en klaar voor een nieuw thuis.';
+        : ($DESC_FALLBACK[$lang] ?? $DESC_FALLBACK['nl']);
 
     // Primary photo — same ordering the client uses for the carousel.
     $photos = ssr_get('/rest/v1/dog_photos?select=photo_url&dog_id=eq.' . rawurlencode($dogId)
         . '&order=sort_order.asc.nullslast,is_primary.desc,created_at.asc');
     $img = ($photos && count($photos) && !empty($photos[0]['photo_url'])) ? $photos[0]['photo_url'] : null;
 
-    $title = $naam . ' — Adoptiehond | Hope for Dogs';
-    $desc = 'Maak kennis met ' . $naam . '. ' . $descShort;
+    // Language-aware title/description (previously hardcoded Dutch, which leaked onto /de/ and /en/).
+    $TITLE_SUFFIX = ['nl' => 'Adoptiehond | Hope for Dogs', 'de' => 'Adoptionshund | Hope for Dogs', 'en' => 'Adoptable Dog | Hope for Dogs'];
+    $DESC_PREFIX  = ['nl' => 'Maak kennis met ', 'de' => 'Das ist ', 'en' => 'Meet '];
+    $title = $naam . ' — ' . ($TITLE_SUFFIX[$lang] ?? $TITLE_SUFFIX['nl']);
+    $desc = ($DESC_PREFIX[$lang] ?? $DESC_PREFIX['nl']) . $naam . '. ' . $descShort;
     // Slug URL when the row has a slug; otherwise the legacy ?id= form.
     if ($dogSlug !== '') {
         $canonical = ssr_url_path('hond/' . $dogSlug, $lang);

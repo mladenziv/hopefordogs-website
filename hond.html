@@ -587,7 +587,7 @@
     </div>
   </div>
 
-  <script src="components.js?v=37"></script>
+  <script src="components.js?v=38"></script>
 
   <!-- ============ SUPABASE ============ -->
   <script src="supabase-config.js"></script>
@@ -651,10 +651,12 @@
         const beschrijving = h4dField(dog, 'beschrijving');
         const leeftijd = h4dField(dog, 'leeftijd');
         const ras = h4dField(dog, 'ras');
-        document.title = `${dog.naam} — Adoptiehond | Hope for Dogs`;
-        document.querySelector('meta[name="description"]').setAttribute('content', `Maak kennis met ${dog.naam}. ${beschrijving ? beschrijving.substring(0, 120) : 'Gered van de straat en klaar voor een nieuw thuis.'}`);
-        document.querySelector('meta[property="og:title"]').setAttribute('content', `${dog.naam} — Adoptiehond | Hope for Dogs`);
-        document.querySelector('meta[property="og:description"]').setAttribute('content', `Maak kennis met ${dog.naam}. ${beschrijving ? beschrijving.substring(0, 120) : 'Gered van de straat en klaar voor een nieuw thuis.'}`);
+        var _pageTitle = `${dog.naam} — ${h4dT('dog.metaTitleSuffix')}`;
+        var _metaDesc = h4dT('dog.metaDescPrefix') + dog.naam + '. ' + (beschrijving ? beschrijving.substring(0, 120) : h4dT('dog.metaDescFallback'));
+        document.title = _pageTitle;
+        document.querySelector('meta[name="description"]').setAttribute('content', _metaDesc);
+        document.querySelector('meta[property="og:title"]').setAttribute('content', _pageTitle);
+        document.querySelector('meta[property="og:description"]').setAttribute('content', _metaDesc);
         if (dog.photos && dog.photos.length > 0) {
           document.querySelector('meta[property="og:image"]').setAttribute('content', dog.photos[0].photo_url);
         }

@@ -393,6 +393,10 @@ var H4D_I18N = {
   'dogcard.tag.senior':     { nl: 'Senior',     de: 'Senior',      en: 'Senior' },
   'dogcard.tag.langzitter': { nl: 'Langzitter', de: 'Langzeithund', en: 'Long-stay' },
   'dogcard.tag.gereserveerd': { nl: 'Gereserveerd', de: 'Reserviert', en: 'Reserved' },
+  // Dog detail-page meta (kept language-aware; was hardcoded Dutch on /de/ and /en/).
+  'dog.metaTitleSuffix':  { nl: 'Adoptiehond | Hope for Dogs', de: 'Adoptionshund | Hope for Dogs', en: 'Adoptable Dog | Hope for Dogs' },
+  'dog.metaDescPrefix':   { nl: 'Maak kennis met ', de: 'Das ist ', en: 'Meet ' },
+  'dog.metaDescFallback': { nl: 'Gered van de straat en klaar voor een nieuw thuis.', de: 'Von der Straße gerettet und bereit für ein neues Zuhause.', en: 'Rescued from the streets and ready for a new home.' },
   'dogcard.size.klein':     { nl: 'Klein',      de: 'Klein',       en: 'Small' },
   'dogcard.size.middel':    { nl: 'Middel',     de: 'Mittel',      en: 'Medium' },
   'dogcard.size.groot':     { nl: 'Groot',      de: 'Groß',        en: 'Large' },

@@ -50,6 +50,21 @@ function tp_http_get($url) {
     return array($code, $res);
 }
 
+// Post-process the machine output: correct known-bad translations of Dutch rescue
+// terms before returning. Mirrors db/glossary-fix.sql so re-running the translation
+// tool never reintroduces the slur ("teef" -> "Schlampe"/"bitch") or clear errors.
+function tp_glossary($text, $to) {
+    if ($text === '') return $text;
+    $map = array(
+        'de' => array('/\bSchlampe\b/u' => 'Hündin', '/\bschlampe\b/u' => 'Hündin'),
+        'en' => array('/\bBitch\b/u' => 'Female dog', '/\bbitch\b/u' => 'female dog', '/\bDeflead\b/ui' => 'flea-treated'),
+    );
+    if (isset($map[$to])) {
+        foreach ($map[$to] as $pat => $rep) { $text = preg_replace($pat, $rep, $text); }
+    }
+    return $text;
+}
+
 // 1) Google (keyless gtx endpoint). Response: [[[translated, source, ...], ...], ...]
 $gurl = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=' . urlencode($from)
       . '&tl=' . urlencode($to) . '&dt=t&q=' . urlencode($q);
@@ -62,7 +77,7 @@ if ($gcode === 200 && $gres) {
             if (isset($seg[0])) { $out .= $seg[0]; }
         }
         if ($out !== '') {
-            echo json_encode(array('translated' => $out, 'engine' => 'google'), JSON_UNESCAPED_UNICODE);
+            echo json_encode(array('translated' => tp_glossary($out, $to), 'engine' => 'google'), JSON_UNESCAPED_UNICODE);
             exit;
         }
     }
@@ -76,7 +91,7 @@ if ($mcode === 200 && $mres) {
     $data = json_decode($mres, true);
     $t = isset($data['responseData']['translatedText']) ? $data['responseData']['translatedText'] : '';
     if ($t !== '' && stripos($t, 'MYMEMORY WARNING') === false && stripos($t, 'QUERY LENGTH LIMIT') === false) {
-        echo json_encode(array('translated' => $t, 'engine' => 'mymemory'), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array('translated' => tp_glossary($t, $to), 'engine' => 'mymemory'), JSON_UNESCAPED_UNICODE);
         exit;
     }
 }
