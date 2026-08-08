@@ -409,17 +409,21 @@
     }
 
     async function loadStory(storyId, isTransition) {
+      var storySlug = null;
       if (!storyId) {
         var params = new URLSearchParams(window.location.search);
         storyId = params.get('id');
+        // Clean URLs (/ervaring/<slug>, /de/ervaring/<slug>) carry no ?id= — resolve by slug.
+        if (!storyId) {
+          var mSlug = window.location.pathname.match(/\/ervaring\/([^\/?#]+)/);
+          if (mSlug) storySlug = decodeURIComponent(mSlug[1]);
+        }
       }
 
-      if (!storyId) {
+      if (!storyId && !storySlug) {
         showError();
         return;
       }
-
-      currentStoryId = storyId;
 
       // On initial load, show loading screen; on transition, just fade content
       if (!isTransition) {
@@ -428,7 +432,8 @@
       }
 
       try {
-        var stories = await supabaseGet('stories', 'select=*&id=eq.' + storyId);
+        var filter = storyId ? ('id=eq.' + encodeURIComponent(storyId)) : ('slug=eq.' + encodeURIComponent(storySlug));
+        var stories = await supabaseGet('stories', 'select=*&' + filter);
 
         if (!stories || stories.length === 0) {
           showError();
@@ -436,6 +441,8 @@
         }
 
         var story = stories[0];
+        currentStoryId = story.id;
+        storyId = story.id;   // normalise (may have been resolved via slug) for the URL + next-story logic below
         // Language-aware content (falls back to Dutch when a translation is missing).
         var description = h4dField(story, 'description') || '';
         var fullStory = h4dField(story, 'full_story') || '';
@@ -515,8 +522,8 @@
           window.scrollTo({ top: 0 });
         }
 
-        // Update URL without reload
-        history.replaceState(null, '', location.pathname + '?id=' + storyId);
+        // Update URL without reload — keep the clean /ervaring/<slug> URL (don't revert to ?id=)
+        history.replaceState(null, '', (story.slug && typeof h4dDetailUrl === 'function') ? h4dDetailUrl('ervaring', 'ervaring.html', story) : (location.pathname + '?id=' + storyId));
 
         // Set up "next story" button
         if (allStoryIds.length === 0) {
