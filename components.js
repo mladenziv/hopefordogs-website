@@ -1016,7 +1016,9 @@ document.addEventListener('DOMContentLoaded', function () {
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/aa04d042-485e-4fa2-b768-ea4e50906ab5/10152aeb-3d7f-420f-9d22-e3472537d4e2+%281%29.jpg', name: 'Ivana', role: 'Vrijwilliger', years: '8 jaar' },
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/ffbbbe65-db73-474a-b484-4c4f1acaf25b/348892586_1445678299527776_3873644328475865037_n.jpeg', name: 'Mladen', role: 'Vrijwilliger', years: '8 jaar' },
       { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/078ee273-80ad-416e-99ae-b15172473079/noella.jpg', name: 'No\u00EBlla', role: 'Vrijwilliger', years: '2 jaar' },
-      { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/413db489-786e-4436-8eb7-d2d3bbe645ce/IMG-20260125-WA0077.jpg', name: 'Eva', role: 'Vrijwilliger', years: '1 jaar' }
+      { img: 'https://images.squarespace-cdn.com/content/v1/638d22162df7e0764a499e1a/413db489-786e-4436-8eb7-d2d3bbe645ce/IMG-20260125-WA0077.jpg', name: 'Eva', role: 'Vrijwilliger', years: '1 jaar' },
+      { img: 'images/about/team/branko.webp', name: 'Branko', role: 'Vrijwilliger' },
+      { img: 'images/about/team/lauren.webp', name: 'Lauren', role: 'Vrijwilliger' }
     ];
 
     var cardsHtml = teamMembers.map(function(m) {
