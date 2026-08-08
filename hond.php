@@ -17,10 +17,12 @@ try {
     // Resolve by slug (/hond/<slug>), or by legacy ?id= which 301s to the slug.
     if ($slug !== '' && preg_match('/^[A-Za-z0-9-]{1,80}$/', $slug)) {
         $dogs = ssr_get('/rest/v1/dogs?select=*&slug=eq.' . rawurlencode($slug) . '&draft=eq.false');
-        if ($dogs === null || count($dogs) === 0) ssr_passthru($tpl); // unknown/draft -> shell
+        if ($dogs === null) ssr_passthru($tpl);        // API error -> 200 shell (client retries)
+        if (count($dogs) === 0) ssr_not_found($tpl);   // unknown/draft dog -> 404
     } elseif ($id !== '' && preg_match('/^[A-Za-z0-9_-]{8,64}$/', $id)) {
         $dogs = ssr_get('/rest/v1/dogs?select=*&id=eq.' . rawurlencode($id) . '&draft=eq.false');
-        if ($dogs === null || count($dogs) === 0) ssr_passthru($tpl);
+        if ($dogs === null) ssr_passthru($tpl);        // API error -> 200 shell (client retries)
+        if (count($dogs) === 0) ssr_not_found($tpl);   // unknown legacy id -> 404
         $s = trim((string) ($dogs[0]['slug'] ?? ''));
         if ($s !== '') { // consolidate legacy id URL onto the slug
             header('Location: ' . ssr_url_path('hond/' . rawurlencode($s), $lang), true, 301);

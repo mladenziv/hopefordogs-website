@@ -329,13 +329,13 @@
         var excerpt = h4dField(post, 'excerpt') || '';
         var content = h4dField(post, 'content') || '';
 
-        document.title = title + ' — Nieuws | Hope for Dogs';
+        document.title = title + ' — ' + (typeof h4dT === 'function' ? h4dT('nav.nieuws') : 'Nieuws') + ' | Hope for Dogs';
         var postDesc = excerpt ? excerpt.substring(0, 140) : content ? content.substring(0, 140) : 'Lees het laatste nieuws van Hope for Dogs.';
         // canonical/og:url/hreflang are already set correctly (language-prefixed, ?id=
         // preserved) by h4dInitSEOTags() at DOMContentLoaded — only override the fields
         // that depend on the fetched record.
         document.querySelector('meta[name="description"]').setAttribute('content', postDesc);
-        document.querySelector('meta[property="og:title"]').setAttribute('content', title + ' — Nieuws | Hope for Dogs');
+        document.querySelector('meta[property="og:title"]').setAttribute('content', title + ' — ' + (typeof h4dT === 'function' ? h4dT('nav.nieuws') : 'Nieuws') + ' | Hope for Dogs');
         document.querySelector('meta[property="og:description"]').setAttribute('content', postDesc);
         if (post.photo_url) {
           document.querySelector('meta[property="og:image"]').setAttribute('content', post.photo_url);

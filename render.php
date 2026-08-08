@@ -63,6 +63,16 @@ function ssr_passthru($tpl) {
     exit;
 }
 
+// Serve the shell with a real 404 so a genuinely missing/draft/expired resource is
+// not indexed as a live page (avoids soft-404s). The client JS still renders the
+// friendly "not found" body inside the shell. Only use this when a specific resource
+// was requested and the database CONFIRMED it does not exist — never on an API error
+// (that must stay a 200 shell so the client can retry and real records aren't deindexed).
+function ssr_not_found($tpl) {
+    http_response_code(404);
+    ssr_passthru($tpl);
+}
+
 // Build the <link rel="alternate" hreflang> mesh (nl/de/en + x-default -> nl).
 function ssr_hreflang($bare, $query = '') {
     $out = '';

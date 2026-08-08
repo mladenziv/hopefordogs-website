@@ -30,14 +30,20 @@ try {
     } else {
         ssr_passthru($tpl);
     }
-    if ($posts === null || count($posts) === 0) ssr_passthru($tpl);
+    if ($posts === null) ssr_passthru($tpl);        // API error -> 200 shell (client retries)
+    if (count($posts) === 0) ssr_not_found($tpl);   // unknown post -> 404
     $post = $posts[0];
 
     // Publish gate (mirror the client): live = published_at set AND <= now.
     // Drafts/scheduled are never prerendered for crawlers.
     $pub = $post['published_at'] ?? null;
     $isLive = $pub && strtotime($pub) !== false && strtotime($pub) <= time();
-    if (!$isLive) ssr_passthru($tpl);
+    // Draft/scheduled posts are not public -> 404 for crawlers. ?preview=1 still lets a
+    // logged-in admin load the shell so the client can render the unpublished post.
+    if (!$isLive) {
+        if (isset($_GET['preview']) && $_GET['preview'] === '1') ssr_passthru($tpl);
+        ssr_not_found($tpl);
+    }
 
     // Consolidate a legacy ?id= URL onto the slug — AFTER the publish gate so a
     // draft/scheduled post never 301s to a public URL.
@@ -56,7 +62,8 @@ try {
     $base = $excerpt !== '' ? $excerpt : $content;
     $descShort = $base !== '' ? mb_substr(trim(strip_tags($base)), 0, 140) : 'Lees het laatste nieuws van Hope for Dogs.';
 
-    $fullTitle = $title . ' — Nieuws | Hope for Dogs';
+    $newsWord = ['nl' => 'Nieuws', 'de' => 'Neuigkeiten', 'en' => 'News'];
+    $fullTitle = $title . ' — ' . ($newsWord[$lang] ?? 'Nieuws') . ' | Hope for Dogs';
     if ($postSlug !== '') {
         $canonical = ssr_url_path('nieuws/' . $postSlug, $lang);
         $hreflangMesh = ssr_hreflang_path('nieuws/' . $postSlug);

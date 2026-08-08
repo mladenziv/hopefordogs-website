@@ -17,3 +17,6 @@ api/ocr/config.php
 
 # Manual backups (pre-edit copies)
 /backups/
+
+# SEO audit working folders — local analysis artifacts, never deploy to the public site
+/seo-audit-third-pass/
