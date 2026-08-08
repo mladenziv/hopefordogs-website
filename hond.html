@@ -547,11 +547,11 @@
 
   <!-- ============ CONTACT MODAL ============ -->
   <div class="modal-overlay" id="contactModal">
-    <div class="modal">
-      <button class="modal-close" id="modalClose">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Sluiten">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
       </button>
-      <h2><span id="contactTitlePre"></span><span id="contactDogName"></span><span id="contactTitlePost"></span></h2>
+      <h2 id="contactModalTitle"><span id="contactTitlePre"></span><span id="contactDogName"></span><span id="contactTitlePost"></span></h2>
       <p data-i18n="dog.inquiry.intro">Vul het formulier in en wij nemen zo snel mogelijk contact met je op.</p>
 
       <form class="contact-form" id="contactForm">
@@ -639,6 +639,7 @@
         const dog = dogs[0];
         dogId = dog.id;
         dogFound = true;
+        h4dTrack('view_dog', { dog: dog.naam || String(dog.id), status: dog.status || '', lang: (typeof h4dGetLanguage === 'function' ? h4dGetLanguage() : 'nl') });
         // Adopted dogs are noindex,follow (kept live, but out of the index). The server
         // prerender already sets this; this covers the case where it fell back to the shell.
         if (dog.status === 'geadopteerd' && !document.querySelector('meta[name="robots"]')) {
@@ -778,6 +779,7 @@
             }
           }
           document.getElementById('contactBtn').addEventListener('click', function() {
+            h4dTrack('start_adoption', { dog: dog.naam || String(dog.id), from: 'detail' });
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
           });

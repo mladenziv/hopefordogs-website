@@ -855,6 +855,9 @@
         }
       }
 
+      // Track donation intent (no PII — amount + frequency only) before the Mollie redirect.
+      h4dTrack('begin_donation', { amount: selectedAmount, frequency: selectedFrequency });
+
       // Disable button and show loading state
       donateBtn.disabled = true;
       donateBtn.textContent = 'Bezig...';

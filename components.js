@@ -540,6 +540,7 @@ function h4dStripLangPrefix(pathname) {
 // query string (?id=...) and hash. Used by the language switcher.
 function h4dNavigateToLanguage(lang) {
   var bare = h4dStripLangPrefix(location.pathname).replace(/^\//, '') || 'index.html';
+  h4dTrack('language_switch', { from: h4dGetLanguage(), to: lang });
   window.location.href = h4dUrlFor(bare, lang) + location.search + location.hash;
 }
 
