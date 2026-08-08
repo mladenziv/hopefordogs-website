@@ -1088,14 +1088,36 @@
     }
     // aggregate kas_srb rows into per-month buckets { inEur, uitEur, uitRsd, cats:{cat:{eur,rsd}} }.
     // Serbian spending is in dinar, so we keep both the RSD original and its EUR value.
+    // representative RSD-per-EUR rate per month = average koers of that month's RSD receipts.
+    // Used to ALSO express EUR receipts in dinar so the RSD figures are complete (not just RSD->EUR).
+    // A month with no RSD receipt falls back to the overall average (else the 117.42 default).
+    function serbiaMonthKoers(rows) {
+      var sum = {}, cnt = {}, gs = 0, gc = 0;
+      rows.forEach(function (r) {
+        if (r.valuta !== 'RSD' || !(r.koers > 0)) return;
+        var ym = (r.datum && /^\d{4}-\d{2}/.test(r.datum)) ? r.datum.slice(0, 7) : '_';
+        sum[ym] = (sum[ym] || 0) + (+r.koers); cnt[ym] = (cnt[ym] || 0) + 1; gs += (+r.koers); gc++;
+      });
+      var per = {}; Object.keys(sum).forEach(function (ym) { per[ym] = sum[ym] / cnt[ym]; });
+      return { per: per, global: gc ? gs / gc : 117.42 };
+    }
     function serbiaMonths() {
       function mkB() { return { inEur: 0, uitEur: 0, uitRsd: 0, cats: {}, costs: [], transfers: [] }; }
       var rows = ALL.filter(function (r) { return r.rekening === 'kas_srb' && r.meetellen !== false; });
+      var mk = serbiaMonthKoers(rows);
+      // RSD value of a spending row: the original dinar for RSD receipts, or the EUR amount
+      // converted at that month's rate for EUR receipts (so EUR bonnen also count in dinar).
+      function rsdOf(r, ym) {
+        if (r.valuta === 'RSD') return r.bedrag_cents || 0;
+        var k = mk.per[ym || '_'] || mk.global;
+        return Math.round((r.bedrag_eur_cents || 0) * k);
+      }
       var byMonth = {}, undated = mkB(), totIn = 0, totUitEur = 0, totUitRsd = 0, bonEur = 0, noBonEur = 0, bonCount = 0, costCount = 0;
       function bucket(ym) { return ym ? (byMonth[ym] = byMonth[ym] || mkB()) : undated; }
       rows.forEach(function (r) {
-        var eur = r.bedrag_eur_cents || 0, rsdc = (r.valuta === 'RSD' ? (r.bedrag_cents || 0) : 0);
+        var eur = r.bedrag_eur_cents || 0;
         var ym = (r.datum && /^\d{4}-\d{2}/.test(r.datum)) ? r.datum.slice(0, 7) : null;
+        var rsdc = (r.richting === 'in') ? 0 : rsdOf(r, ym);
         var b = bucket(ym);
         if (r.richting === 'in') { b.inEur += eur; b.transfers.push(r); totIn += eur; }
         else {
@@ -1128,6 +1150,17 @@
       });
       return { bruto: bruto, fees: fees, netto: bruto - fees, has: has };
     }
+    // the individual NL-bank withdrawals (opname) + transfers (overboeking) in the period,
+    // so the overview can show WHO withdrew / a description per line (from omschrijving).
+    function nlOutRows(monthsArr) {
+      if (!monthsArr.length) return [];
+      var ps = monthsArr[0] + '-01', pe = monthsArr[monthsArr.length - 1] + '-31';
+      return ALL.filter(function (r) {
+        return r.rekening === 'bank_nl' && r.richting === 'uit' && r.meetellen !== false &&
+          r.datum && r.datum >= ps && r.datum <= pe &&
+          (r.categorie === 'opname' || r.categorie === 'overboeking');
+      }).sort(function (a, b) { return (a.datum || '').localeCompare(b.datum || ''); });
+    }
     function openMonthly() {
       var d = serbiaMonths();
       // running = cumulative saldo carried into/through this month (null = not part of the chain, e.g. undated)
@@ -1141,11 +1174,20 @@
         }).join('') : '<div class="hint">Geen uitgaven deze maand.</div>';
         var net = m.inEur - m.uitEur;
         var runH = (running == null) ? '' : '<div class="mo-run">Lopend saldo <b class="' + (running < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(running) + '</b></div>';
+        // individual receipts with their description ("waarvoor") — e.g. what a bouwmateriaal-bon funded
+        var costsH = (m.costs && m.costs.length) ? '<div class="mo-lines" style="margin-top:8px"><div class="mo-sec-t">Bonnen &amp; omschrijving</div>' +
+          m.costs.slice().sort(function (a, b) { return (a.datum || 'zzzz').localeCompare(b.datum || 'zzzz'); }).map(function (r) {
+            return '<div style="display:flex;gap:8px;align-items:baseline;padding:4px 0;font-size:13px;border-top:1px solid var(--line)">' +
+              '<span class="hint" style="min-width:74px">' + (r.datum ? fmtDate(r.datum) : '—') + '</span>' +
+              '<span style="flex:1">' + catEmoji(r.categorie) + ' ' + esc(r.tegenpartij || catLabel(r.categorie)) + (r.omschrijving ? ' <span class="hint">· ' + esc(r.omschrijving) + '</span>' : '') + '</span>' +
+              '<span style="white-space:nowrap">' + dinEur(r.valuta === 'RSD' ? (r.bedrag_cents || 0) : 0, r.bedrag_eur_cents || 0) + '</span>' +
+            '</div>';
+          }).join('') + '</div>' : '';
         return '<div class="mo-month"><div class="mo-mhead"><div class="mo-mtitle">' + title + '</div>' + runH + '</div>' +
           '<div class="mo-stats"><span>Middelen beschikbaar gesteld <b class="mo-in">' + euros(m.inEur) + '</b></span>' +
           '<span>Uitgegeven <b class="mo-uit">' + dinEur(m.uitRsd, m.uitEur) + '</b></span>' +
           '<span>Mutatie deze maand <b class="' + (net < 0 ? 'mo-uit' : 'mo-in') + '">' + eurosSigned(net) + '</b></span></div>' +
-          '<div class="mo-cats">' + catsH + '</div></div>';
+          '<div class="mo-cats">' + catsH + '</div>' + costsH + '</div>';
       }
       var html;
       if (!d.hasRows) {
@@ -1164,10 +1206,21 @@
           '</div>' +
           '<div class="mo-evidence">Bewijs: <b>' + d.bonCount + ' van ' + d.costCount + '</b> uitgaven met bon · met bon ' + euros(d.bonEur) + ' · zonder bon ' + euros(d.noBonEur) + '</div>';
         var nl = nlFlows(mk);
-        if (nl.has) html += '<div class="mo-nl"><div class="mo-sec-t">Nederlandse geldstromen (periode)</div>' +
-          '<div class="mo-nl-row"><span>Bruto afgeschreven van NL-rekening (opnames + overboekingen)</span><b>' + euros(nl.bruto) + '</b></div>' +
-          '<div class="mo-nl-row"><span>Bank-, wissel- en ATM-kosten</span><b class="mo-uit">' + eurosSigned(-nl.fees) + '</b></div>' +
-          '<div class="mo-nl-row"><span>Netto beschikbaar gesteld</span><b>' + euros(nl.netto) + '</b></div></div>';
+        if (nl.has) {
+          var nlRows = nlOutRows(mk);   // individual withdrawals + transfers, with who/omschrijving
+          var nlItems = nlRows.length ? '<div class="mo-lines" style="margin-top:8px"><div class="mo-sec-t">Opnames &amp; overboekingen (wie / omschrijving)</div>' +
+            nlRows.map(function (r) {
+              return '<div style="display:flex;gap:8px;align-items:baseline;padding:4px 0;font-size:13px;border-top:1px solid var(--line)">' +
+                '<span class="hint" style="min-width:74px">' + fmtDate(r.datum) + '</span>' +
+                '<span style="flex:1">' + (r.categorie === 'opname' ? '🏧 ' : '🔁 ') + esc(r.tegenpartij || catLabel(r.categorie)) + (r.omschrijving ? ' <span class="hint">· ' + esc(r.omschrijving) + '</span>' : '') + '</span>' +
+                '<span style="white-space:nowrap">' + euros(r.bedrag_eur_cents) + '</span>' +
+              '</div>';
+            }).join('') + '</div>' : '';
+          html += '<div class="mo-nl"><div class="mo-sec-t">Nederlandse geldstromen (periode)</div>' +
+            '<div class="mo-nl-row"><span>Bruto afgeschreven van NL-rekening (opnames + overboekingen)</span><b>' + euros(nl.bruto) + '</b></div>' +
+            '<div class="mo-nl-row"><span>Bank-, wissel- en ATM-kosten</span><b class="mo-uit">' + eurosSigned(-nl.fees) + '</b></div>' +
+            '<div class="mo-nl-row"><span>Netto beschikbaar gesteld</span><b>' + euros(nl.netto) + '</b></div>' + nlItems + '</div>';
+        }
         var ct = serbiaCatTotals(d);
         if (ct.length) {
           var maxct = ct.reduce(function (s, p) { return Math.max(s, p[1].eur); }, 1);
@@ -1246,6 +1299,11 @@
           [bold('Netto beschikbaar gesteld'), bold(euros(nl.netto))]
         ] });
 
+        // ---- detail: individuele opnames + overboekingen (wie / omschrijving) ----
+        var nlDet = nlOutRows(months);
+        if (nlDet.length) AT({ startY: doc.lastAutoTable.finalY + 12, head: [['Soort', 'Datum', 'Wie / omschrijving', 'Bedrag €']], theme: 'striped', headStyles: { fillColor: GR }, styles: { fontSize: 8, overflow: 'linebreak' }, columnStyles: { 1: { cellWidth: 62 }, 3: { halign: 'right', cellWidth: 70 } },
+          body: nlDet.map(function (r) { return [(r.categorie === 'opname' ? 'Opname (ATM)' : 'Overboeking'), fmtDate(r.datum), ([r.tegenpartij, r.omschrijving].filter(Boolean).join(' · ') || '—'), euros(r.bedrag_eur_cents)]; }) });
+
         // ---- kosten per categorie (eerste pagina) ----
         var ct = serbiaCatTotals(d);
         if (ct.length) AT({ startY: doc.lastAutoTable.finalY + 16, head: [['Kosten per categorie', 'Bedrag', 'Aandeel']], theme: 'striped', headStyles: { fillColor: BR },
@@ -1268,7 +1326,7 @@
         // ---- detail: middelen beschikbaar gesteld (NL → Servië) ----
         doc.addPage(); doc.setFont(FONT, 'bold'); doc.setFontSize(12); doc.text('Detail — middelen beschikbaar gesteld (NL → Servië)', M, 46);
         var tb = [];
-        allBuckets.forEach(function (b) { b.transfers.slice().sort(byDate).forEach(function (r) { tb.push([fmtDate(r.datum), catLabel(r.categorie), (r.tegenpartij || r.omschrijving || ''), euros(r.bedrag_eur_cents)]); }); });
+        allBuckets.forEach(function (b) { b.transfers.slice().sort(byDate).forEach(function (r) { tb.push([fmtDate(r.datum), catLabel(r.categorie), ([r.tegenpartij, r.omschrijving].filter(Boolean).join(' · ') || ''), euros(r.bedrag_eur_cents)]); }); });
         if (!tb.length) tb.push(['—', '—', 'geen', '—']);
         tb.push([bold('Totaal'), '', '', bold(euros(d.totIn))]);
         AT({ startY: 56, head: [['Datum', 'Soort', 'Omschrijving', 'Bedrag €']], headStyles: { fillColor: GR }, styles: { fontSize: 8 }, columnStyles: { 0: { cellWidth: 62 }, 3: { halign: 'right', cellWidth: 80 } }, body: tb });
@@ -2064,6 +2122,7 @@
           '<button type="button" class="mitem-x" title="Verwijderen">✕</button>' +
           '<input type="text" class="mitem-teg" list="vendorOptions" autocomplete="off" placeholder="leverancier" value="' + escA(it.vendorStr || '') + '">' +
           '<span class="vendor-sug mitem-sug" style="display:none"></span>' +
+          '<input type="text" class="mitem-oms" autocomplete="off" placeholder="waarvoor / omschrijving (bijv. cement voor het nieuwe hok)" value="' + escA(it.omsStr || '') + '" style="flex:1 1 100%;min-width:0;margin-top:6px">' +
           '</div>';
       }).join('');
       wrap.querySelectorAll('.mitem').forEach(function (el) {
@@ -2074,6 +2133,7 @@
         el.querySelector('.mitem-x').addEventListener('click', function () { if (mItems[i].url) { try { URL.revokeObjectURL(mItems[i].url); } catch (_) {} } mItems.splice(i, 1); renderMItems(); });
         var teg = el.querySelector('.mitem-teg'), sug = el.querySelector('.mitem-sug');
         teg.addEventListener('input', function () { mItems[i].vendorStr = this.value; renderVendorSug(teg, sug); });   // keep focus; update model + typo hint
+        var omsEl = el.querySelector('.mitem-oms'); if (omsEl) omsEl.addEventListener('input', function () { mItems[i].omsStr = this.value; });
         renderVendorSug(teg, sug);
       });
       $('mSaveAll').disabled = false; $('mSaveAll').textContent = 'Klaar & opslaan (' + mItems.length + ')';
@@ -2101,7 +2161,7 @@
             rekening: 'kas_srb', richting: 'uit',
             categorie: ((it.data || {}).category_guess && CATS.kas_srb.uit.some(function (p) { return p[0] === it.data.category_guess; })) ? it.data.category_guess : 'overig',
             valuta: cur, bedrag_cents: bc, bedrag_eur_cents: ec, koers: koers, btw_cents: null,
-            datum: datum, omschrijving: null, tegenpartij: vendor, factuurnr: (it.data || {}).invoice_no || null,
+            datum: datum, omschrijving: (it.omsStr || '').trim() || null, tegenpartij: vendor, factuurnr: (it.data || {}).invoice_no || null,
             referentie: null, bron: 'scan', dog_id: null, bon_pad: bonPad, bon_bestand: it.fileName, opmerking: null, meetellen: true
           });
           savedPool.push({ rekening: 'kas_srb', bedrag_eur_cents: ec, datum: datum, tegenpartij: vendor });
