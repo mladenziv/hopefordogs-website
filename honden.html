@@ -2228,6 +2228,12 @@
                     searchQuery = dogSearch.value;
                     renderDogs();
                 });
+                // Same iOS tap-swallow quirk on the input itself: during the early
+                // window a tap's native focus can be eaten, so the keyboard never
+                // appears. Force focus on tap (harmless no-op once already focused).
+                dogSearch.addEventListener("touchend", () => {
+                    if (document.activeElement !== dogSearch) dogSearch.focus();
+                }, { passive: true });
             }
 
             // Responsive short labels for filter tabs at XS
