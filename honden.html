@@ -2181,7 +2181,7 @@
             const dogSearch = document.getElementById("dogSearch");
             if (searchToggle && searchRow && dogSearch) {
                 let searchOpen = false;
-                searchToggle.addEventListener("click", () => {
+                function toggleSearch() {
                     searchOpen = !searchOpen;
                     searchRow.style.display = searchOpen ? "block" : "none";
                     searchToggle.classList.toggle("active", searchOpen);
@@ -2196,7 +2196,34 @@
                         searchQuery = "";
                         renderDogs();
                     }
+                }
+                // iOS quirk (same one worked around for the dog cards in dog-card.js and
+                // the nav in components.js): for the first seconds after load a scroll
+                // container swallows the button's synthetic click, so a tap does nothing.
+                // Rescue: run the toggle from a short, stationary touch, and guard the
+                // click handler so the touch + click paths never double-fire.
+                let lastTouchToggle = 0;
+                searchToggle.addEventListener("click", () => {
+                    if (Date.now() - lastTouchToggle < 600) return;
+                    toggleSearch();
                 });
+                let tsx = 0, tsy = 0, tst = 0, tapping = false;
+                searchToggle.addEventListener("touchstart", (e) => {
+                    tapping = true;
+                    var t = e.touches[0];
+                    tsx = t.clientX; tsy = t.clientY; tst = Date.now();
+                }, { passive: true });
+                searchToggle.addEventListener("touchend", (e) => {
+                    if (!tapping) return;
+                    tapping = false;
+                    var t = e.changedTouches[0];
+                    if (!t) return;
+                    if (Date.now() - tst < 500 && Math.abs(t.clientX - tsx) < 12 && Math.abs(t.clientY - tsy) < 12) {
+                        e.preventDefault(); // stop the synthetic click so it can't double-toggle
+                        lastTouchToggle = Date.now();
+                        toggleSearch();
+                    }
+                }, { passive: false });
                 dogSearch.addEventListener("input", () => {
                     searchQuery = dogSearch.value;
                     renderDogs();
