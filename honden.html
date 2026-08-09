@@ -179,6 +179,70 @@
                 -webkit-appearance: none;
                 appearance: none;
             }
+            /* Custom location dropdown — replaces the native <select> on mobile
+               (iOS Safari can't reliably open a native <select> inside the Vaul wrapper). */
+            .filter-select-wrap {
+                display: none;
+                position: relative;
+                align-self: stretch;
+            }
+            .filter-select-btn {
+                width: 100%;
+                height: 100%;
+                min-height: 46px;
+                padding: 0 44px 0 20px;
+                border: none;
+                border-radius: 100px;
+                background-color: var(--beige);
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23545454' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 16px center;
+                font-family: "Manrope", sans-serif;
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--dark-1);
+                cursor: pointer;
+                text-align: left;
+                display: flex;
+                align-items: center;
+                overflow: hidden;
+            }
+            #filterSelectLabel {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .filter-select-menu {
+                position: absolute;
+                top: calc(100% + 8px);
+                left: 0;
+                right: 0;
+                background: #fff;
+                border-radius: 16px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+                padding: 6px;
+                z-index: 60;
+            }
+            .filter-select-menu[hidden] { display: none; }
+            .filter-select-opt {
+                display: block;
+                width: 100%;
+                text-align: left;
+                padding: 13px 16px;
+                border: none;
+                background: transparent;
+                border-radius: 12px;
+                font-family: "Manrope", sans-serif;
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--dark-1);
+                cursor: pointer;
+                white-space: nowrap;
+            }
+            .filter-select-opt[aria-selected="true"] { background: var(--beige); }
+            @media (max-width: 1023px) {
+                .filter-select-wrap { display: block; flex: 1 1 auto; min-width: 0; }
+            }
             .gender-toggle {
                 display: flex;
                 align-items: center;
@@ -1602,11 +1666,24 @@
                             Gemeente asiel
                         </button>
                     </div>
-                    <select class="filter-select" id="filterSelect" aria-label="Filter honden">
-                        <option value="alle" data-i18n="honden.filter.alle">Alle honden</option>
-                        <option value="in_asiel" data-i18n="honden.filter.onsasiel">Ons asiel</option>
-                        <option value="gemeente_asiel" data-i18n="honden.filter.gemeente">Gemeente asiel</option>
-                    </select>
+                    <!-- Location filter (tablet/mobile). Native <select> is kept hidden as the
+                         state + i18n source; the visible control is a custom button + menu because
+                         iOS Safari can't reliably open a native <select> through the Vaul wrapper. -->
+                    <div class="filter-select-wrap">
+                        <select class="filter-select" id="filterSelect" aria-label="Filter honden" style="display:none" tabindex="-1" aria-hidden="true">
+                            <option value="alle" data-i18n="honden.filter.alle">Alle honden</option>
+                            <option value="in_asiel" data-i18n="honden.filter.onsasiel">Ons asiel</option>
+                            <option value="gemeente_asiel" data-i18n="honden.filter.gemeente">Gemeente asiel</option>
+                        </select>
+                        <button type="button" class="filter-select-btn" id="filterSelectBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Filter honden">
+                            <span id="filterSelectLabel" data-i18n="honden.filter.alle">Alle honden</span>
+                        </button>
+                        <div class="filter-select-menu" id="filterSelectMenu" role="listbox" hidden>
+                            <button type="button" class="filter-select-opt" role="option" data-value="alle" data-i18n="honden.filter.alle">Alle honden</button>
+                            <button type="button" class="filter-select-opt" role="option" data-value="in_asiel" data-i18n="honden.filter.onsasiel">Ons asiel</button>
+                            <button type="button" class="filter-select-opt" role="option" data-value="gemeente_asiel" data-i18n="honden.filter.gemeente">Gemeente asiel</button>
+                        </div>
+                    </div>
                     <div class="filter-right">
                         <div class="gender-toggle" role="group" aria-label="Geslacht">
                             <button type="button" class="gender-btn" data-gender="reu" data-i18n="honden.gender.reu">Reu</button>
@@ -2146,7 +2223,23 @@
                     ),
                 );
                 if (filterSelect && filterSelect.value !== val) filterSelect.value = val;
+                syncFilterLabel();
                 renderDogs();
+            }
+            // Keep the custom dropdown's button label + selected state in sync with the
+            // hidden native <select>, no matter what changed the filter.
+            function syncFilterLabel() {
+                var sel = document.getElementById("filterSelect");
+                var lbl = document.getElementById("filterSelectLabel");
+                if (sel && lbl && sel.options[sel.selectedIndex]) {
+                    lbl.textContent = sel.options[sel.selectedIndex].textContent;
+                }
+                var menu = document.getElementById("filterSelectMenu");
+                if (sel && menu) {
+                    menu.querySelectorAll(".filter-select-opt").forEach(function (o) {
+                        o.setAttribute("aria-selected", o.getAttribute("data-value") === sel.value ? "true" : "false");
+                    });
+                }
             }
             filterTabs.forEach((tab) => {
                 tab.addEventListener("click", () =>
@@ -2157,14 +2250,6 @@
                 filterSelect.addEventListener("change", () =>
                     setActiveFilter(filterSelect.value),
                 );
-                // iOS: the Vaul wrapper can swallow the tap that opens the native
-                // picker in the first moments after load, so the dropdown won't open.
-                // Open it ourselves on tap (guarded; no-op if the browser lacks it).
-                filterSelect.addEventListener("touchend", () => {
-                    if (typeof filterSelect.showPicker === "function") {
-                        try { filterSelect.showPicker(); } catch (e) {}
-                    }
-                }, { passive: true });
             }
 
             // Shared iOS tap rescue: the Vaul wrapper (mobile nav drawer) swallows the
@@ -2211,6 +2296,35 @@
                     renderDogs();
                 });
             });
+
+            // Custom location dropdown: the trigger + options run through the tap
+            // rescue, since a native <select> can't be opened programmatically on iOS.
+            var fsBtn = document.getElementById("filterSelectBtn");
+            var fsMenu = document.getElementById("filterSelectMenu");
+            if (fsBtn && fsMenu) {
+                var fsClose = function () {
+                    fsMenu.hidden = true;
+                    fsBtn.setAttribute("aria-expanded", "false");
+                };
+                addTapRescue(fsBtn, function () {
+                    var willOpen = fsMenu.hidden;
+                    fsMenu.hidden = !willOpen;
+                    fsBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+                });
+                fsMenu.querySelectorAll(".filter-select-opt").forEach(function (opt) {
+                    addTapRescue(opt, function () {
+                        setActiveFilter(opt.getAttribute("data-value"));
+                        fsClose();
+                    });
+                });
+                // Close when tapping/clicking anywhere outside the trigger or menu.
+                var fsOutside = function (e) {
+                    if (!fsMenu.hidden && e.target !== fsBtn && !fsBtn.contains(e.target) && !fsMenu.contains(e.target)) fsClose();
+                };
+                document.addEventListener("click", fsOutside);
+                document.addEventListener("touchend", fsOutside, { passive: true });
+                syncFilterLabel();
+            }
 
             // Search: icon toggles an input row; typing filters by name/breed
             const searchToggle = document.getElementById("searchToggle");
