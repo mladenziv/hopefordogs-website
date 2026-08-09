@@ -235,7 +235,7 @@
                 border: 1px solid rgba(0, 0, 0, 0.1);
                 border-radius: 100px;
                 font-family: "Manrope", sans-serif;
-                font-size: 15px;
+                font-size: 16px; /* 16px keeps iOS Safari from zooming in on focus */
                 font-weight: 500;
                 outline: none;
                 background: #fff;
@@ -2180,12 +2180,17 @@
             const searchRow = document.getElementById("searchRow");
             const dogSearch = document.getElementById("dogSearch");
             if (searchToggle && searchRow && dogSearch) {
+                let searchOpen = false;
                 searchToggle.addEventListener("click", () => {
-                    const open = searchRow.style.display === "none";
-                    searchRow.style.display = open ? "block" : "none";
-                    searchToggle.classList.toggle("active", open);
-                    if (open) {
-                        setTimeout(() => dogSearch.focus(), 30);
+                    searchOpen = !searchOpen;
+                    searchRow.style.display = searchOpen ? "block" : "none";
+                    searchToggle.classList.toggle("active", searchOpen);
+                    if (searchOpen) {
+                        // iOS Safari: the row can open below the fold, and a deferred
+                        // focus() is ignored (it's outside the tap gesture), so the box
+                        // never scrolls into view. Scroll it in + focus synchronously.
+                        try { searchRow.scrollIntoView({ block: "nearest" }); } catch (e) {}
+                        dogSearch.focus();
                     } else {
                         dogSearch.value = "";
                         searchQuery = "";
