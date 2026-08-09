@@ -2157,12 +2157,49 @@
                 filterSelect.addEventListener("change", () =>
                     setActiveFilter(filterSelect.value),
                 );
+                // iOS: the Vaul wrapper can swallow the tap that opens the native
+                // picker in the first moments after load, so the dropdown won't open.
+                // Open it ourselves on tap (guarded; no-op if the browser lacks it).
+                filterSelect.addEventListener("touchend", () => {
+                    if (typeof filterSelect.showPicker === "function") {
+                        try { filterSelect.showPicker(); } catch (e) {}
+                    }
+                }, { passive: true });
+            }
+
+            // Shared iOS tap rescue: the Vaul wrapper (mobile nav drawer) swallows the
+            // synthetic click on elements inside <main> for the first moments after
+            // load, so a tap does nothing until the page settles. Wire the action to a
+            // short, stationary touch as well as click, with a guard so the two paths
+            // never double-fire. (Same quirk handled for the dog cards + nav + search.)
+            function addTapRescue(el, action) {
+                let lastTap = 0, sx = 0, sy = 0, st = 0, tapping = false;
+                el.addEventListener("click", () => {
+                    if (Date.now() - lastTap < 600) return;
+                    action();
+                });
+                el.addEventListener("touchstart", (e) => {
+                    tapping = true;
+                    var t = e.touches[0];
+                    sx = t.clientX; sy = t.clientY; st = Date.now();
+                }, { passive: true });
+                el.addEventListener("touchend", (e) => {
+                    if (!tapping) return;
+                    tapping = false;
+                    var t = e.changedTouches[0];
+                    if (!t) return;
+                    if (Date.now() - st < 500 && Math.abs(t.clientX - sx) < 12 && Math.abs(t.clientY - sy) < 12) {
+                        e.preventDefault();
+                        lastTap = Date.now();
+                        action();
+                    }
+                }, { passive: false });
             }
 
             // Gender toggle (Reu / Teef) — click the active one again to clear (show all)
             const genderBtns = document.querySelectorAll(".gender-btn");
             genderBtns.forEach((btn) => {
-                btn.addEventListener("click", () => {
+                addTapRescue(btn, () => {
                     const g = btn.getAttribute("data-gender");
                     activeGender = activeGender === g ? null : g;
                     genderBtns.forEach((b) =>
