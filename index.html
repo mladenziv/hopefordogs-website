@@ -2904,7 +2904,7 @@
     async function loadCarouselDogs() {
       try {
         const [allDocs, primaryPhotos] = await Promise.all([
-          supabaseGet('dogs', 'select=*&draft=eq.false&status=neq.geadopteerd&order=sort_order.asc.nullslast,created_at.desc&limit=20'),
+          supabaseGet('dogs', 'select=*&draft=eq.false&status=neq.geadopteerd&order=sort_order.asc.nullslast,created_at.desc&limit=4'),
           supabaseGet('dog_photos', 'select=dog_id,photo_url&is_primary=eq.true')
         ]);
 
