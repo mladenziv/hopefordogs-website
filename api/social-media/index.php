@@ -13,7 +13,7 @@
 
 require_once __DIR__ . '/config.php';
 
-set_time_limit(180);
+set_time_limit(240);
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -47,7 +47,28 @@ if (!$isFacebook) {
 }
 
 // ---- Facebook: extract via the proven on-server endpoint ----
+// Facebook serves reels/videos inconsistently to logged-out servers: the same
+// URL sometimes comes back WITHOUT the video (a lighter, media-less page). For a
+// known video/reel URL, retry a few times until the media appears — otherwise we
+// would silently downgrade to an (empty) photo gallery, which shows the admin
+// confusing blank upload slots.
+$isVideoUrl = (strpos($url, '/reel/') !== false)
+    || (strpos($url, '/watch') !== false)
+    || (strpos($url, '/videos/') !== false)
+    || (strpos($url, '/share/v/') !== false)
+    || (strpos($url, '/share/r/') !== false);
+
 $ext = callFacebookText($url);
+if ($isVideoUrl && empty($ext['videos'])) {
+    for ($try = 0; $try < 3 && empty($ext['videos']); $try++) {
+        usleep(700000); // 0.7s between attempts
+        $retry = callFacebookText($url);
+        if (!empty($retry['videos'])) { $ext = $retry; break; }
+        // keep the richest caption/images seen across attempts
+        if (empty($ext['text']) && !empty($retry['text'])) $ext['text'] = $retry['text'];
+        if (empty($ext['image_data']) && !empty($retry['image_data'])) $ext['image_data'] = $retry['image_data'];
+    }
+}
 $caption = isset($ext['text']) && $ext['text'] ? $ext['text'] : null;
 $videos = isset($ext['videos']) && is_array($ext['videos']) ? $ext['videos'] : [];
 $imageData = isset($ext['image_data']) && is_array($ext['image_data']) ? $ext['image_data'] : [];
@@ -86,6 +107,18 @@ if (!empty($videos)) {
         exit;
     }
     // If the video couldn't be downloaded, fall through to try photos.
+}
+
+// A known video/reel URL must NOT downgrade to an (empty) photo gallery — that
+// renders confusing blank upload slots in beheer. Return a clear video error so
+// the admin knows to simply retry.
+if ($isVideoUrl) {
+    echo json_encode([
+        'error'       => 'De video kon niet worden opgehaald. Facebook gaf de video deze keer niet vrij. Probeer het nog eens.',
+        'caption'     => $caption,
+        'originalUrl' => $url,
+    ]);
+    exit;
 }
 
 // ---- Photo post: build a gallery ----
