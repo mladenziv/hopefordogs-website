@@ -38,7 +38,7 @@ if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 $lottery = fetchLottery($lotteryId);
 if (!$lottery)                          jsonOut(['error' => 'Actie niet gevonden.'], 404);
 if (($lottery['type'] ?? '') !== 'fundraiser') jsonOut(['error' => 'Deze actie accepteert geen donaties.'], 409);
-if ($lottery['status'] !== 'live')      jsonOut(['error' => 'Deze actie is niet (meer) actief.'], 409);
+if (isset($lottery['visible']) && $lottery['visible'] === false) jsonOut(['error' => 'Deze actie is niet (meer) actief.'], 409);
 
 $amountCents = (int) round($amount * 100);
 $amountStr   = number_format($amount, 2, '.', '');

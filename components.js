@@ -74,6 +74,7 @@ var H4D_I18N = {
   'nav.overons':     { nl: 'Over ons',    de: 'Über uns',     en: 'About us' },
   'nav.adoptie':     { nl: 'Adoptie',     de: 'Adoption',     en: 'Adoption' },
   'nav.ervaringen':  { nl: 'Ervaringen',  de: 'Erfahrungen',  en: 'Experiences' },
+  'nav.acties':      { nl: 'Acties',      de: 'Aktionen',     en: 'Campaigns' },
   'nav.nieuws':      { nl: 'Nieuws',      de: 'Neuigkeiten',  en: 'News' },
   'nav.contact':     { nl: 'Contact',     de: 'Kontakt',      en: 'Contact' },
   'contact.hero':          { nl: 'Neem contact op', de: 'Kontakt aufnehmen', en: 'Get in touch' },
@@ -94,6 +95,19 @@ var H4D_I18N = {
   'nav.doneer':      { nl: 'Doneer nu',   de: 'Jetzt spenden', en: 'Donate now' },
   'nav.doneer.short':{ nl: 'Doneer',     de: 'Spenden',      en: 'Donate' },
   'nav.beheer':      { nl: 'Beheer',      de: 'Verwaltung',   en: 'Admin' },
+
+  // --- Acties (homepage section, acties page + modal) ---
+  'index.acties.title':    { nl: 'Onze acties', de: 'Unsere Aktionen', en: 'Our campaigns' },
+  'index.acties.subtitle': { nl: 'We organiseren regelmatig leuke acties om onze dieren en onze opvang te steunen. Doe jij ook mee?', de: 'Wir organisieren regelmäßig schöne Aktionen, um unsere Tiere und unser Tierheim zu unterstützen. Machst du mit?', en: 'We regularly run fun campaigns to support our animals and our shelter. Will you join in?' },
+  'index.acties.btn':      { nl: 'Bekijk alle acties', de: 'Alle Aktionen ansehen', en: 'See all campaigns' },
+  'acties.hero':           { nl: 'Onze acties', de: 'Unsere Aktionen', en: 'Our campaigns' },
+  'acties.hero.sub':       { nl: 'We organiseren regelmatig leuke acties om onze dieren en onze opvang te steunen. Doe jij ook mee?', de: 'Wir organisieren regelmäßig schöne Aktionen, um unsere Tiere und unser Tierheim zu unterstützen. Machst du mit?', en: 'We regularly run fun campaigns to support our animals and our shelter. Will you join in?' },
+  'acties.empty':          { nl: 'Er zijn op dit moment geen acties. Kom snel terug!', de: 'Zurzeit gibt es keine Aktionen. Schau bald wieder vorbei!', en: 'There are no campaigns right now. Check back soon!' },
+  'actie.join':            { nl: 'Ik doe mee!', de: 'Ich mache mit!', en: 'Count me in!' },
+  'actie.qty':             { nl: 'Aantal', de: 'Anzahl', en: 'Quantity' },
+  'actie.note':            { nl: 'Bericht (optioneel)', de: 'Nachricht (optional)', en: 'Message (optional)' },
+  'actie.processing':      { nl: 'Bezig…', de: 'Wird bearbeitet…', en: 'Processing…' },
+  'actie.err':             { nl: 'Er ging iets mis. Controleer je gegevens en probeer het opnieuw.', de: 'Etwas ist schiefgelaufen. Prüfe deine Angaben und versuche es erneut.', en: 'Something went wrong. Please check your details and try again.' },
 
   // --- Footer ---
   'footer.tagline':     { nl: 'Wij zijn een non-profit organisatie die zich inzet voor een beter bestaan voor zwerfhonden in Bosni\u00EB en Servi\u00EB.', de: 'Wir sind eine gemeinn\u00FCtzige Organisation, die sich f\u00FCr ein besseres Leben f\u00FCr Stra\u00DFenhunde in Bosnien und Serbien einsetzt.', en: 'We are a non-profit organization dedicated to a better life for stray dogs in Bosnia and Serbia.' },
@@ -205,6 +219,8 @@ var H4D_I18N = {
   'adoptie.hero':    { nl: 'Adopteer een buitenlandse hond en geef hoop een thuis', de: 'Adoptiere einen Rettungshund aus Europa — aus Bosnien & Serbien', en: 'Adopt a rescue dog from Europe — from Bosnia & Serbia' },
   'ervaringen.hero': { nl: 'Van straat naar warm nestje', de: 'Von der Stra\u00DFe ins warme Nest', en: 'From street to loving home' },
   'nieuws.hero':     { nl: 'Actueel', de: 'Aktuell', en: 'News' },
+  'nieuws.sub':      { nl: 'Bekijk hier onze recente bezigheden', de: 'Sieh dir hier unsere neuesten Aktivitäten an', en: 'See what we’ve been up to lately' },
+  'doneer.mollie':   { nl: 'Veilig betalen via Mollie', de: 'Sichere Zahlung über Mollie', en: 'Secure payment via Mollie' },
   'doneer.hero':     { nl: 'Help onze honden', de: 'Hilf unseren Hunden', en: 'Help our dogs' },
 
   // --- Index: Before & After ---
@@ -633,6 +649,10 @@ var H4D_PAGE_SEO = {
     title: { nl: 'Adoptieverhalen — Ervaringen van Adoptanten | Hope for Dogs', de: 'Adoptionsgeschichten — Erfahrungen von Adoptanten | Hope for Dogs', en: 'Adoption Stories — Experiences from Adopters | Hope for Dogs' },
     desc: { nl: 'Lees de mooiste adoptieverhalen van Hope for Dogs. Onze honden vonden hun thuis in Nederland, België, Duitsland en Oostenrijk.', de: 'Lies die schönsten Adoptionsgeschichten von Hope for Dogs. Unsere Hunde fanden ihr Zuhause in den Niederlanden, Belgien, Deutschland und Österreich.', en: 'Read the most heartwarming adoption stories from Hope for Dogs. Our dogs found their homes in the Netherlands, Belgium, Germany and Austria.' }
   },
+  'acties': {
+    title: { nl: 'Acties — Steun onze straathonden | Hope for Dogs', de: 'Aktionen — Unterstütze unsere Straßenhunde | Hope for Dogs', en: 'Campaigns — Support our street dogs | Hope for Dogs' },
+    desc: { nl: 'Doe mee met onze acties: koop een lot, bestel onze kalender of steun een inzameling. Elke bijdrage helpt straathonden in Bosnië en Servië.', de: 'Mach bei unseren Aktionen mit: Kaufe ein Los, bestelle unseren Kalender oder unterstütze eine Sammlung. Jeder Beitrag hilft Straßenhunden in Bosnien und Serbien.', en: 'Join our campaigns: buy a raffle ticket, order our calendar, or support a fundraiser. Every contribution helps street dogs in Bosnia and Serbia.' }
+  },
   'nieuws': {
     title: { nl: 'Nieuws — Updates uit het Asiel | Hope for Dogs', de: 'Neuigkeiten — Updates aus dem Tierheim | Hope for Dogs', en: 'News — Updates from the Shelter | Hope for Dogs' },
     desc: { nl: 'Blijf op de hoogte van het laatste nieuws van Hope for Dogs. Reddingsverhalen, updates uit het asiel en meer over onze straathonden.', de: 'Bleib auf dem Laufenden mit den neuesten Nachrichten von Hope for Dogs. Rettungsgeschichten, Updates aus dem Tierheim und mehr über unsere Streunerhunde.', en: 'Stay up to date with the latest news from Hope for Dogs. Rescue stories, updates from the shelter, and more about our stray dogs.' }
@@ -806,6 +826,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '<a href="' + h4dUrl('over-ons.html') + '" data-nav="over-ons" data-i18n="nav.overons">Over ons</a>' +
             '<a href="' + h4dUrl('adoptie.html') + '" data-nav="adoptie" data-i18n="nav.adoptie">Adoptie</a>' +
             '<a href="' + h4dUrl('ervaringen.html') + '" data-nav="ervaringen" data-i18n="nav.ervaringen">Ervaringen</a>' +
+            '<a href="' + h4dUrl('acties.html') + '" data-nav="acties" data-i18n="nav.acties">Acties</a>' +
             '<a href="' + h4dUrl('nieuws.html') + '" data-nav="nieuws" data-i18n="nav.nieuws">Nieuws</a>' +
             '<a href="' + h4dUrl('contact.html') + '" data-nav="contact" data-i18n="nav.contact">Contact</a>' +
           '</div>' +
@@ -857,6 +878,7 @@ document.addEventListener('DOMContentLoaded', function () {
     else if (page === 'over-ons.html') activeNav = 'over-ons';
     else if (page === 'nieuws.html') activeNav = 'nieuws';
     else if (page === 'ervaringen.html' || page === 'ervaring.html') activeNav = 'ervaringen';
+    else if (page === 'acties.html') activeNav = 'acties';
     else if (page === 'adoptie.html' || page === 'buitenlandse-hond-adopteren') activeNav = 'adoptie';
     else if (page === 'doneer.html') activeNav = 'doneer';
     else if (location.pathname.indexOf('/beheer') !== -1) activeNav = 'beheer';
@@ -2032,7 +2054,11 @@ document.addEventListener('DOMContentLoaded', function () {
     translateIn(overlay);
 
     document.getElementById('h4dLtDismiss').addEventListener('click', function () { hideToast(true); });
-    document.getElementById('h4dLtBtn').addEventListener('click', function () { if (current) window.openLotteryModal(current); });
+    document.getElementById('h4dLtBtn').addEventListener('click', function () {
+      if (!current) return;
+      if (current.type === 'product') window.openActieModal(current.id);
+      else window.openLotteryModal(current);
+    });
     document.getElementById('h4dLmClose').addEventListener('click', window.closeLotteryModal);
     overlay.addEventListener('click', function (e) { if (e.target === overlay) window.closeLotteryModal(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('open')) window.closeLotteryModal(); });
@@ -2063,10 +2089,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var img = document.getElementById('h4dLtImg');
     if (lottery.image_url) { img.src = lottery.image_url; media.classList.remove('is-default'); }
     else { img.src = DEFAULT_IMG; media.classList.add('is-default'); }
-    var isFund = lottery.type === 'fundraiser';
     var btn = document.getElementById('h4dLtBtn');
-    btn.setAttribute('data-i18n', isFund ? 'lottery.donate' : 'lottery.enter');
-    btn.textContent = t(isFund ? 'lottery.donate' : 'lottery.enter');
+    var btnKey = lottery.type === 'product' ? 'actie.join' : (lottery.type === 'fundraiser' ? 'lottery.donate' : 'lottery.enter');
+    btn.setAttribute('data-i18n', btnKey);
+    btn.textContent = t(btnKey);
     document.getElementById('h4dLtHeading').textContent = loc(lottery, 'title') || 'Loterij';
     document.getElementById('h4dLtText').textContent = loc(lottery, 'description') || loc(lottery, 'prize') || '';
     requestAnimationFrame(function () {
@@ -2344,6 +2370,159 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
+  // ===== Actie (product) modal — image gallery + "Ik doe mee!" → Mollie =====
+  var actieImgs = [], actieSlide = 0, actieRow = null;
+  function injectActieCSS() {
+    if (document.getElementById('h4dActieCSS')) return;
+    var css = document.createElement('style'); css.id = 'h4dActieCSS';
+    css.textContent =
+      '.h4d-am-overlay{position:fixed;inset:0;z-index:1400;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:24px 16px;overflow-y:auto;}' +
+      '.h4d-am-overlay.open{display:flex;}' +
+      '.h4d-am{background:#fff;border-radius:24px;width:100%;max-width:560px;max-height:calc(100vh - 48px);overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.28);}' +
+      '.h4d-am-scroll{max-height:calc(100vh - 48px);overflow-y:auto;-webkit-overflow-scrolling:touch;}' +
+      '.h4d-am-close{position:absolute;top:14px;right:14px;z-index:3;width:38px;height:38px;border-radius:50%;border:none;background:rgba(255,255,255,.92);cursor:pointer;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,.15);}' +
+      '.h4d-am-gallery{position:relative;width:100%;height:340px;background:#000;}' +
+      '.h4d-am-gallery img{width:100%;height:100%;object-fit:cover;display:block;}' +
+      '.h4d-am-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.9);cursor:pointer;z-index:2;font-size:18px;line-height:1;}' +
+      '.h4d-am-nav.prev{left:12px;} .h4d-am-nav.next{right:12px;}' +
+      '.h4d-am-dots{position:absolute;bottom:12px;left:0;right:0;display:flex;gap:6px;justify-content:center;z-index:2;}' +
+      '.h4d-am-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.55);border:none;padding:0;cursor:pointer;}' +
+      '.h4d-am-dot.active{background:#fff;}' +
+      '.h4d-am-body{padding:26px 28px 28px;}' +
+      '.h4d-am-title{font-family:"Nunito",sans-serif;font-weight:800;font-size:24px;margin:0 0 6px;color:#1a1a1a;}' +
+      '.h4d-am-price{font-weight:800;color:#ff5314;font-size:18px;margin:0 0 12px;}' +
+      '.h4d-am-desc{font-size:15px;line-height:1.7;color:#4a4a4a;white-space:pre-line;margin:0 0 18px;}' +
+      '.h4d-am-form{display:flex;flex-direction:column;gap:12px;}' +
+      '.h4d-am-form label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700;color:#666;}' +
+      '.h4d-am-form input{font-family:inherit;font-size:16px;padding:11px 13px;border:1.5px solid rgba(0,0,0,.12);border-radius:12px;outline:none;background:#fff;}' +
+      '.h4d-am-form input:focus{border-color:#ff5314;}' +
+      '.h4d-am-form textarea{font-family:inherit;font-size:16px;padding:11px 13px;border:1.5px solid rgba(0,0,0,.12);border-radius:12px;outline:none;background:#fff;resize:vertical;min-height:70px;}' +
+      '.h4d-am-form textarea:focus{border-color:#ff5314;}' +
+      '.h4d-am-qty{flex-direction:row!important;align-items:center;gap:10px;}' +
+      '.h4d-am-qty input{width:64px;text-align:center;}' +
+      '.h4d-am-qbtn{width:38px;height:42px;border:1.5px solid rgba(0,0,0,.12);background:#fff;border-radius:10px;font-size:18px;cursor:pointer;flex:0 0 auto;}' +
+      '.h4d-am-err{color:#c0392b;font-size:13.5px;min-height:16px;}' +
+      '.h4d-am-submit{margin-top:4px;background:#ff5314;color:#fff;border:none;border-radius:999px;font-weight:800;font-size:16px;padding:14px;cursor:pointer;}' +
+      '.h4d-am-submit:disabled{opacity:.55;cursor:default;}';
+    document.head.appendChild(css);
+  }
+  function injectActieDOM() {
+    if (document.getElementById('h4dActieOverlay')) return;
+    var o = document.createElement('div'); o.className = 'h4d-am-overlay'; o.id = 'h4dActieOverlay';
+    o.innerHTML =
+      '<div class="h4d-am" role="dialog" aria-modal="true">' +
+        '<button class="h4d-am-close" id="h4dAmClose" aria-label="Sluiten">✕</button>' +
+        '<div class="h4d-am-scroll">' +
+        '<div class="h4d-am-gallery" id="h4dAmGallery">' +
+          '<img id="h4dAmImg" alt="">' +
+          '<button class="h4d-am-nav prev" id="h4dAmPrev" aria-label="Vorige">‹</button>' +
+          '<button class="h4d-am-nav next" id="h4dAmNext" aria-label="Volgende">›</button>' +
+          '<div class="h4d-am-dots" id="h4dAmDots"></div>' +
+        '</div>' +
+        '<div class="h4d-am-body">' +
+          '<h3 class="h4d-am-title" id="h4dAmTitle"></h3>' +
+          '<div class="h4d-am-price" id="h4dAmPrice"></div>' +
+          '<p class="h4d-am-desc" id="h4dAmDesc"></p>' +
+          '<form class="h4d-am-form" id="h4dAmForm">' +
+            '<label><span>' + esc(t('lottery.name')) + '</span><input type="text" id="h4dAmName" required></label>' +
+            '<label><span>' + esc(t('lottery.email')) + '</span><input type="email" id="h4dAmEmail" required></label>' +
+            '<label><span>' + esc(t('actie.note')) + '</span><textarea id="h4dAmNote" rows="2"></textarea></label>' +
+            '<label><span>' + esc(t('actie.qty')) + '</span><span class="h4d-am-qty"><button type="button" class="h4d-am-qbtn" id="h4dAmMinus" aria-label="Minder">−</button><input type="number" id="h4dAmQty" value="1" min="1" max="50" step="1"><button type="button" class="h4d-am-qbtn" id="h4dAmPlus" aria-label="Meer">+</button></span></label>' +
+            '<div class="h4d-am-err" id="h4dAmError"></div>' +
+            '<button type="submit" class="h4d-am-submit" id="h4dAmSubmit">' + esc(t('actie.join')) + '</button>' +
+          '</form>' +
+        '</div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(o);
+    o.addEventListener('click', function (e) { if (e.target === o) window.closeActieModal(); });
+    document.getElementById('h4dAmClose').addEventListener('click', window.closeActieModal);
+    document.getElementById('h4dAmPrev').addEventListener('click', function () { actieGo(actieSlide - 1); });
+    document.getElementById('h4dAmNext').addEventListener('click', function () { actieGo(actieSlide + 1); });
+    document.getElementById('h4dAmMinus').addEventListener('click', function () { stepQty(-1); });
+    document.getElementById('h4dAmPlus').addEventListener('click', function () { stepQty(1); });
+    document.getElementById('h4dAmForm').addEventListener('submit', submitActie);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && o.classList.contains('open')) window.closeActieModal();
+    });
+  }
+  function stepQty(d) {
+    var q = document.getElementById('h4dAmQty');
+    q.value = Math.max(1, Math.min(50, (parseInt(q.value, 10) || 1) + d));
+  }
+  function actieGo(i) {
+    if (!actieImgs.length) return;
+    actieSlide = (i + actieImgs.length) % actieImgs.length;
+    document.getElementById('h4dAmImg').src = actieImgs[actieSlide];
+    var dots = document.getElementById('h4dAmDots').children;
+    for (var d = 0; d < dots.length; d++) dots[d].className = 'h4d-am-dot' + (d === actieSlide ? ' active' : '');
+  }
+  window.openActieModal = function (id) {
+    if (!id || typeof supabaseGet !== 'function') return;
+    injectActieCSS(); injectActieDOM();
+    var o = document.getElementById('h4dActieOverlay');
+    o.classList.add('open'); document.body.style.overflow = 'hidden';
+    document.getElementById('h4dAmError').textContent = '';
+    document.getElementById('h4dAmQty').value = '1';
+    var _nn = document.getElementById('h4dAmNote'); if (_nn) _nn.value = '';
+    supabaseGet('lotteries', 'id=eq.' + encodeURIComponent(id) + '&select=*&limit=1')
+      .then(function (rows) {
+        var r = rows && rows[0];
+        if (!r) { window.closeActieModal(); return; }
+        actieRow = r;
+        actieImgs = (Array.isArray(r.gallery_images) && r.gallery_images.length)
+          ? r.gallery_images.slice()
+          : [r.image_url || DEFAULT_IMG];
+        actieSlide = 0;
+        document.getElementById('h4dAmImg').src = actieImgs[0];
+        var multi = actieImgs.length > 1;
+        document.getElementById('h4dAmPrev').style.display = multi ? '' : 'none';
+        document.getElementById('h4dAmNext').style.display = multi ? '' : 'none';
+        var dotsEl = document.getElementById('h4dAmDots');
+        dotsEl.innerHTML = multi
+          ? actieImgs.map(function (_, i) { return '<button class="h4d-am-dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '"></button>'; }).join('')
+          : '';
+        if (multi) {
+          Array.prototype.forEach.call(dotsEl.children, function (dot) {
+            dot.addEventListener('click', function () { actieGo(parseInt(dot.getAttribute('data-i'), 10)); });
+          });
+        }
+        document.getElementById('h4dAmTitle').textContent = loc(r, 'title') || 'Actie';
+        document.getElementById('h4dAmPrice').textContent = money(r.price_cents);
+        document.getElementById('h4dAmDesc').textContent = loc(r, 'description') || '';
+      })
+      .catch(function () { window.closeActieModal(); });
+  };
+  window.closeActieModal = function () {
+    var o = document.getElementById('h4dActieOverlay');
+    if (o) o.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  function submitActie(e) {
+    e.preventDefault();
+    if (!actieRow) return;
+    var err = document.getElementById('h4dAmError'); err.textContent = '';
+    var name = document.getElementById('h4dAmName').value.trim();
+    var email = document.getElementById('h4dAmEmail').value.trim();
+    var qty = Math.max(1, Math.min(50, parseInt(document.getElementById('h4dAmQty').value, 10) || 1));
+    var noteEl = document.getElementById('h4dAmNote');
+    var note = noteEl ? noteEl.value.trim() : '';
+    if (!name || !email) { err.textContent = t('actie.err'); return; }
+    var submit = document.getElementById('h4dAmSubmit');
+    var orig = submit.textContent; submit.disabled = true; submit.textContent = t('actie.processing');
+    fetch('/api/actie/create-payment.php', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ actie_id: actieRow.id, quantity: qty, name: name, email: email, note: note })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.checkoutUrl) { window.location.href = d.checkoutUrl; return; }
+        submit.disabled = false; submit.textContent = orig;
+        err.textContent = (d && d.error) ? d.error : t('actie.err');
+      })
+      .catch(function () { submit.disabled = false; submit.textContent = orig; err.textContent = t('actie.err'); });
+  }
+
   function init() {
     if (excluded()) return;
     injectCSS();
@@ -2351,22 +2530,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var params = new URLSearchParams(location.search);
     var qid = params.get('lottery');
+    var aid = params.get('actie');
 
+    // Deep links open the right modal directly.
+    if (aid) window.openActieModal(aid);
+    else if (qid) window.openLotteryModal(qid);
+
+    // The bottom popup shows the single featured + visible action (any type).
     if (typeof supabaseGet === 'function') {
-      supabaseGet('lotteries', 'select=*&status=eq.live&order=start_at.desc.nullslast,created_at.desc&limit=1')
+      supabaseGet('lotteries', 'select=*&visible=eq.true&featured=eq.true&limit=1')
         .then(function (rows) {
           var lot = rows && rows[0];
           if (lot) {
             current = lot;
             var dismissed = false;
             try { dismissed = sessionStorage.getItem('h4d_lottery_dismissed_' + lot.id) === '1'; } catch (e) {}
-            if (!dismissed && !qid) showToast(lot);
+            if (!dismissed && !qid && !aid) showToast(lot);
           }
-          if (qid) window.openLotteryModal(qid);
         })
-        .catch(function () { if (qid) window.openLotteryModal(qid); });
-    } else if (qid) {
-      window.openLotteryModal(qid);
+        .catch(function () {});
     }
   }
 

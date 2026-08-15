@@ -1,0 +1,152 @@
+{
+  "_readme": "Canonical config for the multi-site dog-listing pipeline. Read by beheer/listings.html (browser) AND listings/runner (Node). NO secrets here (it is web-served). Field `src` vocab (see listings/mapping.js): ['dog','col'] direct column · ['const',v] literal · ['org','key'] from .org · ['default','key'] editable default from platform.defaults · ['boolJaNee','col'] bool→Ja/Nee · ['boolCheck','col'] bool→true/false · ['optionMap','col','mapName'] via platform.options · ['compute','name'] special (ageYears|ageMonths|birthDate|andereDierenBaasje|andereDierenToelichting).",
+
+  "verify_before_first_post": [
+    "org.email / org.phone / org.adoptievergoeding_eur / org.verblijfplaats — fill in the real values",
+    "Every platforms.*.options map + select `enum` — confirm the EXACT dropdown <option> strings from the live forms while logged into the org accounts (they must match character-for-character or the option won't be selected)",
+    "petrescue.constants.zoekt / .status and petrescue.options.categorie / .locatie_land — confirm the exact select values",
+    "guidelines.min_photos and the herplaatsing/extra_info templates read well"
+  ],
+
+  "org": {
+    "naam": "Stichting Hope for Dogs Europe",
+    "email": "info@hopefordogseurope.com",
+    "phone": "",
+    "website": "www.hopefordogseurope.com",
+    "adoptievergoeding_eur": 430,
+    "verblijfplaats": "In ons asiel"
+  },
+
+  "guidelines": {
+    "min_photos": 3,
+    "photo_aspect": "4:3",
+    "tone": "Warm en eerlijk. Wees open over gedrag/uitdagingen, beloof niets wat je niet weet. Noem de herkomst (gered uit Bosnië/Servië) en dat adoptie via de stichting loopt.",
+    "price_rule": "Altijd een adoptievergoeding invullen — nooit € 0 (dat trekt de verkeerde mensen aan).",
+    "required_dog_fields": ["naam", "beschrijving"]
+  },
+
+  "platforms": {
+    "baasjegezocht": {
+      "label": "Baasje Gezocht",
+      "new_listing_url": "https://www.baasjegezocht.nl/nl/adverteren",
+      "auto_submit": false,
+      "constants": {},
+      "defaults": {
+        "beharing": "",
+        "kleur": "",
+        "leeftijd_jaar": "",
+        "leeftijd_maand": "",
+        "gesteriliseerd": "Nee",
+        "lichamelijke_afwijking": "Nee",
+        "medicijnen": "Nee",
+        "zindelijk": "Onbekend",
+        "gedragsproblemen": "Nee",
+        "speciaal_voer": "Nee",
+        "bij_andere_dieren": "Ja",
+        "andere_dieren_toelichting": "",
+        "kan_in_auto": "Onbekend",
+        "hoelang_alleen": "Is 's avonds altijd alleen in ons asiel.",
+        "kinderen_toelichting": "",
+        "extra_info": "",
+        "youtube": ""
+      },
+      "templates": {
+        "reden_herplaatsing": "Opzoek naar een forever home <3",
+        "extra_info": "Adoptie verloopt via Stichting Hope for Dogs Europe, inclusief zorgvuldige matching en nazorg. De hond is gechipt, ingeënt (incl. rabiës) en reist met een geldig EU-dierenpaspoort. Meer info: www.hopefordogseurope.com. Neem gerust contact op om kennis te maken."
+      },
+      "options": {
+        "geslacht": { "reu": "Reu", "teefje": "Teef" },
+        "grootte": { "klein": "Klein", "middel": "Middel", "groot": "Groot" }
+      },
+      "fields": [
+        { "key": "aangeboden_gezocht", "label": "Aangeboden / Gezocht", "type": "select", "src": ["const", "Aangeboden"], "enum": ["Aangeboden", "Gezocht"] },
+        { "key": "naam", "label": "Naam", "type": "text", "src": ["dog", "naam"], "required": true, "maxlen": 10 },
+        { "key": "diersoort", "label": "Diersoort", "type": "select", "src": ["const", "Hond"] },
+        { "key": "geslacht", "label": "Geslacht", "type": "select", "src": ["optionMap", "geslacht", "geslacht"], "required": true, "enum": ["Reu", "Teef"], "ai": "geslacht" },
+        { "key": "ras", "label": "Ras", "type": "text", "src": ["dogOr", "ras", "Mix"], "required": true, "ai": "ras" },
+        { "key": "leeftijd_jaar", "label": "Leeftijd — Jaar", "type": "number", "src": ["default", "leeftijd_jaar"], "ai": "leeftijdJaar" },
+        { "key": "leeftijd_maanden", "label": "Leeftijd — Maanden", "type": "number", "src": ["default", "leeftijd_maand"], "ai": "leeftijdMaand" },
+        { "key": "grootte", "label": "Grootte", "type": "select", "src": ["optionMap", "grootte", "grootte"], "enum": ["Klein", "Middel", "Groot"] },
+        { "key": "beharing", "label": "Beharing", "type": "select", "src": ["default", "beharing"], "enum": ["", "Kort", "Halflang", "Lang"] },
+        { "key": "kleur", "label": "Kleur", "type": "text", "src": ["default", "kleur"] },
+        { "key": "stamboom", "label": "Stamboom", "type": "select", "src": ["const", "n.v.t."], "enum": ["Ja", "Nee", "n.v.t."] },
+        { "key": "paspoort", "label": "Paspoort", "type": "select", "src": ["const", "Ja"], "enum": ["Ja", "Nee"] },
+        { "key": "gechipt", "label": "Gechipt", "type": "select", "src": ["const", "Ja"], "enum": ["Ja", "Nee"] },
+        { "key": "geent", "label": "Geënt", "type": "select", "src": ["const", "Ja"], "enum": ["Ja", "Nee"] },
+        { "key": "karakteromschrijving", "label": "Karakteromschrijving", "type": "textarea", "src": ["dog", "beschrijving"], "required": true, "ai": "karakter" },
+        { "key": "uit_asiel", "label": "Komt het dier uit een asiel?", "type": "select", "src": ["const", "Ja"], "enum": ["Ja", "Nee"] },
+        { "key": "toestemming_verplaatsing", "label": "Toestemming voor verplaatsing", "type": "select", "src": ["const", "Ja"], "enum": ["Ja", "Nee"] },
+        { "key": "gesteriliseerd", "label": "Is het dier gesteriliseerd/gecastreerd?", "type": "select", "src": ["default", "gesteriliseerd"], "enum": ["Ja", "Nee", "Onbekend"] },
+        { "key": "lichamelijke_afwijking", "label": "Heeft het dier een lichamelijke afwijking?", "type": "select", "src": ["default", "lichamelijke_afwijking"], "enum": ["Ja", "Nee"] },
+        { "key": "medicijnen", "label": "Heeft het dier medicijnen nodig?", "type": "select", "src": ["default", "medicijnen"], "enum": ["Ja", "Nee"] },
+        { "key": "zindelijk", "label": "Is het dier zindelijk?", "type": "select", "src": ["default", "zindelijk"], "enum": ["Ja", "Nee", "Onbekend"] },
+        { "key": "gedragsproblemen", "label": "Heeft het dier gedragsproblemen?", "type": "select", "src": ["default", "gedragsproblemen"], "enum": ["Ja", "Nee"] },
+        { "key": "speciaal_voer", "label": "Heeft het dier speciaal voer?", "type": "select", "src": ["default", "speciaal_voer"], "enum": ["Ja", "Nee"] },
+        { "key": "bij_kinderen", "label": "Kan het dier bij kinderen?", "type": "select", "src": ["boolJaNee", "kindvriendelijk"], "enum": ["Ja", "Nee", "Onbekend"] },
+        { "key": "bij_kinderen_toelichting", "label": "Bij kinderen — toelichting", "type": "text", "src": ["default", "kinderen_toelichting"] },
+        { "key": "bij_andere_dieren", "label": "Kan het dier bij andere dieren?", "type": "select", "src": ["default", "bij_andere_dieren"], "enum": ["Ja", "Nee", "Onbekend"] },
+        { "key": "bij_andere_dieren_toelichting", "label": "Bij andere dieren — toelichting", "type": "text", "src": ["default", "andere_dieren_toelichting"] },
+        { "key": "hoelang_alleen", "label": "Hoelang kan het dier alleen zijn?", "type": "text", "src": ["default", "hoelang_alleen"] },
+        { "key": "kan_in_auto", "label": "Kan het dier in de auto?", "type": "select", "src": ["default", "kan_in_auto"], "enum": ["Ja", "Nee", "Onbekend"] },
+        { "key": "mag_in_huis", "label": "Mag het dier in huis?", "type": "select", "src": ["const", "Ja"], "enum": ["Ja", "Nee"] },
+        { "key": "mag_naar_buiten", "label": "Mag het dier naar buiten?", "type": "select", "src": ["const", "Ja"], "enum": ["Ja", "Nee"] },
+        { "key": "reden_herplaatsing", "label": "Reden van herplaatsing", "type": "textarea", "src": ["template", "reden_herplaatsing"], "maxlen": 250 },
+        { "key": "extra_info", "label": "Extra info", "type": "textarea", "src": ["dog", "beschrijving"], "maxlen": 2500 },
+        { "key": "prijs", "label": "Prijs (€)", "type": "number", "src": ["org", "adoptievergoeding_eur"] },
+        { "key": "youtube", "label": "Youtube link", "type": "text", "src": ["default", "youtube"] },
+        { "key": "verblijfplaats", "label": "Verblijfplaats van het dier", "type": "text", "src": ["org", "verblijfplaats"] },
+        { "key": "email", "label": "E-mailadres contactpersoon", "type": "text", "src": ["org", "email"] },
+        { "key": "telefoon", "label": "Telefoon contactpersoon", "type": "text", "src": ["org", "phone"] }
+      ]
+    },
+
+    "petrescue": {
+      "label": "Pet Rescue",
+      "new_listing_url": "https://petrescue.be/pet/create",
+      "auto_submit": false,
+      "constants": {
+        "categorie": "Hond",
+        "locatie_land": "Servië",
+        "zoekt": "adoptie",
+        "status": "beschikbaar"
+      },
+      "defaults": {
+        "birth_date": "",
+        "region": "Servië",
+        "beschrijving_fr": "",
+        "kinderen_text": "",
+        "soortgenoten_text": "",
+        "andere_dieren_text": ""
+      },
+      "options": {
+        "geslacht": { "reu": "mannelijk", "teefje": "vrouwelijk" }
+      },
+      "fields": [
+        { "key": "naam", "label": "Naam dier", "type": "text", "src": ["dog", "naam"], "required": true },
+        { "key": "geslacht", "label": "Geslacht", "type": "select", "src": ["optionMap", "geslacht", "geslacht"], "required": true, "enum": ["mannelijk", "vrouwelijk"], "ai": "geslacht" },
+        { "key": "birth_date", "label": "Birth Date", "type": "date", "src": ["default", "birth_date"], "required": true, "ai": "birthDateFromAge" },
+        { "key": "categorie", "label": "Categorie", "type": "select", "src": ["const", "Hond"], "required": true },
+        { "key": "is_gechipped", "label": "Is gechipped", "type": "checkbox", "src": ["const", true] },
+        { "key": "is_gevaccineerd", "label": "Is gevaccineerd", "type": "checkbox", "src": ["const", true] },
+        { "key": "is_gevaccineerd_rabies", "label": "Is gevaccineerd tegen rabiës", "type": "checkbox", "src": ["const", true] },
+        { "key": "is_gesteriliseerd", "label": "Is gesteriliseerd", "type": "checkbox", "src": ["boolCheck", "gesteriliseerd"] },
+        { "key": "beschrijving_nl", "label": "Beschrijving nl", "type": "textarea", "src": ["dog", "beschrijving"], "required": true, "ai": "karakter" },
+        { "key": "beschrijving_en", "label": "Beschrijving en", "type": "textarea", "src": ["dog", "beschrijving_en"] },
+        { "key": "beschrijving_fr", "label": "Beschrijving fr", "type": "textarea", "src": ["default", "beschrijving_fr"], "note": "Optioneel — kan automatisch vertaald worden via /api/translate." },
+        { "key": "kan_met_kinderen", "label": "Kan met kinderen", "type": "checkbox", "src": ["boolCheck", "kindvriendelijk"] },
+        { "key": "kan_met_kinderen_text", "label": "Kan met kinderen — toelichting", "type": "text", "src": ["default", "kinderen_text"] },
+        { "key": "kan_met_soortgenoten", "label": "Kan met soortgenoten", "type": "checkbox", "src": ["boolCheck", "hondvriendelijk"] },
+        { "key": "kan_met_soortgenoten_text", "label": "Kan met soortgenoten — toelichting", "type": "text", "src": ["default", "soortgenoten_text"] },
+        { "key": "kan_met_andere_dieren", "label": "Kan met andere dieren", "type": "checkbox", "src": ["boolCheck", "katvriendelijk"] },
+        { "key": "kan_met_andere_dieren_text", "label": "Kan met andere dieren — toelichting", "type": "text", "src": ["default", "andere_dieren_text"] },
+        { "key": "adoptiekost", "label": "Adoptiekost", "type": "number", "src": ["org", "adoptievergoeding_eur"], "required": true },
+        { "key": "locatie_land", "label": "Locatie land", "type": "select", "src": ["const", "Servië"], "required": true },
+        { "key": "region", "label": "Region", "type": "text", "src": ["default", "region"], "required": true },
+        { "key": "zoekt", "label": "zoekt", "type": "select", "src": ["const", "adoptie"], "required": true },
+        { "key": "email", "label": "E-mail", "type": "text", "src": ["org", "email"], "required": true },
+        { "key": "telefoon", "label": "Telefoon", "type": "text", "src": ["org", "phone"] },
+        { "key": "status", "label": "status", "type": "select", "src": ["const", "beschikbaar"], "required": true }
+      ]
+    }
+  }
+}

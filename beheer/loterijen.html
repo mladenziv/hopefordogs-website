@@ -35,11 +35,14 @@
     .btn-ghost:hover { border-color:var(--brand); }
     .btn-sm { padding:7px 12px; font-size:13px; }
     .btn-danger { background:#fff; color:#c0392b; border:1.5px solid rgba(192,57,43,.3); }
+    .btn-on { background:#e7f7ec; color:#177a3a; border:1.5px solid rgba(23,122,58,.3); }
+    .btn-feat { background:#fff7e6; color:#b45309; border:1.5px solid rgba(180,83,9,.35); }
     .warn { background:#fff5e6; border:1px solid #ffd58a; border-radius:12px; padding:14px 18px; margin-bottom:20px; font-size:14px; color:#7a5200; }
     .empty { text-align:center; color:var(--muted); padding:60px 20px; }
     /* list cards */
     .cards { display:flex; flex-direction:column; gap:14px; }
     .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px; display:flex; gap:18px; align-items:flex-start; }
+    .card.hidden-row { opacity:.6; }
     .card-thumb { width:76px; height:76px; border-radius:12px; object-fit:cover; background:var(--beige); flex:0 0 auto; }
     .card-thumb.empty { display:flex; align-items:center; justify-content:center; font-size:26px; }
     .card-main { flex:1 1 auto; min-width:0; }
@@ -47,8 +50,9 @@
     .card-meta { font-size:13px; color:var(--muted); line-height:1.6; }
     .card-meta b { color:var(--ink); }
     .badge { display:inline-block; font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; padding:3px 9px; border-radius:999px; vertical-align:middle; margin-left:6px; }
-    .badge.draft{background:#eee;color:#666;} .badge.scheduled{background:#e6efff;color:#1f5fd0;}
-    .badge.live{background:#e7f7ec;color:#177a3a;} .badge.closed{background:#fdecea;color:#c0392b;} .badge.drawn{background:#f0e9ff;color:#6b3fd0;}
+    .badge.type{background:#eef1f5;color:#3a4a5a;}
+    .badge.hidden{background:#fdecea;color:#c0392b;}
+    .badge.feat{background:#fff7e6;color:#b45309;}
     .card-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
     /* form overlay */
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:flex-start; justify-content:center; padding:32px 16px; overflow-y:auto; z-index:100; }
@@ -66,6 +70,11 @@
     .section-label { font-family:'Nunito',sans-serif; font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:#999; margin:20px 0 10px; }
     .thumb-row { display:flex; align-items:center; gap:12px; }
     .thumb-row img { width:56px; height:56px; border-radius:10px; object-fit:cover; background:var(--beige); }
+    /* product gallery manager */
+    .gthumb { position:relative; width:64px; height:64px; border-radius:10px; overflow:hidden; background:var(--beige); flex:0 0 auto; cursor:pointer; border:1.5px solid var(--line); }
+    .gthumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .gthumb .x { position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:rgba(0,0,0,.6); color:#fff; font-size:11px; display:flex; align-items:center; justify-content:center; }
+    .gthumb.cover::after { content:'omslag'; position:absolute; bottom:0; left:0; right:0; font-size:9px; font-weight:800; text-align:center; background:rgba(0,0,0,.55); color:#fff; padding:1px 0; }
     .form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:22px; }
     .prize-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
     .prize-row .p-label { flex:1; }
@@ -105,6 +114,7 @@
         <a href="index.html#/ervaringen">Ervaringen</a>
         <a href="index.html#/website-content?tab=faq">FAQ</a>
         <a href="loterijen.html" class="active">Acties</a>
+        <a href="listings.html">Aanbiedingen</a>
       </nav>
     </div>
   </header>
@@ -130,64 +140,48 @@
   <div class="overlay" id="overlay">
     <div class="sheet">
       <button class="close" id="closeBtn" aria-label="Sluiten">✕</button>
-      <h2 id="formTitle">Nieuwe loterij</h2>
+      <h2 id="formTitle">Nieuwe actie</h2>
       <form id="form">
         <input type="hidden" id="f_id">
 
         <div class="field">
           <label for="f_type">Type</label>
           <select id="f_type">
+            <option value="product">Actie — foto's + titel + prijs (kopen)</option>
             <option value="raffle">Loterij — nummers kopen + prijzen</option>
             <option value="fundraiser">Inzameling — doneren voor een doel</option>
           </select>
         </div>
 
-        <div class="grid2">
-          <div class="field">
-            <label for="f_status">Status</label>
-            <select id="f_status">
-              <option value="draft">Concept (niet zichtbaar)</option>
-              <option value="scheduled">Ingepland</option>
-              <option value="live">Live (zichtbaar op de site)</option>
-              <option value="closed">Gesloten</option>
-              <option value="drawn">Getrokken</option>
-            </select>
-            <span class="hint">Er kan er maar één tegelijk live staan.</span>
-          </div>
-          <div class="field">
-            <label for="f_sort">Sorteervolgorde</label>
-            <input type="number" id="f_sort" value="0" step="1">
-          </div>
+        <div class="field raffle-only">
+          <label for="f_draw">Trekkingsdatum (optioneel)</label>
+          <input type="datetime-local" id="f_draw">
         </div>
 
-        <div class="grid2">
-          <div class="field">
-            <label for="f_start">Gaat live op (optioneel)</label>
-            <input type="datetime-local" id="f_start">
-          </div>
-          <div class="field raffle-only">
-            <label for="f_draw">Trekkingsdatum</label>
-            <input type="datetime-local" id="f_draw">
-          </div>
+        <div class="section-label">Teksten (Duits + Engels worden automatisch vertaald bij opslaan)</div>
+        <div class="field">
+          <label for="f_title_nl">Titel</label>
+          <input type="text" id="f_title_nl" required placeholder="bijv. Bestel onze kalender 2027">
+        </div>
+        <div class="field">
+          <label for="f_desc_nl">Omschrijving</label>
+          <textarea id="f_desc_nl" placeholder="Korte uitleg die op de site en in de pop-up verschijnt."></textarea>
         </div>
 
-        <div class="section-label">Teksten (NL verplicht — DE/EN optioneel, vallen anders terug op NL)</div>
-        <div class="field">
-          <label for="f_title_nl">Titel (NL)</label>
-          <input type="text" id="f_title_nl" required placeholder="bijv. Zomerloterij 2026">
+        <!-- Product (Actie) -->
+        <div class="section-label product-only" style="display:none">Prijs & foto's</div>
+        <div class="field product-only" style="display:none">
+          <label for="f_product_price">Prijs (€)</label>
+          <input type="number" id="f_product_price" min="0" step="0.01" placeholder="bijv. 15.00">
         </div>
-        <div class="grid2">
-          <div class="field"><label for="f_title_de">Titel (DE)</label><input type="text" id="f_title_de"></div>
-          <div class="field"><label for="f_title_en">Titel (EN)</label><input type="text" id="f_title_en"></div>
+        <div class="field product-only" style="display:none">
+          <label>Foto's (1 of meer)</label>
+          <div id="f_gallery" class="thumb-row" style="flex-wrap:wrap"></div>
+          <input type="file" id="f_gallery_file" accept="image/*" multiple>
+          <span class="hint">De eerste foto is de omslag. Klik op een foto om die te verwijderen.</span>
         </div>
-        <div class="field">
-          <label for="f_desc_nl">Omschrijving (NL)</label>
-          <textarea id="f_desc_nl" placeholder="Korte uitleg die in de toast en pop-up verschijnt."></textarea>
-        </div>
-        <div class="grid2">
-          <div class="field"><label for="f_desc_de">Omschrijving (DE)</label><textarea id="f_desc_de"></textarea></div>
-          <div class="field"><label for="f_desc_en">Omschrijving (EN)</label><textarea id="f_desc_en"></textarea></div>
-        </div>
+
+        <!-- Raffle -->
         <div class="section-label raffle-only">Loten & prijs</div>
         <div class="grid2 raffle-only">
           <div class="field">
@@ -200,6 +194,7 @@
           </div>
         </div>
 
+        <!-- Fundraiser -->
         <div class="section-label fundraiser-only" style="display:none">Doel</div>
         <div class="field fundraiser-only" style="display:none">
           <label for="f_goal">Doelbedrag (€, optioneel)</label>
@@ -216,12 +211,12 @@
           <div class="section-label">Prijzen (elk met een eigen winnend nummer)</div>
           <div id="f_prizes"></div>
           <button type="button" class="btn btn-ghost btn-sm" id="addPrizeBtn" style="margin-top:2px">+ Prijs toevoegen</button>
-          <span class="hint" style="display:block;margin-top:8px">Voeg een prijs toe per te winnen nummer (bijv. 1e prijs, 2e prijs). Vul het winnende nummer ná de trekking in — het verschijnt op de site zodra de status “Getrokken” is.</span>
+          <span class="hint" style="display:block;margin-top:8px">Voeg een prijs toe per te winnen nummer (bijv. 1e prijs, 2e prijs). Vul het winnende nummer ná de trekking in.</span>
         </div>
 
-        <div class="section-label">Afbeeldingen</div>
-        <span class="hint" style="display:block;margin:-4px 0 10px">Leeg laten → standaard afbeelding (het logo).</span>
-        <div class="grid2">
+        <div class="section-label not-product">Afbeeldingen</div>
+        <span class="hint not-product" style="display:block;margin:-4px 0 10px">Leeg laten → standaard afbeelding (het logo).</span>
+        <div class="grid2 not-product">
           <div class="field">
             <label>Toast-afbeelding</label>
             <div class="thumb-row">
@@ -249,7 +244,7 @@
     </div>
   </div>
 
-  <!-- Numbers overview: sold / reserved / blocked + who bought which numbers -->
+  <!-- Overview: numbers (raffle) / donations (fundraiser) / purchases (product) -->
   <div class="overlay" id="pOverlay">
     <div class="sheet">
       <button class="close" id="pClose" aria-label="Sluiten">✕</button>
@@ -281,8 +276,6 @@
   (function () {
     var SB = 'https://gdmntnrsgfntcgqmbmtj.supabase.co';
     var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkbW50bnJzZ2ZudGNncW1ibXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzU4NzgsImV4cCI6MjA4Njg1MTg3OH0.dy2JosgoqcI74tDzY3TvVt2lo2Jt3vdYBrLrcb8ACjg';
-    // Default image (relative to /beheer/) used in previews; the public toast/modal
-    // fall back to lolo.png when a lottery has no image of its own.
     var ADMIN_DEFAULT_IMG = '../lolo.png';
 
     function token() {
@@ -292,9 +285,22 @@
       } catch (e) {}
       return null;
     }
-    function authed() { return !!token(); }
+    // Only use the token if it hasn't expired — an expired JWT is actively rejected
+    // by Supabase (401 PGRST303), which is worse than sending none at all.
+    function validToken() {
+      var tk = token(); if (!tk) return null;
+      try {
+        var payload = JSON.parse(atob(tk.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+        if (payload && payload.exp && (payload.exp * 1000) <= Date.now()) return null;
+      } catch (e) {}
+      return tk;
+    }
+    function authed() { return !!validToken(); }
     function headers(write) {
-      var h = { apikey: ANON, Authorization: 'Bearer ' + (token() || ANON) };
+      // Reads fall back to the anon key (lotteries is public-read) so an expired admin
+      // token never blanks the whole list; a fresh token adds the admin-only sold/
+      // revenue stats and enables writes.
+      var h = { apikey: ANON, Authorization: 'Bearer ' + (validToken() || ANON) };
       if (write) { h['Content-Type'] = 'application/json'; h.Prefer = 'return=representation'; }
       return h;
     }
@@ -320,12 +326,21 @@
       if (!r.ok) throw new Error('Upload ' + r.status + ' ' + (await r.text()));
       return SB + '/storage/v1/object/public/dog-photos/' + path;
     }
+    // Auto-translate NL → de/en via the on-server engine. Never throws — returns '' on failure.
+    async function translate(text, to) {
+      if (!text) return '';
+      try {
+        var r = await fetch('/api/translate/index.php?q=' + encodeURIComponent(text) + '&to=' + to + '&from=nl');
+        if (!r.ok) return '';
+        var d = await r.json();
+        return (d && d.translated) ? d.translated : '';
+      } catch (e) { return ''; }
+    }
 
     var $ = function (id) { return document.getElementById(id); };
     function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
     function euros(cents) { return '€' + (Number(cents || 0) / 100).toFixed(2).replace('.', ','); }
     function fmtDate(iso) { if (!iso) return '—'; try { return new Date(iso).toLocaleString('nl-NL', { dateStyle: 'medium', timeStyle: 'short' }); } catch (e) { return iso; } }
-    // datetime-local <-> ISO
     function toLocalInput(iso) {
       if (!iso) return '';
       var d = new Date(iso); if (isNaN(d)) return '';
@@ -334,21 +349,27 @@
     }
     function fromLocalInput(v) { if (!v) return null; var d = new Date(v); return isNaN(d) ? null : d.toISOString(); }
 
-    var STATUS_LABEL = { draft: 'Concept', scheduled: 'Ingepland', live: 'Live', closed: 'Gesloten', drawn: 'Getrokken' };
+    var TYPE_LABEL = { product: 'Actie', raffle: 'Loterij', fundraiser: 'Inzameling' };
 
     async function load() {
       $('authWarn').style.display = authed() ? 'none' : 'block';
       var list = $('list');
       try {
-        var rows = await apiGet('lotteries?select=*&order=sort_order.asc,created_at.desc');
+        var rows = await apiGet('lotteries?select=*&order=featured.desc,created_at.desc');
         if (!rows.length) { list.innerHTML = '<div class="empty">Nog geen acties. Klik op “+ Nieuwe actie”.</div>'; return; }
-        // per-type stats: raffle → paid tickets sold; fundraiser → amount raised + count
         var stats = {};
         await Promise.all(rows.map(async function (r) {
           try {
             if (r.type === 'fundraiser') {
               var d = await apiGet('lottery_donations?select=amount_cents&lottery_id=eq.' + r.id + '&status=eq.paid');
               stats[r.id] = { raised: d.reduce(function (s, x) { return s + (x.amount_cents || 0); }, 0), count: d.length };
+            } else if (r.type === 'product') {
+              var p = await apiGet('actie_purchases?select=amount_cents,quantity&lottery_id=eq.' + r.id + '&status=eq.paid');
+              stats[r.id] = {
+                revenue: p.reduce(function (s, x) { return s + (x.amount_cents || 0); }, 0),
+                qty: p.reduce(function (s, x) { return s + (x.quantity || 1); }, 0),
+                count: p.length
+              };
             } else {
               var t = await apiGet('lottery_tickets?select=id&lottery_id=eq.' + r.id + '&status=eq.paid');
               stats[r.id] = { sold: t.length };
@@ -358,21 +379,29 @@
         list.innerHTML = '<div class="cards">' + rows.map(function (r) { return cardHTML(r, stats[r.id]); }).join('') + '</div>';
         wireCards(rows);
       } catch (e) {
-        list.innerHTML = '<div class="empty">Kon acties niet laden.<br><small>' + esc(e.message) + '</small><br><br>' +
-          'Draai je de database-migratie al? (db/lottery-schema.md)</div>';
+        var expired = /JWT expired|PGRST303|\b401\b/.test(e.message || '');
+        list.innerHTML = expired
+          ? '<div class="empty">Je sessie is verlopen.<br>Log opnieuw in via <a href="index.html#/">het beheer</a> en kom dan terug.</div>'
+          : '<div class="empty">Kon acties niet laden.<br><small>' + esc(e.message) + '</small><br><br>Draaide je de database-migratie al? (db/acties-schema.sql)</div>';
       }
     }
 
     function cardHTML(r, st) {
-      var isFund = r.type === 'fundraiser';
-      var img = r.image_url || r.prize_image_url;
-      var thumb = img ? '<img class="card-thumb" src="' + esc(img) + '" alt="">' : '<div class="card-thumb empty">' + (isFund ? '🧡' : '🎟️') + '</div>';
+      var type = r.type || 'raffle';
+      var img = (Array.isArray(r.gallery_images) && r.gallery_images[0]) || r.image_url || r.prize_image_url;
+      var thumb = img ? '<img class="card-thumb" src="' + esc(img) + '" alt="">'
+        : '<div class="card-thumb empty">' + (type === 'fundraiser' ? '🧡' : (type === 'product' ? '🛍️' : '🎟️')) + '</div>';
       var meta;
-      if (isFund) {
+      if (type === 'fundraiser') {
         var raised = st && st.raised != null ? st.raised : 0;
         var cnt = st && st.count != null ? st.count : 0;
         meta = 'Inzameling · <b>' + euros(raised) + '</b>' + (r.goal_cents ? ' van ' + euros(r.goal_cents) : '') +
           ' opgehaald · <b>' + cnt + '</b> donatie(s)';
+      } else if (type === 'product') {
+        var rev = st && st.revenue != null ? st.revenue : 0;
+        var qty = st && st.qty != null ? st.qty : 0;
+        var nph = Array.isArray(r.gallery_images) ? r.gallery_images.length : 0;
+        meta = 'Actie · ' + euros(r.price_cents) + ' per stuk · ' + nph + ' foto(\'s) · <b>' + qty + '</b> verkocht · <b>' + euros(rev) + '</b> opgehaald';
       } else {
         var soldStr = (st && st.sold != null ? st.sold : '?');
         var prizes = Array.isArray(r.prizes) ? r.prizes : [];
@@ -383,20 +412,28 @@
         meta = 'Loterij · ' + euros(r.price_cents) + ' per nummer · ' + esc(r.max_numbers) + ' nummers · <b>' + soldStr + '</b> verkocht · ' + esc(nWin) + ' prijs(zen)<br>' +
           'Trekking: ' + fmtDate(r.draw_date) + win;
       }
-      var overviewBtn = isFund
+      var overviewBtn = type === 'fundraiser'
         ? '<button class="btn btn-ghost btn-sm" data-act="donations">Donaties</button>'
-        : '<button class="btn btn-ghost btn-sm" data-act="numbers">Nummers</button>';
-      return '<div class="card" data-id="' + r.id + '">' +
+        : (type === 'product'
+          ? '<button class="btn btn-ghost btn-sm" data-act="purchases">Verkopen</button>'
+          : '<button class="btn btn-ghost btn-sm" data-act="numbers">Nummers</button>');
+      var badges = '<span class="badge type">' + (TYPE_LABEL[type] || type) + '</span>' +
+        (r.visible === false ? '<span class="badge hidden">Verborgen</span>' : '') +
+        (r.featured ? '<span class="badge feat">★ Uitgelicht</span>' : '');
+      return '<div class="card' + (r.visible === false ? ' hidden-row' : '') + '" data-id="' + r.id + '">' +
         thumb +
         '<div class="card-main">' +
-          '<div class="card-title">' + esc(r.title_nl || '(zonder titel)') + '<span class="badge ' + r.status + '">' + (STATUS_LABEL[r.status] || r.status) + '</span></div>' +
+          '<div class="card-title">' + esc(r.title_nl || '(zonder titel)') + badges + '</div>' +
           '<div class="card-meta">' + meta + '</div>' +
           '<div class="card-actions">' +
             '<button class="btn btn-ghost btn-sm" data-act="edit">Bewerken</button>' +
             overviewBtn +
-            (r.status === 'live'
-              ? '<button class="btn btn-ghost btn-sm" data-act="close">Sluiten</button>'
-              : '<button class="btn btn-ghost btn-sm" data-act="live">Zet live</button>') +
+            (r.visible === false
+              ? '<button class="btn btn-on btn-sm" data-act="show">Zichtbaar maken</button>'
+              : '<button class="btn btn-ghost btn-sm" data-act="hide">Verbergen</button>') +
+            (r.featured
+              ? '<button class="btn btn-feat btn-sm" data-act="unfeature">★ Niet meer uitlichten</button>'
+              : '<button class="btn btn-ghost btn-sm" data-act="feature">Uitlichten</button>') +
             '<button class="btn btn-ghost btn-sm" data-act="share">Deel-link kopiëren</button>' +
             '<button class="btn btn-danger btn-sm" data-act="del">Verwijderen</button>' +
           '</div>' +
@@ -414,8 +451,11 @@
             if (act === 'edit') openForm(r);
             else if (act === 'numbers') openNumbers(r);
             else if (act === 'donations') openDonations(r);
-            else if (act === 'live') setStatus(r, 'live');
-            else if (act === 'close') setStatus(r, 'closed');
+            else if (act === 'purchases') openPurchases(r);
+            else if (act === 'show') setVisible(r, true);
+            else if (act === 'hide') setVisible(r, false);
+            else if (act === 'feature') setFeatured(r);
+            else if (act === 'unfeature') clearFeatured(r);
             else if (act === 'share') shareLink(r);
             else if (act === 'del') removeLottery(r);
           });
@@ -423,8 +463,6 @@
       });
     }
 
-    // Copy that also works on non-secure origins (temp domain), where
-    // navigator.clipboard is unavailable — falls back to execCommand, then a prompt.
     function copyText(text) {
       if (window.isSecureContext && navigator.clipboard && navigator.clipboard.writeText) {
         return navigator.clipboard.writeText(text);
@@ -449,7 +487,7 @@
       );
     }
 
-    // ---- Numbers overview: sold / reserved / blocked, click-to-block, + buyers ----
+    // ---- Numbers overview (raffle): sold / reserved / blocked, click-to-block, + buyers ----
     var pCurrent = null, pRows = [], pBlocked = {}, pMax = 0, pSold = {}, pReserved = {}, pMode = 'numbers';
     async function openNumbers(r) {
       pCurrent = r; pRows = []; pSold = {}; pReserved = {}; pMode = 'numbers';
@@ -462,7 +500,7 @@
       $('pSummary').textContent = '';
       $('pList').innerHTML = '<div class="hint">Laden…</div>';
       $('pOverlay').classList.add('open');
-      renderNumberGrid(); // show the grid immediately (blocked + available); sold/reserved fill in after fetch
+      renderNumberGrid();
       try {
         var rows = await apiGet('lottery_tickets?lottery_id=eq.' + r.id +
           '&status=in.(paid,reserved)&select=number,status,buyer_name,buyer_email,created_at,reserved_until&order=number.asc');
@@ -514,6 +552,7 @@
         '</div>';
       }).join('');
     }
+
     // ---- Donations overview (fundraiser) ----
     async function openDonations(r) {
       pCurrent = r; pRows = []; pMode = 'donations';
@@ -547,6 +586,35 @@
       }).join('');
     }
 
+    // ---- Purchases overview (product / Actie) ----
+    async function openPurchases(r) {
+      pCurrent = r; pRows = []; pMode = 'purchases';
+      $('pRaffleTools').style.display = 'none';
+      $('pListLabel').textContent = 'Verkopen';
+      $('pTitle').textContent = 'Verkopen — ' + (r.title_nl || '');
+      $('pSummary').textContent = '';
+      $('pList').innerHTML = '<div class="hint">Laden…</div>';
+      $('pOverlay').classList.add('open');
+      try {
+        var rows = await apiGet('actie_purchases?lottery_id=eq.' + r.id +
+          '&status=eq.paid&select=amount_cents,quantity,buyer_name,buyer_email,note,created_at&order=created_at.desc');
+        pRows = rows || [];
+        var total = pRows.reduce(function (s, x) { return s + (x.amount_cents || 0); }, 0);
+        var qty = pRows.reduce(function (s, x) { return s + (x.quantity || 1); }, 0);
+        $('pSummary').innerHTML = '<b>' + qty + '</b> verkocht · <b>' + euros(total) + '</b> opgehaald · ' + pRows.length + ' bestelling(en)';
+        if (!pRows.length) { $('pList').innerHTML = '<div class="empty">Nog geen verkopen.</div>'; return; }
+        $('pList').innerHTML = pRows.map(function (d) {
+          return '<div class="pt-item">' +
+            '<div class="pt-num">' + euros(d.amount_cents) + '</div>' +
+            '<div class="pt-who"><div>' + esc(d.buyer_name || '—') + (d.quantity > 1 ? ' <span class="e">×' + esc(d.quantity) + '</span>' : '') + '</div><div class="e">' + esc(d.buyer_email || '') + '</div>' + (d.note ? '<div style="margin-top:4px;color:var(--ink);white-space:pre-line">“' + esc(d.note) + '”</div>' : '') + '</div>' +
+            '<div class="pt-date">' + fmtDate(d.created_at) + '</div>' +
+          '</div>';
+        }).join('');
+      } catch (e) {
+        $('pList').innerHTML = '<div class="empty">Kon verkopen niet laden.<br><small>' + esc(e.message) + '</small></div>';
+      }
+    }
+
     async function saveBlocks() {
       if (!authed()) { alert('Log eerst in via het beheer.'); return; }
       var nums = Object.keys(pBlocked).map(function (n) { return parseInt(n, 10); }).sort(function (a, b) { return a - b; });
@@ -572,6 +640,11 @@
           return [(d.amount_cents / 100).toFixed(2), csvCell(d.donor_name), csvCell(d.donor_email), d.anonymous ? 'ja' : 'nee', csvCell(d.created_at)];
         }));
         prefix = 'donaties';
+      } else if (pMode === 'purchases') {
+        lines = [['bedrag_eur', 'aantal', 'naam', 'email', 'bericht', 'datum']].concat(pRows.map(function (d) {
+          return [(d.amount_cents / 100).toFixed(2), (d.quantity || 1), csvCell(d.buyer_name), csvCell(d.buyer_email), csvCell(d.note), csvCell(d.created_at)];
+        }));
+        prefix = 'verkopen';
       } else {
         lines = [['nummer', 'naam', 'email', 'datum']].concat(pRows.map(function (t) {
           return [t.number, csvCell(t.buyer_name), csvCell(t.buyer_email), csvCell(t.created_at)];
@@ -587,60 +660,86 @@
       setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
     }
 
-    async function setStatus(r, status) {
+    // ---- Visible (aan/uit) + Featured (uitgelicht) ----
+    async function setVisible(r, vis) {
       if (!authed()) { alert('Log eerst in via het beheer.'); return; }
       try {
-        if (status === 'live') await ensureSingleLive(r.id);
-        await apiWrite('PATCH', 'lotteries?id=eq.' + r.id, { status: status });
+        var patch = { visible: vis };
+        if (!vis && r.featured) patch.featured = false; // hiding also drops the featured spot
+        await apiWrite('PATCH', 'lotteries?id=eq.' + r.id, patch);
         load();
-      } catch (e) { alert('Kon status niet wijzigen: ' + e.message); }
+      } catch (e) { alert('Kon zichtbaarheid niet wijzigen: ' + e.message); }
     }
-
-    // Enforce "one live at a time": close any other live lottery.
-    async function ensureSingleLive(exceptId) {
-      var others = await apiGet('lotteries?select=id&status=eq.live' + (exceptId ? '&id=neq.' + exceptId : ''));
-      await Promise.all(others.map(function (o) { return apiWrite('PATCH', 'lotteries?id=eq.' + o.id, { status: 'closed' }); }));
+    async function setFeatured(r) {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      try {
+        // Only one featured at a time — clear the others first (unique index enforces it).
+        var others = await apiGet('lotteries?select=id&featured=eq.true&id=neq.' + r.id);
+        await Promise.all(others.map(function (o) { return apiWrite('PATCH', 'lotteries?id=eq.' + o.id, { featured: false }); }));
+        await apiWrite('PATCH', 'lotteries?id=eq.' + r.id, { featured: true, visible: true });
+        load();
+      } catch (e) { alert('Kon niet uitlichten: ' + e.message); }
+    }
+    async function clearFeatured(r) {
+      if (!authed()) { alert('Log eerst in via het beheer.'); return; }
+      try { await apiWrite('PATCH', 'lotteries?id=eq.' + r.id, { featured: false }); load(); }
+      catch (e) { alert('Mislukt: ' + e.message); }
     }
 
     async function removeLottery(r) {
       if (!authed()) { alert('Log eerst in via het beheer.'); return; }
-      if (!confirm('Loterij “' + (r.title_nl || '') + '” verwijderen? Dit verwijdert ook alle gekochte loten.')) return;
+      if (!confirm('Actie “' + (r.title_nl || '') + '” verwijderen? Dit verwijdert ook alle gekochte loten/verkopen.')) return;
       try { await apiWrite('DELETE', 'lotteries?id=eq.' + r.id); load(); }
       catch (e) { alert('Verwijderen mislukt: ' + e.message); }
     }
 
     // ---- Form ----
     function toggleType() {
-      var isFund = $('f_type').value === 'fundraiser';
-      document.querySelectorAll('.raffle-only').forEach(function (el) { el.style.display = isFund ? 'none' : ''; });
-      document.querySelectorAll('.fundraiser-only').forEach(function (el) { el.style.display = isFund ? '' : 'none'; });
+      var v = $('f_type').value; // product | raffle | fundraiser
+      document.querySelectorAll('.raffle-only').forEach(function (el) { el.style.display = v === 'raffle' ? '' : 'none'; });
+      document.querySelectorAll('.fundraiser-only').forEach(function (el) { el.style.display = v === 'fundraiser' ? '' : 'none'; });
+      document.querySelectorAll('.product-only').forEach(function (el) { el.style.display = v === 'product' ? '' : 'none'; });
+      document.querySelectorAll('.not-product').forEach(function (el) { el.style.display = v === 'product' ? 'none' : ''; });
+    }
+
+    // Product gallery working state — items are {url} (already uploaded) or {file, preview}.
+    var galleryItems = [];
+    function renderGallery() {
+      var wrap = $('f_gallery');
+      wrap.innerHTML = galleryItems.map(function (it, i) {
+        var src = it.url || it.preview || '';
+        return '<div class="gthumb' + (i === 0 ? ' cover' : '') + '" data-i="' + i + '"><img src="' + esc(src) + '" alt=""><span class="x">✕</span></div>';
+      }).join('');
+      wrap.querySelectorAll('.gthumb').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var i = parseInt(el.getAttribute('data-i'), 10);
+          galleryItems.splice(i, 1);
+          renderGallery();
+        });
+      });
     }
 
     function openForm(r) {
       $('formMsg').textContent = '';
       $('formTitle').textContent = r ? 'Actie bewerken' : 'Nieuwe actie';
       $('f_id').value = r ? r.id : '';
-      $('f_type').value = r ? (r.type || 'raffle') : 'raffle';
+      $('f_type').value = r ? (r.type || 'raffle') : 'product';
       $('f_goal').value = (r && r.goal_cents) ? (r.goal_cents / 100) : '';
-      $('f_status').value = r ? r.status : 'draft';
-      $('f_sort').value = r ? (r.sort_order || 0) : 0;
-      $('f_start').value = r ? toLocalInput(r.start_at) : '';
       $('f_draw').value = r ? toLocalInput(r.draw_date) : '';
       $('f_title_nl').value = r ? (r.title_nl || '') : '';
-      $('f_title_de').value = r ? (r.title_de || '') : '';
-      $('f_title_en').value = r ? (r.title_en || '') : '';
       $('f_desc_nl').value = r ? (r.description_nl || '') : '';
-      $('f_desc_de').value = r ? (r.description_de || '') : '';
-      $('f_desc_en').value = r ? (r.description_en || '') : '';
       $('f_max').value = r ? r.max_numbers : 100;
       $('f_price').value = r ? (r.price_cents / 100).toFixed(2) : '5.00';
+      $('f_product_price').value = (r && r.type === 'product' && r.price_cents != null) ? (r.price_cents / 100).toFixed(2) : '';
       $('f_terms').value = r ? (r.terms_url || '') : '';
       $('f_image_url').value = r ? (r.image_url || '') : '';
       $('f_prize_image_url').value = r ? (r.prize_image_url || '') : '';
       setPrev('f_img_prev', (r && r.image_url) || ADMIN_DEFAULT_IMG);
       setPrev('f_prize_prev', (r && r.prize_image_url) || ADMIN_DEFAULT_IMG);
-      $('f_img_file').value = ''; $('f_prize_file').value = '';
-      // prizes repeater — one row per prize, each with its own winning number
+      $('f_img_file').value = ''; $('f_prize_file').value = ''; $('f_gallery_file').value = '';
+      galleryItems = (r && Array.isArray(r.gallery_images)) ? r.gallery_images.map(function (u) { return { url: u }; }) : [];
+      renderGallery();
+      // prizes repeater
       $('f_prizes').innerHTML = '';
       var pr = (r && Array.isArray(r.prizes)) ? r.prizes : [];
       if (pr.length) pr.forEach(function (p) { addPrizeRow(p.label, p.number); });
@@ -665,7 +764,7 @@
         var label = row.querySelector('.p-label').value.trim();
         var raw = row.querySelector('.p-num').value.trim();
         var num = raw === '' ? null : parseInt(raw, 10);
-        if (label === '' && num == null) return; // skip fully-empty rows
+        if (label === '' && num == null) return;
         out.push({ label: label, number: (num != null && !isNaN(num)) ? num : null });
       });
       return out;
@@ -673,53 +772,78 @@
     function closeForm() { $('overlay').classList.remove('open'); }
     function setPrev(id, url) { var el = $(id); if (url) { el.src = url; el.style.display = ''; } else { el.removeAttribute('src'); el.style.display = 'none'; } }
 
-    function parseNumbers(str) {
-      return (str || '').split(/[,\s]+/).map(function (s) { return parseInt(s, 10); }).filter(function (n) { return !isNaN(n); });
-    }
-
     async function save(e) {
       e.preventDefault();
       var msg = $('formMsg'); msg.className = 'msg'; msg.textContent = '';
       if (!authed()) { msg.className = 'msg err'; msg.textContent = 'Je bent niet ingelogd — open het beheer en log in.'; return; }
-      if (!$('f_title_nl').value.trim()) { msg.className = 'msg err'; msg.textContent = 'Titel (NL) is verplicht.'; return; }
+      if (!$('f_title_nl').value.trim()) { msg.className = 'msg err'; msg.textContent = 'Titel is verplicht.'; return; }
       var saveBtn = $('saveBtn'); saveBtn.disabled = true; var orig = saveBtn.textContent; saveBtn.textContent = 'Opslaan…';
       try {
-        // upload any newly-chosen images first
-        var imgFile = $('f_img_file').files[0];
-        var prizeFile = $('f_prize_file').files[0];
-        if (imgFile) $('f_image_url').value = await uploadImage(imgFile);
-        if (prizeFile) $('f_prize_image_url').value = await uploadImage(prizeFile);
+        var type = $('f_type').value;
+        if (type !== 'raffle' && type !== 'fundraiser' && type !== 'product') type = 'raffle';
 
-        var status = $('f_status').value;
-        var type = $('f_type').value === 'fundraiser' ? 'fundraiser' : 'raffle';
+        // Upload any newly-chosen images.
+        var galleryUrls = [];
+        if (type === 'product') {
+          saveBtn.textContent = 'Foto\'s uploaden…';
+          for (var gi = 0; gi < galleryItems.length; gi++) {
+            var it = galleryItems[gi];
+            galleryUrls.push(it.url ? it.url : await uploadImage(it.file));
+          }
+        } else {
+          var imgFile = $('f_img_file').files[0];
+          var prizeFile = $('f_prize_file').files[0];
+          if (imgFile) $('f_image_url').value = await uploadImage(imgFile);
+          if (prizeFile) $('f_prize_image_url').value = await uploadImage(prizeFile);
+        }
+
+        // Price by type: product → product price; raffle → per-number; fundraiser → 0.
+        var priceCents;
+        if (type === 'product') priceCents = Math.round(parseFloat($('f_product_price').value || '0') * 100);
+        else if (type === 'raffle') priceCents = Math.round(parseFloat($('f_price').value || '0') * 100);
+        else priceCents = 0;
+        if (type === 'product' && priceCents <= 0) { msg.className = 'msg err'; msg.textContent = 'Vul een geldige prijs in voor deze actie.'; return; }
+
         var goalRaw = parseFloat($('f_goal').value);
         var prizes = getPrizes();
         var winning = prizes.map(function (p) { return p.number; }).filter(function (n) { return n != null; });
+
+        // Auto-translate title + description NL → de/en (best effort).
+        saveBtn.textContent = 'Vertalen…';
+        var titleNl = $('f_title_nl').value.trim();
+        var descNl = $('f_desc_nl').value.trim();
+        var tr = await Promise.all([
+          translate(titleNl, 'de'), translate(titleNl, 'en'),
+          translate(descNl, 'de'), translate(descNl, 'en')
+        ]);
+
         var payload = {
           type: type,
+          // NB: we deliberately do NOT set status here. The new acties model uses the
+          // `visible` flag for show/hide; leaving status alone means new rows default to
+          // 'draft' (so the currently-deployed site — which still keys its popup on
+          // status='live' — can never surface test data), and editing an existing row
+          // leaves its status untouched.
           goal_cents: (type === 'fundraiser' && goalRaw > 0) ? Math.round(goalRaw * 100) : null,
-          status: status,
-          sort_order: parseInt($('f_sort').value, 10) || 0,
-          start_at: fromLocalInput($('f_start').value),
-          draw_date: fromLocalInput($('f_draw').value),
-          title_nl: $('f_title_nl').value.trim(),
-          title_de: $('f_title_de').value.trim() || null,
-          title_en: $('f_title_en').value.trim() || null,
-          description_nl: $('f_desc_nl').value.trim() || null,
-          description_de: $('f_desc_de').value.trim() || null,
-          description_en: $('f_desc_en').value.trim() || null,
-          max_numbers: parseInt($('f_max').value, 10) || 100,
-          price_cents: Math.round(parseFloat($('f_price').value || '0') * 100),
+          draw_date: type === 'raffle' ? fromLocalInput($('f_draw').value) : null,
+          title_nl: titleNl,
+          title_de: tr[0] || null,
+          title_en: tr[1] || null,
+          description_nl: descNl || null,
+          description_de: (descNl && tr[2]) ? tr[2] : null,
+          description_en: (descNl && tr[3]) ? tr[3] : null,
+          max_numbers: type === 'raffle' ? (parseInt($('f_max').value, 10) || 100) : 100, // column is NOT NULL; unused for non-raffle
+          price_cents: priceCents,
           num_winners: prizes.length || 1,
           terms_url: $('f_terms').value.trim() || null,
-          image_url: $('f_image_url').value || null,
-          prize_image_url: $('f_prize_image_url').value || null,
-          prizes: prizes.length ? prizes : null,
-          winning_numbers: winning.length ? winning : null
+          gallery_images: type === 'product' ? (galleryUrls.length ? galleryUrls : null) : null,
+          image_url: type === 'product' ? (galleryUrls[0] || null) : ($('f_image_url').value || null),
+          prize_image_url: type === 'product' ? null : ($('f_prize_image_url').value || null),
+          prizes: (type === 'raffle' && prizes.length) ? prizes : null,
+          winning_numbers: (type === 'raffle' && winning.length) ? winning : null
         };
 
         var id = $('f_id').value;
-        if (status === 'live') await ensureSingleLive(id || null);
         if (id) await apiWrite('PATCH', 'lotteries?id=eq.' + id, payload);
         else await apiWrite('POST', 'lotteries', payload);
 
@@ -732,7 +856,6 @@
       }
     }
 
-    // live image preview on file choose
     function livePrev(fileId, prevId) {
       $(fileId).addEventListener('change', function () {
         var f = this.files[0]; if (!f) return;
@@ -753,6 +876,13 @@
     $('cancelBtn').addEventListener('click', closeForm);
     $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay')) closeForm(); });
     $('form').addEventListener('submit', save);
+    // preview newly-chosen product photos immediately (append as object URLs; replaced by real URLs on save)
+    $('f_gallery_file').addEventListener('change', function () {
+      var fs = Array.prototype.slice.call(this.files || []);
+      fs.forEach(function (f) { galleryItems.push({ file: f, preview: URL.createObjectURL(f) }); });
+      this.value = ''; // allow re-picking the same file; uploads happen from galleryItems on save
+      renderGallery();
+    });
     livePrev('f_img_file', 'f_img_prev');
     livePrev('f_prize_file', 'f_prize_prev');
     setPrev('f_img_prev', ''); setPrev('f_prize_prev', '');

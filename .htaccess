@@ -86,6 +86,7 @@ RewriteRule ^ervaring\.html$ ervaring.php [L]
 RewriteRule ^ervaringen\.html$ ervaringen.php [L]
 RewriteRule ^nieuws\.html$ nieuws.php [L]
 RewriteRule ^over-ons\.html$ over-ons.php [L]
+RewriteRule ^acties\.html$ acties.php [L]
 # Flagship served at its keyword-clean URL (internal rewrite; URL bar stays clean).
 RewriteRule ^(?:(en|de)/)?buitenlandse-hond-adopteren/?$ adoptie.php [L,QSA]
 RewriteRule ^contact\.html$ contact.php [L]

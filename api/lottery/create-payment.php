@@ -48,10 +48,13 @@ if (count($numbers) > 50) {
     jsonOut(['error' => 'Je kunt maximaal 50 nummers per keer kopen.'], 400);
 }
 
-// Lottery must exist and be live.
+// Lottery must exist and be visible on the site. (Visibility is the single source of
+// truth in the acties model; `status` is legacy and no longer gates buying.)
 $lottery = fetchLottery($lotteryId);
-if (!$lottery)                       jsonOut(['error' => 'Loterij niet gevonden.'], 404);
-if ($lottery['status'] !== 'live')   jsonOut(['error' => 'Deze loterij is niet (meer) actief.'], 409);
+if (!$lottery)                                       jsonOut(['error' => 'Loterij niet gevonden.'], 404);
+if (isset($lottery['visible']) && $lottery['visible'] === false) {
+    jsonOut(['error' => 'Deze loterij is niet (meer) actief.'], 409);
+}
 
 $maxNum    = (int)$lottery['max_numbers'];
 $priceEach = (int)$lottery['price_cents'];

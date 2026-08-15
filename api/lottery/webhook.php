@@ -61,6 +61,33 @@ if ($type === 'lottery') {
             'lottery_donations?mollie_payment_id=eq.' . $pidEnc . '&status=eq.pending',
             null, 'return=minimal');
     }
+} elseif ($type === 'actie') {
+    if ($status === 'paid' && !alreadyProcessed($paymentId)) {
+        // Confirm the purchase tied to this payment.
+        sbRequest('PATCH',
+            'actie_purchases?mollie_payment_id=eq.' . $pidEnc . '&status=eq.pending',
+            ['status' => 'paid'], 'return=minimal');
+
+        $email  = isset($metadata['buyer_email']) ? trim($metadata['buyer_email']) : '';
+        $name   = isset($metadata['buyer_name']) ? trim($metadata['buyer_name']) : '';
+        $title  = isset($metadata['actie_title']) ? $metadata['actie_title'] : 'Actie';
+        $qty    = isset($metadata['quantity']) ? (int)$metadata['quantity'] : 1;
+        $amount = isset($payment['amount']['value']) ? $payment['amount']['value'] : '';
+        $note   = isset($metadata['note']) ? trim($metadata['note']) : '';
+
+        if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            sendActieConfirmation($email, $name, $amount, $title, $qty);
+        }
+        // Drop a notification into the beheer inbox (contact_messages) so the sale
+        // shows up alongside the other messages — "who bought what".
+        notifyPurchase($name, $email, $title, $amount, $qty, $note);
+        markProcessed($paymentId);
+    } elseif (in_array($status, ['failed', 'canceled', 'expired'], true)) {
+        // Payment did not complete — drop the pending purchase.
+        sbRequest('DELETE',
+            'actie_purchases?mollie_payment_id=eq.' . $pidEnc . '&status=eq.pending',
+            null, 'return=minimal');
+    }
 }
 
 http_response_code(200);
@@ -125,6 +152,70 @@ function sendTicketConfirmation($to, $name, $numbers, $title) {
 
     $subjectEnc = '=?UTF-8?B?' . base64_encode($subject) . '?=';
     @mail($to, $subjectEnc, $body, $headers, '-f' . $fromEmail);
+}
+
+// ---- Actie purchase confirmation email ----
+function sendActieConfirmation($to, $name, $amountValue, $title, $qty) {
+    $fromEmail = defined('DONATION_FROM_EMAIL') ? DONATION_FROM_EMAIL : 'info@hopefordogseurope.com';
+    $fromName  = defined('DONATION_FROM_NAME')  ? DONATION_FROM_NAME  : 'Hope for Dogs';
+    $replyTo   = defined('DONATION_REPLY_TO')   ? DONATION_REPLY_TO   : 'info@hopefordogseurope.com';
+
+    $greeting  = $name !== '' ? ('Beste ' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8')) : 'Beste deelnemer';
+    $titleOut  = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+    $amountFmt = '€' . number_format((float)$amountValue, 2, ',', '.');
+    $qtyOut    = (int)$qty;
+    $subject   = 'Bedankt voor je bestelling — Hope for Dogs';
+
+    $html = '<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"></head>'
+        . '<body style="margin:0;padding:0;background:#faf8f4;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">'
+        . '<div style="max-width:560px;margin:0 auto;padding:32px 24px;">'
+        . '<div style="background:#ffffff;border-radius:16px;padding:32px 28px;">'
+        . '<div style="font-size:40px;line-height:1;margin-bottom:12px;">🛍️</div>'
+        . '<h1 style="font-size:24px;margin:0 0 16px;color:#1a1a1a;">Bedankt dat je meedoet!</h1>'
+        . '<p style="font-size:16px;line-height:26px;margin:0 0 14px;">' . $greeting . ',</p>'
+        . '<p style="font-size:16px;line-height:26px;margin:0 0 14px;">We hebben je bestelling voor <strong>' . $titleOut . '</strong>'
+        . ($qtyOut > 1 ? (' (' . $qtyOut . '×)') : '') . ' van <strong>' . $amountFmt . '</strong> in goede orde ontvangen.</p>'
+        . '<p style="font-size:16px;line-height:26px;margin:0 0 14px;">We nemen contact met je op over de details. Met jouw steun helpen we straathonden — bedankt!</p>'
+        . '<p style="font-size:16px;line-height:26px;margin:0;">Met warme groet,<br>Team Hope for Dogs</p>'
+        . '</div>'
+        . '<p style="font-size:12px;color:#888;text-align:center;margin:20px 0 0;">Hope for Dogs · Samen voor straathonden in Bosnië en Servië</p>'
+        . '</div></body></html>';
+
+    $textGreeting = $name !== '' ? ('Beste ' . $name) : 'Beste deelnemer';
+    $text = $textGreeting . ",\r\n\r\n"
+        . 'We hebben je bestelling voor ' . $title . ($qtyOut > 1 ? (' (' . $qtyOut . 'x)') : '') . ' van ' . $amountFmt . " in goede orde ontvangen.\r\n\r\n"
+        . "We nemen contact met je op over de details. Bedankt voor je steun!\r\n\r\n"
+        . "Met warme groet,\r\nTeam Hope for Dogs";
+
+    $boundary = 'h4d' . md5(uniqid('', true));
+    $headers = implode("\r\n", [
+        'From: ' . $fromName . ' <' . $fromEmail . '>',
+        'Reply-To: ' . $replyTo,
+        'MIME-Version: 1.0',
+        'Content-Type: multipart/alternative; boundary="' . $boundary . '"',
+    ]);
+    $body = '--' . $boundary . "\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\n\r\n"
+        . $text . "\r\n\r\n"
+        . '--' . $boundary . "\r\n"
+        . "Content-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\n\r\n"
+        . $html . "\r\n\r\n"
+        . '--' . $boundary . "--";
+
+    $subjectEnc = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+    @mail($to, $subjectEnc, $body, $headers, '-f' . $fromEmail);
+}
+
+// ---- Beheer-inbox notification (reuses contact_messages) ----
+function notifyPurchase($name, $email, $title, $amountValue, $qty, $note = '') {
+    $amountFmt = '€' . number_format((float)$amountValue, 2, ',', '.');
+    $bericht = 'Nieuwe aankoop: ' . $title . ($qty > 1 ? (' (' . (int)$qty . '×)') : '') . ' — ' . $amountFmt;
+    if ($note !== '') $bericht .= "\n\nBericht van koper: " . $note;
+    sbRequest('POST', 'contact_messages', [[
+        'naam'    => ($name !== '' ? $name : 'Onbekend'),
+        'email'   => $email,
+        'bericht' => $bericht,
+    ]], 'return=minimal');
 }
 
 // ---- Fundraiser donation receipt ----

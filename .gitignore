@@ -15,6 +15,12 @@ api/social-media/config.php
 # Anthropic API key (OCR/vision) — set on server, never commit
 api/ocr/config.php
 
+# Listings runner (Phase 2) — local-only: secrets, saved sessions, dry-run shots
+listings/runner/.env
+listings/runner/.profile/
+listings/runner/.dryrun/
+listings/runner/.auth/
+
 # Manual backups (pre-edit copies)
 /backups/
 

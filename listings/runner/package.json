@@ -1,0 +1,15 @@
+{
+  "name": "hope-listings-runner",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Local Playwright runner that posts ready dog listings to baasjegezocht.nl + petrescue.be. Runs on your Mac, never on the server.",
+  "scripts": {
+    "login": "node post.js --login",
+    "dry": "node post.js --dry-run --headed",
+    "post": "node post.js"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}

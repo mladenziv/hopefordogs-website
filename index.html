@@ -55,7 +55,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://gdmntnrsgfntcgqmbmtj.supabase.co" crossorigin>
   <!-- Preload the page scripts so they download alongside the HTML instead of after it. -->
-  <link rel="preload" as="script" href="components.js?v=42">
+  <link rel="preload" as="script" href="components.js?v=43">
   <link rel="preload" as="script" href="supabase-config.js">
   <link rel="preload" as="script" href="dog-card.js?v=10">
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&amp;family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700;800&amp;family=Nunito:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
@@ -980,6 +980,90 @@
     }
 
     /* ===== SOCIAL ===== */
+    /* ---- Onze acties (homepage) — dogs-style text, social-style horizontal list ---- */
+    .acties-home {
+      width: 100%;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+    }
+    .acties-home-inner {
+      width: 100%;
+      max-width: 1560px;
+      padding: 72px 40px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+    .acties-home-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 640px;
+    }
+    .acties-home-header h2 { color: #181818; }
+    .acties-home-header p {
+      max-width: 640px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 28px;
+      color: #6e6e6e;
+    }
+    .acties-carousel-wrap { position: relative; }
+    .acties-carousel {
+      display: flex;
+      align-items: stretch;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 4px 2px 14px;
+    }
+    .acties-carousel::-webkit-scrollbar { display: none; }
+    /* arrows sit at the carousel edges (this wrap isn't full-bleed) */
+    .acties-carousel-wrap .carousel-arrow.prev { left: -6px; }
+    .acties-carousel-wrap .carousel-arrow.next { right: -6px; }
+    .actie-hcard {
+      flex: 0 0 auto;
+      width: calc((100% - 40px) / 3); /* exactly 3 across the content width (2 × 20px gaps) */
+      scroll-snap-align: start;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      background: #faf8f4;
+      border: none;
+      border-radius: 20px;
+      padding: 16px;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .actie-hcard:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); }
+    .actie-hcard-img { width: 76px; height: 76px; border-radius: 14px; object-fit: cover; flex: 0 0 auto; background: #eee; }
+    .actie-hcard-body { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+    .actie-hcard-title { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px; color: #181818; }
+    .actie-hcard-desc {
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      color: #6e6e6e;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    @media (max-width: 900px) {
+      .acties-home-inner { padding: 48px 20px 28px; }
+      .actie-hcard { width: calc((100% - 20px) / 2); } /* 2 across */
+    }
+    @media (max-width: 620px) {
+      .actie-hcard { width: 84%; } /* 1 + a peek */
+    }
+
     .social {
       width: 100%;
       background: #ffffff;
@@ -2553,6 +2637,26 @@
     <div class="dogs-divider"></div>
   </section>
 
+  <!-- ONZE ACTIES — hidden until at least one visible actie loads -->
+  <section class="acties-home" id="actiesHome" style="display:none">
+    <div class="acties-home-inner">
+      <div class="acties-home-header">
+        <h2 class="t-heading-md" data-i18n="index.acties.title">Onze acties</h2>
+        <p data-i18n="index.acties.subtitle">We organiseren regelmatig leuke acties om onze dieren en onze opvang te steunen. Doe jij ook mee?</p>
+      </div>
+      <div class="acties-carousel-wrap">
+        <button class="carousel-arrow prev hidden" id="actiesPrev" onclick="scrollActies(-1)" aria-label="Vorige">
+          <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <div class="acties-carousel" id="actiesFeed"></div>
+        <button class="carousel-arrow next hidden" id="actiesNext" onclick="scrollActies(1)" aria-label="Volgende">
+          <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="dogs-divider"></div>
+  </section>
+
   <!-- THE PROBLEM -->
   <section class="problem">
     <div class="problem-inner">
@@ -2845,7 +2949,7 @@
     </div>
   </div>
 
-  <script src="components.js?v=42"></script>
+  <script src="components.js?v=43"></script>
   <script src="supabase-config.js"></script>
   <script src="dog-card.js?v=10"></script>
 
@@ -3234,6 +3338,53 @@
     }
 
     loadSocialFeed();
+
+    // ---- Onze acties (homepage) ----
+    function actieEsc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+    function actieLoc(row, field) {
+      var lang = (typeof h4dGetLanguage === 'function') ? h4dGetLanguage() : 'nl';
+      return (row && (row[field + '_' + lang] || row[field + '_nl'])) || '';
+    }
+    function actieCardHTML(r) {
+      var img = (Array.isArray(r.gallery_images) && r.gallery_images[0]) || r.image_url || r.prize_image_url || 'lolo.png';
+      return '<button type="button" class="actie-hcard" data-id="' + r.id + '" data-type="' + actieEsc(r.type || '') + '">' +
+        '<img class="actie-hcard-img" src="' + actieEsc(img) + '" alt="" loading="lazy">' +
+        '<span class="actie-hcard-body">' +
+          '<span class="actie-hcard-title">' + actieEsc(actieLoc(r, 'title') || 'Actie') + '</span>' +
+          '<span class="actie-hcard-desc">' + actieEsc(actieLoc(r, 'description') || '') + '</span>' +
+        '</span>' +
+      '</button>';
+    }
+    function updateActieArrows() {
+      var c = document.getElementById('actiesFeed'), p = document.getElementById('actiesPrev'), n = document.getElementById('actiesNext');
+      if (!c || !p || !n) return;
+      p.classList.toggle('hidden', c.scrollLeft <= 10);
+      n.classList.toggle('hidden', c.scrollLeft + c.clientWidth >= c.scrollWidth - 10);
+    }
+    function scrollActies(dir) {
+      var c = document.getElementById('actiesFeed'), card = c && c.querySelector('.actie-hcard');
+      if (!card) return;
+      c.scrollBy({ left: dir * (card.offsetWidth + 20) * 2, behavior: 'smooth' });
+    }
+    async function loadActies() {
+      try {
+        var rows = await supabaseGet('lotteries', 'select=*&visible=eq.true&order=featured.desc,created_at.desc');
+        if (!rows || !rows.length) return; // section stays hidden when there are no acties
+        var feed = document.getElementById('actiesFeed');
+        feed.innerHTML = rows.map(actieCardHTML).join('');
+        feed.querySelectorAll('.actie-hcard').forEach(function (card) {
+          card.addEventListener('click', function () {
+            var id = card.getAttribute('data-id'), type = card.getAttribute('data-type');
+            if (type === 'product' && window.openActieModal) window.openActieModal(id);
+            else if (window.openLotteryModal) window.openLotteryModal(id);
+          });
+        });
+        feed.addEventListener('scroll', updateActieArrows);
+        document.getElementById('actiesHome').style.display = '';
+        setTimeout(updateActieArrows, 120);
+      } catch (e) { console.error('Error loading acties:', e); }
+    }
+    loadActies();
 
     // Before & After — loaded from Supabase
     var baStories = [];
